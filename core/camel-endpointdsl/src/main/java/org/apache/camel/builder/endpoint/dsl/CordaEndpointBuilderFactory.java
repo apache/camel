@@ -43,10 +43,12 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * URL to the corda node.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.corda.CordaConfiguration</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CordaEndpointConsumerBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
@@ -54,10 +56,12 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * URL to the corda node.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.corda.CordaConfiguration</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CordaEndpointConsumerBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
@@ -71,8 +75,10 @@ public interface CordaEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -87,8 +93,10 @@ public interface CordaEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CordaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -111,9 +119,11 @@ public interface CordaEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -125,9 +135,11 @@ public interface CordaEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -136,8 +148,10 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -146,9 +160,11 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCordaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -158,8 +174,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -169,8 +187,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -180,8 +200,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -191,8 +213,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -212,10 +236,12 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * URL to the corda node.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.corda.CordaConfiguration</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CordaEndpointProducerBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
@@ -223,10 +249,12 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * URL to the corda node.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.corda.CordaConfiguration</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CordaEndpointProducerBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
@@ -242,8 +270,10 @@ public interface CordaEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CordaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -260,8 +290,10 @@ public interface CordaEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CordaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -282,8 +314,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -293,8 +327,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -304,8 +340,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -315,8 +353,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -336,10 +376,12 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * URL to the corda node.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.corda.CordaConfiguration</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CordaEndpointBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
@@ -347,10 +389,12 @@ public interface CordaEndpointBuilderFactory {
         }
         /**
          * URL to the corda node.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.corda.CordaConfiguration</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CordaEndpointBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
@@ -370,8 +414,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -381,8 +427,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -392,8 +440,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -402,8 +452,10 @@ public interface CordaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCordaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -41,8 +41,10 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         }
         /**
          * Google Cloud Project Id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleBigQuerySQLEndpointBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -50,8 +52,10 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         }
         /**
          * BigQuery standard SQL query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleBigQuerySQLEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -60,9 +64,11 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to Bigquery Service. If non
          * provided the default will be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 Object connectionFactory) {
@@ -72,9 +78,11 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to Bigquery Service. If non
          * provided the default will be used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 String connectionFactory) {
@@ -96,8 +104,10 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -107,8 +117,10 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -118,8 +130,10 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -129,8 +143,10 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 String synchronous) {

@@ -43,9 +43,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder apiName(
                 GoogleSheetsApiName apiName) {
@@ -54,9 +56,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -64,8 +68,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -74,8 +80,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -85,8 +93,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -95,8 +105,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Client ID of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -104,8 +116,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Client secret of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
@@ -114,8 +128,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -125,8 +141,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
@@ -141,8 +159,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -157,8 +177,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleSheetsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -181,9 +203,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -195,9 +219,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -206,8 +232,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -216,9 +244,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -228,8 +258,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -239,8 +271,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -250,8 +284,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -261,8 +297,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -282,9 +320,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder apiName(
                 GoogleSheetsApiName apiName) {
@@ -293,9 +333,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -303,8 +345,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -313,8 +357,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -324,8 +370,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -334,8 +382,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Client ID of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -343,8 +393,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Client secret of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder clientSecret(
                 String clientSecret) {
@@ -353,8 +405,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -364,8 +418,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointProducerBuilder refreshToken(
                 String refreshToken) {
@@ -382,8 +438,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -400,8 +458,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -422,8 +482,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -433,8 +495,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -444,8 +508,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -455,8 +521,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -476,9 +544,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder apiName(GoogleSheetsApiName apiName) {
             setProperty("apiName", apiName);
@@ -486,9 +556,11 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -496,8 +568,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -506,8 +580,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -516,8 +592,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Google Sheets application name. Example would be
          * camel-google-sheets/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder applicationName(
                 String applicationName) {
@@ -526,8 +604,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Client ID of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -535,8 +615,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Client secret of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -544,8 +626,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -555,8 +639,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Sheets component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleSheetsEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
@@ -576,8 +662,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -587,8 +675,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -598,8 +688,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -609,8 +701,10 @@ public interface GoogleSheetsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointBuilder synchronous(
                 String synchronous) {

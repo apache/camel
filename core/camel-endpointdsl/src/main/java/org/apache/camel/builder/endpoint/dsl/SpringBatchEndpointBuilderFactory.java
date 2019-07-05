@@ -42,8 +42,10 @@ public interface SpringBatchEndpointBuilderFactory {
         }
         /**
          * The name of the Spring Batch job located in the registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SpringBatchEndpointBuilder jobName(String jobName) {
             setProperty("jobName", jobName);
@@ -52,8 +54,10 @@ public interface SpringBatchEndpointBuilderFactory {
         /**
          * Explicitly defines if the jobName should be taken from the headers
          * instead of the URI.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SpringBatchEndpointBuilder jobFromHeader(boolean jobFromHeader) {
             setProperty("jobFromHeader", jobFromHeader);
@@ -62,8 +66,10 @@ public interface SpringBatchEndpointBuilderFactory {
         /**
          * Explicitly defines if the jobName should be taken from the headers
          * instead of the URI.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SpringBatchEndpointBuilder jobFromHeader(String jobFromHeader) {
             setProperty("jobFromHeader", jobFromHeader);
@@ -71,9 +77,11 @@ public interface SpringBatchEndpointBuilderFactory {
         }
         /**
          * Explicitly specifies a JobLauncher to be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(Object jobLauncher) {
             setProperty("jobLauncher", jobLauncher);
@@ -81,9 +89,11 @@ public interface SpringBatchEndpointBuilderFactory {
         }
         /**
          * Explicitly specifies a JobLauncher to be used.
+         * 
          * The option will be converted to a
          * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(String jobLauncher) {
             setProperty("jobLauncher", jobLauncher);
@@ -91,10 +101,12 @@ public interface SpringBatchEndpointBuilderFactory {
         }
         /**
          * Explicitly specifies a JobRegistry to be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.batch.core.configuration.JobRegistry</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(Object jobRegistry) {
             setProperty("jobRegistry", jobRegistry);
@@ -102,10 +114,12 @@ public interface SpringBatchEndpointBuilderFactory {
         }
         /**
          * Explicitly specifies a JobRegistry to be used.
+         * 
          * The option will be converted to a
          * <code>org.springframework.batch.core.configuration.JobRegistry</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(String jobRegistry) {
             setProperty("jobRegistry", jobRegistry);
@@ -125,8 +139,10 @@ public interface SpringBatchEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -136,8 +152,10 @@ public interface SpringBatchEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -147,8 +165,10 @@ public interface SpringBatchEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringBatchEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -158,8 +178,10 @@ public interface SpringBatchEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringBatchEndpointBuilder synchronous(
                 String synchronous) {

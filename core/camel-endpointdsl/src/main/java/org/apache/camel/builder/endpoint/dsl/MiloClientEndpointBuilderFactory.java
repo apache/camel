@@ -46,8 +46,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The OPC UA server endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder endpointUri(String endpointUri) {
             setProperty("endpointUri", endpointUri);
@@ -56,8 +58,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A virtual client id to force the creation of a new connection
          * instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -65,8 +69,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Default await setting for writes.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder defaultAwaitWrites(
                 boolean defaultAwaitWrites) {
@@ -75,8 +81,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Default await setting for writes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder defaultAwaitWrites(
                 String defaultAwaitWrites) {
@@ -85,8 +93,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * A suffix for endpoint URI when discovering.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder discoveryEndpointSuffix(
                 String discoveryEndpointSuffix) {
@@ -95,8 +105,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * An alternative discovery URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder discoveryEndpointUri(
                 String discoveryEndpointUri) {
@@ -105,9 +117,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The method definition (see Method ID).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder method(Object method) {
             setProperty("method", method);
@@ -115,9 +129,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The method definition (see Method ID).
+         * 
          * The option will be converted to a
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder method(String method) {
             setProperty("method", method);
@@ -125,9 +141,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The node definition (see Node ID).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder node(Object node) {
             setProperty("node", node);
@@ -135,9 +153,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The node definition (see Node ID).
+         * 
          * The option will be converted to a
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder node(String node) {
             setProperty("node", node);
@@ -145,8 +165,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The sampling interval in milliseconds.
-         * The option is a <code>java.lang.Double</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder samplingInterval(
                 Double samplingInterval) {
@@ -155,8 +177,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The sampling interval in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Double</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointConsumerBuilder samplingInterval(
                 String samplingInterval) {
@@ -171,8 +195,10 @@ public interface MiloClientEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default MiloClientEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -187,8 +213,10 @@ public interface MiloClientEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default MiloClientEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -198,9 +226,11 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
-         * The option is a <code>java.util.Set&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder allowedSecurityPolicies(
                 Set<String> allowedSecurityPolicies) {
@@ -210,9 +240,11 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
+         * 
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder allowedSecurityPolicies(
                 String allowedSecurityPolicies) {
@@ -221,8 +253,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The application name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -231,8 +265,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The application URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder applicationUri(
                 String applicationUri) {
@@ -241,8 +277,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Channel lifetime in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder channelLifetime(
                 Long channelLifetime) {
@@ -251,8 +289,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Channel lifetime in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder channelLifetime(
                 String channelLifetime) {
@@ -261,8 +301,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The name of the key in the keystore file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyAlias(String keyAlias) {
             setProperty("keyAlias", keyAlias);
@@ -270,8 +312,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The key password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
@@ -279,8 +323,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The keystore password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyStorePassword(
                 String keyStorePassword) {
@@ -289,8 +335,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The key store type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyStoreType(
                 String keyStoreType) {
@@ -299,8 +347,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The URL where the key should be loaded from.
-         * The option is a <code>java.net.URL</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.net.URL</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyStoreUrl(URL keyStoreUrl) {
             setProperty("keyStoreUrl", keyStoreUrl);
@@ -308,8 +358,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The URL where the key should be loaded from.
+         * 
          * The option will be converted to a <code>java.net.URL</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder keyStoreUrl(String keyStoreUrl) {
             setProperty("keyStoreUrl", keyStoreUrl);
@@ -317,8 +369,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending publish requests.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxPendingPublishRequests(
                 Long maxPendingPublishRequests) {
@@ -327,8 +381,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending publish requests.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxPendingPublishRequests(
                 String maxPendingPublishRequests) {
@@ -337,8 +393,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of bytes a response message may have.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxResponseMessageSize(
                 Long maxResponseMessageSize) {
@@ -347,8 +405,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of bytes a response message may have.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder maxResponseMessageSize(
                 String maxResponseMessageSize) {
@@ -358,8 +418,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
-         * The option is a <code>boolean</code> type.
-         * @group client
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder overrideHost(
                 boolean overrideHost) {
@@ -369,8 +431,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder overrideHost(
                 String overrideHost) {
@@ -379,8 +443,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The product URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder productUri(String productUri) {
             setProperty("productUri", productUri);
@@ -388,8 +454,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Request timeout in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder requestTimeout(
                 Long requestTimeout) {
@@ -398,8 +466,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Request timeout in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder requestTimeout(
                 String requestTimeout) {
@@ -408,8 +478,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder sessionName(String sessionName) {
             setProperty("sessionName", sessionName);
@@ -417,8 +489,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session timeout in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder sessionTimeout(
                 Long sessionTimeout) {
@@ -427,8 +501,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session timeout in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointConsumerBuilder sessionTimeout(
                 String sessionTimeout) {
@@ -451,9 +527,11 @@ public interface MiloClientEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -465,9 +543,11 @@ public interface MiloClientEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -476,8 +556,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -486,9 +568,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedMiloClientEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -498,8 +582,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -509,8 +595,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -520,8 +608,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -531,8 +621,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -552,8 +644,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The OPC UA server endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder endpointUri(String endpointUri) {
             setProperty("endpointUri", endpointUri);
@@ -562,8 +656,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A virtual client id to force the creation of a new connection
          * instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -571,8 +667,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Default await setting for writes.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder defaultAwaitWrites(
                 boolean defaultAwaitWrites) {
@@ -581,8 +679,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Default await setting for writes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder defaultAwaitWrites(
                 String defaultAwaitWrites) {
@@ -591,8 +691,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * A suffix for endpoint URI when discovering.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder discoveryEndpointSuffix(
                 String discoveryEndpointSuffix) {
@@ -601,8 +703,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * An alternative discovery URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder discoveryEndpointUri(
                 String discoveryEndpointUri) {
@@ -611,9 +715,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The method definition (see Method ID).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder method(Object method) {
             setProperty("method", method);
@@ -621,9 +727,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The method definition (see Method ID).
+         * 
          * The option will be converted to a
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder method(String method) {
             setProperty("method", method);
@@ -631,9 +739,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The node definition (see Node ID).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder node(Object node) {
             setProperty("node", node);
@@ -641,9 +751,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The node definition (see Node ID).
+         * 
          * The option will be converted to a
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder node(String node) {
             setProperty("node", node);
@@ -651,8 +763,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The sampling interval in milliseconds.
-         * The option is a <code>java.lang.Double</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder samplingInterval(
                 Double samplingInterval) {
@@ -661,8 +775,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The sampling interval in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Double</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointProducerBuilder samplingInterval(
                 String samplingInterval) {
@@ -679,8 +795,10 @@ public interface MiloClientEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default MiloClientEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -697,8 +815,10 @@ public interface MiloClientEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MiloClientEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -708,9 +828,11 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
-         * The option is a <code>java.util.Set&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder allowedSecurityPolicies(
                 Set<String> allowedSecurityPolicies) {
@@ -720,9 +842,11 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
+         * 
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder allowedSecurityPolicies(
                 String allowedSecurityPolicies) {
@@ -731,8 +855,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The application name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -741,8 +867,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The application URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder applicationUri(
                 String applicationUri) {
@@ -751,8 +879,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Channel lifetime in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder channelLifetime(
                 Long channelLifetime) {
@@ -761,8 +891,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Channel lifetime in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder channelLifetime(
                 String channelLifetime) {
@@ -771,8 +903,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The name of the key in the keystore file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder keyAlias(String keyAlias) {
             setProperty("keyAlias", keyAlias);
@@ -780,8 +914,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The key password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
@@ -789,8 +925,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The keystore password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder keyStorePassword(
                 String keyStorePassword) {
@@ -799,8 +937,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The key store type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder keyStoreType(
                 String keyStoreType) {
@@ -809,8 +949,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The URL where the key should be loaded from.
-         * The option is a <code>java.net.URL</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.net.URL</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder keyStoreUrl(URL keyStoreUrl) {
             setProperty("keyStoreUrl", keyStoreUrl);
@@ -818,8 +960,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The URL where the key should be loaded from.
+         * 
          * The option will be converted to a <code>java.net.URL</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder keyStoreUrl(String keyStoreUrl) {
             setProperty("keyStoreUrl", keyStoreUrl);
@@ -827,8 +971,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending publish requests.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder maxPendingPublishRequests(
                 Long maxPendingPublishRequests) {
@@ -837,8 +983,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending publish requests.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder maxPendingPublishRequests(
                 String maxPendingPublishRequests) {
@@ -847,8 +995,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of bytes a response message may have.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder maxResponseMessageSize(
                 Long maxResponseMessageSize) {
@@ -857,8 +1007,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of bytes a response message may have.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder maxResponseMessageSize(
                 String maxResponseMessageSize) {
@@ -868,8 +1020,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
-         * The option is a <code>boolean</code> type.
-         * @group client
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder overrideHost(
                 boolean overrideHost) {
@@ -879,8 +1033,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder overrideHost(
                 String overrideHost) {
@@ -889,8 +1045,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The product URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder productUri(String productUri) {
             setProperty("productUri", productUri);
@@ -898,8 +1056,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Request timeout in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder requestTimeout(
                 Long requestTimeout) {
@@ -908,8 +1068,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Request timeout in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
@@ -918,8 +1080,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder sessionName(String sessionName) {
             setProperty("sessionName", sessionName);
@@ -927,8 +1091,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session timeout in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder sessionTimeout(
                 Long sessionTimeout) {
@@ -937,8 +1103,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session timeout in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointProducerBuilder sessionTimeout(
                 String sessionTimeout) {
@@ -959,8 +1127,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -970,8 +1140,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -981,8 +1153,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -992,8 +1166,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1013,8 +1189,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The OPC UA server endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder endpointUri(String endpointUri) {
             setProperty("endpointUri", endpointUri);
@@ -1023,8 +1201,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A virtual client id to force the creation of a new connection
          * instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -1032,8 +1212,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Default await setting for writes.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder defaultAwaitWrites(
                 boolean defaultAwaitWrites) {
@@ -1042,8 +1224,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Default await setting for writes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder defaultAwaitWrites(
                 String defaultAwaitWrites) {
@@ -1052,8 +1236,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * A suffix for endpoint URI when discovering.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder discoveryEndpointSuffix(
                 String discoveryEndpointSuffix) {
@@ -1062,8 +1248,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * An alternative discovery URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder discoveryEndpointUri(
                 String discoveryEndpointUri) {
@@ -1072,9 +1260,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The method definition (see Method ID).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder method(Object method) {
             setProperty("method", method);
@@ -1082,9 +1272,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The method definition (see Method ID).
+         * 
          * The option will be converted to a
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder method(String method) {
             setProperty("method", method);
@@ -1092,9 +1284,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The node definition (see Node ID).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder node(Object node) {
             setProperty("node", node);
@@ -1102,9 +1296,11 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The node definition (see Node ID).
+         * 
          * The option will be converted to a
          * <code>org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder node(String node) {
             setProperty("node", node);
@@ -1112,8 +1308,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The sampling interval in milliseconds.
-         * The option is a <code>java.lang.Double</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder samplingInterval(
                 Double samplingInterval) {
@@ -1122,8 +1320,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The sampling interval in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Double</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default MiloClientEndpointBuilder samplingInterval(
                 String samplingInterval) {
@@ -1133,9 +1333,11 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
-         * The option is a <code>java.util.Set&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
          * type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder allowedSecurityPolicies(
                 Set<String> allowedSecurityPolicies) {
@@ -1145,9 +1347,11 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * A set of allowed security policy URIs. Default is to accept all and
          * use the highest.
+         * 
          * The option will be converted to a
          * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder allowedSecurityPolicies(
                 String allowedSecurityPolicies) {
@@ -1156,8 +1360,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The application name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder applicationName(String applicationName) {
             setProperty("applicationName", applicationName);
@@ -1165,8 +1371,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The application URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder applicationUri(String applicationUri) {
             setProperty("applicationUri", applicationUri);
@@ -1174,8 +1382,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Channel lifetime in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder channelLifetime(Long channelLifetime) {
             setProperty("channelLifetime", channelLifetime);
@@ -1183,8 +1393,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Channel lifetime in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder channelLifetime(String channelLifetime) {
             setProperty("channelLifetime", channelLifetime);
@@ -1192,8 +1404,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The name of the key in the keystore file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder keyAlias(String keyAlias) {
             setProperty("keyAlias", keyAlias);
@@ -1201,8 +1415,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The key password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
@@ -1210,8 +1426,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The keystore password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder keyStorePassword(
                 String keyStorePassword) {
@@ -1220,8 +1438,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The key store type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder keyStoreType(String keyStoreType) {
             setProperty("keyStoreType", keyStoreType);
@@ -1229,8 +1449,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The URL where the key should be loaded from.
-         * The option is a <code>java.net.URL</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.net.URL</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder keyStoreUrl(URL keyStoreUrl) {
             setProperty("keyStoreUrl", keyStoreUrl);
@@ -1238,8 +1460,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The URL where the key should be loaded from.
+         * 
          * The option will be converted to a <code>java.net.URL</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder keyStoreUrl(String keyStoreUrl) {
             setProperty("keyStoreUrl", keyStoreUrl);
@@ -1247,8 +1471,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending publish requests.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder maxPendingPublishRequests(
                 Long maxPendingPublishRequests) {
@@ -1257,8 +1483,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending publish requests.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder maxPendingPublishRequests(
                 String maxPendingPublishRequests) {
@@ -1267,8 +1495,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of bytes a response message may have.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder maxResponseMessageSize(
                 Long maxResponseMessageSize) {
@@ -1277,8 +1507,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The maximum number of bytes a response message may have.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder maxResponseMessageSize(
                 String maxResponseMessageSize) {
@@ -1288,8 +1520,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
-         * The option is a <code>boolean</code> type.
-         * @group client
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder overrideHost(boolean overrideHost) {
             setProperty("overrideHost", overrideHost);
@@ -1298,8 +1532,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Override the server reported endpoint host with the host from the
          * endpoint URI.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder overrideHost(String overrideHost) {
             setProperty("overrideHost", overrideHost);
@@ -1307,8 +1543,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * The product URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder productUri(String productUri) {
             setProperty("productUri", productUri);
@@ -1316,8 +1554,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Request timeout in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder requestTimeout(Long requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
@@ -1325,8 +1565,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Request timeout in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder requestTimeout(String requestTimeout) {
             setProperty("requestTimeout", requestTimeout);
@@ -1334,8 +1576,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder sessionName(String sessionName) {
             setProperty("sessionName", sessionName);
@@ -1343,8 +1587,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session timeout in milliseconds.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder sessionTimeout(Long sessionTimeout) {
             setProperty("sessionTimeout", sessionTimeout);
@@ -1352,8 +1598,10 @@ public interface MiloClientEndpointBuilderFactory {
         }
         /**
          * Session timeout in milliseconds.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group client
+         * 
+         * Group: client
          */
         default MiloClientEndpointBuilder sessionTimeout(String sessionTimeout) {
             setProperty("sessionTimeout", sessionTimeout);
@@ -1373,8 +1621,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1384,8 +1634,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1395,8 +1647,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1406,8 +1660,10 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMiloClientEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

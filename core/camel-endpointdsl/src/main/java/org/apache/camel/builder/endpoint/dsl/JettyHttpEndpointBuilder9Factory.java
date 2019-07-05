@@ -44,8 +44,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         }
         /**
          * The url of the HTTP endpoint to call.
-         * The option is a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: common
          */
         default JettyHttpEndpointBuilder9 httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
@@ -53,8 +55,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         }
         /**
          * The url of the HTTP endpoint to call.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JettyHttpEndpointBuilder9 httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
@@ -77,8 +81,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * response body stream. If setting this option to true, then the
          * producers will not cache the response body stream but use the
          * response stream as-is as the message body.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default JettyHttpEndpointBuilder9 disableStreamCache(
                 boolean disableStreamCache) {
@@ -102,8 +108,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * response body stream. If setting this option to true, then the
          * producers will not cache the response body stream but use the
          * response stream as-is as the message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JettyHttpEndpointBuilder9 disableStreamCache(
                 String disableStreamCache) {
@@ -113,9 +121,11 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JettyHttpEndpointBuilder9 headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -125,9 +135,11 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JettyHttpEndpointBuilder9 headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -137,8 +149,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JettyHttpEndpointBuilder9 chunked(boolean chunked) {
             setProperty("chunked", chunked);
@@ -147,8 +161,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JettyHttpEndpointBuilder9 chunked(String chunked) {
             setProperty("chunked", chunked);
@@ -158,8 +174,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JettyHttpEndpointBuilder9 enableMultipartFilter(
                 boolean enableMultipartFilter) {
@@ -170,8 +188,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * Whether Jetty org.eclipse.jetty.servlets.MultiPartFilter is enabled
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JettyHttpEndpointBuilder9 enableMultipartFilter(
                 String enableMultipartFilter) {
@@ -188,8 +208,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * enable this then be aware that Java will deserialize the incoming
          * data from the request to Java and that can be a potential security
          * risk.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JettyHttpEndpointBuilder9 transferException(
                 boolean transferException) {
@@ -206,8 +228,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * enable this then be aware that Java will deserialize the incoming
          * data from the request to Java and that can be a potential security
          * risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JettyHttpEndpointBuilder9 transferException(
                 String transferException) {
@@ -216,9 +240,11 @@ public interface JettyHttpEndpointBuilder9Factory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default JettyHttpEndpointBuilder9 sslContextParameters(
                 Object sslContextParameters) {
@@ -227,9 +253,11 @@ public interface JettyHttpEndpointBuilder9Factory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default JettyHttpEndpointBuilder9 sslContextParameters(
                 String sslContextParameters) {
@@ -250,9 +278,11 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
-         * The option is a <code>org.apache.camel.http.common.HttpBinding</code>
-         * type.
-         * @group common (advanced)
+         * 
+         * The option is a:
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder9 httpBinding(Object httpBinding) {
             setProperty("httpBinding", httpBinding);
@@ -261,9 +291,11 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder9 httpBinding(String httpBinding) {
             setProperty("httpBinding", httpBinding);
@@ -272,8 +304,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -283,8 +317,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -295,8 +331,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * If this option is true then IN exchange Body of the exchange will be
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
@@ -307,8 +345,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * If this option is true then IN exchange Body of the exchange will be
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
                 String mapHttpMessageBody) {
@@ -319,8 +359,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * If this option is true then IN exchange Form Encoded body of the
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
@@ -331,8 +373,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * If this option is true then IN exchange Form Encoded body of the
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
@@ -343,8 +387,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * If this option is true then IN exchange Headers of the exchange will
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
@@ -355,8 +401,10 @@ public interface JettyHttpEndpointBuilder9Factory {
          * If this option is true then IN exchange Headers of the exchange will
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
@@ -366,8 +414,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 synchronous(
                 boolean synchronous) {
@@ -377,8 +427,10 @@ public interface JettyHttpEndpointBuilder9Factory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

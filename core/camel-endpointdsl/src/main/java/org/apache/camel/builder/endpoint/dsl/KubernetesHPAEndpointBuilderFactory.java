@@ -44,8 +44,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -53,8 +55,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
@@ -63,8 +67,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -72,9 +78,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -83,9 +91,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -94,8 +104,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -103,8 +115,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
@@ -119,8 +133,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -135,8 +151,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -145,8 +163,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Consumer Label key when watching at some resources.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder labelKey(String labelKey) {
             setProperty("labelKey", labelKey);
@@ -154,8 +174,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Consumer Label value when watching at some resources.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder labelValue(
                 String labelValue) {
@@ -164,8 +186,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The namespace.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
@@ -173,8 +197,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Consumer pool size.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
@@ -182,8 +208,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Consumer pool size.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
@@ -191,8 +219,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Consumer Resource Name we would like to watch.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder resourceName(
                 String resourceName) {
@@ -201,8 +231,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder caCertData(
                 String caCertData) {
@@ -211,8 +243,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
@@ -221,8 +255,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
@@ -231,8 +267,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
@@ -241,8 +279,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -251,8 +291,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
@@ -261,8 +303,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -271,8 +315,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -281,8 +327,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
@@ -291,8 +339,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -300,8 +350,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -310,9 +362,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
@@ -321,8 +375,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -344,9 +400,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -358,9 +416,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -369,8 +429,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -379,9 +441,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -391,8 +455,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -402,8 +468,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -413,8 +481,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -424,9 +494,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -436,8 +508,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -447,8 +521,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -468,8 +544,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -477,8 +555,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder apiVersion(
                 String apiVersion) {
@@ -487,8 +567,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -496,9 +578,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -507,9 +591,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -518,8 +604,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -527,8 +615,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder portProtocol(
                 String portProtocol) {
@@ -545,8 +635,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -563,8 +655,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -573,8 +667,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Producer operation to do on Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesHPAEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -582,8 +678,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder caCertData(
                 String caCertData) {
@@ -592,8 +690,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder caCertFile(
                 String caCertFile) {
@@ -602,8 +702,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder clientCertData(
                 String clientCertData) {
@@ -612,8 +714,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
@@ -622,8 +726,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -632,8 +738,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
@@ -642,8 +750,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -652,8 +762,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -662,8 +774,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder oauthToken(
                 String oauthToken) {
@@ -672,8 +786,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -681,8 +797,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -691,9 +809,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder trustCerts(
                 String trustCerts) {
@@ -702,8 +822,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -723,8 +845,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -734,8 +858,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -745,8 +871,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -756,9 +884,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -768,8 +898,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -779,8 +911,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -800,8 +934,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -809,8 +945,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
@@ -818,8 +956,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -827,9 +967,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -838,9 +980,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -849,8 +993,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -858,8 +1004,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesHPAEndpointBuilder portProtocol(String portProtocol) {
             setProperty("portProtocol", portProtocol);
@@ -867,8 +1015,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
@@ -876,8 +1026,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
@@ -885,8 +1037,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -895,8 +1049,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -905,8 +1061,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
@@ -914,8 +1072,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder clientKeyData(String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
@@ -923,8 +1083,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder clientKeyFile(String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
@@ -932,8 +1094,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -942,8 +1106,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -951,8 +1117,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -960,8 +1128,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder trustCerts(Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
@@ -969,9 +1139,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
@@ -979,8 +1151,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesHPAEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1000,8 +1174,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1011,8 +1187,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1022,8 +1200,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -1033,9 +1213,11 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1045,8 +1227,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1056,8 +1240,10 @@ public interface KubernetesHPAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder synchronous(
                 String synchronous) {

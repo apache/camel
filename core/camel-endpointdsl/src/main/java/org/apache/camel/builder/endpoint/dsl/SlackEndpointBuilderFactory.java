@@ -50,8 +50,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The channel name (syntax #name) or slackuser (syntax userName) to
          * send a message directly to an user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SlackEndpointConsumerBuilder channel(String channel) {
             setProperty("channel", channel);
@@ -65,8 +67,10 @@ public interface SlackEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SlackEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -81,8 +85,10 @@ public interface SlackEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SlackEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -91,8 +97,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * The Max Result for the poll.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SlackEndpointConsumerBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
@@ -101,8 +109,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SlackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -112,8 +122,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SlackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -122,8 +134,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * The Server URL of the Slack instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SlackEndpointConsumerBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
@@ -131,8 +145,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * The token to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SlackEndpointConsumerBuilder token(String token) {
             setProperty("token", token);
@@ -141,8 +157,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -152,8 +170,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -163,8 +183,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -174,8 +196,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -189,8 +213,10 @@ public interface SlackEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -204,8 +230,10 @@ public interface SlackEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -216,8 +244,10 @@ public interface SlackEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -227,8 +257,10 @@ public interface SlackEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -237,8 +269,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -247,8 +281,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -258,8 +294,10 @@ public interface SlackEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -269,8 +307,10 @@ public interface SlackEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -279,8 +319,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -290,9 +332,11 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -303,9 +347,11 @@ public interface SlackEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -316,9 +362,11 @@ public interface SlackEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -328,10 +376,12 @@ public interface SlackEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -341,10 +391,12 @@ public interface SlackEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -353,9 +405,11 @@ public interface SlackEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -365,10 +419,12 @@ public interface SlackEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -377,8 +433,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -387,8 +445,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -397,8 +457,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -406,9 +468,11 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -417,8 +481,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -427,8 +493,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SlackEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -450,9 +518,11 @@ public interface SlackEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -464,9 +534,11 @@ public interface SlackEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -475,8 +547,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -485,9 +559,11 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -499,9 +575,11 @@ public interface SlackEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -513,9 +591,11 @@ public interface SlackEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSlackEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -525,8 +605,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -536,8 +618,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -547,8 +631,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -558,8 +644,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -580,8 +668,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The channel name (syntax #name) or slackuser (syntax userName) to
          * send a message directly to an user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SlackEndpointProducerBuilder channel(String channel) {
             setProperty("channel", channel);
@@ -589,8 +679,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * Use a Slack emoji as an avatar.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SlackEndpointProducerBuilder iconEmoji(String iconEmoji) {
             setProperty("iconEmoji", iconEmoji);
@@ -599,8 +691,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The avatar that the component will use when sending message to a
          * channel or user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SlackEndpointProducerBuilder iconUrl(String iconUrl) {
             setProperty("iconUrl", iconUrl);
@@ -616,8 +710,10 @@ public interface SlackEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SlackEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -634,8 +730,10 @@ public interface SlackEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SlackEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -645,8 +743,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * This is the username that the bot will have when sending messages to
          * a channel or user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SlackEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -654,8 +754,10 @@ public interface SlackEndpointBuilderFactory {
         }
         /**
          * The incoming webhook URL.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SlackEndpointProducerBuilder webhookUrl(String webhookUrl) {
             setProperty("webhookUrl", webhookUrl);
@@ -675,8 +777,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -686,8 +790,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -697,8 +803,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -708,8 +816,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -730,8 +840,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * The channel name (syntax #name) or slackuser (syntax userName) to
          * send a message directly to an user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SlackEndpointBuilder channel(String channel) {
             setProperty("channel", channel);
@@ -751,8 +863,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -762,8 +876,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -773,8 +889,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -783,8 +901,10 @@ public interface SlackEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSlackEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

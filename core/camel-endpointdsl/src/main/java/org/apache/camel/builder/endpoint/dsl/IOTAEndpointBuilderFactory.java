@@ -43,8 +43,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Component name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -53,8 +55,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder depth(Integer depth) {
             setProperty("depth", depth);
@@ -63,9 +67,11 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder depth(String depth) {
             setProperty("depth", depth);
@@ -75,8 +81,10 @@ public interface IOTAEndpointBuilderFactory {
          * The minWeightMagnitude is the minimum number of zeroes that a
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
@@ -87,9 +95,11 @@ public interface IOTAEndpointBuilderFactory {
          * The minWeightMagnitude is the minimum number of zeroes that a
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder minWeightMagnitude(
                 String minWeightMagnitude) {
@@ -98,8 +108,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Supported operations are 'sendTransfer', 'getNewAddress'.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -107,8 +119,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Address security level.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder securityLevel(Integer securityLevel) {
             setProperty("securityLevel", securityLevel);
@@ -116,9 +130,11 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Address security level.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder securityLevel(String securityLevel) {
             setProperty("securityLevel", securityLevel);
@@ -126,8 +142,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * TAG.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder tag(String tag) {
             setProperty("tag", tag);
@@ -135,8 +153,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Node url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointConsumerBuilder url(String url) {
             setProperty("url", url);
@@ -150,8 +170,10 @@ public interface IOTAEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default IOTAEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -166,8 +188,10 @@ public interface IOTAEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IOTAEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -190,9 +214,11 @@ public interface IOTAEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -204,9 +230,11 @@ public interface IOTAEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIOTAEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -215,8 +243,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -225,9 +255,11 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIOTAEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -237,8 +269,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -248,8 +282,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -259,8 +295,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -270,8 +308,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -291,8 +331,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Component name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -301,8 +343,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder depth(Integer depth) {
             setProperty("depth", depth);
@@ -311,9 +355,11 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder depth(String depth) {
             setProperty("depth", depth);
@@ -323,8 +369,10 @@ public interface IOTAEndpointBuilderFactory {
          * The minWeightMagnitude is the minimum number of zeroes that a
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
@@ -335,9 +383,11 @@ public interface IOTAEndpointBuilderFactory {
          * The minWeightMagnitude is the minimum number of zeroes that a
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder minWeightMagnitude(
                 String minWeightMagnitude) {
@@ -346,8 +396,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Supported operations are 'sendTransfer', 'getNewAddress'.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -355,8 +407,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Address security level.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder securityLevel(Integer securityLevel) {
             setProperty("securityLevel", securityLevel);
@@ -364,9 +418,11 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Address security level.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder securityLevel(String securityLevel) {
             setProperty("securityLevel", securityLevel);
@@ -374,8 +430,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * TAG.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder tag(String tag) {
             setProperty("tag", tag);
@@ -383,8 +441,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Node url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointProducerBuilder url(String url) {
             setProperty("url", url);
@@ -400,8 +460,10 @@ public interface IOTAEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default IOTAEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -418,8 +480,10 @@ public interface IOTAEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default IOTAEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -440,8 +504,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -451,8 +517,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -462,8 +530,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -473,8 +543,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -494,8 +566,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Component name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -504,8 +578,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder depth(Integer depth) {
             setProperty("depth", depth);
@@ -514,9 +590,11 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder depth(String depth) {
             setProperty("depth", depth);
@@ -526,8 +604,10 @@ public interface IOTAEndpointBuilderFactory {
          * The minWeightMagnitude is the minimum number of zeroes that a
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
@@ -538,9 +618,11 @@ public interface IOTAEndpointBuilderFactory {
          * The minWeightMagnitude is the minimum number of zeroes that a
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder minWeightMagnitude(String minWeightMagnitude) {
             setProperty("minWeightMagnitude", minWeightMagnitude);
@@ -548,8 +630,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Supported operations are 'sendTransfer', 'getNewAddress'.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -557,8 +641,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Address security level.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder securityLevel(Integer securityLevel) {
             setProperty("securityLevel", securityLevel);
@@ -566,9 +652,11 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Address security level.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder securityLevel(String securityLevel) {
             setProperty("securityLevel", securityLevel);
@@ -576,8 +664,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * TAG.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder tag(String tag) {
             setProperty("tag", tag);
@@ -585,8 +675,10 @@ public interface IOTAEndpointBuilderFactory {
         }
         /**
          * Node url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IOTAEndpointBuilder url(String url) {
             setProperty("url", url);
@@ -606,8 +698,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -617,8 +711,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -628,8 +724,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -638,8 +736,10 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

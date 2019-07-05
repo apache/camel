@@ -40,8 +40,10 @@ public interface RssEndpointBuilderFactory {
         }
         /**
          * The URI to the feed to poll.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder feedUri(String feedUri) {
             setProperty("feedUri", feedUri);
@@ -49,8 +51,10 @@ public interface RssEndpointBuilderFactory {
         }
         /**
          * Sets whether to add the feed object as a header.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder feedHeader(boolean feedHeader) {
             setProperty("feedHeader", feedHeader);
@@ -58,8 +62,10 @@ public interface RssEndpointBuilderFactory {
         }
         /**
          * Sets whether to add the feed object as a header.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder feedHeader(String feedHeader) {
             setProperty("feedHeader", feedHeader);
@@ -67,8 +73,10 @@ public interface RssEndpointBuilderFactory {
         }
         /**
          * Sets whether to use filtering or not of the entries.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder filter(boolean filter) {
             setProperty("filter", filter);
@@ -76,8 +84,10 @@ public interface RssEndpointBuilderFactory {
         }
         /**
          * Sets whether to use filtering or not of the entries.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder filter(String filter) {
             setProperty("filter", filter);
@@ -86,8 +96,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets the timestamp to be used for filtering entries from the atom
          * feeds. This options is only in conjunction with the splitEntries.
-         * The option is a <code>java.util.Date</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.util.Date</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder lastUpdate(Date lastUpdate) {
             setProperty("lastUpdate", lastUpdate);
@@ -96,8 +108,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets the timestamp to be used for filtering entries from the atom
          * feeds. This options is only in conjunction with the splitEntries.
+         * 
          * The option will be converted to a <code>java.util.Date</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder lastUpdate(String lastUpdate) {
             setProperty("lastUpdate", lastUpdate);
@@ -106,8 +120,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets the password to be used for basic authentication when polling
          * from a HTTP feed.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -116,8 +132,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets whether to sort entries by published date. Only works when
          * splitEntries = true.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder sortEntries(boolean sortEntries) {
             setProperty("sortEntries", sortEntries);
@@ -126,8 +144,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets whether to sort entries by published date. Only works when
          * splitEntries = true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder sortEntries(String sortEntries) {
             setProperty("sortEntries", sortEntries);
@@ -136,8 +156,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets whether or not entries should be sent individually or whether
          * the entire feed should be sent as a single message.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder splitEntries(boolean splitEntries) {
             setProperty("splitEntries", splitEntries);
@@ -146,8 +168,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets whether or not entries should be sent individually or whether
          * the entire feed should be sent as a single message.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder splitEntries(String splitEntries) {
             setProperty("splitEntries", splitEntries);
@@ -157,8 +181,10 @@ public interface RssEndpointBuilderFactory {
          * Sets whether all entries identified in a single feed poll should be
          * delivered immediately. If true, only one entry is processed per
          * consumer.delay. Only applicable when splitEntries = true.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder throttleEntries(boolean throttleEntries) {
             setProperty("throttleEntries", throttleEntries);
@@ -168,8 +194,10 @@ public interface RssEndpointBuilderFactory {
          * Sets whether all entries identified in a single feed poll should be
          * delivered immediately. If true, only one entry is processed per
          * consumer.delay. Only applicable when splitEntries = true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder throttleEntries(String throttleEntries) {
             setProperty("throttleEntries", throttleEntries);
@@ -178,8 +206,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets the username to be used for basic authentication when polling
          * from a HTTP feed.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RssEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -199,8 +229,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRssEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -210,8 +242,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRssEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -221,8 +255,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRssEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -231,8 +267,10 @@ public interface RssEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRssEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -43,8 +43,10 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Logical name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AsteriskEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -52,8 +54,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * The hostname of the asterisk server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointConsumerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -61,8 +66,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Login password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -70,8 +78,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Login username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -85,8 +96,10 @@ public interface AsteriskEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -101,8 +114,10 @@ public interface AsteriskEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -125,9 +140,11 @@ public interface AsteriskEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -139,9 +156,11 @@ public interface AsteriskEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -150,8 +169,10 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -160,9 +181,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAsteriskEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -172,8 +195,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -183,8 +208,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -194,8 +221,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -205,8 +234,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -226,8 +257,10 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Logical name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AsteriskEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -235,8 +268,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * The hostname of the asterisk server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointProducerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -244,8 +280,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Login password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -253,8 +292,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Login username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -263,9 +305,11 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * What action to perform such as getting queue status, sip peers or
          * extension state.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AsteriskEndpointProducerBuilder action(AsteriskAction action) {
             setProperty("action", action);
@@ -274,9 +318,11 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * What action to perform such as getting queue status, sip peers or
          * extension state.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.asterisk.AsteriskAction</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AsteriskEndpointProducerBuilder action(String action) {
             setProperty("action", action);
@@ -292,8 +338,10 @@ public interface AsteriskEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default AsteriskEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -310,8 +358,10 @@ public interface AsteriskEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AsteriskEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -332,8 +382,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -343,8 +395,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -354,8 +408,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -365,8 +421,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -386,8 +444,10 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Logical name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AsteriskEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -395,8 +455,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * The hostname of the asterisk server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -404,8 +467,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Login password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -413,8 +479,11 @@ public interface AsteriskEndpointBuilderFactory {
         }
         /**
          * Login username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default AsteriskEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -434,8 +503,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -445,8 +516,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -456,8 +529,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -466,8 +541,10 @@ public interface AsteriskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -45,8 +45,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         }
         /**
          * Name of queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -59,8 +61,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * name, that determines the size. To make sure all endpoints use same
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointConsumerBuilder size(int size) {
             setProperty("size", size);
@@ -73,8 +77,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * name, that determines the size. To make sure all endpoints use same
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
@@ -88,8 +94,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -104,8 +112,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -114,8 +124,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         }
         /**
          * Number of concurrent threads processing exchanges.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -124,8 +136,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         }
         /**
          * Number of concurrent threads processing exchanges.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -138,8 +152,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * a message to the queue and have each consumer receive a copy of the
          * message. When enabled, this option should be specified on every
          * consumer endpoint.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
@@ -152,8 +168,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * a message to the queue and have each consumer receive a copy of the
          * message. When enabled, this option should be specified on every
          * consumer endpoint.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
@@ -164,9 +182,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Defines the strategy used by consumer threads to wait on new
          * exchanges to be published. The options allowed are:Blocking,
          * Sleeping, BusySpin and Yielding.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder waitStrategy(
                 DisruptorWaitStrategy waitStrategy) {
@@ -177,9 +197,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Defines the strategy used by consumer threads to wait on new
          * exchanges to be published. The options allowed are:Blocking,
          * Sleeping, BusySpin and Yielding.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder waitStrategy(
                 String waitStrategy) {
@@ -202,9 +224,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -216,9 +240,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -227,8 +253,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -237,9 +265,11 @@ public interface DisruptorVmEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -249,8 +279,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -260,8 +292,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -271,8 +305,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -282,8 +318,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -303,8 +341,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         }
         /**
          * Name of queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -317,8 +357,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * name, that determines the size. To make sure all endpoints use same
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointProducerBuilder size(int size) {
             setProperty("size", size);
@@ -331,8 +373,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * name, that determines the size. To make sure all endpoints use same
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointProducerBuilder size(String size) {
             setProperty("size", size);
@@ -344,8 +388,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * the calling thread will block and wait until the message can be
          * accepted. By disabling this option, an exception will be thrown
          * stating that the queue is full.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder blockWhenFull(
                 boolean blockWhenFull) {
@@ -358,8 +404,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * the calling thread will block and wait until the message can be
          * accepted. By disabling this option, an exception will be thrown
          * stating that the queue is full.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder blockWhenFull(
                 String blockWhenFull) {
@@ -376,8 +424,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -394,8 +444,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -407,9 +459,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * are: Multi to allow multiple producers and Single to enable certain
          * optimizations only allowed when one concurrent producer (on one
          * thread or otherwise synchronized) is active.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder producerType(
                 DisruptorProducerType producerType) {
@@ -421,9 +475,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * are: Multi to allow multiple producers and Single to enable certain
          * optimizations only allowed when one concurrent producer (on one
          * thread or otherwise synchronized) is active.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder producerType(
                 String producerType) {
@@ -434,8 +490,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Timeout (in milliseconds) before a producer will stop waiting for an
          * asynchronous task to complete. You can disable timeout by using 0 or
          * a negative value.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -445,8 +503,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Timeout (in milliseconds) before a producer will stop waiting for an
          * asynchronous task to complete. You can disable timeout by using 0 or
          * a negative value.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -458,9 +518,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * supported: Always, Never or IfReplyExpected. The first two values are
          * self-explanatory. The last value, IfReplyExpected, will only wait if
          * the message is Request Reply based.
-         * The option is a <code>org.apache.camel.WaitForTaskToComplete</code>
+         * 
+         * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
@@ -473,9 +535,11 @@ public interface DisruptorVmEndpointBuilderFactory {
          * supported: Always, Never or IfReplyExpected. The first two values are
          * self-explanatory. The last value, IfReplyExpected, will only wait if
          * the message is Request Reply based.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
@@ -496,8 +560,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -507,8 +573,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -518,8 +586,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -529,8 +599,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -550,8 +622,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         }
         /**
          * Name of queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -564,8 +638,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * name, that determines the size. To make sure all endpoints use same
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointBuilder size(int size) {
             setProperty("size", size);
@@ -578,8 +654,10 @@ public interface DisruptorVmEndpointBuilderFactory {
          * name, that determines the size. To make sure all endpoints use same
          * size, then configure the size option on all of them, or the first
          * endpoint being created.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DisruptorVmEndpointBuilder size(String size) {
             setProperty("size", size);
@@ -599,8 +677,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -610,8 +690,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -621,8 +703,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -632,8 +716,10 @@ public interface DisruptorVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDisruptorVmEndpointBuilder synchronous(
                 String synchronous) {

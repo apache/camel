@@ -40,9 +40,11 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Type of metrics.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.metrics.MetricsType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder metricsType(MetricsType metricsType) {
             setProperty("metricsType", metricsType);
@@ -50,9 +52,11 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Type of metrics.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.metrics.MetricsType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder metricsType(String metricsType) {
             setProperty("metricsType", metricsType);
@@ -60,8 +64,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Name of metrics.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder metricsName(String metricsName) {
             setProperty("metricsName", metricsName);
@@ -69,10 +75,12 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Action when using timer type.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder action(MetricsTimerAction action) {
             setProperty("action", action);
@@ -80,10 +88,12 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Action when using timer type.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.metrics.MetricsTimerAction</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder action(String action) {
             setProperty("action", action);
@@ -91,8 +101,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Decrement value when using counter type.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder decrement(Long decrement) {
             setProperty("decrement", decrement);
@@ -100,8 +112,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Decrement value when using counter type.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder decrement(String decrement) {
             setProperty("decrement", decrement);
@@ -109,8 +123,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Increment value when using counter type.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder increment(Long increment) {
             setProperty("increment", increment);
@@ -118,8 +134,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Increment value when using counter type.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder increment(String increment) {
             setProperty("increment", increment);
@@ -127,8 +145,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Mark when using meter type.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder mark(Long mark) {
             setProperty("mark", mark);
@@ -136,8 +156,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Mark when using meter type.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder mark(String mark) {
             setProperty("mark", mark);
@@ -145,8 +167,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Subject value when using gauge type.
-         * The option is a <code>java.lang.Object</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder subject(Object subject) {
             setProperty("subject", subject);
@@ -154,8 +178,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Subject value when using gauge type.
+         * 
          * The option will be converted to a <code>java.lang.Object</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder subject(String subject) {
             setProperty("subject", subject);
@@ -163,8 +189,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Value value when using histogram type.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder value(Long value) {
             setProperty("value", value);
@@ -172,8 +200,10 @@ public interface MetricsEndpointBuilderFactory {
         }
         /**
          * Value value when using histogram type.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MetricsEndpointBuilder value(String value) {
             setProperty("value", value);
@@ -193,8 +223,10 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -204,8 +236,10 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -215,8 +249,10 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -225,8 +261,10 @@ public interface MetricsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

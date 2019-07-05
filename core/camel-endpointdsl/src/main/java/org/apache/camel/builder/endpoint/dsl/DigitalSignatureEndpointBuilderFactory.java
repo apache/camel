@@ -48,9 +48,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the Crypto operation from that supplied after the crypto scheme
          * in the endpoint uri e.g. crypto:sign sets sign as the operation.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.crypto.CryptoOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder cryptoOperation(
                 CryptoOperation cryptoOperation) {
@@ -60,9 +62,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the Crypto operation from that supplied after the crypto scheme
          * in the endpoint uri e.g. crypto:sign sets sign as the operation.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.crypto.CryptoOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder cryptoOperation(
                 String cryptoOperation) {
@@ -71,8 +75,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * The logical name of this operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -81,8 +87,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets the JCE name of the Algorithm that should be used for the
          * signer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder algorithm(String algorithm) {
             setProperty("algorithm", algorithm);
@@ -94,8 +102,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * and verifying exchanges. This value can be provided at runtime via
          * the message header
          * org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder alias(String alias) {
             setProperty("alias", alias);
@@ -104,8 +114,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder certificateName(
                 String certificateName) {
@@ -119,8 +131,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * the message header CamelSignatureKeyStoreAlias. If no alias is
          * supplied and there is only a single entry in the Keystore, then this
          * single entry will be used.
-         * The option is a <code>java.security.KeyStore</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.security.KeyStore</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystore(KeyStore keystore) {
             setProperty("keystore", keystore);
@@ -133,9 +147,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * the message header CamelSignatureKeyStoreAlias. If no alias is
          * supplied and there is only a single entry in the Keystore, then this
          * single entry will be used.
+         * 
          * The option will be converted to a <code>java.security.KeyStore</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystore(String keystore) {
             setProperty("keystore", keystore);
@@ -144,8 +160,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets the reference name for a Keystore that can be found in the
          * registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystoreName(String keystoreName) {
             setProperty("keystoreName", keystoreName);
@@ -153,8 +171,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * Set the PrivateKey that should be used to sign the exchange.
-         * The option is a <code>java.security.PrivateKey</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.security.PrivateKey</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKey(PrivateKey privateKey) {
             setProperty("privateKey", privateKey);
@@ -162,9 +182,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * Set the PrivateKey that should be used to sign the exchange.
+         * 
          * The option will be converted to a
          * <code>java.security.PrivateKey</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
@@ -173,8 +195,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKeyName(
                 String privateKeyName) {
@@ -184,8 +208,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the id of the security provider that provides the configured
          * Signature algorithm.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder provider(String provider) {
             setProperty("provider", provider);
@@ -193,8 +219,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * references that should be resolved when the context changes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder publicKeyName(
                 String publicKeyName) {
@@ -204,8 +232,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets the reference name for a SecureRandom that can be found in the
          * registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder secureRandomName(
                 String secureRandomName) {
@@ -215,8 +245,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the name of the message header that should be used to store the
          * base64 encoded signature. This defaults to 'CamelDigitalSignature'.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DigitalSignatureEndpointBuilder signatureHeaderName(
                 String signatureHeaderName) {
@@ -226,8 +258,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
-         * The option is a <code>char[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>char[]</code> type.
+         * 
+         * Group: security
          */
         default DigitalSignatureEndpointBuilder password(Character[] password) {
             setProperty("password", password);
@@ -236,8 +270,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
+         * 
          * The option will be converted to a <code>char[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default DigitalSignatureEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -257,8 +293,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -268,8 +306,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -278,8 +318,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 Integer bufferSize) {
@@ -288,9 +330,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 String bufferSize) {
@@ -300,8 +344,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the Certificate that should be used to verify the signature in
          * the exchange based on its payload.
-         * The option is a <code>java.security.cert.Certificate</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.security.cert.Certificate</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
                 Certificate certificate) {
@@ -311,9 +357,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the Certificate that should be used to verify the signature in
          * the exchange based on its payload.
+         * 
          * The option will be converted to a
          * <code>java.security.cert.Certificate</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
                 String certificate) {
@@ -325,8 +373,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * and verification. Defaults to true, and should only be made otherwise
          * at your extreme peril as vital private information such as Keys and
          * passwords may escape if unset.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 boolean clearHeaders) {
@@ -338,8 +388,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * and verification. Defaults to true, and should only be made otherwise
          * at your extreme peril as vital private information such as Keys and
          * passwords may escape if unset.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 String clearHeaders) {
@@ -354,9 +406,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * message header CamelSignatureKeyStoreAlias. If no alias is supplied
          * and there is only a single entry in the Keystore, then this single
          * entry will be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
@@ -371,9 +425,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * message header CamelSignatureKeyStoreAlias. If no alias is supplied
          * and there is only a single entry in the Keystore, then this single
          * entry will be used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
@@ -383,8 +439,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the PublicKey that should be used to verify the signature in the
          * exchange.
-         * The option is a <code>java.security.PublicKey</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.security.PublicKey</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 PublicKey publicKey) {
@@ -394,9 +452,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the PublicKey that should be used to verify the signature in the
          * exchange.
+         * 
          * The option will be converted to a
          * <code>java.security.PublicKey</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 String publicKey) {
@@ -405,8 +465,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * Set the SecureRandom used to initialize the Signature service.
-         * The option is a <code>java.security.SecureRandom</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.security.SecureRandom</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 SecureRandom secureRandom) {
@@ -415,9 +477,11 @@ public interface DigitalSignatureEndpointBuilderFactory {
         }
         /**
          * Set the SecureRandom used to initialize the Signature service.
+         * 
          * The option will be converted to a
          * <code>java.security.SecureRandom</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 String secureRandom) {
@@ -427,8 +491,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -438,8 +504,10 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 String synchronous) {

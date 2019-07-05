@@ -43,8 +43,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the location to the solver file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default OptaPlannerEndpointConsumerBuilder configFile(String configFile) {
             setProperty("configFile", configFile);
@@ -52,8 +54,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the solverId to user for the solver instance key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default OptaPlannerEndpointConsumerBuilder solverId(String solverId) {
             setProperty("solverId", solverId);
@@ -67,8 +71,10 @@ public interface OptaPlannerEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -83,8 +89,10 @@ public interface OptaPlannerEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -107,9 +115,11 @@ public interface OptaPlannerEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -121,9 +131,11 @@ public interface OptaPlannerEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -132,8 +144,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -142,9 +156,11 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -154,8 +170,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -165,8 +183,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -176,8 +196,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -187,8 +209,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -208,8 +232,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the location to the solver file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default OptaPlannerEndpointProducerBuilder configFile(String configFile) {
             setProperty("configFile", configFile);
@@ -217,8 +243,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the solverId to user for the solver instance key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default OptaPlannerEndpointProducerBuilder solverId(String solverId) {
             setProperty("solverId", solverId);
@@ -226,8 +254,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies to perform operations in async mode.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder async(boolean async) {
             setProperty("async", async);
@@ -235,8 +265,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies to perform operations in async mode.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder async(String async) {
             setProperty("async", async);
@@ -252,8 +284,10 @@ public interface OptaPlannerEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -270,8 +304,10 @@ public interface OptaPlannerEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -280,8 +316,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the thread pool size to use when async is true.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder threadPoolSize(
                 int threadPoolSize) {
@@ -290,8 +328,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the thread pool size to use when async is true.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder threadPoolSize(
                 String threadPoolSize) {
@@ -312,8 +352,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -323,8 +365,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -334,8 +378,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -345,8 +391,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -366,8 +414,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the location to the solver file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default OptaPlannerEndpointBuilder configFile(String configFile) {
             setProperty("configFile", configFile);
@@ -375,8 +425,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
         /**
          * Specifies the solverId to user for the solver instance key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default OptaPlannerEndpointBuilder solverId(String solverId) {
             setProperty("solverId", solverId);
@@ -396,8 +448,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -407,8 +461,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -418,8 +474,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -429,8 +487,10 @@ public interface OptaPlannerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOptaPlannerEndpointBuilder synchronous(
                 String synchronous) {

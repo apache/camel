@@ -40,8 +40,10 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * The name of the domain currently worked with.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder domainName(String domainName) {
             setProperty("domainName", domainName);
@@ -49,8 +51,10 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -58,9 +62,11 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * To use the AmazonSimpleDB as the client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(Object amazonSDBClient) {
             setProperty("amazonSDBClient", amazonSDBClient);
@@ -68,9 +74,11 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * To use the AmazonSimpleDB as the client.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(String amazonSDBClient) {
             setProperty("amazonSDBClient", amazonSDBClient);
@@ -79,8 +87,10 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Determines whether or not strong consistency should be enforced when
          * data is read.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder consistentRead(boolean consistentRead) {
             setProperty("consistentRead", consistentRead);
@@ -89,8 +99,10 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Determines whether or not strong consistency should be enforced when
          * data is read.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder consistentRead(String consistentRead) {
             setProperty("consistentRead", consistentRead);
@@ -99,8 +111,10 @@ public interface SdbEndpointBuilderFactory {
         /**
          * The maximum number of domain names you want returned. The range is 1
          * to 100.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(Integer maxNumberOfDomains) {
             setProperty("maxNumberOfDomains", maxNumberOfDomains);
@@ -109,9 +123,11 @@ public interface SdbEndpointBuilderFactory {
         /**
          * The maximum number of domain names you want returned. The range is 1
          * to 100.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(String maxNumberOfDomains) {
             setProperty("maxNumberOfDomains", maxNumberOfDomains);
@@ -119,9 +135,11 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder operation(SdbOperations operation) {
             setProperty("operation", operation);
@@ -129,9 +147,11 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -139,8 +159,10 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the SDB client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -148,8 +170,10 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the SDB client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -157,9 +181,11 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the SDB client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -167,8 +193,10 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * The region in which SDB client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -176,8 +204,10 @@ public interface SdbEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SdbEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -197,8 +227,10 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -208,8 +240,10 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -219,8 +253,10 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSdbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -229,8 +265,10 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSdbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

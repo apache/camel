@@ -39,10 +39,12 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * Operation to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.bonita.util.BonitaOperation</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default BonitaEndpointBuilder operation(BonitaOperation operation) {
             setProperty("operation", operation);
@@ -50,10 +52,12 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * Operation to use.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.bonita.util.BonitaOperation</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default BonitaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -61,8 +65,10 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * Hostname where Bonita engine runs.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default BonitaEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -70,8 +76,10 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * Port of the server hosting Bonita engine.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default BonitaEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -79,8 +87,10 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * Name of the process involved in the operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default BonitaEndpointBuilder processName(String processName) {
             setProperty("processName", processName);
@@ -88,8 +98,10 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * Password to authenticate to Bonita engine.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BonitaEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -97,8 +109,10 @@ public interface BonitaEndpointBuilderFactory {
         }
         /**
          * Username to authenticate to Bonita engine.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BonitaEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -118,8 +132,10 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -129,8 +145,10 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -140,8 +158,10 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -150,8 +170,10 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -42,8 +42,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * Replication slot name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder slot(String slot) {
             setProperty("slot", slot);
@@ -51,8 +53,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * PostgreSQL server host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -60,8 +64,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * PostgreSQL server port.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder port(Integer port) {
             setProperty("port", port);
@@ -69,9 +75,11 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * PostgreSQL server port.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -79,8 +87,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * PostgreSQL database name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder database(String database) {
             setProperty("database", database);
@@ -88,8 +98,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * Output plugin name (e.g. test_decoding, wal2json).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder outputPlugin(
                 String outputPlugin) {
@@ -98,8 +110,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * PostgreSQL password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -107,8 +121,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * PostgreSQL username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgReplicationSlotEndpointBuilder user(String user) {
             setProperty("user", user);
@@ -128,8 +144,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * Auto create slot if it does not exist.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder autoCreateSlot(
                 Boolean autoCreateSlot) {
@@ -138,9 +156,11 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * Auto create slot if it does not exist.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder autoCreateSlot(
                 String autoCreateSlot) {
@@ -150,8 +170,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -161,8 +183,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -171,9 +195,11 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * Slot options to be passed to the output plugin.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(
                 Map<String, Object> slotOptions) {
@@ -182,10 +208,12 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         }
         /**
          * Slot options to be passed to the output plugin.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder slotOptions(
                 String slotOptions) {
@@ -195,8 +223,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Specifies the number of seconds between status packets sent back to
          * Postgres server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder statusInterval(
                 Integer statusInterval) {
@@ -206,9 +236,11 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Specifies the number of seconds between status packets sent back to
          * Postgres server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder statusInterval(
                 String statusInterval) {
@@ -218,8 +250,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -229,8 +263,10 @@ public interface PgReplicationSlotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder synchronous(
                 String synchronous) {

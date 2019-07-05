@@ -42,8 +42,10 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * The path to the schematron rules file. Can either be in class path or
          * location in the file system.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SchematronEndpointBuilder path(String path) {
             setProperty("path", path);
@@ -51,8 +53,10 @@ public interface SchematronEndpointBuilderFactory {
         }
         /**
          * Flag to abort the route and throw a schematron validation exception.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SchematronEndpointBuilder abort(boolean abort) {
             setProperty("abort", abort);
@@ -60,8 +64,10 @@ public interface SchematronEndpointBuilderFactory {
         }
         /**
          * Flag to abort the route and throw a schematron validation exception.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SchematronEndpointBuilder abort(String abort) {
             setProperty("abort", abort);
@@ -69,8 +75,10 @@ public interface SchematronEndpointBuilderFactory {
         }
         /**
          * To use the given schematron rules instead of loading from the path.
-         * The option is a <code>javax.xml.transform.Templates</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>javax.xml.transform.Templates</code> type.
+         * 
+         * Group: producer
          */
         default SchematronEndpointBuilder rules(Object rules) {
             setProperty("rules", rules);
@@ -78,9 +86,11 @@ public interface SchematronEndpointBuilderFactory {
         }
         /**
          * To use the given schematron rules instead of loading from the path.
+         * 
          * The option will be converted to a
          * <code>javax.xml.transform.Templates</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SchematronEndpointBuilder rules(String rules) {
             setProperty("rules", rules);
@@ -100,8 +110,10 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -111,8 +123,10 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -122,8 +136,10 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -133,8 +149,10 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -143,8 +161,10 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Set the URIResolver to be used for resolving schematron includes in
          * the rules file.
-         * The option is a <code>javax.xml.transform.URIResolver</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(Object uriResolver) {
             setProperty("uriResolver", uriResolver);
@@ -153,9 +173,11 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Set the URIResolver to be used for resolving schematron includes in
          * the rules file.
+         * 
          * The option will be converted to a
          * <code>javax.xml.transform.URIResolver</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(String uriResolver) {
             setProperty("uriResolver", uriResolver);

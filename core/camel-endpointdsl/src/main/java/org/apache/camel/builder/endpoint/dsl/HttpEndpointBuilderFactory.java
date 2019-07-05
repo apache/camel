@@ -42,8 +42,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to call.
-         * The option is a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: common
          */
         default HttpEndpointBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
@@ -51,8 +53,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to call.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HttpEndpointBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
@@ -75,8 +79,10 @@ public interface HttpEndpointBuilderFactory {
          * response body stream. If setting this option to true, then the
          * producers will not cache the response body stream but use the
          * response stream as-is as the message body.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -100,8 +106,10 @@ public interface HttpEndpointBuilderFactory {
          * response body stream. If setting this option to true, then the
          * producers will not cache the response body stream but use the
          * response stream as-is as the message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HttpEndpointBuilder disableStreamCache(String disableStreamCache) {
             setProperty("disableStreamCache", disableStreamCache);
@@ -110,9 +118,11 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -122,9 +132,11 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -134,8 +146,10 @@ public interface HttpEndpointBuilderFactory {
         /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HttpEndpointBuilder chunked(boolean chunked) {
             setProperty("chunked", chunked);
@@ -144,8 +158,10 @@ public interface HttpEndpointBuilderFactory {
         /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HttpEndpointBuilder chunked(String chunked) {
             setProperty("chunked", chunked);
@@ -161,8 +177,10 @@ public interface HttpEndpointBuilderFactory {
          * enable this then be aware that Java will deserialize the incoming
          * data from the request to Java and that can be a potential security
          * risk.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HttpEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
@@ -178,8 +196,10 @@ public interface HttpEndpointBuilderFactory {
          * enable this then be aware that Java will deserialize the incoming
          * data from the request to Java and that can be a potential security
          * risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HttpEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
@@ -191,9 +211,11 @@ public interface HttpEndpointBuilderFactory {
          * supported per HttpComponent. If you need to use 2 or more different
          * instances, you need to define a new HttpComponent per instance you
          * need.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default HttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -206,9 +228,11 @@ public interface HttpEndpointBuilderFactory {
          * supported per HttpComponent. If you need to use 2 or more different
          * instances, you need to define a new HttpComponent per instance you
          * need.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default HttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -218,8 +242,10 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or org.apache.http.conn.ssl.NoopHostnameVerifier.
-         * The option is a <code>javax.net.ssl.HostnameVerifier</code> type.
-         * @group security
+         * 
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: security
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 Object x509HostnameVerifier) {
@@ -229,9 +255,11 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier
          * or org.apache.http.conn.ssl.NoopHostnameVerifier.
+         * 
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 String x509HostnameVerifier) {
@@ -252,9 +280,11 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
-         * The option is a <code>org.apache.camel.http.common.HttpBinding</code>
-         * type.
-         * @group common (advanced)
+         * 
+         * The option is a:
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(Object httpBinding) {
             setProperty("httpBinding", httpBinding);
@@ -263,9 +293,11 @@ public interface HttpEndpointBuilderFactory {
         /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(String httpBinding) {
             setProperty("httpBinding", httpBinding);
@@ -274,8 +306,10 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -285,8 +319,10 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -297,9 +333,11 @@ public interface HttpEndpointBuilderFactory {
          * Provide access to the http client request parameters used on new
          * RequestConfig instances used by producers or consumers of this
          * endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(Object clientBuilder) {
             setProperty("clientBuilder", clientBuilder);
@@ -309,9 +347,11 @@ public interface HttpEndpointBuilderFactory {
          * Provide access to the http client request parameters used on new
          * RequestConfig instances used by producers or consumers of this
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(String clientBuilder) {
             setProperty("clientBuilder", clientBuilder);
@@ -319,9 +359,11 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpClientConnectionManager to manage connections.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 Object clientConnectionManager) {
@@ -330,9 +372,11 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpClientConnectionManager to manage connections.
+         * 
          * The option will be converted to a
          * <code>org.apache.http.conn.HttpClientConnectionManager</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 String clientConnectionManager) {
@@ -341,8 +385,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * The maximum number of connections per route.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 int connectionsPerRoute) {
@@ -351,8 +397,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * The maximum number of connections per route.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 String connectionsPerRoute) {
@@ -361,8 +409,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Sets a custom HttpClient to be used by the producer.
-         * The option is a <code>org.apache.http.client.HttpClient</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>org.apache.http.client.HttpClient</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
             setProperty("httpClient", httpClient);
@@ -370,9 +420,11 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Sets a custom HttpClient to be used by the producer.
+         * 
          * The option will be converted to a
          * <code>org.apache.http.client.HttpClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(String httpClient) {
             setProperty("httpClient", httpClient);
@@ -382,10 +434,12 @@ public interface HttpEndpointBuilderFactory {
          * Register a custom configuration strategy for new HttpClient instances
          * created by producers or consumers such as to configure authentication
          * mechanisms etc.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.http4.HttpClientConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 Object httpClientConfigurer) {
@@ -396,10 +450,12 @@ public interface HttpEndpointBuilderFactory {
          * Register a custom configuration strategy for new HttpClient instances
          * created by producers or consumers such as to configure authentication
          * mechanisms etc.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.http4.HttpClientConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 String httpClientConfigurer) {
@@ -408,9 +464,11 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the HttpClient using the key/values from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
                 Map<String, Object> httpClientOptions) {
@@ -419,10 +477,12 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To configure the HttpClient using the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
                 String httpClientOptions) {
@@ -431,9 +491,11 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpContext instance.
-         * The option is a <code>org.apache.http.protocol.HttpContext</code>
+         * 
+         * The option is a: <code>org.apache.http.protocol.HttpContext</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(Object httpContext) {
             setProperty("httpContext", httpContext);
@@ -441,9 +503,11 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpContext instance.
+         * 
          * The option will be converted to a
          * <code>org.apache.http.protocol.HttpContext</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(String httpContext) {
             setProperty("httpContext", httpContext);
@@ -453,8 +517,10 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true then IN exchange Body of the exchange will be
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
@@ -465,8 +531,10 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true then IN exchange Body of the exchange will be
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
@@ -477,8 +545,10 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true then IN exchange Form Encoded body of the
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
@@ -489,8 +559,10 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true then IN exchange Form Encoded body of the
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
@@ -501,8 +573,10 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true then IN exchange Headers of the exchange will
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
@@ -513,8 +587,10 @@ public interface HttpEndpointBuilderFactory {
          * If this option is true then IN exchange Headers of the exchange will
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
@@ -523,8 +599,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * The maximum number of connections.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 int maxTotalConnections) {
@@ -533,8 +611,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * The maximum number of connections.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
@@ -544,8 +624,10 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -554,8 +636,10 @@ public interface HttpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -563,8 +647,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use System Properties as fallback for configuration.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 boolean useSystemProperties) {
@@ -573,8 +659,10 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * To use System Properties as fallback for configuration.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 String useSystemProperties) {

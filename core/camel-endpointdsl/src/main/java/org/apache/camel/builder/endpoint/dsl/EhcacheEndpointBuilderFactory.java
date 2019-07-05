@@ -46,8 +46,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * the cache name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -55,9 +57,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(Object cacheManager) {
             setProperty("cacheManager", cacheManager);
@@ -65,9 +69,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(String cacheManager) {
             setProperty("cacheManager", cacheManager);
@@ -75,8 +81,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager configuration.
-         * The option is a <code>org.ehcache.config.Configuration</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.ehcache.config.Configuration</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
@@ -85,9 +93,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager configuration.
+         * 
          * The option will be converted to a
          * <code>org.ehcache.config.Configuration</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
@@ -96,8 +106,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * URI pointing to the Ehcache XML configuration file's location.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
@@ -107,8 +119,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -118,8 +132,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -134,8 +150,10 @@ public interface EhcacheEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -150,8 +168,10 @@ public interface EhcacheEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -160,8 +180,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Set the delivery mode (synchronous, asynchronous).
-         * The option is a <code>org.ehcache.event.EventFiring</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>org.ehcache.event.EventFiring</code> type.
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventFiring(
                 EventFiring eventFiring) {
@@ -170,9 +192,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Set the delivery mode (synchronous, asynchronous).
+         * 
          * The option will be converted to a
          * <code>org.ehcache.event.EventFiring</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventFiring(String eventFiring) {
             setProperty("eventFiring", eventFiring);
@@ -180,8 +204,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Set the delivery mode (ordered, unordered).
-         * The option is a <code>org.ehcache.event.EventOrdering</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>org.ehcache.event.EventOrdering</code> type.
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 EventOrdering eventOrdering) {
@@ -190,9 +216,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Set the delivery mode (ordered, unordered).
+         * 
          * The option will be converted to a
          * <code>org.ehcache.event.EventOrdering</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 String eventOrdering) {
@@ -201,9 +229,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Set the type of events to listen for.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.Set&lt;org.ehcache.event.EventType&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventTypes(
                 Set<EventType> eventTypes) {
@@ -212,9 +242,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Set the type of events to listen for.
+         * 
          * The option will be converted to a
          * <code>java.util.Set&lt;org.ehcache.event.EventType&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventTypes(String eventTypes) {
             setProperty("eventTypes", eventTypes);
@@ -236,9 +268,11 @@ public interface EhcacheEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -250,9 +284,11 @@ public interface EhcacheEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -261,8 +297,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -271,9 +309,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -283,8 +323,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -294,8 +336,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -304,10 +348,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The default cache configuration to be used to create caches.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 Object configuration) {
@@ -316,10 +362,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The default cache configuration to be used to create caches.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 String configuration) {
@@ -328,10 +376,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * A map of cache configuration to be used to create caches.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
          * java.lang.Object&gt;&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 Map<String, Object> configurations) {
@@ -340,11 +390,13 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * A map of cache configuration to be used to create caches.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
          * java.lang.Object&gt;&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 String configurations) {
@@ -353,9 +405,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder keyType(
                 Class<Object> keyType) {
@@ -364,9 +418,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -375,8 +431,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -386,8 +444,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -396,9 +456,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder valueType(
                 Class<Object> valueType) {
@@ -407,9 +469,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder valueType(
                 String valueType) {
@@ -429,8 +493,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * the cache name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -438,9 +504,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(Object cacheManager) {
             setProperty("cacheManager", cacheManager);
@@ -448,9 +516,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(String cacheManager) {
             setProperty("cacheManager", cacheManager);
@@ -458,8 +528,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager configuration.
-         * The option is a <code>org.ehcache.config.Configuration</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.ehcache.config.Configuration</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
@@ -468,9 +540,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager configuration.
+         * 
          * The option will be converted to a
          * <code>org.ehcache.config.Configuration</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
@@ -479,8 +553,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * URI pointing to the Ehcache XML configuration file's location.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder configurationUri(
                 String configurationUri) {
@@ -490,8 +566,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -501,8 +579,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -512,8 +592,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * To configure the default cache action. If an action is set in the
          * message header, then the operation from the header takes precedence.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default EhcacheEndpointProducerBuilder action(String action) {
             setProperty("action", action);
@@ -522,8 +604,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
-         * The option is a <code>java.lang.Object</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(Object key) {
             setProperty("key", key);
@@ -532,8 +616,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
+         * 
          * The option will be converted to a <code>java.lang.Object</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(String key) {
             setProperty("key", key);
@@ -549,8 +635,10 @@ public interface EhcacheEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -567,8 +655,10 @@ public interface EhcacheEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -589,8 +679,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -600,8 +692,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -610,10 +704,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The default cache configuration to be used to create caches.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 Object configuration) {
@@ -622,10 +718,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The default cache configuration to be used to create caches.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 String configuration) {
@@ -634,10 +732,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * A map of cache configuration to be used to create caches.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
          * java.lang.Object&gt;&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 Map<String, Object> configurations) {
@@ -646,11 +746,13 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * A map of cache configuration to be used to create caches.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
          * java.lang.Object&gt;&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 String configurations) {
@@ -659,9 +761,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder keyType(
                 Class<Object> keyType) {
@@ -670,9 +774,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -681,8 +787,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -692,8 +800,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -702,9 +812,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder valueType(
                 Class<Object> valueType) {
@@ -713,9 +825,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder valueType(
                 String valueType) {
@@ -735,8 +849,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * the cache name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -744,9 +860,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(Object cacheManager) {
             setProperty("cacheManager", cacheManager);
@@ -754,9 +872,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(String cacheManager) {
             setProperty("cacheManager", cacheManager);
@@ -764,8 +884,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager configuration.
-         * The option is a <code>org.ehcache.config.Configuration</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.ehcache.config.Configuration</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
@@ -774,9 +896,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache manager configuration.
+         * 
          * The option will be converted to a
          * <code>org.ehcache.config.Configuration</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
@@ -785,8 +909,10 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * URI pointing to the Ehcache XML configuration file's location.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder configurationUri(String configurationUri) {
             setProperty("configurationUri", configurationUri);
@@ -795,8 +921,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -806,8 +934,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -828,8 +958,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -839,8 +971,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -849,10 +983,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The default cache configuration to be used to create caches.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 Object configuration) {
@@ -861,10 +997,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The default cache configuration to be used to create caches.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 String configuration) {
@@ -873,10 +1011,12 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * A map of cache configuration to be used to create caches.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
          * java.lang.Object&gt;&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 Map<String, Object> configurations) {
@@ -885,11 +1025,13 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * A map of cache configuration to be used to create caches.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
          * java.lang.Object&gt;&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 String configurations) {
@@ -898,9 +1040,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder keyType(Class<Object> keyType) {
             setProperty("keyType", keyType);
@@ -908,9 +1052,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -919,8 +1065,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -929,8 +1077,10 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -938,9 +1088,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder valueType(Class<Object> valueType) {
             setProperty("valueType", valueType);
@@ -948,9 +1100,11 @@ public interface EhcacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder valueType(String valueType) {
             setProperty("valueType", valueType);

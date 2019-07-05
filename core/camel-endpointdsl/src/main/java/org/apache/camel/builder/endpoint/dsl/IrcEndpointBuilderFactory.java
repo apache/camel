@@ -43,8 +43,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Hostname for the IRC chat server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -53,8 +55,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Port number for the IRC chat server. If no port is configured then a
          * default port of either 6667, 6668 or 6669 is used.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -63,8 +67,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Port number for the IRC chat server. If no port is configured then a
          * default port of either 6667, 6668 or 6669 is used.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -72,8 +78,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether to auto re-join when being kicked.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder autoRejoin(boolean autoRejoin) {
             setProperty("autoRejoin", autoRejoin);
@@ -81,8 +89,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether to auto re-join when being kicked.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder autoRejoin(String autoRejoin) {
             setProperty("autoRejoin", autoRejoin);
@@ -91,8 +101,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
-         * The option is a <code>long</code> type.
-         * @group common
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder commandTimeout(long commandTimeout) {
             setProperty("commandTimeout", commandTimeout);
@@ -101,8 +113,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder commandTimeout(String commandTimeout) {
             setProperty("commandTimeout", commandTimeout);
@@ -112,8 +126,10 @@ public interface IrcEndpointBuilderFactory {
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
          * irc.num = '353'.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder namesOnJoin(boolean namesOnJoin) {
             setProperty("namesOnJoin", namesOnJoin);
@@ -123,8 +139,10 @@ public interface IrcEndpointBuilderFactory {
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
          * irc.num = '353'.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder namesOnJoin(String namesOnJoin) {
             setProperty("namesOnJoin", namesOnJoin);
@@ -132,8 +150,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The nickname used in chat.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder nickname(String nickname) {
             setProperty("nickname", nickname);
@@ -141,8 +161,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Use persistent messages.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default IrcEndpointConsumerBuilder persistent(boolean persistent) {
@@ -151,8 +173,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Use persistent messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         @Deprecated
         default IrcEndpointConsumerBuilder persistent(String persistent) {
@@ -161,8 +185,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC user's actual name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointConsumerBuilder realname(String realname) {
             setProperty("realname", realname);
@@ -176,8 +202,10 @@ public interface IrcEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default IrcEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -192,8 +220,10 @@ public interface IrcEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IrcEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -202,8 +232,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user join events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onJoin(boolean onJoin) {
             setProperty("onJoin", onJoin);
@@ -211,8 +243,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user join events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onJoin(String onJoin) {
             setProperty("onJoin", onJoin);
@@ -220,8 +254,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle kick events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onKick(boolean onKick) {
             setProperty("onKick", onKick);
@@ -229,8 +265,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle kick events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onKick(String onKick) {
             setProperty("onKick", onKick);
@@ -238,8 +276,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle mode change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onMode(boolean onMode) {
             setProperty("onMode", onMode);
@@ -247,8 +287,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle mode change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onMode(String onMode) {
             setProperty("onMode", onMode);
@@ -256,8 +298,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle nickname change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onNick(boolean onNick) {
             setProperty("onNick", onNick);
@@ -265,8 +309,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle nickname change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onNick(String onNick) {
             setProperty("onNick", onNick);
@@ -274,8 +320,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user part events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onPart(boolean onPart) {
             setProperty("onPart", onPart);
@@ -283,8 +331,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user part events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onPart(String onPart) {
             setProperty("onPart", onPart);
@@ -292,8 +342,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle private message events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onPrivmsg(boolean onPrivmsg) {
             setProperty("onPrivmsg", onPrivmsg);
@@ -301,8 +353,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle private message events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onPrivmsg(String onPrivmsg) {
             setProperty("onPrivmsg", onPrivmsg);
@@ -310,8 +364,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user quit events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onQuit(boolean onQuit) {
             setProperty("onQuit", onQuit);
@@ -319,8 +375,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user quit events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onQuit(String onQuit) {
             setProperty("onQuit", onQuit);
@@ -329,8 +387,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not to handle general responses to commands or
          * informational messages.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onReply(boolean onReply) {
             setProperty("onReply", onReply);
@@ -339,8 +399,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not to handle general responses to commands or
          * informational messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onReply(String onReply) {
             setProperty("onReply", onReply);
@@ -348,8 +410,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle topic change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onTopic(boolean onTopic) {
             setProperty("onTopic", onTopic);
@@ -357,8 +421,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle topic change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointConsumerBuilder onTopic(String onTopic) {
             setProperty("onTopic", onTopic);
@@ -366,8 +432,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Your IRC server nickname password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointConsumerBuilder nickPassword(String nickPassword) {
             setProperty("nickPassword", nickPassword);
@@ -375,8 +443,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC server password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -388,9 +458,11 @@ public interface IrcEndpointBuilderFactory {
          * This reference overrides any configured SSLContextParameters at the
          * component level. Note that this setting overrides the trustManager
          * option.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -403,9 +475,11 @@ public interface IrcEndpointBuilderFactory {
          * This reference overrides any configured SSLContextParameters at the
          * component level. Note that this setting overrides the trustManager
          * option.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -414,9 +488,11 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The trust manager used to verify the SSL server's certificate.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointConsumerBuilder trustManager(Object trustManager) {
             setProperty("trustManager", trustManager);
@@ -424,9 +500,11 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The trust manager used to verify the SSL server's certificate.
+         * 
          * The option will be converted to a
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointConsumerBuilder trustManager(String trustManager) {
             setProperty("trustManager", trustManager);
@@ -434,8 +512,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC server user name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -457,9 +537,11 @@ public interface IrcEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -471,9 +553,11 @@ public interface IrcEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -482,8 +566,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -492,9 +578,11 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIrcEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -504,8 +592,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -515,8 +605,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -525,8 +617,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether or not the server supports color codes.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder colors(boolean colors) {
             setProperty("colors", colors);
@@ -534,8 +628,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether or not the server supports color codes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder colors(String colors) {
             setProperty("colors", colors);
@@ -544,8 +640,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -555,8 +653,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -576,8 +676,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Hostname for the IRC chat server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -586,8 +688,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Port number for the IRC chat server. If no port is configured then a
          * default port of either 6667, 6668 or 6669 is used.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -596,8 +700,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Port number for the IRC chat server. If no port is configured then a
          * default port of either 6667, 6668 or 6669 is used.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -605,8 +711,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether to auto re-join when being kicked.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder autoRejoin(boolean autoRejoin) {
             setProperty("autoRejoin", autoRejoin);
@@ -614,8 +722,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether to auto re-join when being kicked.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder autoRejoin(String autoRejoin) {
             setProperty("autoRejoin", autoRejoin);
@@ -624,8 +734,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
-         * The option is a <code>long</code> type.
-         * @group common
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder commandTimeout(long commandTimeout) {
             setProperty("commandTimeout", commandTimeout);
@@ -634,8 +746,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder commandTimeout(String commandTimeout) {
             setProperty("commandTimeout", commandTimeout);
@@ -645,8 +759,10 @@ public interface IrcEndpointBuilderFactory {
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
          * irc.num = '353'.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder namesOnJoin(boolean namesOnJoin) {
             setProperty("namesOnJoin", namesOnJoin);
@@ -656,8 +772,10 @@ public interface IrcEndpointBuilderFactory {
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
          * irc.num = '353'.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder namesOnJoin(String namesOnJoin) {
             setProperty("namesOnJoin", namesOnJoin);
@@ -665,8 +783,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The nickname used in chat.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder nickname(String nickname) {
             setProperty("nickname", nickname);
@@ -674,8 +794,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Use persistent messages.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default IrcEndpointProducerBuilder persistent(boolean persistent) {
@@ -684,8 +806,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Use persistent messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         @Deprecated
         default IrcEndpointProducerBuilder persistent(String persistent) {
@@ -694,8 +818,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC user's actual name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointProducerBuilder realname(String realname) {
             setProperty("realname", realname);
@@ -711,8 +837,10 @@ public interface IrcEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default IrcEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -729,8 +857,10 @@ public interface IrcEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default IrcEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -739,8 +869,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user join events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onJoin(boolean onJoin) {
             setProperty("onJoin", onJoin);
@@ -748,8 +880,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user join events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onJoin(String onJoin) {
             setProperty("onJoin", onJoin);
@@ -757,8 +891,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle kick events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onKick(boolean onKick) {
             setProperty("onKick", onKick);
@@ -766,8 +902,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle kick events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onKick(String onKick) {
             setProperty("onKick", onKick);
@@ -775,8 +913,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle mode change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onMode(boolean onMode) {
             setProperty("onMode", onMode);
@@ -784,8 +924,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle mode change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onMode(String onMode) {
             setProperty("onMode", onMode);
@@ -793,8 +935,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle nickname change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onNick(boolean onNick) {
             setProperty("onNick", onNick);
@@ -802,8 +946,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle nickname change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onNick(String onNick) {
             setProperty("onNick", onNick);
@@ -811,8 +957,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user part events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onPart(boolean onPart) {
             setProperty("onPart", onPart);
@@ -820,8 +968,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user part events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onPart(String onPart) {
             setProperty("onPart", onPart);
@@ -829,8 +979,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle private message events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onPrivmsg(boolean onPrivmsg) {
             setProperty("onPrivmsg", onPrivmsg);
@@ -838,8 +990,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle private message events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onPrivmsg(String onPrivmsg) {
             setProperty("onPrivmsg", onPrivmsg);
@@ -847,8 +1001,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user quit events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onQuit(boolean onQuit) {
             setProperty("onQuit", onQuit);
@@ -856,8 +1012,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user quit events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onQuit(String onQuit) {
             setProperty("onQuit", onQuit);
@@ -866,8 +1024,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not to handle general responses to commands or
          * informational messages.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onReply(boolean onReply) {
             setProperty("onReply", onReply);
@@ -876,8 +1036,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not to handle general responses to commands or
          * informational messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onReply(String onReply) {
             setProperty("onReply", onReply);
@@ -885,8 +1047,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle topic change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onTopic(boolean onTopic) {
             setProperty("onTopic", onTopic);
@@ -894,8 +1058,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle topic change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointProducerBuilder onTopic(String onTopic) {
             setProperty("onTopic", onTopic);
@@ -903,8 +1069,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Your IRC server nickname password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointProducerBuilder nickPassword(String nickPassword) {
             setProperty("nickPassword", nickPassword);
@@ -912,8 +1080,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC server password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -925,9 +1095,11 @@ public interface IrcEndpointBuilderFactory {
          * This reference overrides any configured SSLContextParameters at the
          * component level. Note that this setting overrides the trustManager
          * option.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -940,9 +1112,11 @@ public interface IrcEndpointBuilderFactory {
          * This reference overrides any configured SSLContextParameters at the
          * component level. Note that this setting overrides the trustManager
          * option.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -951,9 +1125,11 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The trust manager used to verify the SSL server's certificate.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointProducerBuilder trustManager(Object trustManager) {
             setProperty("trustManager", trustManager);
@@ -961,9 +1137,11 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The trust manager used to verify the SSL server's certificate.
+         * 
          * The option will be converted to a
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointProducerBuilder trustManager(String trustManager) {
             setProperty("trustManager", trustManager);
@@ -971,8 +1149,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC server user name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -992,8 +1172,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1003,8 +1185,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1013,8 +1197,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether or not the server supports color codes.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder colors(boolean colors) {
             setProperty("colors", colors);
@@ -1022,8 +1208,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether or not the server supports color codes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder colors(String colors) {
             setProperty("colors", colors);
@@ -1032,8 +1220,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1043,8 +1233,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1064,8 +1256,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Hostname for the IRC chat server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -1074,8 +1268,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Port number for the IRC chat server. If no port is configured then a
          * default port of either 6667, 6668 or 6669 is used.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -1084,8 +1280,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Port number for the IRC chat server. If no port is configured then a
          * default port of either 6667, 6668 or 6669 is used.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -1093,8 +1291,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether to auto re-join when being kicked.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder autoRejoin(boolean autoRejoin) {
             setProperty("autoRejoin", autoRejoin);
@@ -1102,8 +1302,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether to auto re-join when being kicked.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder autoRejoin(String autoRejoin) {
             setProperty("autoRejoin", autoRejoin);
@@ -1112,8 +1314,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
-         * The option is a <code>long</code> type.
-         * @group common
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder commandTimeout(long commandTimeout) {
             setProperty("commandTimeout", commandTimeout);
@@ -1122,8 +1326,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder commandTimeout(String commandTimeout) {
             setProperty("commandTimeout", commandTimeout);
@@ -1133,8 +1339,10 @@ public interface IrcEndpointBuilderFactory {
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
          * irc.num = '353'.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder namesOnJoin(boolean namesOnJoin) {
             setProperty("namesOnJoin", namesOnJoin);
@@ -1144,8 +1352,10 @@ public interface IrcEndpointBuilderFactory {
          * Sends NAMES command to channel after joining it. onReply has to be
          * true in order to process the result which will have the header value
          * irc.num = '353'.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder namesOnJoin(String namesOnJoin) {
             setProperty("namesOnJoin", namesOnJoin);
@@ -1153,8 +1363,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The nickname used in chat.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder nickname(String nickname) {
             setProperty("nickname", nickname);
@@ -1162,8 +1374,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Use persistent messages.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default IrcEndpointBuilder persistent(boolean persistent) {
@@ -1172,8 +1386,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Use persistent messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         @Deprecated
         default IrcEndpointBuilder persistent(String persistent) {
@@ -1182,8 +1398,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC user's actual name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IrcEndpointBuilder realname(String realname) {
             setProperty("realname", realname);
@@ -1191,8 +1409,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user join events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onJoin(boolean onJoin) {
             setProperty("onJoin", onJoin);
@@ -1200,8 +1420,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user join events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onJoin(String onJoin) {
             setProperty("onJoin", onJoin);
@@ -1209,8 +1431,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle kick events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onKick(boolean onKick) {
             setProperty("onKick", onKick);
@@ -1218,8 +1442,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle kick events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onKick(String onKick) {
             setProperty("onKick", onKick);
@@ -1227,8 +1453,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle mode change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onMode(boolean onMode) {
             setProperty("onMode", onMode);
@@ -1236,8 +1464,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle mode change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onMode(String onMode) {
             setProperty("onMode", onMode);
@@ -1245,8 +1475,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle nickname change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onNick(boolean onNick) {
             setProperty("onNick", onNick);
@@ -1254,8 +1486,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle nickname change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onNick(String onNick) {
             setProperty("onNick", onNick);
@@ -1263,8 +1497,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user part events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onPart(boolean onPart) {
             setProperty("onPart", onPart);
@@ -1272,8 +1508,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user part events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onPart(String onPart) {
             setProperty("onPart", onPart);
@@ -1281,8 +1519,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle private message events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onPrivmsg(boolean onPrivmsg) {
             setProperty("onPrivmsg", onPrivmsg);
@@ -1290,8 +1530,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle private message events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onPrivmsg(String onPrivmsg) {
             setProperty("onPrivmsg", onPrivmsg);
@@ -1299,8 +1541,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user quit events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onQuit(boolean onQuit) {
             setProperty("onQuit", onQuit);
@@ -1308,8 +1552,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle user quit events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onQuit(String onQuit) {
             setProperty("onQuit", onQuit);
@@ -1318,8 +1564,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not to handle general responses to commands or
          * informational messages.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onReply(boolean onReply) {
             setProperty("onReply", onReply);
@@ -1328,8 +1576,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether or not to handle general responses to commands or
          * informational messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onReply(String onReply) {
             setProperty("onReply", onReply);
@@ -1337,8 +1587,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle topic change events.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onTopic(boolean onTopic) {
             setProperty("onTopic", onTopic);
@@ -1346,8 +1598,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Handle topic change events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default IrcEndpointBuilder onTopic(String onTopic) {
             setProperty("onTopic", onTopic);
@@ -1355,8 +1609,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Your IRC server nickname password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointBuilder nickPassword(String nickPassword) {
             setProperty("nickPassword", nickPassword);
@@ -1364,8 +1620,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC server password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -1377,9 +1635,11 @@ public interface IrcEndpointBuilderFactory {
          * This reference overrides any configured SSLContextParameters at the
          * component level. Note that this setting overrides the trustManager
          * option.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1392,9 +1652,11 @@ public interface IrcEndpointBuilderFactory {
          * This reference overrides any configured SSLContextParameters at the
          * component level. Note that this setting overrides the trustManager
          * option.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1403,9 +1665,11 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The trust manager used to verify the SSL server's certificate.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointBuilder trustManager(Object trustManager) {
             setProperty("trustManager", trustManager);
@@ -1413,9 +1677,11 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The trust manager used to verify the SSL server's certificate.
+         * 
          * The option will be converted to a
          * <code>org.schwering.irc.lib.ssl.SSLTrustManager</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default IrcEndpointBuilder trustManager(String trustManager) {
             setProperty("trustManager", trustManager);
@@ -1423,8 +1689,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * The IRC server user name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default IrcEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1444,8 +1712,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1455,8 +1725,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1465,8 +1737,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether or not the server supports color codes.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointBuilder colors(boolean colors) {
             setProperty("colors", colors);
@@ -1474,8 +1748,10 @@ public interface IrcEndpointBuilderFactory {
         }
         /**
          * Whether or not the server supports color codes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointBuilder colors(String colors) {
             setProperty("colors", colors);
@@ -1484,8 +1760,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1494,8 +1772,10 @@ public interface IrcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIrcEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

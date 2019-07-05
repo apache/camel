@@ -45,8 +45,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether to send an message if the web-socket listener received an
          * error.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default WsEndpointConsumerBuilder sendMessageOnError(
                 boolean sendMessageOnError) {
@@ -56,8 +58,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether to send an message if the web-socket listener received an
          * error.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default WsEndpointConsumerBuilder sendMessageOnError(
                 String sendMessageOnError) {
@@ -66,8 +70,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
-         * The option is a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
@@ -75,8 +81,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
@@ -87,8 +95,10 @@ public interface WsEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -99,8 +109,10 @@ public interface WsEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -109,8 +121,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -119,8 +133,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -129,9 +145,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -141,9 +159,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -154,8 +174,10 @@ public interface WsEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -166,8 +188,10 @@ public interface WsEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -184,8 +208,10 @@ public interface WsEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder transferException(
                 boolean transferException) {
@@ -202,8 +228,10 @@ public interface WsEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointConsumerBuilder transferException(
                 String transferException) {
@@ -217,9 +245,11 @@ public interface WsEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default WsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -233,9 +263,11 @@ public interface WsEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default WsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -256,8 +288,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -267,8 +301,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -278,9 +314,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder binding(Object binding) {
             setProperty("binding", binding);
@@ -289,9 +327,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder binding(String binding) {
             setProperty("binding", binding);
@@ -300,9 +340,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
                 Object clientConfig) {
@@ -312,9 +354,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfig(
                 String clientConfig) {
@@ -324,9 +368,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
@@ -336,10 +382,12 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigOptions(
                 String clientConfigOptions) {
@@ -349,8 +397,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -360,8 +410,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -370,9 +422,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
@@ -382,10 +436,12 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedWsEndpointConsumerBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
@@ -405,8 +461,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * To enable streaming to send data as multiple text fragments.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder useStreaming(boolean useStreaming) {
             setProperty("useStreaming", useStreaming);
@@ -414,8 +472,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * To enable streaming to send data as multiple text fragments.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder useStreaming(String useStreaming) {
             setProperty("useStreaming", useStreaming);
@@ -423,8 +483,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
-         * The option is a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
@@ -432,8 +494,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
@@ -444,8 +508,10 @@ public interface WsEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -456,8 +522,10 @@ public interface WsEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -466,8 +534,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -476,8 +546,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -486,8 +558,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Define if the Connection Close header has to be added to HTTP
          * Request. This parameter is false by default.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder connectionClose(
                 boolean connectionClose) {
@@ -497,8 +571,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Define if the Connection Close header has to be added to HTTP
          * Request. This parameter is false by default.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder connectionClose(String connectionClose) {
             setProperty("connectionClose", connectionClose);
@@ -506,9 +582,11 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder cookieHandler(Object cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
@@ -516,9 +594,11 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder cookieHandler(String cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
@@ -527,9 +607,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -539,9 +621,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -558,8 +642,10 @@ public interface WsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -576,8 +662,10 @@ public interface WsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -588,8 +676,10 @@ public interface WsEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -600,8 +690,10 @@ public interface WsEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -618,8 +710,10 @@ public interface WsEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder transferException(
                 boolean transferException) {
@@ -636,8 +730,10 @@ public interface WsEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointProducerBuilder transferException(
                 String transferException) {
@@ -651,9 +747,11 @@ public interface WsEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default WsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -667,9 +765,11 @@ public interface WsEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default WsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -690,8 +790,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -701,8 +803,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -712,9 +816,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder binding(Object binding) {
             setProperty("binding", binding);
@@ -723,9 +829,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder binding(String binding) {
             setProperty("binding", binding);
@@ -734,9 +842,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
                 Object clientConfig) {
@@ -746,9 +856,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfig(
                 String clientConfig) {
@@ -758,9 +870,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
@@ -770,10 +884,12 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder clientConfigOptions(
                 String clientConfigOptions) {
@@ -783,8 +899,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -794,8 +912,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -804,9 +924,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
@@ -816,10 +938,12 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedWsEndpointProducerBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
@@ -839,8 +963,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
-         * The option is a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
@@ -848,8 +974,10 @@ public interface WsEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
@@ -860,8 +988,10 @@ public interface WsEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -872,8 +1002,10 @@ public interface WsEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -882,8 +1014,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -892,8 +1026,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -902,9 +1038,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -914,9 +1052,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -927,8 +1067,10 @@ public interface WsEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -939,8 +1081,10 @@ public interface WsEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -957,8 +1101,10 @@ public interface WsEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
@@ -974,8 +1120,10 @@ public interface WsEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WsEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
@@ -988,9 +1136,11 @@ public interface WsEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default WsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1004,9 +1154,11 @@ public interface WsEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default WsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1027,8 +1179,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1038,8 +1192,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1049,9 +1205,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder binding(Object binding) {
             setProperty("binding", binding);
@@ -1060,9 +1218,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder binding(String binding) {
             setProperty("binding", binding);
@@ -1071,9 +1231,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfig(Object clientConfig) {
             setProperty("clientConfig", clientConfig);
@@ -1082,9 +1244,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfig(String clientConfig) {
             setProperty("clientConfig", clientConfig);
@@ -1093,9 +1257,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
@@ -1105,10 +1271,12 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder clientConfigOptions(
                 String clientConfigOptions) {
@@ -1118,8 +1286,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1128,8 +1298,10 @@ public interface WsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -1138,9 +1310,11 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
@@ -1150,10 +1324,12 @@ public interface WsEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedWsEndpointBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {

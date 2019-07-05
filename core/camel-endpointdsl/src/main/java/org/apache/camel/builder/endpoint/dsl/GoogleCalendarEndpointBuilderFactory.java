@@ -43,9 +43,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder apiName(
                 GoogleCalendarApiName apiName) {
@@ -54,9 +56,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -64,8 +68,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder methodName(
                 String methodName) {
@@ -75,8 +81,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -86,8 +94,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Google calendar application name. Example would be
          * camel-google-calendar/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -96,8 +106,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Client ID of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -105,8 +117,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Client secret of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
@@ -115,8 +129,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * The emailAddress of the Google Service Account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder emailAddress(
                 String emailAddress) {
@@ -125,8 +141,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -135,8 +153,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder p12FileName(
                 String p12FileName) {
@@ -147,8 +167,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
@@ -160,8 +182,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * have to a user account. You can separate multiple scopes by comma.
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -170,8 +194,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The email address of the user the application is trying to
          * impersonate in the service account flow.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
@@ -185,8 +211,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -201,8 +229,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -226,9 +256,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -240,9 +272,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -251,8 +285,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -261,9 +297,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -273,8 +311,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -284,8 +324,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -295,8 +337,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -306,8 +350,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -327,9 +373,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder apiName(
                 GoogleCalendarApiName apiName) {
@@ -338,9 +386,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -348,8 +398,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder methodName(
                 String methodName) {
@@ -359,8 +411,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -370,8 +424,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Google calendar application name. Example would be
          * camel-google-calendar/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -380,8 +436,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Client ID of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -389,8 +447,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Client secret of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder clientSecret(
                 String clientSecret) {
@@ -399,8 +459,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * The emailAddress of the Google Service Account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder emailAddress(
                 String emailAddress) {
@@ -409,8 +471,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -419,8 +483,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder p12FileName(
                 String p12FileName) {
@@ -431,8 +497,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder refreshToken(
                 String refreshToken) {
@@ -444,8 +512,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * have to a user account. You can separate multiple scopes by comma.
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -454,8 +524,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The email address of the user the application is trying to
          * impersonate in the service account flow.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder user(String user) {
             setProperty("user", user);
@@ -471,8 +543,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -489,8 +563,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -512,8 +588,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -523,8 +601,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -534,8 +614,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -545,8 +627,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -566,9 +650,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder apiName(
                 GoogleCalendarApiName apiName) {
@@ -577,9 +663,11 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -587,8 +675,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -597,8 +687,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -607,8 +699,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Google calendar application name. Example would be
          * camel-google-calendar/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder applicationName(
                 String applicationName) {
@@ -617,8 +711,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Client ID of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -626,8 +722,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Client secret of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -635,8 +733,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * The emailAddress of the Google Service Account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
             setProperty("emailAddress", emailAddress);
@@ -644,8 +744,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -654,8 +756,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
             setProperty("p12FileName", p12FileName);
@@ -665,8 +769,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
@@ -677,8 +783,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * have to a user account. You can separate multiple scopes by comma.
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -687,8 +795,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The email address of the user the application is trying to
          * impersonate in the service account flow.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleCalendarEndpointBuilder user(String user) {
             setProperty("user", user);
@@ -708,8 +818,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -719,8 +831,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -730,8 +844,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -741,8 +857,10 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 String synchronous) {

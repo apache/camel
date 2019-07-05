@@ -40,8 +40,10 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * OpenStack host url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GlanceEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -49,8 +51,10 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * OpenStack API version.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GlanceEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
@@ -58,9 +62,11 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * OpenStack configuration.
-         * The option is a <code>org.openstack4j.core.transport.Config</code>
+         * 
+         * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GlanceEndpointBuilder config(Object config) {
             setProperty("config", config);
@@ -68,9 +74,11 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * OpenStack configuration.
+         * 
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GlanceEndpointBuilder config(String config) {
             setProperty("config", config);
@@ -78,8 +86,10 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * Authentication domain.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GlanceEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
@@ -87,8 +97,10 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * The operation to do.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GlanceEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -96,8 +108,11 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * OpenStack password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default GlanceEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -105,8 +120,11 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * The project ID.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default GlanceEndpointBuilder project(String project) {
             setProperty("project", project);
@@ -114,8 +132,11 @@ public interface GlanceEndpointBuilderFactory {
         }
         /**
          * OpenStack username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default GlanceEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -135,8 +156,10 @@ public interface GlanceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -146,8 +169,10 @@ public interface GlanceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -157,8 +182,10 @@ public interface GlanceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -167,8 +194,10 @@ public interface GlanceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

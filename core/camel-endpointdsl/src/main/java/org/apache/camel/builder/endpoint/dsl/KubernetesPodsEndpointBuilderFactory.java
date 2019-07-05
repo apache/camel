@@ -44,8 +44,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -53,8 +55,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
@@ -63,8 +67,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -72,9 +78,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -83,9 +91,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -94,8 +104,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -103,8 +115,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
@@ -119,8 +133,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -135,8 +151,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -145,8 +163,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Consumer Label key when watching at some resources.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder labelKey(String labelKey) {
             setProperty("labelKey", labelKey);
@@ -154,8 +174,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Consumer Label value when watching at some resources.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder labelValue(
                 String labelValue) {
@@ -164,8 +186,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The namespace.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
@@ -173,8 +197,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Consumer pool size.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
@@ -182,8 +208,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Consumer pool size.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
@@ -191,8 +219,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Consumer Resource Name we would like to watch.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder resourceName(
                 String resourceName) {
@@ -201,8 +231,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder caCertData(
                 String caCertData) {
@@ -211,8 +243,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
@@ -221,8 +255,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
@@ -231,8 +267,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
@@ -241,8 +279,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -251,8 +291,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
@@ -261,8 +303,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -271,8 +315,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -281,8 +327,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
@@ -291,8 +339,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -300,8 +350,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -310,9 +362,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
@@ -321,8 +375,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -345,9 +401,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -359,9 +417,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -370,8 +430,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -380,9 +442,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -392,8 +456,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -403,8 +469,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -414,8 +482,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -425,9 +495,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -437,8 +509,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -448,8 +522,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -469,8 +545,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -478,8 +556,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder apiVersion(
                 String apiVersion) {
@@ -488,8 +568,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -497,9 +579,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -508,9 +592,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -519,8 +605,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -528,8 +616,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder portProtocol(
                 String portProtocol) {
@@ -546,8 +636,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesPodsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -564,8 +656,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesPodsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -574,8 +668,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Producer operation to do on Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesPodsEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -583,8 +679,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder caCertData(
                 String caCertData) {
@@ -593,8 +691,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder caCertFile(
                 String caCertFile) {
@@ -603,8 +703,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder clientCertData(
                 String clientCertData) {
@@ -613,8 +715,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
@@ -623,8 +727,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -633,8 +739,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
@@ -643,8 +751,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -653,8 +763,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -663,8 +775,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder oauthToken(
                 String oauthToken) {
@@ -673,8 +787,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -682,8 +798,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -692,9 +810,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder trustCerts(
                 String trustCerts) {
@@ -703,8 +823,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -725,8 +847,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -736,8 +860,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -747,8 +873,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -758,9 +886,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -770,8 +900,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -781,8 +913,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -802,8 +936,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -811,8 +947,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
@@ -820,8 +958,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -829,9 +969,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -840,9 +982,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -851,8 +995,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -860,8 +1006,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KubernetesPodsEndpointBuilder portProtocol(String portProtocol) {
             setProperty("portProtocol", portProtocol);
@@ -869,8 +1017,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
@@ -878,8 +1028,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
@@ -887,8 +1039,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -897,8 +1051,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -907,8 +1063,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
             setProperty("clientKeyAlgo", clientKeyAlgo);
@@ -916,8 +1074,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder clientKeyData(String clientKeyData) {
             setProperty("clientKeyData", clientKeyData);
@@ -925,8 +1085,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder clientKeyFile(String clientKeyFile) {
             setProperty("clientKeyFile", clientKeyFile);
@@ -934,8 +1096,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -944,8 +1108,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -953,8 +1119,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -962,8 +1130,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder trustCerts(Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
@@ -971,9 +1141,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
@@ -981,8 +1153,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesPodsEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1002,8 +1176,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1013,8 +1189,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1024,8 +1202,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -1035,9 +1215,11 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1047,8 +1229,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1058,8 +1242,10 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder synchronous(
                 String synchronous) {

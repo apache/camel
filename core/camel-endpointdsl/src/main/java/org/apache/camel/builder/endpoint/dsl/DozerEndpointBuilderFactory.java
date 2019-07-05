@@ -40,8 +40,10 @@ public interface DozerEndpointBuilderFactory {
         }
         /**
          * A human readable name of the mapping.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DozerEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -54,9 +56,11 @@ public interface DozerEndpointBuilderFactory {
          * fine-grained control over how Dozer is configured. Remember to use a
          * # prefix in the value to indicate that the bean is in the Camel
          * registry (e.g. #myDozerConfig).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DozerEndpointBuilder mappingConfiguration(
                 Object mappingConfiguration) {
@@ -70,9 +74,11 @@ public interface DozerEndpointBuilderFactory {
          * fine-grained control over how Dozer is configured. Remember to use a
          * # prefix in the value to indicate that the bean is in the Camel
          * registry (e.g. #myDozerConfig).
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.converter.dozer.DozerBeanMapperConfiguration</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DozerEndpointBuilder mappingConfiguration(
                 String mappingConfiguration) {
@@ -83,8 +89,10 @@ public interface DozerEndpointBuilderFactory {
          * The location of a Dozer configuration file. The file is loaded from
          * the classpath by default, but you can use file:, classpath:, or http:
          * to load the configuration from a specific location.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DozerEndpointBuilder mappingFile(String mappingFile) {
             setProperty("mappingFile", mappingFile);
@@ -93,8 +101,10 @@ public interface DozerEndpointBuilderFactory {
         /**
          * The id of a dataFormat defined within the Camel Context to use for
          * marshalling the mapping output to a non-Java type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DozerEndpointBuilder marshalId(String marshalId) {
             setProperty("marshalId", marshalId);
@@ -104,8 +114,10 @@ public interface DozerEndpointBuilderFactory {
          * Fully-qualified class name for the source type used in the mapping.
          * If specified, the input to the mapping is converted to the specified
          * type before being mapped with Dozer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DozerEndpointBuilder sourceModel(String sourceModel) {
             setProperty("sourceModel", sourceModel);
@@ -113,8 +125,11 @@ public interface DozerEndpointBuilderFactory {
         }
         /**
          * Fully-qualified class name for the target type used in the mapping.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default DozerEndpointBuilder targetModel(String targetModel) {
             setProperty("targetModel", targetModel);
@@ -123,8 +138,10 @@ public interface DozerEndpointBuilderFactory {
         /**
          * The id of a dataFormat defined within the Camel Context to use for
          * unmarshalling the mapping input from a non-Java type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DozerEndpointBuilder unmarshalId(String unmarshalId) {
             setProperty("unmarshalId", unmarshalId);
@@ -144,8 +161,10 @@ public interface DozerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -155,8 +174,10 @@ public interface DozerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -166,8 +187,10 @@ public interface DozerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -176,8 +199,10 @@ public interface DozerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

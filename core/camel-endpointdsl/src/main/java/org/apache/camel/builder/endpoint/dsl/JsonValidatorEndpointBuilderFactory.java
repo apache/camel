@@ -46,8 +46,10 @@ public interface JsonValidatorEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -55,8 +57,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -64,8 +68,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -73,8 +79,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no body exists.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 boolean failOnNullBody) {
@@ -83,8 +91,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no body exists.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 String failOnNullBody) {
@@ -93,8 +103,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no header exists when validating against a header.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
@@ -103,8 +115,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no header exists when validating against a header.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
@@ -113,8 +127,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         }
         /**
          * To validate against a header instead of the message body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default JsonValidatorEndpointBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
@@ -134,8 +150,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -145,8 +163,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -156,9 +176,11 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * To use a custom ValidatorErrorHandler. The default error handler
          * captures the errors and throws an exception.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
@@ -168,9 +190,11 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * To use a custom ValidatorErrorHandler. The default error handler
          * captures the errors and throws an exception.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jsonvalidator.JsonValidatorErrorHandler</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
@@ -181,9 +205,11 @@ public interface JsonValidatorEndpointBuilderFactory {
          * To use a custom schema loader allowing for adding custom format
          * validation. The default implementation will create a schema loader
          * with draft v4 support.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 Object schemaLoader) {
@@ -194,9 +220,11 @@ public interface JsonValidatorEndpointBuilderFactory {
          * To use a custom schema loader allowing for adding custom format
          * validation. The default implementation will create a schema loader
          * with draft v4 support.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jsonvalidator.JsonSchemaLoader</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 String schemaLoader) {
@@ -206,8 +234,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -217,8 +247,10 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 String synchronous) {

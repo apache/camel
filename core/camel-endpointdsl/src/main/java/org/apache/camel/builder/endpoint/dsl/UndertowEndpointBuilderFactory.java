@@ -47,8 +47,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to use.
-         * The option is a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: common
          */
         default UndertowEndpointConsumerBuilder httpURI(URI httpURI) {
             setProperty("httpURI", httpURI);
@@ -56,8 +58,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to use.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default UndertowEndpointConsumerBuilder httpURI(String httpURI) {
             setProperty("httpURI", httpURI);
@@ -65,8 +69,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Whether or not the consumer should write access log.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder accessLog(Boolean accessLog) {
             setProperty("accessLog", accessLog);
@@ -74,9 +80,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Whether or not the consumer should write access log.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder accessLog(String accessLog) {
             setProperty("accessLog", accessLog);
@@ -90,8 +98,10 @@ public interface UndertowEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -106,8 +116,10 @@ public interface UndertowEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -118,8 +130,10 @@ public interface UndertowEndpointBuilderFactory {
          * Used to only allow consuming if the HttpMethod matches, such as
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
@@ -129,8 +143,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder matchOnUriPrefix(
                 Boolean matchOnUriPrefix) {
@@ -140,9 +156,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
@@ -152,8 +170,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder optionsEnabled(
                 boolean optionsEnabled) {
@@ -163,8 +183,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default UndertowEndpointConsumerBuilder optionsEnabled(
                 String optionsEnabled) {
@@ -175,8 +197,10 @@ public interface UndertowEndpointBuilderFactory {
          * if true, the consumer will post notifications to the route when a new
          * WebSocket peer connects, disconnects, etc. See
          * UndertowConstants.EVENT_TYPE and EventType.
-         * The option is a <code>boolean</code> type.
-         * @group websocket
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: websocket
          */
         default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
                 boolean fireWebSocketChannelEvents) {
@@ -187,8 +211,10 @@ public interface UndertowEndpointBuilderFactory {
          * if true, the consumer will post notifications to the route when a new
          * WebSocket peer connects, disconnects, etc. See
          * UndertowConstants.EVENT_TYPE and EventType.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group websocket
+         * 
+         * Group: websocket
          */
         default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
                 String fireWebSocketChannelEvents) {
@@ -200,8 +226,10 @@ public interface UndertowEndpointBuilderFactory {
          * wrapped as java.io.Reader and java.io.InputStream respectively before
          * they are passed to an Exchange; otherwise they will be passed as
          * String and byte respectively.
-         * The option is a <code>boolean</code> type.
-         * @group websocket
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: websocket
          */
         default UndertowEndpointConsumerBuilder useStreaming(
                 boolean useStreaming) {
@@ -213,8 +241,10 @@ public interface UndertowEndpointBuilderFactory {
          * wrapped as java.io.Reader and java.io.InputStream respectively before
          * they are passed to an Exchange; otherwise they will be passed as
          * String and byte respectively.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group websocket
+         * 
+         * Group: websocket
          */
         default UndertowEndpointConsumerBuilder useStreaming(String useStreaming) {
             setProperty("useStreaming", useStreaming);
@@ -222,9 +252,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default UndertowEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -233,9 +265,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default UndertowEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -258,9 +292,11 @@ public interface UndertowEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -272,9 +308,11 @@ public interface UndertowEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -283,8 +321,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -293,9 +333,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedUndertowEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -305,10 +347,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Which Undertow AccessLogReciever should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
                 Object accessLogReceiver) {
@@ -318,10 +362,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Which Undertow AccessLogReciever should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
+         * 
          * The option will be converted to a
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder accessLogReceiver(
                 String accessLogReceiver) {
@@ -331,8 +377,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -342,8 +390,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -353,9 +403,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -365,9 +417,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -377,8 +431,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -388,8 +444,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -399,10 +457,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom UndertowHttpBinding to control the mapping between
          * Camel message and undertow.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
@@ -412,10 +472,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom UndertowHttpBinding to control the mapping between
          * Camel message and undertow.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
@@ -435,8 +497,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to use.
-         * The option is a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: common
          */
         default UndertowEndpointProducerBuilder httpURI(URI httpURI) {
             setProperty("httpURI", httpURI);
@@ -444,8 +508,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to use.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default UndertowEndpointProducerBuilder httpURI(String httpURI) {
             setProperty("httpURI", httpURI);
@@ -453,9 +519,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
@@ -464,9 +532,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
@@ -475,8 +545,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Setting to ensure socket is not closed due to inactivity.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder keepAlive(Boolean keepAlive) {
             setProperty("keepAlive", keepAlive);
@@ -484,9 +556,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Setting to ensure socket is not closed due to inactivity.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder keepAlive(String keepAlive) {
             setProperty("keepAlive", keepAlive);
@@ -502,8 +576,10 @@ public interface UndertowEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -520,8 +596,10 @@ public interface UndertowEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -533,9 +611,11 @@ public interface UndertowEndpointBuilderFactory {
          * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
          * option.close-abort=true&option.send-buffer=8192.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder options(
                 Map<String, Object> options) {
@@ -547,10 +627,12 @@ public interface UndertowEndpointBuilderFactory {
          * defined in org.xnio.Options. To configure from endpoint uri, then
          * prefix each option with option., such as
          * option.close-abort=true&option.send-buffer=8192.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder options(String options) {
             setProperty("options", options);
@@ -558,8 +640,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Setting to facilitate socket multiplexing.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder reuseAddresses(
                 Boolean reuseAddresses) {
@@ -568,9 +652,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Setting to facilitate socket multiplexing.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder reuseAddresses(
                 String reuseAddresses) {
@@ -579,8 +665,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Setting to improve TCP protocol performance.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder tcpNoDelay(Boolean tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
@@ -588,9 +676,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * Setting to improve TCP protocol performance.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
             setProperty("tcpNoDelay", tcpNoDelay);
@@ -600,8 +690,10 @@ public interface UndertowEndpointBuilderFactory {
          * Option to disable throwing the HttpOperationFailedException in case
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder throwExceptionOnFailure(
                 Boolean throwExceptionOnFailure) {
@@ -612,9 +704,11 @@ public interface UndertowEndpointBuilderFactory {
          * Option to disable throwing the HttpOperationFailedException in case
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -630,8 +724,10 @@ public interface UndertowEndpointBuilderFactory {
          * be serialized. This is by default turned off. If you enable this then
          * be aware that Java will deserialize the incoming data from the
          * request to Java and that can be a potential security risk.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder transferException(
                 Boolean transferException) {
@@ -647,9 +743,11 @@ public interface UndertowEndpointBuilderFactory {
          * be serialized. This is by default turned off. If you enable this then
          * be aware that Java will deserialize the incoming data from the
          * request to Java and that can be a potential security risk.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default UndertowEndpointProducerBuilder transferException(
                 String transferException) {
@@ -659,8 +757,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Timeout in milliseconds when sending to a websocket channel. The
          * default timeout is 30000 (30 seconds).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group websocket
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendTimeout(Integer sendTimeout) {
             setProperty("sendTimeout", sendTimeout);
@@ -669,9 +769,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Timeout in milliseconds when sending to a websocket channel. The
          * default timeout is 30000 (30 seconds).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group websocket
+         * 
+         * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendTimeout(String sendTimeout) {
             setProperty("sendTimeout", sendTimeout);
@@ -681,8 +783,10 @@ public interface UndertowEndpointBuilderFactory {
          * To send to all websocket subscribers. Can be used to configure on
          * endpoint level, instead of having to use the
          * UndertowConstants.SEND_TO_ALL header on the message.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group websocket
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendToAll(Boolean sendToAll) {
             setProperty("sendToAll", sendToAll);
@@ -692,9 +796,11 @@ public interface UndertowEndpointBuilderFactory {
          * To send to all websocket subscribers. Can be used to configure on
          * endpoint level, instead of having to use the
          * UndertowConstants.SEND_TO_ALL header on the message.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group websocket
+         * 
+         * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendToAll(String sendToAll) {
             setProperty("sendToAll", sendToAll);
@@ -702,9 +808,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default UndertowEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -713,9 +821,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default UndertowEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -736,10 +846,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Which Undertow AccessLogReciever should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
                 Object accessLogReceiver) {
@@ -749,10 +861,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Which Undertow AccessLogReciever should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
+         * 
          * The option will be converted to a
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder accessLogReceiver(
                 String accessLogReceiver) {
@@ -762,8 +876,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -773,8 +889,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -784,9 +902,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -796,9 +916,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -808,8 +930,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -819,8 +943,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -830,10 +956,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom UndertowHttpBinding to control the mapping between
          * Camel message and undertow.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
@@ -843,10 +971,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom UndertowHttpBinding to control the mapping between
          * Camel message and undertow.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder undertowHttpBinding(
                 String undertowHttpBinding) {
@@ -866,8 +996,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to use.
-         * The option is a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: common
          */
         default UndertowEndpointBuilder httpURI(URI httpURI) {
             setProperty("httpURI", httpURI);
@@ -875,8 +1007,10 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * The url of the HTTP endpoint to use.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default UndertowEndpointBuilder httpURI(String httpURI) {
             setProperty("httpURI", httpURI);
@@ -884,9 +1018,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default UndertowEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -895,9 +1031,11 @@ public interface UndertowEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default UndertowEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -918,10 +1056,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Which Undertow AccessLogReciever should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder accessLogReceiver(
                 Object accessLogReceiver) {
@@ -931,10 +1071,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Which Undertow AccessLogReciever should be used Will use
          * JBossLoggingAccessLogReceiver if not specifid.
+         * 
          * The option will be converted to a
          * <code>io.undertow.server.handlers.accesslog.AccessLogReceiver</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder accessLogReceiver(
                 String accessLogReceiver) {
@@ -944,8 +1086,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -955,8 +1099,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -966,9 +1112,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -978,9 +1126,11 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -990,8 +1140,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1000,8 +1152,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -1010,10 +1164,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom UndertowHttpBinding to control the mapping between
          * Camel message and undertow.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder undertowHttpBinding(
                 Object undertowHttpBinding) {
@@ -1023,10 +1179,12 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * To use a custom UndertowHttpBinding to control the mapping between
          * Camel message and undertow.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.undertow.UndertowHttpBinding</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder undertowHttpBinding(
                 String undertowHttpBinding) {

@@ -42,9 +42,11 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Type of metrics.
-         * The option is a <code>io.micrometer.core.instrument.Meter$Type</code>
-         * type.
-         * @group producer
+         * 
+         * The option is a:
+         * <code>io.micrometer.core.instrument.Meter$Type</code> type.
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder metricsType(Type metricsType) {
             setProperty("metricsType", metricsType);
@@ -52,9 +54,11 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Type of metrics.
+         * 
          * The option will be converted to a
          * <code>io.micrometer.core.instrument.Meter$Type</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder metricsType(String metricsType) {
             setProperty("metricsType", metricsType);
@@ -62,8 +66,10 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Name of metrics.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder metricsName(String metricsName) {
             setProperty("metricsName", metricsName);
@@ -71,9 +77,11 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Tags of metrics.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.lang.Iterable&lt;io.micrometer.core.instrument.Tag&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder tags(Iterable<Object> tags) {
             setProperty("tags", tags);
@@ -81,9 +89,11 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Tags of metrics.
+         * 
          * The option will be converted to a
          * <code>java.lang.Iterable&lt;io.micrometer.core.instrument.Tag&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder tags(String tags) {
             setProperty("tags", tags);
@@ -91,8 +101,10 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Action expression when using timer type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder action(String action) {
             setProperty("action", action);
@@ -100,8 +112,10 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Decrement value expression when using counter type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder decrement(String decrement) {
             setProperty("decrement", decrement);
@@ -109,8 +123,10 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Increment value expression when using counter type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder increment(String increment) {
             setProperty("increment", increment);
@@ -118,8 +134,10 @@ public interface MicrometerEndpointBuilderFactory {
         }
         /**
          * Value expression when using histogram type.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MicrometerEndpointBuilder value(String value) {
             setProperty("value", value);
@@ -139,8 +157,10 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -150,8 +170,10 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -161,8 +183,10 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -172,8 +196,10 @@ public interface MicrometerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -42,8 +42,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -51,8 +53,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
@@ -60,8 +64,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -69,9 +75,11 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -80,9 +88,11 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -91,8 +101,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -100,8 +112,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default OpenshiftBuildsEndpointBuilder portProtocol(String portProtocol) {
             setProperty("portProtocol", portProtocol);
@@ -109,8 +123,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
@@ -118,8 +134,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
@@ -127,8 +145,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -137,8 +157,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -147,8 +169,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -157,8 +181,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder clientKeyData(
                 String clientKeyData) {
@@ -167,8 +193,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -177,8 +205,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -187,8 +217,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -196,8 +228,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -205,8 +239,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder trustCerts(Boolean trustCerts) {
             setProperty("trustCerts", trustCerts);
@@ -214,9 +250,11 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
@@ -224,8 +262,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default OpenshiftBuildsEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -245,8 +285,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOpenshiftBuildsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -256,8 +298,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOpenshiftBuildsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -267,8 +311,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOpenshiftBuildsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -278,9 +324,11 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOpenshiftBuildsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -290,8 +338,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedOpenshiftBuildsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -301,8 +351,10 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedOpenshiftBuildsEndpointBuilder synchronous(
                 String synchronous) {

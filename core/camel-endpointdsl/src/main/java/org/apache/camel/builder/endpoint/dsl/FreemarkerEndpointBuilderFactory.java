@@ -46,8 +46,10 @@ public interface FreemarkerEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -55,8 +57,10 @@ public interface FreemarkerEndpointBuilderFactory {
         }
         /**
          * Sets the Freemarker configuration to use.
-         * The option is a <code>freemarker.template.Configuration</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>freemarker.template.Configuration</code> type.
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder configuration(Object configuration) {
             setProperty("configuration", configuration);
@@ -64,9 +68,11 @@ public interface FreemarkerEndpointBuilderFactory {
         }
         /**
          * Sets the Freemarker configuration to use.
+         * 
          * The option will be converted to a
          * <code>freemarker.template.Configuration</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder configuration(String configuration) {
             setProperty("configuration", configuration);
@@ -74,8 +80,10 @@ public interface FreemarkerEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -83,8 +91,10 @@ public interface FreemarkerEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -92,8 +102,10 @@ public interface FreemarkerEndpointBuilderFactory {
         }
         /**
          * Sets the encoding to be used for loading the template file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -102,8 +114,10 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Number of seconds the loaded template resource will remain in the
          * cache.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(
                 int templateUpdateDelay) {
@@ -113,8 +127,10 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Number of seconds the loaded template resource will remain in the
          * cache.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(
                 String templateUpdateDelay) {
@@ -135,8 +151,10 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -146,8 +164,10 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -157,8 +177,10 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFreemarkerEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -168,8 +190,10 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFreemarkerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

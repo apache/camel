@@ -40,8 +40,10 @@ public interface MasterEndpointBuilderFactory {
         }
         /**
          * The name of the cluster namespace to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default MasterEndpointBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
@@ -49,8 +51,10 @@ public interface MasterEndpointBuilderFactory {
         }
         /**
          * The endpoint uri to use in master/slave mode.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default MasterEndpointBuilder delegateUri(String delegateUri) {
             setProperty("delegateUri", delegateUri);
@@ -70,8 +74,10 @@ public interface MasterEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMasterEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -81,8 +87,10 @@ public interface MasterEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMasterEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -92,8 +100,10 @@ public interface MasterEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMasterEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -102,8 +112,10 @@ public interface MasterEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMasterEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

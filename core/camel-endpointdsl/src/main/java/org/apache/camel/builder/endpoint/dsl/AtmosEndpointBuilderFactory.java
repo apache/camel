@@ -43,8 +43,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -52,10 +54,12 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder operation(AtmosOperation operation) {
             setProperty("operation", operation);
@@ -63,10 +67,12 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -74,8 +80,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos SSL validation.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder enableSslValidation(
                 boolean enableSslValidation) {
@@ -84,8 +92,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos SSL validation.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder enableSslValidation(
                 String enableSslValidation) {
@@ -94,8 +104,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos client fullTokenId.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder fullTokenId(String fullTokenId) {
             setProperty("fullTokenId", fullTokenId);
@@ -103,8 +115,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Local path to put files.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -112,8 +126,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * New path on Atmos when moving files.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
@@ -121,8 +137,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Search query on Atmos.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
@@ -130,8 +148,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Where to put files on Atmos.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -139,8 +159,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos shared secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -148,8 +170,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atomos server uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointConsumerBuilder uri(String uri) {
             setProperty("uri", uri);
@@ -163,8 +187,10 @@ public interface AtmosEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -179,8 +205,10 @@ public interface AtmosEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -203,9 +231,11 @@ public interface AtmosEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -217,9 +247,11 @@ public interface AtmosEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -228,8 +260,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -238,9 +272,11 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -250,8 +286,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -261,8 +299,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -272,8 +312,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -283,8 +325,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -304,8 +348,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -313,10 +359,12 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder operation(AtmosOperation operation) {
             setProperty("operation", operation);
@@ -324,10 +372,12 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -335,8 +385,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos SSL validation.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder enableSslValidation(
                 boolean enableSslValidation) {
@@ -345,8 +397,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos SSL validation.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder enableSslValidation(
                 String enableSslValidation) {
@@ -355,8 +409,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos client fullTokenId.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder fullTokenId(String fullTokenId) {
             setProperty("fullTokenId", fullTokenId);
@@ -364,8 +420,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Local path to put files.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -373,8 +431,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * New path on Atmos when moving files.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
@@ -382,8 +442,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Search query on Atmos.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder query(String query) {
             setProperty("query", query);
@@ -391,8 +453,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Where to put files on Atmos.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -400,8 +464,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos shared secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -409,8 +475,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atomos server uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointProducerBuilder uri(String uri) {
             setProperty("uri", uri);
@@ -426,8 +494,10 @@ public interface AtmosEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default AtmosEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -444,8 +514,10 @@ public interface AtmosEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AtmosEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -466,8 +538,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -477,8 +551,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -488,8 +564,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -499,8 +577,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -520,8 +600,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -529,10 +611,12 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder operation(AtmosOperation operation) {
             setProperty("operation", operation);
@@ -540,10 +624,12 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -551,8 +637,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos SSL validation.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder enableSslValidation(
                 boolean enableSslValidation) {
@@ -561,8 +649,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos SSL validation.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder enableSslValidation(
                 String enableSslValidation) {
@@ -571,8 +661,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos client fullTokenId.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder fullTokenId(String fullTokenId) {
             setProperty("fullTokenId", fullTokenId);
@@ -580,8 +672,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Local path to put files.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -589,8 +683,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * New path on Atmos when moving files.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
@@ -598,8 +694,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Search query on Atmos.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -607,8 +705,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Where to put files on Atmos.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -616,8 +716,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atmos shared secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -625,8 +727,10 @@ public interface AtmosEndpointBuilderFactory {
         }
         /**
          * Atomos server uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtmosEndpointBuilder uri(String uri) {
             setProperty("uri", uri);
@@ -646,8 +750,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -657,8 +763,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -668,8 +776,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -678,8 +788,10 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

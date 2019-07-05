@@ -46,9 +46,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The object information address.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder uriPath(Object uriPath) {
             setProperty("uriPath", uriPath);
@@ -56,9 +58,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The object information address.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder uriPath(String uriPath) {
             setProperty("uriPath", uriPath);
@@ -66,9 +70,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Data module options.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
@@ -77,9 +83,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Data module options.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder dataModuleOptions(
                 String dataModuleOptions) {
@@ -88,8 +96,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Filter out all requests which don't have the execute bit set.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder filterNonExecute(
                 boolean filterNonExecute) {
@@ -98,8 +108,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Filter out all requests which don't have the execute bit set.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder filterNonExecute(
                 String filterNonExecute) {
@@ -108,10 +120,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Protocol options.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder protocolOptions(
                 Object protocolOptions) {
@@ -120,10 +134,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Protocol options.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointConsumerBuilder protocolOptions(
                 String protocolOptions) {
@@ -138,8 +154,10 @@ public interface ServerEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -154,8 +172,10 @@ public interface ServerEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -164,8 +184,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter W - Acknowledgment window.
-         * The option is a <code>short</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
@@ -174,8 +196,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter W - Acknowledgment window.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
@@ -184,10 +208,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
@@ -196,10 +222,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder adsuAddressType(
                 String adsuAddressType) {
@@ -208,9 +236,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
@@ -219,9 +249,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
@@ -230,9 +262,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
@@ -241,9 +275,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
@@ -252,8 +288,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
-         * The option is a <code>short</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
@@ -262,8 +300,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
@@ -272,8 +312,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T1 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout1(int timeout1) {
             setProperty("timeout1", timeout1);
@@ -281,8 +323,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T1 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout1(String timeout1) {
             setProperty("timeout1", timeout1);
@@ -290,8 +334,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T2 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout2(int timeout2) {
             setProperty("timeout2", timeout2);
@@ -299,8 +345,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T2 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout2(String timeout2) {
             setProperty("timeout2", timeout2);
@@ -308,8 +356,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T3 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout3(int timeout3) {
             setProperty("timeout3", timeout3);
@@ -317,8 +367,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T3 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout3(String timeout3) {
             setProperty("timeout3", timeout3);
@@ -326,8 +378,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to include the source address.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder causeSourceAddress(
                 boolean causeSourceAddress) {
@@ -336,8 +390,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to include the source address.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder causeSourceAddress(
                 String causeSourceAddress) {
@@ -346,8 +402,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether background scan transmissions should be ignored.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
@@ -356,8 +414,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether background scan transmissions should be ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
@@ -366,8 +426,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to ignore or respect DST.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
@@ -376,8 +438,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to ignore or respect DST.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
@@ -386,8 +450,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The timezone to use. May be any Java time zone string.
-         * The option is a <code>java.util.TimeZone</code> type.
-         * @group data
+         * 
+         * The option is a: <code>java.util.TimeZone</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder timeZone(TimeZone timeZone) {
             setProperty("timeZone", timeZone);
@@ -395,9 +461,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The timezone to use. May be any Java time zone string.
+         * 
          * The option will be converted to a <code>java.util.TimeZone</code>
          * type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointConsumerBuilder timeZone(String timeZone) {
             setProperty("timeZone", timeZone);
@@ -405,8 +473,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * An identifier grouping connection instances.
-         * The option is a <code>java.lang.String</code> type.
-         * @group id
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: id
          */
         default ServerEndpointConsumerBuilder connectionId(String connectionId) {
             setProperty("connectionId", connectionId);
@@ -429,9 +499,11 @@ public interface ServerEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -443,9 +515,11 @@ public interface ServerEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -454,8 +528,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -464,9 +540,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -476,8 +554,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -487,8 +567,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -498,8 +580,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -509,8 +593,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -530,9 +616,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The object information address.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder uriPath(Object uriPath) {
             setProperty("uriPath", uriPath);
@@ -540,9 +628,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The object information address.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder uriPath(String uriPath) {
             setProperty("uriPath", uriPath);
@@ -550,9 +640,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Data module options.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
@@ -561,9 +653,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Data module options.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder dataModuleOptions(
                 String dataModuleOptions) {
@@ -572,8 +666,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Filter out all requests which don't have the execute bit set.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder filterNonExecute(
                 boolean filterNonExecute) {
@@ -582,8 +678,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Filter out all requests which don't have the execute bit set.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder filterNonExecute(
                 String filterNonExecute) {
@@ -592,10 +690,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Protocol options.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder protocolOptions(
                 Object protocolOptions) {
@@ -604,10 +704,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Protocol options.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointProducerBuilder protocolOptions(
                 String protocolOptions) {
@@ -624,8 +726,10 @@ public interface ServerEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -642,8 +746,10 @@ public interface ServerEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -652,8 +758,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter W - Acknowledgment window.
-         * The option is a <code>short</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
@@ -662,8 +770,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter W - Acknowledgment window.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
@@ -672,10 +782,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
@@ -684,10 +796,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder adsuAddressType(
                 String adsuAddressType) {
@@ -696,9 +810,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
@@ -707,9 +823,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
@@ -718,9 +836,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
@@ -729,9 +849,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
@@ -740,8 +862,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
-         * The option is a <code>short</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
@@ -750,8 +874,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
@@ -760,8 +886,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T1 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder timeout1(int timeout1) {
             setProperty("timeout1", timeout1);
@@ -769,8 +897,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T1 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder timeout1(String timeout1) {
             setProperty("timeout1", timeout1);
@@ -778,8 +908,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T2 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder timeout2(int timeout2) {
             setProperty("timeout2", timeout2);
@@ -787,8 +919,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T2 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder timeout2(String timeout2) {
             setProperty("timeout2", timeout2);
@@ -796,8 +930,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T3 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder timeout3(int timeout3) {
             setProperty("timeout3", timeout3);
@@ -805,8 +941,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T3 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointProducerBuilder timeout3(String timeout3) {
             setProperty("timeout3", timeout3);
@@ -814,8 +952,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to include the source address.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder causeSourceAddress(
                 boolean causeSourceAddress) {
@@ -824,8 +964,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to include the source address.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder causeSourceAddress(
                 String causeSourceAddress) {
@@ -834,8 +976,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether background scan transmissions should be ignored.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
@@ -844,8 +988,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether background scan transmissions should be ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
@@ -854,8 +1000,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to ignore or respect DST.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
@@ -864,8 +1012,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to ignore or respect DST.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
@@ -874,8 +1024,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The timezone to use. May be any Java time zone string.
-         * The option is a <code>java.util.TimeZone</code> type.
-         * @group data
+         * 
+         * The option is a: <code>java.util.TimeZone</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder timeZone(TimeZone timeZone) {
             setProperty("timeZone", timeZone);
@@ -883,9 +1035,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The timezone to use. May be any Java time zone string.
+         * 
          * The option will be converted to a <code>java.util.TimeZone</code>
          * type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointProducerBuilder timeZone(String timeZone) {
             setProperty("timeZone", timeZone);
@@ -893,8 +1047,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * An identifier grouping connection instances.
-         * The option is a <code>java.lang.String</code> type.
-         * @group id
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: id
          */
         default ServerEndpointProducerBuilder connectionId(String connectionId) {
             setProperty("connectionId", connectionId);
@@ -915,8 +1071,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -926,8 +1084,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -937,8 +1097,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -948,8 +1110,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -969,9 +1133,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The object information address.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder uriPath(Object uriPath) {
             setProperty("uriPath", uriPath);
@@ -979,9 +1145,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The object information address.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder uriPath(String uriPath) {
             setProperty("uriPath", uriPath);
@@ -989,9 +1157,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Data module options.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder dataModuleOptions(Object dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
@@ -999,9 +1169,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Data module options.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder dataModuleOptions(String dataModuleOptions) {
             setProperty("dataModuleOptions", dataModuleOptions);
@@ -1009,8 +1181,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Filter out all requests which don't have the execute bit set.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder filterNonExecute(boolean filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
@@ -1018,8 +1192,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Filter out all requests which don't have the execute bit set.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder filterNonExecute(String filterNonExecute) {
             setProperty("filterNonExecute", filterNonExecute);
@@ -1027,10 +1203,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Protocol options.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder protocolOptions(Object protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
@@ -1038,10 +1216,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Protocol options.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServerEndpointBuilder protocolOptions(String protocolOptions) {
             setProperty("protocolOptions", protocolOptions);
@@ -1049,8 +1229,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter W - Acknowledgment window.
-         * The option is a <code>short</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder acknowledgeWindow(short acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
@@ -1058,8 +1240,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter W - Acknowledgment window.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder acknowledgeWindow(String acknowledgeWindow) {
             setProperty("acknowledgeWindow", acknowledgeWindow);
@@ -1067,10 +1251,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
@@ -1079,10 +1265,12 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
          * type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder adsuAddressType(String adsuAddressType) {
             setProperty("adsuAddressType", adsuAddressType);
@@ -1090,9 +1278,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
@@ -1101,9 +1291,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
@@ -1112,9 +1304,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
@@ -1123,9 +1317,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
+         * 
          * The option will be converted to a
          * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
@@ -1134,8 +1330,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
-         * The option is a <code>short</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder maxUnacknowledged(short maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
@@ -1143,8 +1341,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder maxUnacknowledged(String maxUnacknowledged) {
             setProperty("maxUnacknowledged", maxUnacknowledged);
@@ -1152,8 +1352,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T1 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder timeout1(int timeout1) {
             setProperty("timeout1", timeout1);
@@ -1161,8 +1363,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T1 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder timeout1(String timeout1) {
             setProperty("timeout1", timeout1);
@@ -1170,8 +1374,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T2 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder timeout2(int timeout2) {
             setProperty("timeout2", timeout2);
@@ -1179,8 +1385,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T2 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder timeout2(String timeout2) {
             setProperty("timeout2", timeout2);
@@ -1188,8 +1396,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T3 in milliseconds.
-         * The option is a <code>int</code> type.
-         * @group connection
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder timeout3(int timeout3) {
             setProperty("timeout3", timeout3);
@@ -1197,8 +1407,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Timeout T3 in milliseconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group connection
+         * 
+         * Group: connection
          */
         default ServerEndpointBuilder timeout3(String timeout3) {
             setProperty("timeout3", timeout3);
@@ -1206,8 +1418,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to include the source address.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder causeSourceAddress(
                 boolean causeSourceAddress) {
@@ -1216,8 +1430,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to include the source address.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder causeSourceAddress(
                 String causeSourceAddress) {
@@ -1226,8 +1442,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether background scan transmissions should be ignored.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
@@ -1236,8 +1454,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether background scan transmissions should be ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
@@ -1246,8 +1466,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to ignore or respect DST.
-         * The option is a <code>boolean</code> type.
-         * @group data
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
@@ -1256,8 +1478,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * Whether to ignore or respect DST.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
@@ -1266,8 +1490,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The timezone to use. May be any Java time zone string.
-         * The option is a <code>java.util.TimeZone</code> type.
-         * @group data
+         * 
+         * The option is a: <code>java.util.TimeZone</code> type.
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder timeZone(TimeZone timeZone) {
             setProperty("timeZone", timeZone);
@@ -1275,9 +1501,11 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * The timezone to use. May be any Java time zone string.
+         * 
          * The option will be converted to a <code>java.util.TimeZone</code>
          * type.
-         * @group data
+         * 
+         * Group: data
          */
         default ServerEndpointBuilder timeZone(String timeZone) {
             setProperty("timeZone", timeZone);
@@ -1285,8 +1513,10 @@ public interface ServerEndpointBuilderFactory {
         }
         /**
          * An identifier grouping connection instances.
-         * The option is a <code>java.lang.String</code> type.
-         * @group id
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: id
          */
         default ServerEndpointBuilder connectionId(String connectionId) {
             setProperty("connectionId", connectionId);
@@ -1306,8 +1536,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1317,8 +1549,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1328,8 +1562,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1338,8 +1574,10 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

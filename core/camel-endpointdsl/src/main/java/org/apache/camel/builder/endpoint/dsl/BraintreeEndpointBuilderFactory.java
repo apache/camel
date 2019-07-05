@@ -45,9 +45,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder apiName(
                 BraintreeApiName apiName) {
@@ -56,9 +58,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -66,8 +70,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -75,8 +81,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The environment Either SANDBOX or PRODUCTION.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder environment(String environment) {
             setProperty("environment", environment);
@@ -84,8 +92,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -93,8 +103,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The merchant id provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder merchantId(String merchantId) {
             setProperty("merchantId", merchantId);
@@ -102,8 +114,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The private key provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
@@ -111,8 +125,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The public key provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
@@ -126,8 +142,10 @@ public interface BraintreeEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -142,8 +160,10 @@ public interface BraintreeEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -152,8 +172,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -161,8 +183,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy port.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -170,9 +194,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy port.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -194,9 +220,11 @@ public interface BraintreeEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -208,9 +236,11 @@ public interface BraintreeEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -219,8 +249,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -229,9 +261,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -242,8 +276,10 @@ public interface BraintreeEndpointBuilderFactory {
          * The access token granted by a merchant to another in order to process
          * transactions on their behalf. Used in place of environment, merchant
          * id, public key and private key fields.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -253,8 +289,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -264,8 +302,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -274,8 +314,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set read timeout for http calls.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
@@ -284,9 +326,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set read timeout for http calls.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 String httpReadTimeout) {
@@ -296,8 +340,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -307,8 +353,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -317,8 +365,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set logging level for http calls, see java.util.logging.Level.
-         * The option is a <code>java.util.logging.Level</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 Level httpLogLevel) {
@@ -327,9 +377,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set logging level for http calls, see java.util.logging.Level.
+         * 
          * The option will be converted to a
          * <code>java.util.logging.Level</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 String httpLogLevel) {
@@ -349,9 +401,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder apiName(
                 BraintreeApiName apiName) {
@@ -360,9 +414,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -370,8 +426,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -379,8 +437,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The environment Either SANDBOX or PRODUCTION.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder environment(String environment) {
             setProperty("environment", environment);
@@ -388,8 +448,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -397,8 +459,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The merchant id provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder merchantId(String merchantId) {
             setProperty("merchantId", merchantId);
@@ -406,8 +470,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The private key provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
@@ -415,8 +481,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The public key provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
@@ -432,8 +500,10 @@ public interface BraintreeEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default BraintreeEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -450,8 +520,10 @@ public interface BraintreeEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BraintreeEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -460,8 +532,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -469,8 +543,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy port.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -478,9 +554,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy port.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -501,8 +579,10 @@ public interface BraintreeEndpointBuilderFactory {
          * The access token granted by a merchant to another in order to process
          * transactions on their behalf. Used in place of environment, merchant
          * id, public key and private key fields.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -512,8 +592,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -523,8 +605,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -533,8 +617,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set read timeout for http calls.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
@@ -543,9 +629,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set read timeout for http calls.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 String httpReadTimeout) {
@@ -555,8 +643,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -566,8 +656,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -576,8 +668,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set logging level for http calls, see java.util.logging.Level.
-         * The option is a <code>java.util.logging.Level</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 Level httpLogLevel) {
@@ -586,9 +680,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set logging level for http calls, see java.util.logging.Level.
+         * 
          * The option will be converted to a
          * <code>java.util.logging.Level</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 String httpLogLevel) {
@@ -608,9 +704,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder apiName(BraintreeApiName apiName) {
             setProperty("apiName", apiName);
@@ -618,9 +716,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -628,8 +728,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -637,8 +739,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The environment Either SANDBOX or PRODUCTION.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder environment(String environment) {
             setProperty("environment", environment);
@@ -646,8 +750,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -655,8 +761,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The merchant id provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder merchantId(String merchantId) {
             setProperty("merchantId", merchantId);
@@ -664,8 +772,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The private key provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
@@ -673,8 +783,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The public key provided by Braintree.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BraintreeEndpointBuilder publicKey(String publicKey) {
             setProperty("publicKey", publicKey);
@@ -682,8 +794,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -691,8 +805,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy port.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -700,9 +816,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * The proxy port.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -723,8 +841,10 @@ public interface BraintreeEndpointBuilderFactory {
          * The access token granted by a merchant to another in order to process
          * transactions on their behalf. Used in place of environment, merchant
          * id, public key and private key fields.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -733,8 +853,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -744,8 +866,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -754,8 +878,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set read timeout for http calls.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
@@ -764,9 +890,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set read timeout for http calls.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 String httpReadTimeout) {
@@ -776,8 +904,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -786,8 +916,10 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -795,8 +927,10 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set logging level for http calls, see java.util.logging.Level.
-         * The option is a <code>java.util.logging.Level</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>java.util.logging.Level</code> type.
+         * 
+         * Group: logging
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
             setProperty("httpLogLevel", httpLogLevel);
@@ -804,9 +938,11 @@ public interface BraintreeEndpointBuilderFactory {
         }
         /**
          * Set logging level for http calls, see java.util.logging.Level.
+         * 
          * The option will be converted to a
          * <code>java.util.logging.Level</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(
                 String httpLogLevel) {

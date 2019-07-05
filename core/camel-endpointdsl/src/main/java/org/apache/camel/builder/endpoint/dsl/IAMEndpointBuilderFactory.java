@@ -39,8 +39,10 @@ public interface IAMEndpointBuilderFactory {
         }
         /**
          * Logical name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default IAMEndpointBuilder label(String label) {
             setProperty("label", label);
@@ -48,8 +50,10 @@ public interface IAMEndpointBuilderFactory {
         }
         /**
          * The region in which IAM client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default IAMEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -69,8 +73,10 @@ public interface IAMEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIAMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -80,8 +86,10 @@ public interface IAMEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIAMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -91,8 +99,10 @@ public interface IAMEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIAMEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -101,8 +111,10 @@ public interface IAMEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIAMEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

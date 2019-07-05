@@ -45,8 +45,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The name of the table.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
@@ -55,9 +57,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
@@ -67,9 +71,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
@@ -78,9 +84,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * A list of filters to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
@@ -88,9 +96,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * A list of filters to use.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder filters(String filters) {
             setProperty("filters", filters);
@@ -98,8 +108,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The class name of a custom mapping strategy implementation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
@@ -109,8 +121,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The strategy to use for mapping Camel messages to HBase columns.
          * Supported values: header, or body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder mappingStrategyName(
                 String mappingStrategyName) {
@@ -128,9 +142,11 @@ public interface HBaseEndpointBuilderFactory {
          * number suffix for referring to more than one columns valueType - The
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder rowMapping(
                 Map<String, Object> rowMapping) {
@@ -148,10 +164,12 @@ public interface HBaseEndpointBuilderFactory {
          * number suffix for referring to more than one columns valueType - The
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder rowMapping(String rowMapping) {
             setProperty("rowMapping", rowMapping);
@@ -160,9 +178,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * An instance of org.apache.camel.component.hbase.model.HBaseRow which
          * describes how each row should be modeled.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder rowModel(Object rowModel) {
             setProperty("rowModel", rowModel);
@@ -171,9 +191,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * An instance of org.apache.camel.component.hbase.model.HBaseRow which
          * describes how each row should be modeled.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder rowModel(String rowModel) {
             setProperty("rowModel", rowModel);
@@ -181,9 +203,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Defines privileges to communicate with HBase such as using kerberos.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
                 Object userGroupInformation) {
@@ -192,9 +216,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Defines privileges to communicate with HBase such as using kerberos.
+         * 
          * The option will be converted to a
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
                 String userGroupInformation) {
@@ -209,8 +235,10 @@ public interface HBaseEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -225,8 +253,10 @@ public interface HBaseEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -237,8 +267,10 @@ public interface HBaseEndpointBuilderFactory {
          * Gets the maximum number of messages as a limit to poll at each
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -249,8 +281,10 @@ public interface HBaseEndpointBuilderFactory {
          * Gets the maximum number of messages as a limit to poll at each
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -259,8 +293,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The HBase operation to perform.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -269,8 +305,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * If the option is true, Camel HBase Consumer will remove the rows
          * which it processes.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder remove(boolean remove) {
             setProperty("remove", remove);
@@ -279,8 +317,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * If the option is true, Camel HBase Consumer will remove the rows
          * which it processes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder remove(String remove) {
             setProperty("remove", remove);
@@ -289,10 +329,12 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom HBaseRemoveHandler that is executed when a row is to
          * be removed.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hbase.HBaseRemoveHandler</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder removeHandler(Object removeHandler) {
             setProperty("removeHandler", removeHandler);
@@ -301,10 +343,12 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom HBaseRemoveHandler that is executed when a row is to
          * be removed.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.HBaseRemoveHandler</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HBaseEndpointConsumerBuilder removeHandler(String removeHandler) {
             setProperty("removeHandler", removeHandler);
@@ -326,9 +370,11 @@ public interface HBaseEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -340,9 +386,11 @@ public interface HBaseEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -351,8 +399,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -361,9 +411,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -373,8 +425,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -384,8 +438,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -395,8 +451,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -406,8 +464,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -427,8 +487,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The name of the table.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
@@ -437,9 +499,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
@@ -449,9 +513,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
@@ -460,9 +526,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * A list of filters to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
@@ -470,9 +538,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * A list of filters to use.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder filters(String filters) {
             setProperty("filters", filters);
@@ -480,8 +550,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The class name of a custom mapping strategy implementation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
@@ -491,8 +563,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The strategy to use for mapping Camel messages to HBase columns.
          * Supported values: header, or body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder mappingStrategyName(
                 String mappingStrategyName) {
@@ -510,9 +584,11 @@ public interface HBaseEndpointBuilderFactory {
          * number suffix for referring to more than one columns valueType - The
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder rowMapping(
                 Map<String, Object> rowMapping) {
@@ -530,10 +606,12 @@ public interface HBaseEndpointBuilderFactory {
          * number suffix for referring to more than one columns valueType - The
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder rowMapping(String rowMapping) {
             setProperty("rowMapping", rowMapping);
@@ -542,9 +620,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * An instance of org.apache.camel.component.hbase.model.HBaseRow which
          * describes how each row should be modeled.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder rowModel(Object rowModel) {
             setProperty("rowModel", rowModel);
@@ -553,9 +633,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * An instance of org.apache.camel.component.hbase.model.HBaseRow which
          * describes how each row should be modeled.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder rowModel(String rowModel) {
             setProperty("rowModel", rowModel);
@@ -563,9 +645,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Defines privileges to communicate with HBase such as using kerberos.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
                 Object userGroupInformation) {
@@ -574,9 +658,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Defines privileges to communicate with HBase such as using kerberos.
+         * 
          * The option will be converted to a
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
                 String userGroupInformation) {
@@ -593,8 +679,10 @@ public interface HBaseEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HBaseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -611,8 +699,10 @@ public interface HBaseEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HBaseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -621,8 +711,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The maximum number of rows to scan.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default HBaseEndpointProducerBuilder maxResults(int maxResults) {
             setProperty("maxResults", maxResults);
@@ -630,8 +722,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The maximum number of rows to scan.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HBaseEndpointProducerBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
@@ -651,8 +745,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -662,8 +758,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -673,8 +771,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -684,8 +784,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -705,8 +807,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The name of the table.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
@@ -715,9 +819,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
@@ -727,9 +833,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
@@ -738,9 +846,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * A list of filters to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder filters(List<Object> filters) {
             setProperty("filters", filters);
@@ -748,9 +858,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * A list of filters to use.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder filters(String filters) {
             setProperty("filters", filters);
@@ -758,8 +870,10 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * The class name of a custom mapping strategy implementation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
@@ -769,8 +883,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The strategy to use for mapping Camel messages to HBase columns.
          * Supported values: header, or body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder mappingStrategyName(
                 String mappingStrategyName) {
@@ -788,9 +904,11 @@ public interface HBaseEndpointBuilderFactory {
          * number suffix for referring to more than one columns valueType - The
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder rowMapping(Map<String, Object> rowMapping) {
             setProperty("rowMapping", rowMapping);
@@ -807,10 +925,12 @@ public interface HBaseEndpointBuilderFactory {
          * number suffix for referring to more than one columns valueType - The
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder rowMapping(String rowMapping) {
             setProperty("rowMapping", rowMapping);
@@ -819,9 +939,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * An instance of org.apache.camel.component.hbase.model.HBaseRow which
          * describes how each row should be modeled.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder rowModel(Object rowModel) {
             setProperty("rowModel", rowModel);
@@ -830,9 +952,11 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * An instance of org.apache.camel.component.hbase.model.HBaseRow which
          * describes how each row should be modeled.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder rowModel(String rowModel) {
             setProperty("rowModel", rowModel);
@@ -840,9 +964,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Defines privileges to communicate with HBase such as using kerberos.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder userGroupInformation(
                 Object userGroupInformation) {
@@ -851,9 +977,11 @@ public interface HBaseEndpointBuilderFactory {
         }
         /**
          * Defines privileges to communicate with HBase such as using kerberos.
+         * 
          * The option will be converted to a
          * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HBaseEndpointBuilder userGroupInformation(
                 String userGroupInformation) {
@@ -874,8 +1002,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -885,8 +1015,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -896,8 +1028,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -906,8 +1040,10 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

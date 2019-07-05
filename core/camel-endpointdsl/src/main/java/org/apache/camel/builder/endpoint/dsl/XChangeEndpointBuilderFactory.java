@@ -40,8 +40,10 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The exchange to connect to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default XChangeEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -49,9 +51,11 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The currency.
-         * The option is a <code>org.knowm.xchange.currency.Currency</code>
+         * 
+         * The option is a: <code>org.knowm.xchange.currency.Currency</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XChangeEndpointBuilder currency(Object currency) {
             setProperty("currency", currency);
@@ -59,9 +63,11 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The currency.
+         * 
          * The option will be converted to a
          * <code>org.knowm.xchange.currency.Currency</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XChangeEndpointBuilder currency(String currency) {
             setProperty("currency", currency);
@@ -69,9 +75,11 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The currency pair.
-         * The option is a <code>org.knowm.xchange.currency.CurrencyPair</code>
+         * 
+         * The option is a: <code>org.knowm.xchange.currency.CurrencyPair</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XChangeEndpointBuilder currencyPair(Object currencyPair) {
             setProperty("currencyPair", currencyPair);
@@ -79,9 +87,11 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The currency pair.
+         * 
          * The option will be converted to a
          * <code>org.knowm.xchange.currency.CurrencyPair</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XChangeEndpointBuilder currencyPair(String currencyPair) {
             setProperty("currencyPair", currencyPair);
@@ -89,9 +99,12 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The method to execute.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default XChangeEndpointBuilder method(XChangeMethod method) {
             setProperty("method", method);
@@ -99,9 +112,12 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The method to execute.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeMethod</code> type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default XChangeEndpointBuilder method(String method) {
             setProperty("method", method);
@@ -109,9 +125,12 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The service to call.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default XChangeEndpointBuilder service(XChangeService service) {
             setProperty("service", service);
@@ -119,9 +138,12 @@ public interface XChangeEndpointBuilderFactory {
         }
         /**
          * The service to call.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xchange.XChangeConfiguration$XChangeService</code> type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default XChangeEndpointBuilder service(String service) {
             setProperty("service", service);
@@ -141,8 +163,10 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -152,8 +176,10 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -163,8 +189,10 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -173,8 +201,10 @@ public interface XChangeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

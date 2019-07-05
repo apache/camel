@@ -42,8 +42,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * Sets the apiName.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -52,8 +54,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -62,8 +66,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Google sheets application name. Example would be
          * camel-google-sheets/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder applicationName(
                 String applicationName) {
@@ -72,8 +78,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * Client ID of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -81,8 +89,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * Client secret of the sheets application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder clientSecret(
                 String clientSecret) {
@@ -91,8 +101,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * True if grid data should be returned.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
                 boolean includeGridData) {
@@ -101,8 +113,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * True if grid data should be returned.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
                 String includeGridData) {
@@ -111,8 +125,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * Specifies the major dimension that results should use..
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder majorDimension(
                 String majorDimension) {
@@ -123,8 +139,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Specify the maximum number of returned results. This will limit the
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(int maxResults) {
             setProperty("maxResults", maxResults);
@@ -134,8 +152,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Specify the maximum number of returned results. This will limit the
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
@@ -143,8 +163,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * Specifies the range of rows and columns in a sheet to get data from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder range(String range) {
             setProperty("range", range);
@@ -154,8 +176,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder refreshToken(
                 String refreshToken) {
@@ -167,9 +191,11 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/identity/protocols/googlescopes for
          * more info.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
@@ -180,9 +206,11 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/identity/protocols/googlescopes for
          * more info.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -193,8 +221,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * process each of them individually. When true each row or column is
          * represented with a separate exchange in batch processing. Otherwise
          * value range object is used as exchange junk size.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
                 boolean splitResults) {
@@ -206,8 +236,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * process each of them individually. When true each row or column is
          * represented with a separate exchange in batch processing. Otherwise
          * value range object is used as exchange junk size.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
                 String splitResults) {
@@ -217,8 +249,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Specifies the spreadsheet identifier that is used to identify the
          * target to obtain.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder spreadsheetId(
                 String spreadsheetId) {
@@ -227,8 +261,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
         /**
          * Determines how values should be rendered in the output.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder valueRenderOption(
                 String valueRenderOption) {
@@ -249,8 +285,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -260,8 +298,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -271,8 +311,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -282,8 +324,10 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 String synchronous) {

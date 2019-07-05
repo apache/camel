@@ -40,9 +40,11 @@ public interface TikaEndpointBuilderFactory {
         }
         /**
          * Tika Operation. parse or detect.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.tika.TikaOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder operation(TikaOperation operation) {
             setProperty("operation", operation);
@@ -50,9 +52,11 @@ public interface TikaEndpointBuilderFactory {
         }
         /**
          * Tika Operation. parse or detect.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.tika.TikaOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -60,8 +64,10 @@ public interface TikaEndpointBuilderFactory {
         }
         /**
          * Tika Config.
-         * The option is a <code>org.apache.tika.config.TikaConfig</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.tika.config.TikaConfig</code> type.
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder tikaConfig(Object tikaConfig) {
             setProperty("tikaConfig", tikaConfig);
@@ -69,9 +75,11 @@ public interface TikaEndpointBuilderFactory {
         }
         /**
          * Tika Config.
+         * 
          * The option will be converted to a
          * <code>org.apache.tika.config.TikaConfig</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder tikaConfig(String tikaConfig) {
             setProperty("tikaConfig", tikaConfig);
@@ -79,8 +87,10 @@ public interface TikaEndpointBuilderFactory {
         }
         /**
          * Tika Config Uri: The URI of tika-config.xml.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder tikaConfigUri(String tikaConfigUri) {
             setProperty("tikaConfigUri", tikaConfigUri);
@@ -89,8 +99,10 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Tika Parse Output Encoding - Used to specify the character encoding
          * of the parsed output. Defaults to Charset.defaultCharset() .
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder tikaParseOutputEncoding(
                 String tikaParseOutputEncoding) {
@@ -102,10 +114,12 @@ public interface TikaEndpointBuilderFactory {
          * Content as XML. html: Returns Parsed Content as HTML. text: Returns
          * Parsed Content as Text. textMain: Uses the boilerpipe library to
          * automatically extract the main content from a web page.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder tikaParseOutputFormat(
                 TikaParseOutputFormat tikaParseOutputFormat) {
@@ -117,10 +131,12 @@ public interface TikaEndpointBuilderFactory {
          * Content as XML. html: Returns Parsed Content as HTML. text: Returns
          * Parsed Content as Text. textMain: Uses the boilerpipe library to
          * automatically extract the main content from a web page.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default TikaEndpointBuilder tikaParseOutputFormat(
                 String tikaParseOutputFormat) {
@@ -141,8 +157,10 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTikaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -152,8 +170,10 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTikaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -163,8 +183,10 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTikaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -173,8 +195,10 @@ public interface TikaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTikaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

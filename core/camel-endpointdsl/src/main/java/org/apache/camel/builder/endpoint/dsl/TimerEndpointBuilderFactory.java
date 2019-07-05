@@ -42,8 +42,10 @@ public interface TimerEndpointBuilderFactory {
         }
         /**
          * The name of the timer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder timerName(String timerName) {
             setProperty("timerName", timerName);
@@ -55,8 +57,10 @@ public interface TimerEndpointBuilderFactory {
          * The default value is 1000. You can also specify time values using
          * units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds),
          * and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -68,8 +72,10 @@ public interface TimerEndpointBuilderFactory {
          * The default value is 1000. You can also specify time values using
          * units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds),
          * and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -78,8 +84,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Events take place at approximately regular intervals, separated by
          * the specified period.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(boolean fixedRate) {
             setProperty("fixedRate", fixedRate);
@@ -88,8 +96,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Events take place at approximately regular intervals, separated by
          * the specified period.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(String fixedRate) {
             setProperty("fixedRate", fixedRate);
@@ -100,8 +110,10 @@ public interface TimerEndpointBuilderFactory {
          * milliseconds. The default value is 1000. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder period(long period) {
             setProperty("period", period);
@@ -112,8 +124,10 @@ public interface TimerEndpointBuilderFactory {
          * milliseconds. The default value is 1000. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder period(String period) {
             setProperty("period", period);
@@ -123,8 +137,10 @@ public interface TimerEndpointBuilderFactory {
          * Specifies a maximum limit of number of fires. So if you set it to 1,
          * the timer will only fire once. If you set it to 5, it will only fire
          * five times. A value of zero or negative means fire forever.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(long repeatCount) {
             setProperty("repeatCount", repeatCount);
@@ -134,8 +150,10 @@ public interface TimerEndpointBuilderFactory {
          * Specifies a maximum limit of number of fires. So if you set it to 1,
          * the timer will only fire once. If you set it to 5, it will only fire
          * five times. A value of zero or negative means fire forever.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(String repeatCount) {
             setProperty("repeatCount", repeatCount);
@@ -155,8 +173,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -166,8 +186,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -177,8 +199,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Specifies whether or not the thread associated with the timer
          * endpoint runs as a daemon. The default value is true.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(boolean daemon) {
             setProperty("daemon", daemon);
@@ -187,8 +211,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Specifies whether or not the thread associated with the timer
          * endpoint runs as a daemon. The default value is true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(String daemon) {
             setProperty("daemon", daemon);
@@ -197,8 +223,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Allows you to specify a custom Date pattern to use for setting the
          * time option using URI syntax.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder pattern(String pattern) {
             setProperty("pattern", pattern);
@@ -207,8 +235,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -217,8 +247,10 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -228,8 +260,10 @@ public interface TimerEndpointBuilderFactory {
          * A java.util.Date the first event should be generated. If using the
          * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
          * yyyy-MM-dd'T'HH:mm:ss.
-         * The option is a <code>java.util.Date</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Date</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(Date time) {
             setProperty("time", time);
@@ -239,8 +273,10 @@ public interface TimerEndpointBuilderFactory {
          * A java.util.Date the first event should be generated. If using the
          * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
          * yyyy-MM-dd'T'HH:mm:ss.
+         * 
          * The option will be converted to a <code>java.util.Date</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(String time) {
             setProperty("time", time);
@@ -248,8 +284,10 @@ public interface TimerEndpointBuilderFactory {
         }
         /**
          * To use a custom Timer.
-         * The option is a <code>java.util.Timer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Timer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(Timer timer) {
             setProperty("timer", timer);
@@ -257,8 +295,10 @@ public interface TimerEndpointBuilderFactory {
         }
         /**
          * To use a custom Timer.
+         * 
          * The option will be converted to a <code>java.util.Timer</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(String timer) {
             setProperty("timer", timer);

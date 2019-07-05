@@ -44,8 +44,10 @@ public interface ControlBusEndpointBuilderFactory {
         }
         /**
          * Command can be either route or language.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder command(String command) {
             setProperty("command", command);
@@ -55,8 +57,10 @@ public interface ControlBusEndpointBuilderFactory {
          * Allows you to specify the name of a Language to use for evaluating
          * the message body. If there is any result from the evaluation, then
          * the result is put in the message body.
-         * The option is a <code>org.apache.camel.spi.Language</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.camel.spi.Language</code> type.
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder language(Language language) {
             setProperty("language", language);
@@ -66,9 +70,11 @@ public interface ControlBusEndpointBuilderFactory {
          * Allows you to specify the name of a Language to use for evaluating
          * the message body. If there is any result from the evaluation, then
          * the result is put in the message body.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.Language</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder language(String language) {
             setProperty("language", language);
@@ -84,8 +90,10 @@ public interface ControlBusEndpointBuilderFactory {
          * to get the performance stats for, if routeId is not defined, then you
          * get statistics for the entire CamelContext. The restart action will
          * restart the route.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder action(String action) {
             setProperty("action", action);
@@ -95,8 +103,10 @@ public interface ControlBusEndpointBuilderFactory {
          * Whether to execute the control bus task asynchronously. Important: If
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder async(boolean async) {
             setProperty("async", async);
@@ -106,8 +116,10 @@ public interface ControlBusEndpointBuilderFactory {
          * Whether to execute the control bus task asynchronously. Important: If
          * this option is enabled, then any result from the task is not set on
          * the Exchange. This is only possible if executing tasks synchronously.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder async(String async) {
             setProperty("async", async);
@@ -116,8 +128,10 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * Logging level used for logging when task is done, or if any
          * exceptions occurred during processing the task.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
             setProperty("loggingLevel", loggingLevel);
@@ -126,9 +140,11 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * Logging level used for logging when task is done, or if any
          * exceptions occurred during processing the task.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(String loggingLevel) {
             setProperty("loggingLevel", loggingLevel);
@@ -136,8 +152,10 @@ public interface ControlBusEndpointBuilderFactory {
         }
         /**
          * The delay in millis to use when restarting a route.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder restartDelay(int restartDelay) {
             setProperty("restartDelay", restartDelay);
@@ -145,8 +163,10 @@ public interface ControlBusEndpointBuilderFactory {
         }
         /**
          * The delay in millis to use when restarting a route.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder restartDelay(String restartDelay) {
             setProperty("restartDelay", restartDelay);
@@ -155,8 +175,10 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * To specify a route by its id. The special keyword current indicates
          * the current route.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ControlBusEndpointBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
@@ -176,8 +198,10 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -187,8 +211,10 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -198,8 +224,10 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -209,8 +237,10 @@ public interface ControlBusEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

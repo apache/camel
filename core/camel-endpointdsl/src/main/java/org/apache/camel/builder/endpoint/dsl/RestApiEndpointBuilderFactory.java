@@ -40,8 +40,10 @@ public interface RestApiEndpointBuilderFactory {
         }
         /**
          * The base path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RestApiEndpointBuilder path(String path) {
             setProperty("path", path);
@@ -50,8 +52,10 @@ public interface RestApiEndpointBuilderFactory {
         /**
          * Optional CamelContext id pattern to only allow Rest APIs from rest
          * services within CamelContext's which name matches the pattern.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RestApiEndpointBuilder contextIdPattern(String contextIdPattern) {
             setProperty("contextIdPattern", contextIdPattern);
@@ -60,8 +64,10 @@ public interface RestApiEndpointBuilderFactory {
         /**
          * The Camel Rest API component to use for generating the API of the
          * REST services, such as swagger.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RestApiEndpointBuilder apiComponentName(String apiComponentName) {
             setProperty("apiComponentName", apiComponentName);
@@ -74,8 +80,10 @@ public interface RestApiEndpointBuilderFactory {
          * integrates with the Rest DSL, or if a
          * org.apache.camel.spi.RestConsumerFactory is registered in the
          * registry. If either one is found, then that is being used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RestApiEndpointBuilder consumerComponentName(
                 String consumerComponentName) {
@@ -96,8 +104,10 @@ public interface RestApiEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -107,8 +117,10 @@ public interface RestApiEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -118,8 +130,10 @@ public interface RestApiEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -128,8 +142,10 @@ public interface RestApiEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

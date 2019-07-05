@@ -40,9 +40,11 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Operation type.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.pdf.PdfOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder operation(PdfOperation operation) {
             setProperty("operation", operation);
@@ -50,9 +52,11 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Operation type.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.pdf.PdfOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -60,9 +64,11 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Font.
-         * The option is a <code>org.apache.pdfbox.pdmodel.font.PDFont</code>
+         * 
+         * The option is a: <code>org.apache.pdfbox.pdmodel.font.PDFont</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder font(Object font) {
             setProperty("font", font);
@@ -70,9 +76,11 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Font.
+         * 
          * The option will be converted to a
          * <code>org.apache.pdfbox.pdmodel.font.PDFont</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder font(String font) {
             setProperty("font", font);
@@ -80,8 +88,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Font size in pixels.
-         * The option is a <code>float</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>float</code> type.
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder fontSize(float fontSize) {
             setProperty("fontSize", fontSize);
@@ -89,8 +99,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Font size in pixels.
+         * 
          * The option will be converted to a <code>float</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder fontSize(String fontSize) {
             setProperty("fontSize", fontSize);
@@ -98,8 +110,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin bottom in pixels.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginBottom(int marginBottom) {
             setProperty("marginBottom", marginBottom);
@@ -107,8 +121,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin bottom in pixels.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginBottom(String marginBottom) {
             setProperty("marginBottom", marginBottom);
@@ -116,8 +132,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin left in pixels.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginLeft(int marginLeft) {
             setProperty("marginLeft", marginLeft);
@@ -125,8 +143,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin left in pixels.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginLeft(String marginLeft) {
             setProperty("marginLeft", marginLeft);
@@ -134,8 +154,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin right in pixels.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginRight(int marginRight) {
             setProperty("marginRight", marginRight);
@@ -143,8 +165,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin right in pixels.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginRight(String marginRight) {
             setProperty("marginRight", marginRight);
@@ -152,8 +176,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin top in pixels.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginTop(int marginTop) {
             setProperty("marginTop", marginTop);
@@ -161,8 +187,10 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Margin top in pixels.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder marginTop(String marginTop) {
             setProperty("marginTop", marginTop);
@@ -170,9 +198,11 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Page size.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.pdfbox.pdmodel.common.PDRectangle</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder pageSize(Object pageSize) {
             setProperty("pageSize", pageSize);
@@ -180,9 +210,11 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Page size.
+         * 
          * The option will be converted to a
          * <code>org.apache.pdfbox.pdmodel.common.PDRectangle</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
@@ -196,10 +228,12 @@ public interface PdfEndpointBuilderFactory {
          * of classes for line-termination writing strategy. Text getting sliced
          * by line termination symbol and then it will be written regardless it
          * fits in the line or not.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.pdf.TextProcessingFactory</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder textProcessingFactory(
                 TextProcessingFactory textProcessingFactory) {
@@ -214,10 +248,12 @@ public interface PdfEndpointBuilderFactory {
          * of classes for line-termination writing strategy. Text getting sliced
          * by line termination symbol and then it will be written regardless it
          * fits in the line or not.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.pdf.TextProcessingFactory</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PdfEndpointBuilder textProcessingFactory(
                 String textProcessingFactory) {
@@ -238,8 +274,10 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPdfEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -249,8 +287,10 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPdfEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -260,8 +300,10 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPdfEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -270,8 +312,10 @@ public interface PdfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPdfEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -44,8 +44,10 @@ public interface PropertiesEndpointBuilderFactory {
         }
         /**
          * Property key to use as placeholder.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PropertiesEndpointConsumerBuilder key(String key) {
             setProperty("key", key);
@@ -59,8 +61,10 @@ public interface PropertiesEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,8 +79,10 @@ public interface PropertiesEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default PropertiesEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -99,9 +105,11 @@ public interface PropertiesEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -113,9 +121,11 @@ public interface PropertiesEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPropertiesEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -124,8 +134,10 @@ public interface PropertiesEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -134,9 +146,11 @@ public interface PropertiesEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPropertiesEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -146,8 +160,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -157,8 +173,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -168,8 +186,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -179,8 +199,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -200,8 +222,10 @@ public interface PropertiesEndpointBuilderFactory {
         }
         /**
          * Property key to use as placeholder.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PropertiesEndpointProducerBuilder key(String key) {
             setProperty("key", key);
@@ -217,8 +241,10 @@ public interface PropertiesEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default PropertiesEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -235,8 +261,10 @@ public interface PropertiesEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PropertiesEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -257,8 +285,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -268,8 +298,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -279,8 +311,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -290,8 +324,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -311,8 +347,10 @@ public interface PropertiesEndpointBuilderFactory {
         }
         /**
          * Property key to use as placeholder.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PropertiesEndpointBuilder key(String key) {
             setProperty("key", key);
@@ -332,8 +370,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -343,8 +383,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -354,8 +396,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -365,8 +409,10 @@ public interface PropertiesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPropertiesEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

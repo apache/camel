@@ -40,8 +40,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Hostname of the FTP server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -49,8 +51,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -58,8 +62,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -67,8 +73,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * The starting directory.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
@@ -79,8 +87,10 @@ public interface ScpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ScpEndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
@@ -91,8 +101,10 @@ public interface ScpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ScpEndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
@@ -100,8 +112,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Allows you to set chmod on the stored file. For example chmod=664.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder chmod(String chmod) {
             setProperty("chmod", chmod);
@@ -124,8 +138,10 @@ public interface ScpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
@@ -148,9 +164,11 @@ public interface ScpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -159,8 +177,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets whether to use strict host key checking. Possible values are:
          * no, yes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ScpEndpointBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
@@ -171,8 +191,10 @@ public interface ScpEndpointBuilderFactory {
          * Sets the known_hosts file, so that the jsch endpoint can do host key
          * verification. You can prefix with classpath: to load the file from
          * classpath instead of file system.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
@@ -180,8 +202,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Password to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -193,8 +217,10 @@ public interface ScpEndpointBuilderFactory {
          * JCraft JSCH. Some examples include:
          * gssapi-with-mic,publickey,keyboard-interactive,password If not
          * specified the JSCH and/or system defaults will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder preferredAuthentications(
                 String preferredAuthentications) {
@@ -205,8 +231,10 @@ public interface ScpEndpointBuilderFactory {
          * Set the private key bytes to that the endpoint can do private key
          * verification. This must be used only if privateKeyFile wasn't set.
          * Otherwise the file will have the priority.
-         * The option is a <code>byte[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
             setProperty("privateKeyBytes", privateKeyBytes);
@@ -216,8 +244,10 @@ public interface ScpEndpointBuilderFactory {
          * Set the private key bytes to that the endpoint can do private key
          * verification. This must be used only if privateKeyFile wasn't set.
          * Otherwise the file will have the priority.
+         * 
          * The option will be converted to a <code>byte[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
             setProperty("privateKeyBytes", privateKeyBytes);
@@ -227,8 +257,10 @@ public interface ScpEndpointBuilderFactory {
          * Set the private key file to that the endpoint can do private key
          * verification. You can prefix with classpath: to load the file from
          * classpath instead of file system.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
@@ -237,8 +269,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Set the private key file passphrase to that the endpoint can do
          * private key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder privateKeyFilePassphrase(
                 String privateKeyFilePassphrase) {
@@ -247,8 +281,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Username to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -257,8 +293,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured, then use the host
          * file from System.getProperty(user.home) /.ssh/known_hosts.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
@@ -268,8 +306,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured, then use the host
          * file from System.getProperty(user.home) /.ssh/known_hosts.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
@@ -290,8 +330,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -301,8 +343,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -312,8 +356,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
@@ -322,8 +368,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder connectTimeout(String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
@@ -335,8 +383,10 @@ public interface ScpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -348,8 +398,10 @@ public interface ScpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -358,8 +410,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -368,8 +422,10 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -377,8 +433,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -386,8 +444,10 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -398,8 +458,10 @@ public interface ScpEndpointBuilderFactory {
          * preference. Possible cipher names are defined by JCraft JSCH. Some
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security (advanced)
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security (advanced)
          */
         default AdvancedScpEndpointBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);

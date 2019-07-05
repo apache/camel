@@ -45,8 +45,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Kind of stream to use such as System.in or System.out.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointConsumerBuilder kind(String kind) {
             setProperty("kind", kind);
@@ -56,8 +58,10 @@ public interface StreamEndpointBuilderFactory {
          * You can configure the encoding (is a charset name) to use text-based
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointConsumerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -66,8 +70,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointConsumerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -77,8 +83,10 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:url URI format, this option specifies the URL
          * to stream to/from. The input/output stream will be opened using the
          * JDK URLConnection facility.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointConsumerBuilder url(String url) {
             setProperty("url", url);
@@ -92,8 +100,10 @@ public interface StreamEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -108,8 +118,10 @@ public interface StreamEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -119,8 +131,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * To use JVM file watcher to listen for file change events to support
          * re-loading files that may be overwritten, somewhat like tail --retry.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder fileWatcher(boolean fileWatcher) {
             setProperty("fileWatcher", fileWatcher);
@@ -129,8 +143,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * To use JVM file watcher to listen for file change events to support
          * re-loading files that may be overwritten, somewhat like tail --retry.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder fileWatcher(String fileWatcher) {
             setProperty("fileWatcher", fileWatcher);
@@ -140,8 +156,10 @@ public interface StreamEndpointBuilderFactory {
          * To group X number of lines in the consumer. For example to group 10
          * lines and therefore only spit out an Exchange with 10 lines, instead
          * of 1 Exchange per line.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupLines(int groupLines) {
             setProperty("groupLines", groupLines);
@@ -151,8 +169,10 @@ public interface StreamEndpointBuilderFactory {
          * To group X number of lines in the consumer. For example to group 10
          * lines and therefore only spit out an Exchange with 10 lines, instead
          * of 1 Exchange per line.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupLines(String groupLines) {
             setProperty("groupLines", groupLines);
@@ -160,9 +180,11 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Allows to use a custom GroupStrategy to control how to group lines.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupStrategy(Object groupStrategy) {
             setProperty("groupStrategy", groupStrategy);
@@ -170,9 +192,11 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Allows to use a custom GroupStrategy to control how to group lines.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder groupStrategy(String groupStrategy) {
             setProperty("groupStrategy", groupStrategy);
@@ -183,8 +207,10 @@ public interface StreamEndpointBuilderFactory {
          * delay occurs only once. Can be used during system startup to avoid
          * message prompts being written while other logging is done to the
          * system out.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder initialPromptDelay(
                 long initialPromptDelay) {
@@ -196,8 +222,10 @@ public interface StreamEndpointBuilderFactory {
          * delay occurs only once. Can be used during system startup to avoid
          * message prompts being written while other logging is done to the
          * system out.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder initialPromptDelay(
                 String initialPromptDelay) {
@@ -206,8 +234,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional delay in milliseconds before showing the message prompt.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptDelay(long promptDelay) {
             setProperty("promptDelay", promptDelay);
@@ -215,8 +245,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional delay in milliseconds before showing the message prompt.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptDelay(String promptDelay) {
             setProperty("promptDelay", promptDelay);
@@ -225,8 +257,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Message prompt to use when reading from stream:in; for example, you
          * could set this to Enter a command:.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder promptMessage(String promptMessage) {
             setProperty("promptMessage", promptMessage);
@@ -236,8 +270,10 @@ public interface StreamEndpointBuilderFactory {
          * Will retry opening the stream if it's overwritten, somewhat like tail
          * --retry If reading from files then you should also enable the
          * fileWatcher option, to make it work reliable.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder retry(boolean retry) {
             setProperty("retry", retry);
@@ -247,8 +283,10 @@ public interface StreamEndpointBuilderFactory {
          * Will retry opening the stream if it's overwritten, somewhat like tail
          * --retry If reading from files then you should also enable the
          * fileWatcher option, to make it work reliable.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder retry(String retry) {
             setProperty("retry", retry);
@@ -257,8 +295,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * To be used for continuously reading a stream such as the unix tail
          * command.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStream(boolean scanStream) {
             setProperty("scanStream", scanStream);
@@ -267,8 +307,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * To be used for continuously reading a stream such as the unix tail
          * command.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStream(String scanStream) {
             setProperty("scanStream", scanStream);
@@ -276,8 +318,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Delay in milliseconds between read attempts when using scanStream.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
                 long scanStreamDelay) {
@@ -286,8 +330,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Delay in milliseconds between read attempts when using scanStream.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
                 String scanStreamDelay) {
@@ -310,9 +356,11 @@ public interface StreamEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -324,9 +372,11 @@ public interface StreamEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -335,8 +385,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -345,9 +397,11 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -357,8 +411,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -368,8 +424,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -382,8 +440,10 @@ public interface StreamEndpointBuilderFactory {
          * URLConnection. If the timeout expires before the connection can be
          * established, a java.net.SocketTimeoutException is raised. A timeout
          * of zero is interpreted as an infinite timeout.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
@@ -396,8 +456,10 @@ public interface StreamEndpointBuilderFactory {
          * URLConnection. If the timeout expires before the connection can be
          * established, a java.net.SocketTimeoutException is raised. A timeout
          * of zero is interpreted as an infinite timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
@@ -406,9 +468,11 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional http headers to use in request when using HTTP URL.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
@@ -417,10 +481,12 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional http headers to use in request when using HTTP URL.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder httpHeaders(
                 String httpHeaders) {
@@ -434,8 +500,10 @@ public interface StreamEndpointBuilderFactory {
          * expires before there is data available for read, a
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 int readTimeout) {
@@ -449,8 +517,10 @@ public interface StreamEndpointBuilderFactory {
          * expires before there is data available for read, a
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 String readTimeout) {
@@ -460,8 +530,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -471,8 +543,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -492,8 +566,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Kind of stream to use such as System.in or System.out.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointProducerBuilder kind(String kind) {
             setProperty("kind", kind);
@@ -503,8 +579,10 @@ public interface StreamEndpointBuilderFactory {
          * You can configure the encoding (is a charset name) to use text-based
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointProducerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -513,8 +591,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointProducerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -524,8 +604,10 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:url URI format, this option specifies the URL
          * to stream to/from. The input/output stream will be opened using the
          * JDK URLConnection facility.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointProducerBuilder url(String url) {
             setProperty("url", url);
@@ -536,8 +618,10 @@ public interface StreamEndpointBuilderFactory {
          * Never close stream by default (only when Producer is stopped). If
          * more messages are sent, the stream is reopened for another
          * autoCloseCount batch.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder autoCloseCount(int autoCloseCount) {
             setProperty("autoCloseCount", autoCloseCount);
@@ -548,8 +632,10 @@ public interface StreamEndpointBuilderFactory {
          * Never close stream by default (only when Producer is stopped). If
          * more messages are sent, the stream is reopened for another
          * autoCloseCount batch.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder autoCloseCount(
                 String autoCloseCount) {
@@ -561,8 +647,10 @@ public interface StreamEndpointBuilderFactory {
          * same file. The idea is to keep the stream open and only close when
          * the Splitter is done, to improve performance. Mind this requires that
          * you only stream to the same file, and not 2 or more files.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder closeOnDone(boolean closeOnDone) {
             setProperty("closeOnDone", closeOnDone);
@@ -573,8 +661,10 @@ public interface StreamEndpointBuilderFactory {
          * same file. The idea is to keep the stream open and only close when
          * the Splitter is done, to improve performance. Mind this requires that
          * you only stream to the same file, and not 2 or more files.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder closeOnDone(String closeOnDone) {
             setProperty("closeOnDone", closeOnDone);
@@ -582,8 +672,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Initial delay in milliseconds before producing the stream.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -591,8 +683,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Initial delay in milliseconds before producing the stream.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -608,8 +702,10 @@ public interface StreamEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -626,8 +722,10 @@ public interface StreamEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default StreamEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -648,8 +746,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -659,8 +759,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -673,8 +775,10 @@ public interface StreamEndpointBuilderFactory {
          * URLConnection. If the timeout expires before the connection can be
          * established, a java.net.SocketTimeoutException is raised. A timeout
          * of zero is interpreted as an infinite timeout.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
@@ -687,8 +791,10 @@ public interface StreamEndpointBuilderFactory {
          * URLConnection. If the timeout expires before the connection can be
          * established, a java.net.SocketTimeoutException is raised. A timeout
          * of zero is interpreted as an infinite timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -697,9 +803,11 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional http headers to use in request when using HTTP URL.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
@@ -708,10 +816,12 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional http headers to use in request when using HTTP URL.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder httpHeaders(
                 String httpHeaders) {
@@ -725,8 +835,10 @@ public interface StreamEndpointBuilderFactory {
          * expires before there is data available for read, a
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
                 int readTimeout) {
@@ -740,8 +852,10 @@ public interface StreamEndpointBuilderFactory {
          * expires before there is data available for read, a
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
                 String readTimeout) {
@@ -751,8 +865,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -762,8 +878,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -783,8 +901,10 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Kind of stream to use such as System.in or System.out.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointBuilder kind(String kind) {
             setProperty("kind", kind);
@@ -794,8 +914,10 @@ public interface StreamEndpointBuilderFactory {
          * You can configure the encoding (is a charset name) to use text-based
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -804,8 +926,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -815,8 +939,10 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:url URI format, this option specifies the URL
          * to stream to/from. The input/output stream will be opened using the
          * JDK URLConnection facility.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default StreamEndpointBuilder url(String url) {
             setProperty("url", url);
@@ -836,8 +962,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -847,8 +975,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -861,8 +991,10 @@ public interface StreamEndpointBuilderFactory {
          * URLConnection. If the timeout expires before the connection can be
          * established, a java.net.SocketTimeoutException is raised. A timeout
          * of zero is interpreted as an infinite timeout.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
@@ -874,8 +1006,10 @@ public interface StreamEndpointBuilderFactory {
          * URLConnection. If the timeout expires before the connection can be
          * established, a java.net.SocketTimeoutException is raised. A timeout
          * of zero is interpreted as an infinite timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder connectTimeout(
                 String connectTimeout) {
@@ -884,9 +1018,11 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional http headers to use in request when using HTTP URL.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder httpHeaders(
                 Map<String, Object> httpHeaders) {
@@ -895,10 +1031,12 @@ public interface StreamEndpointBuilderFactory {
         }
         /**
          * Optional http headers to use in request when using HTTP URL.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder httpHeaders(String httpHeaders) {
             setProperty("httpHeaders", httpHeaders);
@@ -911,8 +1049,10 @@ public interface StreamEndpointBuilderFactory {
          * expires before there is data available for read, a
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder readTimeout(int readTimeout) {
             setProperty("readTimeout", readTimeout);
@@ -925,8 +1065,10 @@ public interface StreamEndpointBuilderFactory {
          * expires before there is data available for read, a
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder readTimeout(String readTimeout) {
             setProperty("readTimeout", readTimeout);
@@ -935,8 +1077,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -945,8 +1089,10 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStreamEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -41,8 +41,10 @@ public interface IPFSEndpointBuilderFactory {
         }
         /**
          * The ipfs command.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default IPFSEndpointBuilder ipfsCmd(String ipfsCmd) {
             setProperty("ipfsCmd", ipfsCmd);
@@ -50,8 +52,10 @@ public interface IPFSEndpointBuilderFactory {
         }
         /**
          * The ipfs output directory.
-         * The option is a <code>java.nio.file.Path</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.nio.file.Path</code> type.
+         * 
+         * Group: producer
          */
         default IPFSEndpointBuilder outdir(Path outdir) {
             setProperty("outdir", outdir);
@@ -59,9 +63,11 @@ public interface IPFSEndpointBuilderFactory {
         }
         /**
          * The ipfs output directory.
+         * 
          * The option will be converted to a <code>java.nio.file.Path</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default IPFSEndpointBuilder outdir(String outdir) {
             setProperty("outdir", outdir);
@@ -81,8 +87,10 @@ public interface IPFSEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -92,8 +100,10 @@ public interface IPFSEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -103,8 +113,10 @@ public interface IPFSEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -113,8 +125,10 @@ public interface IPFSEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

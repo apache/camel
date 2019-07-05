@@ -44,8 +44,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * If a path (/foo) it will deploy locally the endpoint, if an uri it
          * will connect to the corresponding server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder websocketPathOrUri(
                 String websocketPathOrUri) {
@@ -54,8 +56,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         }
         /**
          * the servlet context to use (represented by its path).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder context(String context) {
             setProperty("context", context);
@@ -64,8 +68,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 int sessionCount) {
@@ -75,8 +81,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 String sessionCount) {
@@ -91,8 +99,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -107,8 +117,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -132,9 +144,11 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -146,9 +160,11 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -157,8 +173,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -167,9 +185,11 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -179,8 +199,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -190,8 +212,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -201,8 +225,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -212,8 +238,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -234,8 +262,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * If a path (/foo) it will deploy locally the endpoint, if an uri it
          * will connect to the corresponding server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder websocketPathOrUri(
                 String websocketPathOrUri) {
@@ -244,8 +274,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         }
         /**
          * the servlet context to use (represented by its path).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder context(String context) {
             setProperty("context", context);
@@ -254,8 +286,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 int sessionCount) {
@@ -265,8 +299,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 String sessionCount) {
@@ -283,8 +319,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -301,8 +339,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -324,8 +364,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -335,8 +377,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -346,8 +390,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -357,8 +403,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -379,8 +427,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * If a path (/foo) it will deploy locally the endpoint, if an uri it
          * will connect to the corresponding server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointBuilder websocketPathOrUri(
                 String websocketPathOrUri) {
@@ -389,8 +439,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         }
         /**
          * the servlet context to use (represented by its path).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointBuilder context(String context) {
             setProperty("context", context);
@@ -399,8 +451,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(int sessionCount) {
             setProperty("sessionCount", sessionCount);
@@ -409,8 +463,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JSR356WebSocketEndpointBuilder sessionCount(String sessionCount) {
             setProperty("sessionCount", sessionCount);
@@ -430,8 +486,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -441,8 +499,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -452,8 +512,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -463,8 +525,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 String synchronous) {

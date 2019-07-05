@@ -49,8 +49,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Name has no purpose.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -58,8 +60,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk app.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder app(String app) {
             setProperty("app", app);
@@ -67,8 +71,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Timeout in MS when connecting to Splunk server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -77,8 +83,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Timeout in MS when connecting to Splunk server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -87,8 +95,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -96,8 +106,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk owner.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder owner(String owner) {
             setProperty("owner", owner);
@@ -105,8 +117,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk port.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -114,8 +128,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk port.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -123,8 +139,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk scheme.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointConsumerBuilder scheme(String scheme) {
             setProperty("scheme", scheme);
@@ -138,8 +156,10 @@ public interface SplunkEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -154,8 +174,10 @@ public interface SplunkEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -164,8 +186,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * A number that indicates the maximum number of entities to return.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder count(int count) {
             setProperty("count", count);
@@ -173,8 +197,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * A number that indicates the maximum number of entities to return.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder count(String count) {
             setProperty("count", count);
@@ -182,8 +208,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Earliest time of the search time window.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder earliestTime(String earliestTime) {
             setProperty("earliestTime", earliestTime);
@@ -191,8 +219,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Initial start offset of the first search.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder initEarliestTime(
                 String initEarliestTime) {
@@ -201,8 +231,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Latest time of the search time window.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder latestTime(String latestTime) {
             setProperty("latestTime", latestTime);
@@ -210,8 +242,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * The name of the query saved in Splunk to run.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder savedSearch(String savedSearch) {
             setProperty("savedSearch", savedSearch);
@@ -219,8 +253,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * The Splunk query to run.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder search(String search) {
             setProperty("search", search);
@@ -229,8 +265,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -240,8 +278,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -251,8 +291,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder streaming(Boolean streaming) {
             setProperty("streaming", streaming);
@@ -261,9 +303,11 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SplunkEndpointConsumerBuilder streaming(String streaming) {
             setProperty("streaming", streaming);
@@ -272,8 +316,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -283,8 +329,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -294,8 +342,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -305,8 +355,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -320,8 +372,10 @@ public interface SplunkEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -335,8 +389,10 @@ public interface SplunkEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -347,8 +403,10 @@ public interface SplunkEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -358,8 +416,10 @@ public interface SplunkEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -368,8 +428,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -378,8 +440,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -389,8 +453,10 @@ public interface SplunkEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -400,8 +466,10 @@ public interface SplunkEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -410,8 +478,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -421,9 +491,11 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -434,9 +506,11 @@ public interface SplunkEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -447,9 +521,11 @@ public interface SplunkEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -459,10 +535,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -472,10 +550,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -484,9 +564,11 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -496,10 +578,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -508,8 +592,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -518,8 +604,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -528,8 +616,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -537,9 +627,11 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -548,8 +640,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -559,8 +653,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -568,8 +664,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Password for Splunk.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -577,8 +675,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Set the ssl protocol to use.
-         * The option is a <code>com.splunk.SSLSecurityProtocol</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.splunk.SSLSecurityProtocol</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointConsumerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
@@ -587,9 +687,11 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Set the ssl protocol to use.
+         * 
          * The option will be converted to a
          * <code>com.splunk.SSLSecurityProtocol</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SplunkEndpointConsumerBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
@@ -597,8 +699,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Username for Splunk.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -608,8 +712,10 @@ public interface SplunkEndpointBuilderFactory {
          * Use sun.net.www.protocol.https.Handler Https handler to establish the
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
@@ -620,8 +726,10 @@ public interface SplunkEndpointBuilderFactory {
          * Use sun.net.www.protocol.https.Handler Https handler to establish the
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
@@ -644,9 +752,11 @@ public interface SplunkEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -658,9 +768,11 @@ public interface SplunkEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -669,8 +781,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -679,9 +793,11 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -693,9 +809,11 @@ public interface SplunkEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -707,9 +825,11 @@ public interface SplunkEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -719,8 +839,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -730,8 +852,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -741,8 +865,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -752,8 +878,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -773,8 +901,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Name has no purpose.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -782,8 +912,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk app.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder app(String app) {
             setProperty("app", app);
@@ -791,8 +923,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Timeout in MS when connecting to Splunk server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -801,8 +935,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Timeout in MS when connecting to Splunk server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -811,8 +947,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -820,8 +958,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk owner.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder owner(String owner) {
             setProperty("owner", owner);
@@ -829,8 +969,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk port.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -838,8 +980,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk port.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -847,8 +991,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk scheme.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointProducerBuilder scheme(String scheme) {
             setProperty("scheme", scheme);
@@ -856,8 +1002,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Override the default Splunk event host field.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder eventHost(String eventHost) {
             setProperty("eventHost", eventHost);
@@ -865,8 +1013,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk index to write to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder index(String index) {
             setProperty("index", index);
@@ -882,8 +1032,10 @@ public interface SplunkEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -900,8 +1052,10 @@ public interface SplunkEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -910,8 +1064,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Should the payload be inserted raw.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder raw(boolean raw) {
             setProperty("raw", raw);
@@ -919,8 +1075,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Should the payload be inserted raw.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder raw(String raw) {
             setProperty("raw", raw);
@@ -928,8 +1086,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk source argument.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder source(String source) {
             setProperty("source", source);
@@ -937,8 +1097,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk sourcetype argument.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder sourceType(String sourceType) {
             setProperty("sourceType", sourceType);
@@ -946,8 +1108,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk tcp receiver port.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
                 int tcpReceiverPort) {
@@ -956,8 +1120,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk tcp receiver port.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
                 String tcpReceiverPort) {
@@ -966,8 +1132,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Password for Splunk.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -975,8 +1143,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Set the ssl protocol to use.
-         * The option is a <code>com.splunk.SSLSecurityProtocol</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.splunk.SSLSecurityProtocol</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointProducerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
@@ -985,9 +1155,11 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Set the ssl protocol to use.
+         * 
          * The option will be converted to a
          * <code>com.splunk.SSLSecurityProtocol</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SplunkEndpointProducerBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
@@ -995,8 +1167,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Username for Splunk.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -1006,8 +1180,10 @@ public interface SplunkEndpointBuilderFactory {
          * Use sun.net.www.protocol.https.Handler Https handler to establish the
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
@@ -1018,8 +1194,10 @@ public interface SplunkEndpointBuilderFactory {
          * Use sun.net.www.protocol.https.Handler Https handler to establish the
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
@@ -1040,8 +1218,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1051,8 +1231,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1062,8 +1244,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1073,8 +1257,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1094,8 +1280,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Name has no purpose.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -1103,8 +1291,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk app.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder app(String app) {
             setProperty("app", app);
@@ -1112,8 +1302,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Timeout in MS when connecting to Splunk server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder connectionTimeout(int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
@@ -1121,8 +1313,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Timeout in MS when connecting to Splunk server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder connectionTimeout(String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
@@ -1130,8 +1324,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -1139,8 +1335,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk owner.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder owner(String owner) {
             setProperty("owner", owner);
@@ -1148,8 +1346,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk port.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -1157,8 +1357,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk port.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -1166,8 +1368,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Splunk scheme.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SplunkEndpointBuilder scheme(String scheme) {
             setProperty("scheme", scheme);
@@ -1175,8 +1379,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Password for Splunk.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -1184,8 +1390,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Set the ssl protocol to use.
-         * The option is a <code>com.splunk.SSLSecurityProtocol</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.splunk.SSLSecurityProtocol</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
@@ -1194,9 +1402,11 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Set the ssl protocol to use.
+         * 
          * The option will be converted to a
          * <code>com.splunk.SSLSecurityProtocol</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SplunkEndpointBuilder sslProtocol(String sslProtocol) {
             setProperty("sslProtocol", sslProtocol);
@@ -1204,8 +1414,10 @@ public interface SplunkEndpointBuilderFactory {
         }
         /**
          * Username for Splunk.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1215,8 +1427,10 @@ public interface SplunkEndpointBuilderFactory {
          * Use sun.net.www.protocol.https.Handler Https handler to establish the
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default SplunkEndpointBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
@@ -1227,8 +1441,10 @@ public interface SplunkEndpointBuilderFactory {
          * Use sun.net.www.protocol.https.Handler Https handler to establish the
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SplunkEndpointBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
@@ -1249,8 +1465,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1260,8 +1478,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1271,8 +1491,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1281,8 +1503,10 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

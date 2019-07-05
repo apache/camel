@@ -56,8 +56,10 @@ public interface ServletEndpointBuilderFactory {
          * response body stream. If setting this option to true, then the
          * producers will not cache the response body stream but use the
          * response stream as-is as the message body.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ServletEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -81,8 +83,10 @@ public interface ServletEndpointBuilderFactory {
          * response body stream. If setting this option to true, then the
          * producers will not cache the response body stream but use the
          * response stream as-is as the message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServletEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -92,9 +96,11 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServletEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -104,9 +110,11 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ServletEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -116,8 +124,10 @@ public interface ServletEndpointBuilderFactory {
         /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ServletEndpointBuilder chunked(boolean chunked) {
             setProperty("chunked", chunked);
@@ -126,8 +136,10 @@ public interface ServletEndpointBuilderFactory {
         /**
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ServletEndpointBuilder chunked(String chunked) {
             setProperty("chunked", chunked);
@@ -143,8 +155,10 @@ public interface ServletEndpointBuilderFactory {
          * enable this then be aware that Java will deserialize the incoming
          * data from the request to Java and that can be a potential security
          * risk.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ServletEndpointBuilder transferException(
                 boolean transferException) {
@@ -161,8 +175,10 @@ public interface ServletEndpointBuilderFactory {
          * enable this then be aware that Java will deserialize the incoming
          * data from the request to Java and that can be a potential security
          * risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ServletEndpointBuilder transferException(
                 String transferException) {
@@ -183,9 +199,11 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
-         * The option is a <code>org.apache.camel.http.common.HttpBinding</code>
-         * type.
-         * @group common (advanced)
+         * 
+         * The option is a:
+         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedServletEndpointBuilder httpBinding(Object httpBinding) {
             setProperty("httpBinding", httpBinding);
@@ -194,9 +212,11 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom HttpBinding to control the mapping between Camel
          * message and HttpClient.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.http.common.HttpBinding</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedServletEndpointBuilder httpBinding(String httpBinding) {
             setProperty("httpBinding", httpBinding);
@@ -205,8 +225,10 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -216,8 +238,10 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -228,8 +252,10 @@ public interface ServletEndpointBuilderFactory {
          * If this option is true then IN exchange Body of the exchange will be
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
@@ -240,8 +266,10 @@ public interface ServletEndpointBuilderFactory {
          * If this option is true then IN exchange Body of the exchange will be
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
@@ -252,8 +280,10 @@ public interface ServletEndpointBuilderFactory {
          * If this option is true then IN exchange Form Encoded body of the
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
@@ -264,8 +294,10 @@ public interface ServletEndpointBuilderFactory {
          * If this option is true then IN exchange Form Encoded body of the
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
@@ -276,8 +308,10 @@ public interface ServletEndpointBuilderFactory {
          * If this option is true then IN exchange Headers of the exchange will
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
@@ -288,8 +322,10 @@ public interface ServletEndpointBuilderFactory {
          * If this option is true then IN exchange Headers of the exchange will
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
@@ -299,8 +335,10 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -309,8 +347,10 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServletEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

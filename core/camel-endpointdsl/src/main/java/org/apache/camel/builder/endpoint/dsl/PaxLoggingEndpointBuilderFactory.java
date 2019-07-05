@@ -43,8 +43,10 @@ public interface PaxLoggingEndpointBuilderFactory {
         /**
          * Appender is the name of the pax appender that need to be configured
          * in the PaxLogging service configuration.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default PaxLoggingEndpointBuilder appender(String appender) {
             setProperty("appender", appender);
@@ -64,8 +66,10 @@ public interface PaxLoggingEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -75,8 +79,10 @@ public interface PaxLoggingEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -86,8 +92,10 @@ public interface PaxLoggingEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPaxLoggingEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -97,8 +105,10 @@ public interface PaxLoggingEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPaxLoggingEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

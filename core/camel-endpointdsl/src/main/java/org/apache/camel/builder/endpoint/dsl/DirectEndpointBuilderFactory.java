@@ -44,8 +44,10 @@ public interface DirectEndpointBuilderFactory {
         }
         /**
          * Name of direct endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DirectEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -59,8 +61,10 @@ public interface DirectEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,8 +79,10 @@ public interface DirectEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -99,9 +105,11 @@ public interface DirectEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -113,9 +121,11 @@ public interface DirectEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -124,8 +134,10 @@ public interface DirectEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -134,9 +146,11 @@ public interface DirectEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -146,8 +160,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -157,8 +173,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -168,8 +186,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -179,8 +199,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -200,8 +222,10 @@ public interface DirectEndpointBuilderFactory {
         }
         /**
          * Name of direct endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DirectEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -211,8 +235,10 @@ public interface DirectEndpointBuilderFactory {
          * If sending a message to a direct endpoint which has no active
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder block(boolean block) {
             setProperty("block", block);
@@ -222,8 +248,10 @@ public interface DirectEndpointBuilderFactory {
          * If sending a message to a direct endpoint which has no active
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder block(String block) {
             setProperty("block", block);
@@ -232,8 +260,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the producer should fail by throwing an exception, when
          * sending to a DIRECT endpoint with no active consumers.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
@@ -243,8 +273,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the producer should fail by throwing an exception, when
          * sending to a DIRECT endpoint with no active consumers.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
@@ -261,8 +293,10 @@ public interface DirectEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -279,8 +313,10 @@ public interface DirectEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -289,8 +325,10 @@ public interface DirectEndpointBuilderFactory {
         }
         /**
          * The timeout value to use if block is enabled.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -298,8 +336,10 @@ public interface DirectEndpointBuilderFactory {
         }
         /**
          * The timeout value to use if block is enabled.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -319,8 +359,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -330,8 +372,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -341,8 +385,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -352,8 +398,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -373,8 +421,10 @@ public interface DirectEndpointBuilderFactory {
         }
         /**
          * Name of direct endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DirectEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -394,8 +444,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -405,8 +457,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -416,8 +470,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -426,8 +482,10 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

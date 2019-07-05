@@ -41,8 +41,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * Topic name or ARN.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder topicNameOrArn(String topicNameOrArn) {
             setProperty("topicNameOrArn", topicNameOrArn);
@@ -50,9 +52,11 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * To use the AmazonSNS as the client.
-         * The option is a <code>com.amazonaws.services.sns.AmazonSNS</code>
+         * 
+         * The option is a: <code>com.amazonaws.services.sns.AmazonSNS</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(Object amazonSNSClient) {
             setProperty("amazonSNSClient", amazonSNSClient);
@@ -60,9 +64,11 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * To use the AmazonSNS as the client.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.sns.AmazonSNS</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(String amazonSNSClient) {
             setProperty("amazonSNSClient", amazonSNSClient);
@@ -70,9 +76,11 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * An SQS Client to use as bridge between SNS and SQS.
-         * The option is a <code>com.amazonaws.services.sqs.AmazonSQS</code>
+         * 
+         * The option is a: <code>com.amazonaws.services.sqs.AmazonSQS</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
@@ -80,9 +88,11 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * An SQS Client to use as bridge between SNS and SQS.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.sqs.AmazonSQS</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
             setProperty("amazonSQSClient", amazonSQSClient);
@@ -90,8 +100,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the topic.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(boolean autoCreateTopic) {
             setProperty("autoCreateTopic", autoCreateTopic);
@@ -99,8 +111,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the topic.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(String autoCreateTopic) {
             setProperty("autoCreateTopic", autoCreateTopic);
@@ -108,9 +122,11 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -119,9 +135,11 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -131,8 +149,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or
          * a custom CMK.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder kmsMasterKeyId(String kmsMasterKeyId) {
             setProperty("kmsMasterKeyId", kmsMasterKeyId);
@@ -140,8 +160,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * The message structure to use such as json.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder messageStructure(String messageStructure) {
             setProperty("messageStructure", messageStructure);
@@ -149,8 +171,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * The policy for this queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder policy(String policy) {
             setProperty("policy", policy);
@@ -158,8 +182,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the SNS client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -167,8 +193,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the SNS client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -176,9 +204,11 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the SNS client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -186,8 +216,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * The queueUrl to subscribe to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder queueUrl(String queueUrl) {
             setProperty("queueUrl", queueUrl);
@@ -195,8 +227,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * The region in which SNS client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -204,8 +238,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
@@ -214,8 +250,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
@@ -225,8 +263,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * The subject which is used if the message header 'CamelAwsSnsSubject'
          * is not present.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder subject(String subject) {
             setProperty("subject", subject);
@@ -235,8 +275,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(boolean subscribeSNStoSQS) {
             setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
@@ -245,8 +287,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(String subscribeSNStoSQS) {
             setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
@@ -254,8 +298,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SnsEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -263,8 +309,10 @@ public interface SnsEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SnsEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -285,8 +333,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -296,8 +346,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -307,8 +359,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -317,8 +371,10 @@ public interface SnsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

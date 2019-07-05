@@ -42,8 +42,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         }
         /**
          * Name of the stream.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KinesisFirehoseEndpointBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
@@ -52,9 +54,11 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Amazon Kinesis Firehose client to use for all requests for this
          * endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 Object amazonKinesisFirehoseClient) {
@@ -64,9 +68,11 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Amazon Kinesis Firehose client to use for all requests for this
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 String amazonKinesisFirehoseClient) {
@@ -75,8 +81,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -84,8 +92,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -93,9 +103,11 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -103,8 +115,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         }
         /**
          * The region in which Kinesis client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KinesisFirehoseEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -112,8 +126,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisFirehoseEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -121,8 +137,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisFirehoseEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -142,8 +160,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -153,8 +173,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -164,8 +186,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -175,8 +199,10 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 String synchronous) {

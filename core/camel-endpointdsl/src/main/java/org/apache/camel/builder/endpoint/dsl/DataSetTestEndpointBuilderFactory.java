@@ -43,8 +43,10 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * Name of endpoint to lookup in the registry to use for polling
          * messages used for testing.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -53,8 +55,10 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * Whether the expected messages should arrive in the same order or can
          * be in any order.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder anyOrder(boolean anyOrder) {
             setProperty("anyOrder", anyOrder);
@@ -63,8 +67,10 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * Whether the expected messages should arrive in the same order or can
          * be in any order.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder anyOrder(String anyOrder) {
             setProperty("anyOrder", anyOrder);
@@ -74,8 +80,10 @@ public interface DataSetTestEndpointBuilderFactory {
          * The split delimiter to use when split is enabled. By default the
          * delimiter is new line based. The delimiter can be a regular
          * expression.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
@@ -86,8 +94,10 @@ public interface DataSetTestEndpointBuilderFactory {
          * using new line delimiters so each line is an expected message. For
          * example to use a file endpoint to load a file where each line is an
          * expected message.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder split(boolean split) {
             setProperty("split", split);
@@ -98,8 +108,10 @@ public interface DataSetTestEndpointBuilderFactory {
          * using new line delimiters so each line is an expected message. For
          * example to use a file endpoint to load a file where each line is an
          * expected message.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder split(String split) {
             setProperty("split", split);
@@ -107,8 +119,10 @@ public interface DataSetTestEndpointBuilderFactory {
         }
         /**
          * The timeout to use when polling for message bodies from the URI.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -116,8 +130,10 @@ public interface DataSetTestEndpointBuilderFactory {
         }
         /**
          * The timeout to use when polling for message bodies from the URI.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetTestEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -137,8 +153,10 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -148,8 +166,10 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetTestEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -159,8 +179,10 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetTestEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -170,8 +192,10 @@ public interface DataSetTestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetTestEndpointBuilder synchronous(
                 String synchronous) {

@@ -40,8 +40,10 @@ public interface ClassEndpointBuilderFactory {
         }
         /**
          * Sets the name of the bean to invoke.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ClassEndpointBuilder beanName(String beanName) {
             setProperty("beanName", beanName);
@@ -51,8 +53,10 @@ public interface ClassEndpointBuilderFactory {
          * If enabled, Camel will cache the result of the first Registry
          * look-up. Cache can be enabled if the bean in the Registry is defined
          * as a singleton scope.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default ClassEndpointBuilder cache(Boolean cache) {
             setProperty("cache", cache);
@@ -62,9 +66,11 @@ public interface ClassEndpointBuilderFactory {
          * If enabled, Camel will cache the result of the first Registry
          * look-up. Cache can be enabled if the bean in the Registry is defined
          * as a singleton scope.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ClassEndpointBuilder cache(String cache) {
             setProperty("cache", cache);
@@ -72,8 +78,10 @@ public interface ClassEndpointBuilderFactory {
         }
         /**
          * Sets the name of the method to invoke on the bean.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ClassEndpointBuilder method(String method) {
             setProperty("method", method);
@@ -81,9 +89,11 @@ public interface ClassEndpointBuilderFactory {
         }
         /**
          * Used for configuring additional properties on the bean.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ClassEndpointBuilder parameters(Map<String, Object> parameters) {
             setProperty("parameters", parameters);
@@ -91,10 +101,12 @@ public interface ClassEndpointBuilderFactory {
         }
         /**
          * Used for configuring additional properties on the bean.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default ClassEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
@@ -114,8 +126,10 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedClassEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -125,8 +139,10 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedClassEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -136,8 +152,10 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedClassEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -146,8 +164,10 @@ public interface ClassEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedClassEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

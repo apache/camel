@@ -49,8 +49,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * The endpoint type. Currently, only the 'bots' type is supported.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default TelegramEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
@@ -58,8 +60,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * The authorization token for using the bot (ask the BotFather).
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TelegramEndpointConsumerBuilder authorizationToken(
                 String authorizationToken) {
@@ -74,8 +78,10 @@ public interface TelegramEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -90,8 +96,10 @@ public interface TelegramEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -101,8 +109,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Limit on the number of updates that can be received in a single
          * polling request.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder limit(Integer limit) {
             setProperty("limit", limit);
@@ -111,9 +121,11 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Limit on the number of updates that can be received in a single
          * polling request.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder limit(String limit) {
             setProperty("limit", limit);
@@ -122,8 +134,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -133,8 +147,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -145,8 +161,10 @@ public interface TelegramEndpointBuilderFactory {
          * Timeout in seconds for long polling. Put 0 for short polling or a
          * bigger number for long polling. Long polling produces shorter
          * response time.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder timeout(Integer timeout) {
             setProperty("timeout", timeout);
@@ -156,9 +174,11 @@ public interface TelegramEndpointBuilderFactory {
          * Timeout in seconds for long polling. Put 0 for short polling or a
          * bigger number for long polling. Long polling produces shorter
          * response time.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TelegramEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -167,8 +187,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -178,8 +200,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -189,8 +213,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -200,8 +226,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -215,8 +243,10 @@ public interface TelegramEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -230,8 +260,10 @@ public interface TelegramEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -242,8 +274,10 @@ public interface TelegramEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -253,8 +287,10 @@ public interface TelegramEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -263,8 +299,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -273,8 +311,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -284,8 +324,10 @@ public interface TelegramEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -295,8 +337,10 @@ public interface TelegramEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -305,8 +349,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -316,9 +362,11 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -329,9 +377,11 @@ public interface TelegramEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -342,9 +392,11 @@ public interface TelegramEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -354,10 +406,12 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -367,10 +421,12 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -379,9 +435,11 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -391,10 +449,12 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -403,8 +463,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -413,8 +475,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -423,8 +487,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -432,9 +498,11 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -443,8 +511,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -454,8 +524,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -464,8 +536,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy host which could be used when sending out the message.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -473,8 +547,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy port which could be used when sending out the message.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -482,9 +558,11 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy port which could be used when sending out the message.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default TelegramEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -506,9 +584,11 @@ public interface TelegramEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -520,9 +600,11 @@ public interface TelegramEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -531,8 +613,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -541,9 +625,11 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -555,9 +641,11 @@ public interface TelegramEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -569,9 +657,11 @@ public interface TelegramEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTelegramEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -581,8 +671,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -592,8 +684,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -603,8 +697,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -614,8 +710,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -635,8 +733,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * The endpoint type. Currently, only the 'bots' type is supported.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default TelegramEndpointProducerBuilder type(String type) {
             setProperty("type", type);
@@ -644,8 +744,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * The authorization token for using the bot (ask the BotFather).
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TelegramEndpointProducerBuilder authorizationToken(
                 String authorizationToken) {
@@ -659,8 +761,10 @@ public interface TelegramEndpointBuilderFactory {
          * automatically a '/start' message containing the chat id). It is an
          * optional parameter, as the chat id can be set dynamically for each
          * outgoing message (using body or headers).
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default TelegramEndpointProducerBuilder chatId(String chatId) {
             setProperty("chatId", chatId);
@@ -676,8 +780,10 @@ public interface TelegramEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default TelegramEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -694,8 +800,10 @@ public interface TelegramEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default TelegramEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -704,8 +812,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy host which could be used when sending out the message.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -713,8 +823,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy port which could be used when sending out the message.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -722,9 +834,11 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy port which could be used when sending out the message.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default TelegramEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -744,8 +858,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -755,8 +871,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -766,8 +884,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -777,8 +897,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -798,8 +920,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * The endpoint type. Currently, only the 'bots' type is supported.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default TelegramEndpointBuilder type(String type) {
             setProperty("type", type);
@@ -807,8 +931,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * The authorization token for using the bot (ask the BotFather).
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TelegramEndpointBuilder authorizationToken(
                 String authorizationToken) {
@@ -817,8 +943,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy host which could be used when sending out the message.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TelegramEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -826,8 +954,10 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy port which could be used when sending out the message.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default TelegramEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -835,9 +965,11 @@ public interface TelegramEndpointBuilderFactory {
         }
         /**
          * HTTP proxy port which could be used when sending out the message.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default TelegramEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -857,8 +989,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -868,8 +1002,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -879,8 +1015,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -889,8 +1027,10 @@ public interface TelegramEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

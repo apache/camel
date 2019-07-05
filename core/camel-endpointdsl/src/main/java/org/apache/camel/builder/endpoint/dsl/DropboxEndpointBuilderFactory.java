@@ -45,10 +45,12 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder operation(
                 DropboxOperation operation) {
@@ -58,10 +60,12 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -69,8 +73,11 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * The access token to make API requests for a specific Dropbox user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -78,8 +85,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * To use an existing DbxClient instance as DropBox client.
-         * The option is a <code>com.dropbox.core.v2.DbxClientV2</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.dropbox.core.v2.DbxClientV2</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder client(Object client) {
             setProperty("client", client);
@@ -87,9 +96,11 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * To use an existing DbxClient instance as DropBox client.
+         * 
          * The option will be converted to a
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder client(String client) {
             setProperty("client", client);
@@ -97,8 +108,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Name of the app registered to make API requests.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder clientIdentifier(
                 String clientIdentifier) {
@@ -109,8 +122,10 @@ public interface DropboxEndpointBuilderFactory {
          * Optional folder or file to upload on Dropbox from the local
          * filesystem. If this option has not been configured then the message
          * body is used as the content to upload.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -118,8 +133,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Destination file or folder.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder newRemotePath(
                 String newRemotePath) {
@@ -130,8 +147,10 @@ public interface DropboxEndpointBuilderFactory {
          * A space-separated list of sub-strings to search for. A file matches
          * only if it contains all the sub-strings. If this option is not set,
          * all files will be matched.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
@@ -139,8 +158,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Original file or folder to move.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -151,9 +172,11 @@ public interface DropboxEndpointBuilderFactory {
          * a file with the same name already exists on dropbox. in case of force
          * if a file with the same name already exists on dropbox, this will be
          * overwritten.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder uploadMode(
                 DropboxUploadMode uploadMode) {
@@ -165,9 +188,11 @@ public interface DropboxEndpointBuilderFactory {
          * a file with the same name already exists on dropbox. in case of force
          * if a file with the same name already exists on dropbox, this will be
          * overwritten.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointConsumerBuilder uploadMode(String uploadMode) {
             setProperty("uploadMode", uploadMode);
@@ -181,8 +206,10 @@ public interface DropboxEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default DropboxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -197,8 +224,10 @@ public interface DropboxEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DropboxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -221,9 +250,11 @@ public interface DropboxEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -235,9 +266,11 @@ public interface DropboxEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -246,8 +279,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -256,9 +291,11 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDropboxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -268,8 +305,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -279,8 +318,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -290,8 +331,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -301,8 +344,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -323,10 +368,12 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder operation(
                 DropboxOperation operation) {
@@ -336,10 +383,12 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -347,8 +396,11 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * The access token to make API requests for a specific Dropbox user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default DropboxEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -356,8 +408,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * To use an existing DbxClient instance as DropBox client.
-         * The option is a <code>com.dropbox.core.v2.DbxClientV2</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.dropbox.core.v2.DbxClientV2</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder client(Object client) {
             setProperty("client", client);
@@ -365,9 +419,11 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * To use an existing DbxClient instance as DropBox client.
+         * 
          * The option will be converted to a
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder client(String client) {
             setProperty("client", client);
@@ -375,8 +431,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Name of the app registered to make API requests.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder clientIdentifier(
                 String clientIdentifier) {
@@ -387,8 +445,10 @@ public interface DropboxEndpointBuilderFactory {
          * Optional folder or file to upload on Dropbox from the local
          * filesystem. If this option has not been configured then the message
          * body is used as the content to upload.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -396,8 +456,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Destination file or folder.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder newRemotePath(
                 String newRemotePath) {
@@ -408,8 +470,10 @@ public interface DropboxEndpointBuilderFactory {
          * A space-separated list of sub-strings to search for. A file matches
          * only if it contains all the sub-strings. If this option is not set,
          * all files will be matched.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder query(String query) {
             setProperty("query", query);
@@ -417,8 +481,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Original file or folder to move.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -429,9 +495,11 @@ public interface DropboxEndpointBuilderFactory {
          * a file with the same name already exists on dropbox. in case of force
          * if a file with the same name already exists on dropbox, this will be
          * overwritten.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder uploadMode(
                 DropboxUploadMode uploadMode) {
@@ -443,9 +511,11 @@ public interface DropboxEndpointBuilderFactory {
          * a file with the same name already exists on dropbox. in case of force
          * if a file with the same name already exists on dropbox, this will be
          * overwritten.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointProducerBuilder uploadMode(String uploadMode) {
             setProperty("uploadMode", uploadMode);
@@ -461,8 +531,10 @@ public interface DropboxEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DropboxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -479,8 +551,10 @@ public interface DropboxEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DropboxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -501,8 +575,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -512,8 +588,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -523,8 +601,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -534,8 +614,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -556,10 +638,12 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder operation(DropboxOperation operation) {
             setProperty("operation", operation);
@@ -568,10 +652,12 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * The specific action (typically is a CRUD action) to perform on
          * Dropbox remote folder.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -579,8 +665,11 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * The access token to make API requests for a specific Dropbox user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default DropboxEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -588,8 +677,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * To use an existing DbxClient instance as DropBox client.
-         * The option is a <code>com.dropbox.core.v2.DbxClientV2</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.dropbox.core.v2.DbxClientV2</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder client(Object client) {
             setProperty("client", client);
@@ -597,9 +688,11 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * To use an existing DbxClient instance as DropBox client.
+         * 
          * The option will be converted to a
          * <code>com.dropbox.core.v2.DbxClientV2</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder client(String client) {
             setProperty("client", client);
@@ -607,8 +700,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Name of the app registered to make API requests.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder clientIdentifier(String clientIdentifier) {
             setProperty("clientIdentifier", clientIdentifier);
@@ -618,8 +713,10 @@ public interface DropboxEndpointBuilderFactory {
          * Optional folder or file to upload on Dropbox from the local
          * filesystem. If this option has not been configured then the message
          * body is used as the content to upload.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -627,8 +724,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Destination file or folder.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder newRemotePath(String newRemotePath) {
             setProperty("newRemotePath", newRemotePath);
@@ -638,8 +737,10 @@ public interface DropboxEndpointBuilderFactory {
          * A space-separated list of sub-strings to search for. A file matches
          * only if it contains all the sub-strings. If this option is not set,
          * all files will be matched.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -647,8 +748,10 @@ public interface DropboxEndpointBuilderFactory {
         }
         /**
          * Original file or folder to move.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -659,9 +762,11 @@ public interface DropboxEndpointBuilderFactory {
          * a file with the same name already exists on dropbox. in case of force
          * if a file with the same name already exists on dropbox, this will be
          * overwritten.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder uploadMode(DropboxUploadMode uploadMode) {
             setProperty("uploadMode", uploadMode);
@@ -672,9 +777,11 @@ public interface DropboxEndpointBuilderFactory {
          * a file with the same name already exists on dropbox. in case of force
          * if a file with the same name already exists on dropbox, this will be
          * overwritten.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dropbox.util.DropboxUploadMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DropboxEndpointBuilder uploadMode(String uploadMode) {
             setProperty("uploadMode", uploadMode);
@@ -694,8 +801,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -705,8 +814,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -716,8 +827,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -726,8 +839,10 @@ public interface DropboxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

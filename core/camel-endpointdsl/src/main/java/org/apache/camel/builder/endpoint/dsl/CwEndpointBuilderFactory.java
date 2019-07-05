@@ -40,8 +40,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The metric namespace.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
@@ -49,9 +51,11 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * To use the AmazonCloudWatch as the client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(Object amazonCwClient) {
             setProperty("amazonCwClient", amazonCwClient);
@@ -59,9 +63,11 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * To use the AmazonCloudWatch as the client.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(String amazonCwClient) {
             setProperty("amazonCwClient", amazonCwClient);
@@ -69,8 +75,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The metric name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -78,8 +86,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the CW client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -87,8 +97,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the CW client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -96,9 +108,11 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the CW client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -106,8 +120,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The region in which CW client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -115,8 +131,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The metric timestamp.
-         * The option is a <code>java.util.Date</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.util.Date</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder timestamp(Date timestamp) {
             setProperty("timestamp", timestamp);
@@ -124,8 +142,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The metric timestamp.
+         * 
          * The option will be converted to a <code>java.util.Date</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder timestamp(String timestamp) {
             setProperty("timestamp", timestamp);
@@ -133,8 +153,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The metric unit.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder unit(String unit) {
             setProperty("unit", unit);
@@ -142,8 +164,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The metric value.
-         * The option is a <code>java.lang.Double</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder value(Double value) {
             setProperty("value", value);
@@ -151,8 +175,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * The metric value.
+         * 
          * The option will be converted to a <code>java.lang.Double</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CwEndpointBuilder value(String value) {
             setProperty("value", value);
@@ -160,8 +186,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CwEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -169,8 +197,10 @@ public interface CwEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CwEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -190,8 +220,10 @@ public interface CwEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCwEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -201,8 +233,10 @@ public interface CwEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCwEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -212,8 +246,10 @@ public interface CwEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCwEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -222,8 +258,10 @@ public interface CwEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCwEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

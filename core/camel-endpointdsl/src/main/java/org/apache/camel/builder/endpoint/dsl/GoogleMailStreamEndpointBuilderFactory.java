@@ -41,8 +41,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Specifies an index for the endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder index(String index) {
             setProperty("index", index);
@@ -51,8 +53,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -60,8 +64,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder applicationName(
                 String applicationName) {
@@ -70,8 +76,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Client ID of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -79,8 +87,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Client secret of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -88,8 +98,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Comma separated list of labels to take into account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder labels(String labels) {
             setProperty("labels", labels);
@@ -97,8 +109,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Mark the message as read once it has been consumed.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder markAsRead(boolean markAsRead) {
             setProperty("markAsRead", markAsRead);
@@ -106,8 +120,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Mark the message as read once it has been consumed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder markAsRead(String markAsRead) {
             setProperty("markAsRead", markAsRead);
@@ -115,8 +131,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Max results to be returned.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder maxResults(long maxResults) {
             setProperty("maxResults", maxResults);
@@ -124,8 +142,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * Max results to be returned.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
@@ -133,8 +153,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         }
         /**
          * The query to execute on gmail box.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -144,8 +166,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
@@ -165,8 +189,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -176,8 +202,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -187,8 +215,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailStreamEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -198,8 +228,10 @@ public interface GoogleMailStreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailStreamEndpointBuilder synchronous(
                 String synchronous) {

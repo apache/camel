@@ -43,10 +43,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder apiName(FhirApiName apiName) {
             setProperty("apiName", apiName);
@@ -54,10 +56,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -65,8 +69,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -74,8 +80,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Encoding to use for all request.
-         * The option is a <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
-         * @group common
+         * 
+         * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder encoding(EncodingEnum encoding) {
             setProperty("encoding", encoding);
@@ -83,9 +91,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Encoding to use for all request.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -93,9 +103,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR Version to use.
-         * The option is a <code>ca.uhn.fhir.context.FhirVersionEnum</code>
+         * 
+         * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder fhirVersion(
                 FhirVersionEnum fhirVersion) {
@@ -104,9 +116,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR Version to use.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder fhirVersion(String fhirVersion) {
             setProperty("fhirVersion", fhirVersion);
@@ -114,8 +128,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -123,8 +139,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Will log every requests and responses.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder log(boolean log) {
             setProperty("log", log);
@@ -132,8 +150,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Will log every requests and responses.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder log(String log) {
             setProperty("log", log);
@@ -141,8 +161,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Pretty print all request.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder prettyPrint(boolean prettyPrint) {
             setProperty("prettyPrint", prettyPrint);
@@ -150,8 +172,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Pretty print all request.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder prettyPrint(String prettyPrint) {
             setProperty("prettyPrint", prettyPrint);
@@ -159,8 +183,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR server base URL.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointConsumerBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
@@ -174,8 +200,10 @@ public interface FhirEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default FhirEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -190,8 +218,10 @@ public interface FhirEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default FhirEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -200,8 +230,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -209,8 +241,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPassword(String proxyPassword) {
             setProperty("proxyPassword", proxyPassword);
@@ -218,8 +252,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy port.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -227,9 +263,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy port.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -237,8 +275,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointConsumerBuilder proxyUser(String proxyUser) {
             setProperty("proxyUser", proxyUser);
@@ -246,8 +286,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * OAuth access token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -255,8 +297,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Username to use for basic authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -264,8 +308,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Username to use for basic authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -287,9 +333,11 @@ public interface FhirEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -301,9 +349,11 @@ public interface FhirEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -312,8 +362,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -322,9 +374,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -334,8 +388,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -345,8 +401,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -355,9 +413,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder client(Object client) {
             setProperty("client", client);
@@ -365,9 +425,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder client(String client) {
             setProperty("client", client);
@@ -375,9 +437,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client factory.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
                 Object clientFactory) {
@@ -386,9 +450,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client factory.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
                 String clientFactory) {
@@ -397,8 +463,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder compress(boolean compress) {
             setProperty("compress", compress);
@@ -406,8 +474,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder compress(String compress) {
             setProperty("compress", compress);
@@ -415,8 +485,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to try and establish the initial TCP connection (in ms).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -425,9 +497,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to try and establish the initial TCP connection (in ms).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -438,8 +512,10 @@ public interface FhirEndpointBuilderFactory {
          * When this option is set, model classes will not be scanned for
          * children until the child list for the given type is actually
          * accessed.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder deferModelScanning(
                 boolean deferModelScanning) {
@@ -450,8 +526,10 @@ public interface FhirEndpointBuilderFactory {
          * When this option is set, model classes will not be scanned for
          * children until the child list for the given type is actually
          * accessed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder deferModelScanning(
                 String deferModelScanning) {
@@ -461,8 +539,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
-         * The option is a <code>ca.uhn.fhir.context.FhirContext</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
                 Object fhirContext) {
@@ -472,9 +552,11 @@ public interface FhirEndpointBuilderFactory {
         /**
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirContext</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
                 String fhirContext) {
@@ -483,8 +565,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Force conformance check.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
@@ -493,8 +577,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Force conformance check.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
@@ -503,8 +589,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * HTTP session cookie to add to every request.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder sessionCookie(
                 String sessionCookie) {
@@ -513,8 +601,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to block for individual read/write operations (in ms).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder socketTimeout(
                 Integer socketTimeout) {
@@ -523,9 +613,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to block for individual read/write operations (in ms).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
@@ -534,8 +626,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Request that the server modify the response using the _summary param.
-         * The option is a <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder summary(SummaryEnum summary) {
             setProperty("summary", summary);
@@ -543,9 +637,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Request that the server modify the response using the _summary param.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder summary(String summary) {
             setProperty("summary", summary);
@@ -554,8 +650,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -565,8 +663,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -575,10 +675,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * When should Camel validate the FHIR Server's conformance statement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
@@ -587,10 +689,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * When should Camel validate the FHIR Server's conformance statement.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
                 String validationMode) {
@@ -610,10 +714,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder apiName(FhirApiName apiName) {
             setProperty("apiName", apiName);
@@ -621,10 +727,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -632,8 +740,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -641,8 +751,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Encoding to use for all request.
-         * The option is a <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
-         * @group common
+         * 
+         * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder encoding(EncodingEnum encoding) {
             setProperty("encoding", encoding);
@@ -650,9 +762,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Encoding to use for all request.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -660,9 +774,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR Version to use.
-         * The option is a <code>ca.uhn.fhir.context.FhirVersionEnum</code>
+         * 
+         * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder fhirVersion(
                 FhirVersionEnum fhirVersion) {
@@ -671,9 +787,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR Version to use.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder fhirVersion(String fhirVersion) {
             setProperty("fhirVersion", fhirVersion);
@@ -681,8 +799,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -690,8 +810,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Will log every requests and responses.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder log(boolean log) {
             setProperty("log", log);
@@ -699,8 +821,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Will log every requests and responses.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder log(String log) {
             setProperty("log", log);
@@ -708,8 +832,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Pretty print all request.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder prettyPrint(boolean prettyPrint) {
             setProperty("prettyPrint", prettyPrint);
@@ -717,8 +843,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Pretty print all request.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder prettyPrint(String prettyPrint) {
             setProperty("prettyPrint", prettyPrint);
@@ -726,8 +854,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR server base URL.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointProducerBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
@@ -743,8 +873,10 @@ public interface FhirEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default FhirEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -761,8 +893,10 @@ public interface FhirEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FhirEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -771,8 +905,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -780,8 +916,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPassword(String proxyPassword) {
             setProperty("proxyPassword", proxyPassword);
@@ -789,8 +927,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy port.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -798,9 +938,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy port.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -808,8 +950,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointProducerBuilder proxyUser(String proxyUser) {
             setProperty("proxyUser", proxyUser);
@@ -817,8 +961,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * OAuth access token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -826,8 +972,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Username to use for basic authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -835,8 +983,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Username to use for basic authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -856,8 +1006,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -867,8 +1019,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -877,9 +1031,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder client(Object client) {
             setProperty("client", client);
@@ -887,9 +1043,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder client(String client) {
             setProperty("client", client);
@@ -897,9 +1055,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client factory.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
                 Object clientFactory) {
@@ -908,9 +1068,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client factory.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
                 String clientFactory) {
@@ -919,8 +1081,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder compress(boolean compress) {
             setProperty("compress", compress);
@@ -928,8 +1092,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder compress(String compress) {
             setProperty("compress", compress);
@@ -937,8 +1103,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to try and establish the initial TCP connection (in ms).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -947,9 +1115,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to try and establish the initial TCP connection (in ms).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -960,8 +1130,10 @@ public interface FhirEndpointBuilderFactory {
          * When this option is set, model classes will not be scanned for
          * children until the child list for the given type is actually
          * accessed.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder deferModelScanning(
                 boolean deferModelScanning) {
@@ -972,8 +1144,10 @@ public interface FhirEndpointBuilderFactory {
          * When this option is set, model classes will not be scanned for
          * children until the child list for the given type is actually
          * accessed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder deferModelScanning(
                 String deferModelScanning) {
@@ -983,8 +1157,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
-         * The option is a <code>ca.uhn.fhir.context.FhirContext</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
                 Object fhirContext) {
@@ -994,9 +1170,11 @@ public interface FhirEndpointBuilderFactory {
         /**
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirContext</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
                 String fhirContext) {
@@ -1005,8 +1183,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Force conformance check.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
@@ -1015,8 +1195,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Force conformance check.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
@@ -1025,8 +1207,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * HTTP session cookie to add to every request.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder sessionCookie(
                 String sessionCookie) {
@@ -1035,8 +1219,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to block for individual read/write operations (in ms).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder socketTimeout(
                 Integer socketTimeout) {
@@ -1045,9 +1231,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to block for individual read/write operations (in ms).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
@@ -1056,8 +1244,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Request that the server modify the response using the _summary param.
-         * The option is a <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder summary(SummaryEnum summary) {
             setProperty("summary", summary);
@@ -1065,9 +1255,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Request that the server modify the response using the _summary param.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder summary(String summary) {
             setProperty("summary", summary);
@@ -1076,8 +1268,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1087,8 +1281,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1097,10 +1293,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * When should Camel validate the FHIR Server's conformance statement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
@@ -1109,10 +1307,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * When should Camel validate the FHIR Server's conformance statement.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
                 String validationMode) {
@@ -1132,10 +1332,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder apiName(FhirApiName apiName) {
             setProperty("apiName", apiName);
@@ -1143,10 +1345,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -1154,8 +1358,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -1163,8 +1369,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Encoding to use for all request.
-         * The option is a <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
-         * @group common
+         * 
+         * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder encoding(EncodingEnum encoding) {
             setProperty("encoding", encoding);
@@ -1172,9 +1380,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Encoding to use for all request.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -1182,9 +1392,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR Version to use.
-         * The option is a <code>ca.uhn.fhir.context.FhirVersionEnum</code>
+         * 
+         * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder fhirVersion(FhirVersionEnum fhirVersion) {
             setProperty("fhirVersion", fhirVersion);
@@ -1192,9 +1404,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR Version to use.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder fhirVersion(String fhirVersion) {
             setProperty("fhirVersion", fhirVersion);
@@ -1202,8 +1416,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -1211,8 +1427,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Will log every requests and responses.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder log(boolean log) {
             setProperty("log", log);
@@ -1220,8 +1438,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Will log every requests and responses.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder log(String log) {
             setProperty("log", log);
@@ -1229,8 +1449,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Pretty print all request.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder prettyPrint(boolean prettyPrint) {
             setProperty("prettyPrint", prettyPrint);
@@ -1238,8 +1460,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Pretty print all request.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder prettyPrint(String prettyPrint) {
             setProperty("prettyPrint", prettyPrint);
@@ -1247,8 +1471,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The FHIR server base URL.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default FhirEndpointBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
@@ -1256,8 +1482,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy host.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -1265,8 +1493,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointBuilder proxyPassword(String proxyPassword) {
             setProperty("proxyPassword", proxyPassword);
@@ -1274,8 +1504,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy port.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1283,9 +1515,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy port.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default FhirEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1293,8 +1527,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * The proxy username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default FhirEndpointBuilder proxyUser(String proxyUser) {
             setProperty("proxyUser", proxyUser);
@@ -1302,8 +1538,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * OAuth access token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -1311,8 +1549,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Username to use for basic authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -1320,8 +1560,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Username to use for basic authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default FhirEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1341,8 +1583,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1352,8 +1596,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1362,9 +1608,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder client(Object client) {
             setProperty("client", client);
@@ -1372,9 +1620,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder client(String client) {
             setProperty("client", client);
@@ -1382,9 +1632,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client factory.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder clientFactory(Object clientFactory) {
             setProperty("clientFactory", clientFactory);
@@ -1392,9 +1644,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * To use the custom client factory.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder clientFactory(String clientFactory) {
             setProperty("clientFactory", clientFactory);
@@ -1402,8 +1656,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder compress(boolean compress) {
             setProperty("compress", compress);
@@ -1411,8 +1667,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder compress(String compress) {
             setProperty("compress", compress);
@@ -1420,8 +1678,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to try and establish the initial TCP connection (in ms).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -1430,9 +1690,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to try and establish the initial TCP connection (in ms).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1443,8 +1705,10 @@ public interface FhirEndpointBuilderFactory {
          * When this option is set, model classes will not be scanned for
          * children until the child list for the given type is actually
          * accessed.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder deferModelScanning(
                 boolean deferModelScanning) {
@@ -1455,8 +1719,10 @@ public interface FhirEndpointBuilderFactory {
          * When this option is set, model classes will not be scanned for
          * children until the child list for the given type is actually
          * accessed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder deferModelScanning(
                 String deferModelScanning) {
@@ -1466,8 +1732,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
-         * The option is a <code>ca.uhn.fhir.context.FhirContext</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder fhirContext(Object fhirContext) {
             setProperty("fhirContext", fhirContext);
@@ -1476,9 +1744,11 @@ public interface FhirEndpointBuilderFactory {
         /**
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirContext</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder fhirContext(String fhirContext) {
             setProperty("fhirContext", fhirContext);
@@ -1486,8 +1756,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Force conformance check.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
@@ -1496,8 +1768,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Force conformance check.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
@@ -1506,8 +1780,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * HTTP session cookie to add to every request.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder sessionCookie(String sessionCookie) {
             setProperty("sessionCookie", sessionCookie);
@@ -1515,8 +1791,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to block for individual read/write operations (in ms).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder socketTimeout(Integer socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
@@ -1524,9 +1802,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * How long to block for individual read/write operations (in ms).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder socketTimeout(String socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
@@ -1534,8 +1814,10 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Request that the server modify the response using the _summary param.
-         * The option is a <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder summary(SummaryEnum summary) {
             setProperty("summary", summary);
@@ -1543,9 +1825,11 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * Request that the server modify the response using the _summary param.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder summary(String summary) {
             setProperty("summary", summary);
@@ -1554,8 +1838,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1564,8 +1850,10 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -1573,10 +1861,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * When should Camel validate the FHIR Server's conformance statement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
@@ -1585,10 +1875,12 @@ public interface FhirEndpointBuilderFactory {
         }
         /**
          * When should Camel validate the FHIR Server's conformance statement.
+         * 
          * The option will be converted to a
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFhirEndpointBuilder validationMode(String validationMode) {
             setProperty("validationMode", validationMode);

@@ -41,8 +41,10 @@ public interface GrapeEndpointBuilderFactory {
         /**
          * Maven coordinates to use as default to grab if the message body is
          * empty.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GrapeEndpointBuilder defaultCoordinates(
                 String defaultCoordinates) {
@@ -63,8 +65,10 @@ public interface GrapeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrapeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -74,8 +78,10 @@ public interface GrapeEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrapeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -85,8 +91,10 @@ public interface GrapeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrapeEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -95,8 +103,10 @@ public interface GrapeEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrapeEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

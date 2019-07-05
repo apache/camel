@@ -40,8 +40,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * The name of the table currently worked with.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder tableName(String tableName) {
             setProperty("tableName", tableName);
@@ -49,9 +51,11 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * To use the AmazonDynamoDB as the client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDB</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(Object amazonDDBClient) {
             setProperty("amazonDDBClient", amazonDDBClient);
@@ -59,9 +63,11 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * To use the AmazonDynamoDB as the client.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDB</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(String amazonDDBClient) {
             setProperty("amazonDDBClient", amazonDDBClient);
@@ -70,8 +76,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * Determines whether or not strong consistency should be enforced when
          * data is read.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder consistentRead(boolean consistentRead) {
             setProperty("consistentRead", consistentRead);
@@ -80,8 +88,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * Determines whether or not strong consistency should be enforced when
          * data is read.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder consistentRead(String consistentRead) {
             setProperty("consistentRead", consistentRead);
@@ -89,8 +99,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * Attribute name when creating table.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder keyAttributeName(String keyAttributeName) {
             setProperty("keyAttributeName", keyAttributeName);
@@ -98,8 +110,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * Attribute type when creating table.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder keyAttributeType(String keyAttributeType) {
             setProperty("keyAttributeType", keyAttributeType);
@@ -107,9 +121,11 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * What operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.aws.ddb.DdbOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder operation(DdbOperations operation) {
             setProperty("operation", operation);
@@ -117,9 +133,11 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * What operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.ddb.DdbOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -127,8 +145,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the DDB client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -136,8 +156,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDB client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -145,9 +167,11 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDB client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -156,8 +180,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * The provisioned throughput to reserve for reading resources from your
          * table.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder readCapacity(Long readCapacity) {
             setProperty("readCapacity", readCapacity);
@@ -166,8 +192,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * The provisioned throughput to reserve for reading resources from your
          * table.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder readCapacity(String readCapacity) {
             setProperty("readCapacity", readCapacity);
@@ -175,8 +203,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * The region in which DDB client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -185,8 +215,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * The provisioned throughput to reserved for writing resources to your
          * table.
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(Long writeCapacity) {
             setProperty("writeCapacity", writeCapacity);
@@ -195,8 +227,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * The provisioned throughput to reserved for writing resources to your
          * table.
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(String writeCapacity) {
             setProperty("writeCapacity", writeCapacity);
@@ -204,8 +238,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default DdbEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -213,8 +249,10 @@ public interface DdbEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default DdbEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -234,8 +272,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -245,8 +285,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -256,8 +298,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDdbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -266,8 +310,10 @@ public interface DdbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDdbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

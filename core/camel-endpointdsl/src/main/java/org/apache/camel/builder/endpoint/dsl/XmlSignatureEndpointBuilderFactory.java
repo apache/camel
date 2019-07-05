@@ -43,9 +43,11 @@ public interface XmlSignatureEndpointBuilderFactory {
         }
         /**
          * Whether to sign or verify.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.XmlCommand</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XmlSignatureEndpointBuilder command(XmlCommand command) {
             setProperty("command", command);
@@ -53,9 +55,11 @@ public interface XmlSignatureEndpointBuilderFactory {
         }
         /**
          * Whether to sign or verify.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xmlsecurity.XmlCommand</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XmlSignatureEndpointBuilder command(String command) {
             setProperty("command", command);
@@ -64,8 +68,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * The name part in the URI can be chosen by the user to distinguish
          * between different signer/verifier endpoints within the camel context.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default XmlSignatureEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -74,8 +80,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * You can set a base URI which is used in the URI dereferencing.
          * Relative URIs are then concatenated with the base URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder baseUri(String baseUri) {
             setProperty("baseUri", baseUri);
@@ -84,8 +92,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder clearHeaders(Boolean clearHeaders) {
             setProperty("clearHeaders", clearHeaders);
@@ -94,9 +104,11 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder clearHeaders(String clearHeaders) {
             setProperty("clearHeaders", clearHeaders);
@@ -111,9 +123,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * features off you must set the property value to Boolean#FALSE.
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder cryptoContextProperties(
                 Map<String, Object> cryptoContextProperties) {
@@ -129,10 +143,12 @@ public interface XmlSignatureEndpointBuilderFactory {
          * features off you must set the property value to Boolean#FALSE.
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder cryptoContextProperties(
                 String cryptoContextProperties) {
@@ -142,8 +158,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Disallows that the incoming XML document contains DTD DOCTYPE
          * declaration. The default value is Boolean#TRUE.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder disallowDoctypeDecl(
                 Boolean disallowDoctypeDecl) {
@@ -153,9 +171,11 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Disallows that the incoming XML document contains DTD DOCTYPE
          * declaration. The default value is Boolean#TRUE.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder disallowDoctypeDecl(
                 String disallowDoctypeDecl) {
@@ -166,8 +186,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Indicator whether the XML declaration in the outgoing message body
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder omitXmlDeclaration(
                 Boolean omitXmlDeclaration) {
@@ -178,9 +200,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Indicator whether the XML declaration in the outgoing message body
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder omitXmlDeclaration(
                 String omitXmlDeclaration) {
@@ -190,8 +214,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * The character encoding of the resulting signed XML document. If null
          * then the encoding of the original XML document is used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder outputXmlEncoding(
                 String outputXmlEncoding) {
@@ -205,8 +231,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * validated with the specified XML schema. The schema resource URI can
          * be overwritten by the header
          * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default XmlSignatureEndpointBuilder schemaResourceUri(
                 String schemaResourceUri) {
@@ -218,8 +246,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * reference to the signed info element so that it is protected via the
          * signature value. The default value is true. Only relevant when a
          * KeyInfo is returned by KeyAccessor. and KeyInfo#getId() is not null.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder addKeyInfoReference(
                 Boolean addKeyInfoReference) {
@@ -231,9 +261,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * reference to the signed info element so that it is protected via the
          * signature value. The default value is true. Only relevant when a
          * KeyInfo is returned by KeyAccessor. and KeyInfo#getId() is not null.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder addKeyInfoReference(
                 String addKeyInfoReference) {
@@ -246,8 +278,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
          * getCanonicalizationMethod(String algorithm, List
          * inclusiveNamespacePrefixes) to create a canonicalization method.
-         * The option is a <code>javax.xml.crypto.AlgorithmMethod</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>javax.xml.crypto.AlgorithmMethod</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder canonicalizationMethod(
                 Object canonicalizationMethod) {
@@ -260,9 +294,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * XmlSignatureHelper.getCanonicalizationMethod(String algorithm) or
          * getCanonicalizationMethod(String algorithm, List
          * inclusiveNamespacePrefixes) to create a canonicalization method.
+         * 
          * The option will be converted to a
          * <code>javax.xml.crypto.AlgorithmMethod</code> type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder canonicalizationMethod(
                 String canonicalizationMethod) {
@@ -273,8 +309,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Sets the content object Id attribute value. By default a UUID is
          * generated. If you set the null value, then a new UUID will be
          * generated. Only used in the enveloping case.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder contentObjectId(
                 String contentObjectId) {
@@ -285,8 +323,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Type of the content reference. The default value is null. This value
          * can be overwritten by the header
          * XmlSignatureConstants#HEADER_CONTENT_REFERENCE_TYPE.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder contentReferenceType(
                 String contentReferenceType) {
@@ -300,8 +340,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * also be set because the schema validator will then find out which
          * attributes are ID attributes. Will be ignored in the enveloping or
          * detached case.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder contentReferenceUri(
                 String contentReferenceUri) {
@@ -314,8 +356,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * algorithm is not specified then the digest algorithm is calculated
          * from the signature algorithm. Example:
          * http://www.w3.org/2001/04/xmlenc#sha256.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder digestAlgorithm(
                 String digestAlgorithm) {
@@ -329,10 +373,12 @@ public interface XmlSignatureEndpointBuilderFactory {
          * org.apache.camel.component.xmlsecurity.api contains the default
          * implementation class DefaultKeyAccessor which reads the private key
          * from a Java keystore.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.api.KeyAccessor</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder keyAccessor(Object keyAccessor) {
             setProperty("keyAccessor", keyAccessor);
@@ -345,10 +391,12 @@ public interface XmlSignatureEndpointBuilderFactory {
          * org.apache.camel.component.xmlsecurity.api contains the default
          * implementation class DefaultKeyAccessor which reads the private key
          * from a Java keystore.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xmlsecurity.api.KeyAccessor</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder keyAccessor(String keyAccessor) {
             setProperty("keyAccessor", keyAccessor);
@@ -366,8 +414,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * in the same configuration. If the parameters parentXpath and
          * parentLocalName are specified in the same configuration then an
          * exception is thrown.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder parentLocalName(
                 String parentLocalName) {
@@ -377,8 +427,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Namespace of the parent element to which the XML signature element
          * will be added.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder parentNamespace(
                 String parentNamespace) {
@@ -393,10 +445,12 @@ public interface XmlSignatureEndpointBuilderFactory {
          * be null for enveloping and detached XML signature. If the parameters
          * parentXpath and parentLocalName are specified in the same
          * configuration then an exception is thrown.
-         * The option is a
+         * 
+         * The option is a:
          * <code>javax.xml.crypto.dsig.spec.XPathFilterParameterSpec</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder parentXpath(Object parentXpath) {
             setProperty("parentXpath", parentXpath);
@@ -410,10 +464,12 @@ public interface XmlSignatureEndpointBuilderFactory {
          * be null for enveloping and detached XML signature. If the parameters
          * parentXpath and parentLocalName are specified in the same
          * configuration then an exception is thrown.
+         * 
          * The option will be converted to a
          * <code>javax.xml.crypto.dsig.spec.XPathFilterParameterSpec</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder parentXpath(String parentXpath) {
             setProperty("parentXpath", parentXpath);
@@ -424,8 +480,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * value is false, indicating that the message body contains XML. The
          * value can be overwritten by the header
          * XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder plainText(Boolean plainText) {
             setProperty("plainText", plainText);
@@ -436,9 +494,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * value is false, indicating that the message body contains XML. The
          * value can be overwritten by the header
          * XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder plainText(String plainText) {
             setProperty("plainText", plainText);
@@ -447,8 +507,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Encoding of the plain text. Only relevant if the message body is
          * plain text (see parameter plainText. Default value is UTF-8.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder plainTextEncoding(
                 String plainTextEncoding) {
@@ -462,8 +524,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * namespace. See best practice
          * http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-
          * without-namespaces.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder prefixForXmlSignatureNamespace(
                 String prefixForXmlSignatureNamespace) {
@@ -474,9 +538,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * For adding additional References and Objects to the XML signature
          * which contain additional properties, you can provide a bean which
          * implements the XmlSignatureProperties interface.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties</code> type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder properties(Object properties) {
             setProperty("properties", properties);
@@ -486,9 +552,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * For adding additional References and Objects to the XML signature
          * which contain additional properties, you can provide a bean which
          * implements the XmlSignatureProperties interface.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties</code> type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder properties(String properties) {
             setProperty("properties", properties);
@@ -497,8 +565,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Signature algorithm. Default value is
          * http://www.w3.org/2000/09/xmldsig#rsa-sha1.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder signatureAlgorithm(
                 String signatureAlgorithm) {
@@ -510,8 +580,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * a unique ID is generated for the signature ID (default). If this
          * parameter is set to (empty string) then no Id attribute is created in
          * the signature element.
-         * The option is a <code>java.lang.String</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder signatureId(String signatureId) {
             setProperty("signatureId", signatureId);
@@ -524,10 +596,12 @@ public interface XmlSignatureEndpointBuilderFactory {
          * http://www.w3.org/2000/09/xmldsig#enveloped-signature is added at
          * position 0 of the list. Use methods in XmlSignatureHelper to create
          * the transform methods.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;javax.xml.crypto.AlgorithmMethod&gt;</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder transformMethods(
                 List<Object> transformMethods) {
@@ -541,10 +615,12 @@ public interface XmlSignatureEndpointBuilderFactory {
          * http://www.w3.org/2000/09/xmldsig#enveloped-signature is added at
          * position 0 of the list. Use methods in XmlSignatureHelper to create
          * the transform methods.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;javax.xml.crypto.AlgorithmMethod&gt;</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder transformMethods(
                 String transformMethods) {
@@ -564,9 +640,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * setParentXpath(XPathFilterParameterSpec) for enveloped signature and
          * this parameter for detached signature must not be set in the same
          * configuration.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&gt;</code> type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder xpathsToIdAttributes(
                 List<Object> xpathsToIdAttributes) {
@@ -586,9 +664,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * setParentXpath(XPathFilterParameterSpec) for enveloped signature and
          * this parameter for detached signature must not be set in the same
          * configuration.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&gt;</code> type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default XmlSignatureEndpointBuilder xpathsToIdAttributes(
                 String xpathsToIdAttributes) {
@@ -597,8 +677,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         }
         /**
          * Provides the key for validating the XML signature.
-         * The option is a <code>javax.xml.crypto.KeySelector</code> type.
-         * @group verify
+         * 
+         * The option is a: <code>javax.xml.crypto.KeySelector</code> type.
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder keySelector(Object keySelector) {
             setProperty("keySelector", keySelector);
@@ -606,9 +688,11 @@ public interface XmlSignatureEndpointBuilderFactory {
         }
         /**
          * Provides the key for validating the XML signature.
+         * 
          * The option will be converted to a
          * <code>javax.xml.crypto.KeySelector</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder keySelector(String keySelector) {
             setProperty("keySelector", keySelector);
@@ -619,8 +703,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * XML signature document which shall be set to the output message body.
          * The class of the value depends on the type of the output node search.
          * The output node search is forwarded to XmlSignature2Message.
-         * The option is a <code>java.lang.Object</code> type.
-         * @group verify
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder outputNodeSearch(
                 Object outputNodeSearch) {
@@ -632,8 +718,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * XML signature document which shall be set to the output message body.
          * The class of the value depends on the type of the output node search.
          * The output node search is forwarded to XmlSignature2Message.
+         * 
          * The option will be converted to a <code>java.lang.Object</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder outputNodeSearch(
                 String outputNodeSearch) {
@@ -645,8 +733,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * serialized into the output message bodyF. See
          * setOutputNodeSearch(Object). The supported default search types you
          * can find in DefaultXmlSignature2Message.
-         * The option is a <code>java.lang.String</code> type.
-         * @group verify
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder outputNodeSearchType(
                 String outputNodeSearchType) {
@@ -662,8 +752,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * XmlSignature2Message. This indicator has no effect if the output node
          * search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group verify
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder removeSignatureElements(
                 Boolean removeSignatureElements) {
@@ -679,9 +771,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * XmlSignature2Message. This indicator has no effect if the output node
          * search is of type
          * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT.F.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder removeSignatureElements(
                 String removeSignatureElements) {
@@ -690,8 +784,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         }
         /**
          * Enables secure validation. If true then secure validation is enabled.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group verify
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder secureValidation(
                 Boolean secureValidation) {
@@ -700,9 +796,11 @@ public interface XmlSignatureEndpointBuilderFactory {
         }
         /**
          * Enables secure validation. If true then secure validation is enabled.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder secureValidation(
                 String secureValidation) {
@@ -718,9 +816,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * fails, a XmlSignatureInvalidValueException is thrown. If a reference
          * validation fails, a XmlSignatureInvalidContentHashException is
          * thrown. For more detailed information, see the JavaDoc.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder validationFailedHandler(
                 Object validationFailedHandler) {
@@ -736,9 +836,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * fails, a XmlSignatureInvalidValueException is thrown. If a reference
          * validation fails, a XmlSignatureInvalidContentHashException is
          * thrown. For more detailed information, see the JavaDoc.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder validationFailedHandler(
                 String validationFailedHandler) {
@@ -768,9 +870,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * body is determined from a referenced Object; this is explained in
          * more detail in chapter Output Node Determination in Enveloping XML
          * Signature Case.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.api.XmlSignature2Message</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder xmlSignature2Message(
                 Object xmlSignature2Message) {
@@ -800,9 +904,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * body is determined from a referenced Object; this is explained in
          * more detail in chapter Output Node Determination in Enveloping XML
          * Signature Case.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xmlsecurity.api.XmlSignature2Message</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder xmlSignature2Message(
                 String xmlSignature2Message) {
@@ -813,9 +919,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * This interface allows the application to check the XML signature
          * before the validation is executed. This step is recommended in
          * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder xmlSignatureChecker(
                 Object xmlSignatureChecker) {
@@ -826,9 +934,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * This interface allows the application to check the XML signature
          * before the validation is executed. This step is recommended in
          * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker</code> type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default XmlSignatureEndpointBuilder xmlSignatureChecker(
                 String xmlSignatureChecker) {
@@ -849,8 +959,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -860,8 +972,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -871,8 +985,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -882,8 +998,10 @@ public interface XmlSignatureEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder synchronous(
                 String synchronous) {
@@ -896,8 +1014,10 @@ public interface XmlSignatureEndpointBuilderFactory {
          * default dereferencer is used which can resolve URI fragments, HTTP,
          * file and XPpointer URIs. Attention: The implementation is provider
          * dependent!.
-         * The option is a <code>javax.xml.crypto.URIDereferencer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>javax.xml.crypto.URIDereferencer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder uriDereferencer(
                 Object uriDereferencer) {
@@ -910,9 +1030,11 @@ public interface XmlSignatureEndpointBuilderFactory {
          * default dereferencer is used which can resolve URI fragments, HTTP,
          * file and XPpointer URIs. Attention: The implementation is provider
          * dependent!.
+         * 
          * The option will be converted to a
          * <code>javax.xml.crypto.URIDereferencer</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder uriDereferencer(
                 String uriDereferencer) {

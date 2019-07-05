@@ -41,8 +41,10 @@ public interface ChatScriptEndpointBuilderFactory {
         }
         /**
          * Hostname or IP of the server on which CS server is running.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChatScriptEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -50,8 +52,10 @@ public interface ChatScriptEndpointBuilderFactory {
         }
         /**
          * Port on which ChatScript is listening to.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ChatScriptEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -59,8 +63,10 @@ public interface ChatScriptEndpointBuilderFactory {
         }
         /**
          * Port on which ChatScript is listening to.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ChatScriptEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -68,8 +74,10 @@ public interface ChatScriptEndpointBuilderFactory {
         }
         /**
          * Name of the Bot in CS to converse with.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChatScriptEndpointBuilder botName(String botName) {
             setProperty("botName", botName);
@@ -77,8 +85,10 @@ public interface ChatScriptEndpointBuilderFactory {
         }
         /**
          * Issues :reset command to start a new conversation everytime.
-         * The option is a <code>boolean</code> type.
-         * @group reset
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: reset
          */
         default ChatScriptEndpointBuilder resetchat(boolean resetchat) {
             setProperty("resetchat", resetchat);
@@ -86,8 +96,10 @@ public interface ChatScriptEndpointBuilderFactory {
         }
         /**
          * Issues :reset command to start a new conversation everytime.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group reset
+         * 
+         * Group: reset
          */
         default ChatScriptEndpointBuilder resetchat(String resetchat) {
             setProperty("resetchat", resetchat);
@@ -96,8 +108,10 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Username who initializes the CS conversation. To be set when chat is
          * initialized from camel route.
-         * The option is a <code>java.lang.String</code> type.
-         * @group username
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: username
          */
         default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
             setProperty("chatUserName", chatUserName);
@@ -117,8 +131,10 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -128,8 +144,10 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -139,8 +157,10 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -150,8 +170,10 @@ public interface ChatScriptEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

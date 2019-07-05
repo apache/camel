@@ -45,8 +45,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The configFile is the name of the QuickFIX/J configuration to use for
          * the FIX engine (located as a resource found in your classpath).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointConsumerBuilder configurationName(
                 String configurationName) {
@@ -60,8 +62,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the engine is started at the endpoint creation. When this parameter
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
@@ -75,8 +79,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the engine is started at the endpoint creation. When this parameter
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
@@ -87,8 +93,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
-         * The option is a <code>quickfix.SessionID</code> type.
-         * @group common
+         * 
+         * The option is a: <code>quickfix.SessionID</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointConsumerBuilder sessionID(Object sessionID) {
             setProperty("sessionID", sessionID);
@@ -98,9 +106,11 @@ public interface QuickfixjEndpointBuilderFactory {
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * 
          * The option will be converted to a <code>quickfix.SessionID</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default QuickfixjEndpointConsumerBuilder sessionID(String sessionID) {
             setProperty("sessionID", sessionID);
@@ -114,8 +124,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -130,8 +142,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -154,9 +168,11 @@ public interface QuickfixjEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -168,9 +184,11 @@ public interface QuickfixjEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -179,8 +197,10 @@ public interface QuickfixjEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -189,9 +209,11 @@ public interface QuickfixjEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -201,8 +223,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -212,8 +236,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -223,8 +249,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -234,8 +262,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -256,8 +286,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The configFile is the name of the QuickFIX/J configuration to use for
          * the FIX engine (located as a resource found in your classpath).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointProducerBuilder configurationName(
                 String configurationName) {
@@ -271,8 +303,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the engine is started at the endpoint creation. When this parameter
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
@@ -286,8 +320,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the engine is started at the endpoint creation. When this parameter
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
@@ -298,8 +334,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
-         * The option is a <code>quickfix.SessionID</code> type.
-         * @group common
+         * 
+         * The option is a: <code>quickfix.SessionID</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointProducerBuilder sessionID(Object sessionID) {
             setProperty("sessionID", sessionID);
@@ -309,9 +347,11 @@ public interface QuickfixjEndpointBuilderFactory {
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * 
          * The option will be converted to a <code>quickfix.SessionID</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default QuickfixjEndpointProducerBuilder sessionID(String sessionID) {
             setProperty("sessionID", sessionID);
@@ -327,8 +367,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -345,8 +387,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -367,8 +411,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -378,8 +424,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -389,8 +437,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -400,8 +450,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -422,8 +474,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The configFile is the name of the QuickFIX/J configuration to use for
          * the FIX engine (located as a resource found in your classpath).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointBuilder configurationName(
                 String configurationName) {
@@ -437,8 +491,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the engine is started at the endpoint creation. When this parameter
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
@@ -452,8 +508,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * the engine is started at the endpoint creation. When this parameter
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QuickfixjEndpointBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
@@ -464,8 +522,10 @@ public interface QuickfixjEndpointBuilderFactory {
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
-         * The option is a <code>quickfix.SessionID</code> type.
-         * @group common
+         * 
+         * The option is a: <code>quickfix.SessionID</code> type.
+         * 
+         * Group: common
          */
         default QuickfixjEndpointBuilder sessionID(Object sessionID) {
             setProperty("sessionID", sessionID);
@@ -475,9 +535,11 @@ public interface QuickfixjEndpointBuilderFactory {
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * 
          * The option will be converted to a <code>quickfix.SessionID</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default QuickfixjEndpointBuilder sessionID(String sessionID) {
             setProperty("sessionID", sessionID);
@@ -497,8 +559,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -508,8 +572,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -519,8 +585,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -529,8 +597,10 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

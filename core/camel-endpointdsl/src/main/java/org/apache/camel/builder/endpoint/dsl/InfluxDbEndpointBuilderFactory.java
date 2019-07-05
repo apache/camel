@@ -40,8 +40,10 @@ public interface InfluxDbEndpointBuilderFactory {
         }
         /**
          * Connection to the influx database, of class InfluxDB.class.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default InfluxDbEndpointBuilder connectionBean(String connectionBean) {
             setProperty("connectionBean", connectionBean);
@@ -49,8 +51,10 @@ public interface InfluxDbEndpointBuilderFactory {
         }
         /**
          * Define if this operation is a batch operation or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default InfluxDbEndpointBuilder batch(boolean batch) {
             setProperty("batch", batch);
@@ -58,8 +62,10 @@ public interface InfluxDbEndpointBuilderFactory {
         }
         /**
          * Define if this operation is a batch operation or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default InfluxDbEndpointBuilder batch(String batch) {
             setProperty("batch", batch);
@@ -67,8 +73,10 @@ public interface InfluxDbEndpointBuilderFactory {
         }
         /**
          * The name of the database where the time series will be stored.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default InfluxDbEndpointBuilder databaseName(String databaseName) {
             setProperty("databaseName", databaseName);
@@ -76,8 +84,10 @@ public interface InfluxDbEndpointBuilderFactory {
         }
         /**
          * Define if this operation is an insert or a query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default InfluxDbEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -85,8 +95,10 @@ public interface InfluxDbEndpointBuilderFactory {
         }
         /**
          * Define the query in case of operation query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default InfluxDbEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -95,8 +107,10 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * The string that defines the retention policy to the data created by
          * the endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default InfluxDbEndpointBuilder retentionPolicy(String retentionPolicy) {
             setProperty("retentionPolicy", retentionPolicy);
@@ -116,8 +130,10 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -127,8 +143,10 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -138,8 +156,10 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -148,8 +168,10 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

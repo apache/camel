@@ -40,8 +40,10 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * The sender's email address.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder from(String from) {
             setProperty("from", from);
@@ -49,9 +51,11 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * To use the AmazonSimpleEmailService as the client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(Object amazonSESClient) {
             setProperty("amazonSESClient", amazonSESClient);
@@ -59,9 +63,11 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * To use the AmazonSimpleEmailService as the client.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(String amazonSESClient) {
             setProperty("amazonSESClient", amazonSESClient);
@@ -69,8 +75,10 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the SES client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -78,8 +86,10 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the SES client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -87,9 +97,11 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the SES client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -97,8 +109,10 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * The region in which SES client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -107,9 +121,11 @@ public interface SesEndpointBuilderFactory {
         /**
          * List of reply-to email address(es) for the message, override it using
          * 'CamelAwsSesReplyToAddresses' header.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder replyToAddresses(
                 List<String> replyToAddresses) {
@@ -119,9 +135,11 @@ public interface SesEndpointBuilderFactory {
         /**
          * List of reply-to email address(es) for the message, override it using
          * 'CamelAwsSesReplyToAddresses' header.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder replyToAddresses(String replyToAddresses) {
             setProperty("replyToAddresses", replyToAddresses);
@@ -130,8 +148,10 @@ public interface SesEndpointBuilderFactory {
         /**
          * The email address to which bounce notifications are to be forwarded,
          * override it using 'CamelAwsSesReturnPath' header.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder returnPath(String returnPath) {
             setProperty("returnPath", returnPath);
@@ -140,8 +160,10 @@ public interface SesEndpointBuilderFactory {
         /**
          * The subject which is used if the message header 'CamelAwsSesSubject'
          * is not present.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder subject(String subject) {
             setProperty("subject", subject);
@@ -150,9 +172,11 @@ public interface SesEndpointBuilderFactory {
         /**
          * List of destination email address. Can be overriden with
          * 'CamelAwsSesTo' header.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder to(List<String> to) {
             setProperty("to", to);
@@ -161,9 +185,11 @@ public interface SesEndpointBuilderFactory {
         /**
          * List of destination email address. Can be overriden with
          * 'CamelAwsSesTo' header.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SesEndpointBuilder to(String to) {
             setProperty("to", to);
@@ -171,8 +197,10 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SesEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -180,8 +208,10 @@ public interface SesEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SesEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -201,8 +231,10 @@ public interface SesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -212,8 +244,10 @@ public interface SesEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -223,8 +257,10 @@ public interface SesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSesEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -233,8 +269,10 @@ public interface SesEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSesEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

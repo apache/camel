@@ -46,8 +46,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Spring context. It will equal to the inputChannel name for the Spring
          * Integration consumer and the outputChannel name for the Spring
          * Integration provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointConsumerBuilder defaultChannel(
                 String defaultChannel) {
@@ -58,8 +60,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointConsumerBuilder inOut(boolean inOut) {
             setProperty("inOut", inOut);
@@ -69,8 +73,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointConsumerBuilder inOut(String inOut) {
             setProperty("inOut", inOut);
@@ -84,8 +90,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -100,8 +108,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -111,8 +121,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * The Spring integration input channel name that this endpoint wants to
          * consume from Spring integration.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SpringIntegrationEndpointConsumerBuilder inputChannel(
                 String inputChannel) {
@@ -136,9 +148,11 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -150,9 +164,11 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -161,8 +177,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -171,9 +189,11 @@ public interface SpringIntegrationEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -183,8 +203,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -194,8 +216,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -205,8 +229,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -216,8 +242,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -240,8 +268,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Spring context. It will equal to the inputChannel name for the Spring
          * Integration consumer and the outputChannel name for the Spring
          * Integration provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointProducerBuilder defaultChannel(
                 String defaultChannel) {
@@ -252,8 +282,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointProducerBuilder inOut(boolean inOut) {
             setProperty("inOut", inOut);
@@ -263,8 +295,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointProducerBuilder inOut(String inOut) {
             setProperty("inOut", inOut);
@@ -280,8 +314,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -298,8 +334,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -309,8 +347,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * The Spring integration output channel name that is used to send
          * messages to Spring integration.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SpringIntegrationEndpointProducerBuilder outputChannel(
                 String outputChannel) {
@@ -332,8 +372,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -343,8 +385,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -354,8 +398,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -365,8 +411,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -389,8 +437,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Spring context. It will equal to the inputChannel name for the Spring
          * Integration consumer and the outputChannel name for the Spring
          * Integration provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointBuilder defaultChannel(
                 String defaultChannel) {
@@ -401,8 +451,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointBuilder inOut(boolean inOut) {
             setProperty("inOut", inOut);
@@ -412,8 +464,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SpringIntegrationEndpointBuilder inOut(String inOut) {
             setProperty("inOut", inOut);
@@ -433,8 +487,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -444,8 +500,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -455,8 +513,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -466,8 +526,10 @@ public interface SpringIntegrationEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointBuilder synchronous(
                 String synchronous) {

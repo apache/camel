@@ -40,8 +40,10 @@ public interface IgniteSetEndpointBuilderFactory {
         }
         /**
          * The set name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default IgniteSetEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -50,8 +52,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default IgniteSetEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -61,8 +65,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default IgniteSetEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -72,8 +78,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default IgniteSetEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -83,8 +91,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default IgniteSetEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -105,8 +115,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIgniteSetEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -116,8 +128,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIgniteSetEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -127,8 +141,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIgniteSetEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -137,8 +153,10 @@ public interface IgniteSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIgniteSetEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -45,8 +45,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The gRPC server host name. This is localhost or 0.0.0.0 when being a
          * consumer or remote server host name when using producer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -54,8 +56,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The gRPC local or remote server port.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -63,8 +67,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The gRPC local or remote server port.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -73,8 +79,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Fully qualified service name from the protocol buffer descriptor file
          * (package dot service definition name).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder service(String service) {
             setProperty("service", service);
@@ -82,8 +90,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The HTTP/2 flow control window size (MiB).
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder flowControlWindow(
                 int flowControlWindow) {
@@ -92,8 +102,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The HTTP/2 flow control window size (MiB).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder flowControlWindow(
                 String flowControlWindow) {
@@ -102,8 +114,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The maximum message size allowed to be received/sent (MiB).
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(int maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
@@ -111,8 +125,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The maximum message size allowed to be received/sent (MiB).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(String maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
@@ -126,8 +142,10 @@ public interface GrpcEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -142,8 +160,10 @@ public interface GrpcEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -158,10 +178,12 @@ public interface GrpcEndpointBuilderFactory {
          * to the sender. If a propagation strategy is selected, request is sent
          * to the stream, and the response will be immediately sent back to the
          * sender.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
                 GrpcConsumerStrategy consumerStrategy) {
@@ -176,10 +198,12 @@ public interface GrpcEndpointBuilderFactory {
          * to the sender. If a propagation strategy is selected, request is sent
          * to the stream, and the response will be immediately sent back to the
          * sender.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
                 String consumerStrategy) {
@@ -188,8 +212,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Determines if onCompleted events should be pushed to the Camel route.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 boolean forwardOnCompleted) {
@@ -198,8 +224,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Determines if onCompleted events should be pushed to the Camel route.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 String forwardOnCompleted) {
@@ -209,8 +237,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder forwardOnError(
                 boolean forwardOnError) {
@@ -220,8 +250,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder forwardOnError(String forwardOnError) {
             setProperty("forwardOnError", forwardOnError);
@@ -230,8 +262,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum number of concurrent calls permitted for each incoming
          * server connection.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 int maxConcurrentCallsPerConnection) {
@@ -241,8 +275,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum number of concurrent calls permitted for each incoming
          * server connection.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 String maxConcurrentCallsPerConnection) {
@@ -251,9 +287,11 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Authentication method type in advance to the SSL/TLS negotiation.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
@@ -262,9 +300,11 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Authentication method type in advance to the SSL/TLS negotiation.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
@@ -273,10 +313,12 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token sign algorithm.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
@@ -285,10 +327,12 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token sign algorithm.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(String jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
@@ -296,8 +340,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token issuer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtIssuer(String jwtIssuer) {
             setProperty("jwtIssuer", jwtIssuer);
@@ -305,8 +351,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtSecret(String jwtSecret) {
             setProperty("jwtSecret", jwtSecret);
@@ -314,8 +362,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token subject.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtSubject(String jwtSubject) {
             setProperty("jwtSubject", jwtSubject);
@@ -323,8 +373,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The X.509 certificate chain file resource in PEM format link.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder keyCertChainResource(
                 String keyCertChainResource) {
@@ -333,8 +385,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
@@ -342,8 +396,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file resource in PEM format link.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder keyResource(String keyResource) {
             setProperty("keyResource", keyResource);
@@ -352,8 +408,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Identifies the security negotiation type used for HTTP/2
          * communication.
-         * The option is a <code>io.grpc.netty.NegotiationType</code> type.
-         * @group security
+         * 
+         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder negotiationType(
                 NegotiationType negotiationType) {
@@ -363,9 +421,11 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Identifies the security negotiation type used for HTTP/2
          * communication.
+         * 
          * The option will be converted to a
          * <code>io.grpc.netty.NegotiationType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder negotiationType(
                 String negotiationType) {
@@ -375,8 +435,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder serviceAccountResource(
                 String serviceAccountResource) {
@@ -386,8 +448,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointConsumerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
@@ -410,9 +474,11 @@ public interface GrpcEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -424,9 +490,11 @@ public interface GrpcEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -435,8 +503,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -445,9 +515,11 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -457,8 +529,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -468,8 +542,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -479,8 +555,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -490,8 +568,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -512,8 +592,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The gRPC server host name. This is localhost or 0.0.0.0 when being a
          * consumer or remote server host name when using producer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -521,8 +603,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The gRPC local or remote server port.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -530,8 +614,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The gRPC local or remote server port.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -540,8 +626,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Fully qualified service name from the protocol buffer descriptor file
          * (package dot service definition name).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder service(String service) {
             setProperty("service", service);
@@ -549,8 +637,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The HTTP/2 flow control window size (MiB).
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder flowControlWindow(
                 int flowControlWindow) {
@@ -559,8 +649,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The HTTP/2 flow control window size (MiB).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder flowControlWindow(
                 String flowControlWindow) {
@@ -569,8 +661,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The maximum message size allowed to be received/sent (MiB).
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder maxMessageSize(int maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
@@ -578,8 +672,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The maximum message size allowed to be received/sent (MiB).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointProducerBuilder maxMessageSize(String maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
@@ -595,8 +691,10 @@ public interface GrpcEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GrpcEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -613,8 +711,10 @@ public interface GrpcEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GrpcEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -623,8 +723,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * gRPC method name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GrpcEndpointProducerBuilder method(String method) {
             setProperty("method", method);
@@ -636,10 +738,12 @@ public interface GrpcEndpointBuilderFactory {
          * STREAMING mode all exchanges will be sent within the same request
          * (input and output of the recipient gRPC service must be of type
          * 'stream').
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GrpcEndpointProducerBuilder producerStrategy(
                 GrpcProducerStrategy producerStrategy) {
@@ -652,10 +756,12 @@ public interface GrpcEndpointBuilderFactory {
          * STREAMING mode all exchanges will be sent within the same request
          * (input and output of the recipient gRPC service must be of type
          * 'stream').
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GrpcEndpointProducerBuilder producerStrategy(
                 String producerStrategy) {
@@ -665,8 +771,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * When using STREAMING client mode, it indicates the endpoint where
          * responses should be forwarded.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GrpcEndpointProducerBuilder streamRepliesTo(
                 String streamRepliesTo) {
@@ -675,8 +783,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The user agent header passed to the server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GrpcEndpointProducerBuilder userAgent(String userAgent) {
             setProperty("userAgent", userAgent);
@@ -684,9 +794,11 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Authentication method type in advance to the SSL/TLS negotiation.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
@@ -695,9 +807,11 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Authentication method type in advance to the SSL/TLS negotiation.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder authenticationType(
                 String authenticationType) {
@@ -706,10 +820,12 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token sign algorithm.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
@@ -718,10 +834,12 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token sign algorithm.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(String jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
@@ -729,8 +847,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token issuer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder jwtIssuer(String jwtIssuer) {
             setProperty("jwtIssuer", jwtIssuer);
@@ -738,8 +858,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder jwtSecret(String jwtSecret) {
             setProperty("jwtSecret", jwtSecret);
@@ -747,8 +869,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token subject.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
             setProperty("jwtSubject", jwtSubject);
@@ -756,8 +880,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The X.509 certificate chain file resource in PEM format link.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder keyCertChainResource(
                 String keyCertChainResource) {
@@ -766,8 +892,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
@@ -775,8 +903,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file resource in PEM format link.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder keyResource(String keyResource) {
             setProperty("keyResource", keyResource);
@@ -785,8 +915,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Identifies the security negotiation type used for HTTP/2
          * communication.
-         * The option is a <code>io.grpc.netty.NegotiationType</code> type.
-         * @group security
+         * 
+         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder negotiationType(
                 NegotiationType negotiationType) {
@@ -796,9 +928,11 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Identifies the security negotiation type used for HTTP/2
          * communication.
+         * 
          * The option will be converted to a
          * <code>io.grpc.netty.NegotiationType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder negotiationType(
                 String negotiationType) {
@@ -808,8 +942,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder serviceAccountResource(
                 String serviceAccountResource) {
@@ -819,8 +955,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointProducerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
@@ -841,8 +979,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -852,8 +992,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -863,8 +1005,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -874,8 +1018,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -896,8 +1042,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The gRPC server host name. This is localhost or 0.0.0.0 when being a
          * consumer or remote server host name when using producer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -905,8 +1053,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The gRPC local or remote server port.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -914,8 +1064,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The gRPC local or remote server port.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -924,8 +1076,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Fully qualified service name from the protocol buffer descriptor file
          * (package dot service definition name).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder service(String service) {
             setProperty("service", service);
@@ -933,8 +1087,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The HTTP/2 flow control window size (MiB).
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder flowControlWindow(int flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
@@ -942,8 +1098,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The HTTP/2 flow control window size (MiB).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder flowControlWindow(String flowControlWindow) {
             setProperty("flowControlWindow", flowControlWindow);
@@ -951,8 +1109,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The maximum message size allowed to be received/sent (MiB).
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder maxMessageSize(int maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
@@ -960,8 +1120,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The maximum message size allowed to be received/sent (MiB).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GrpcEndpointBuilder maxMessageSize(String maxMessageSize) {
             setProperty("maxMessageSize", maxMessageSize);
@@ -969,9 +1131,11 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Authentication method type in advance to the SSL/TLS negotiation.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder authenticationType(
                 GrpcAuthType authenticationType) {
@@ -980,9 +1144,11 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * Authentication method type in advance to the SSL/TLS negotiation.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder authenticationType(String authenticationType) {
             setProperty("authenticationType", authenticationType);
@@ -990,10 +1156,12 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token sign algorithm.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder jwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
@@ -1001,10 +1169,12 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token sign algorithm.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder jwtAlgorithm(String jwtAlgorithm) {
             setProperty("jwtAlgorithm", jwtAlgorithm);
@@ -1012,8 +1182,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token issuer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder jwtIssuer(String jwtIssuer) {
             setProperty("jwtIssuer", jwtIssuer);
@@ -1021,8 +1193,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder jwtSecret(String jwtSecret) {
             setProperty("jwtSecret", jwtSecret);
@@ -1030,8 +1204,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * JSON Web Token subject.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder jwtSubject(String jwtSubject) {
             setProperty("jwtSubject", jwtSubject);
@@ -1039,8 +1215,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The X.509 certificate chain file resource in PEM format link.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder keyCertChainResource(
                 String keyCertChainResource) {
@@ -1049,8 +1227,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder keyPassword(String keyPassword) {
             setProperty("keyPassword", keyPassword);
@@ -1058,8 +1238,10 @@ public interface GrpcEndpointBuilderFactory {
         }
         /**
          * The PKCS#8 private key file resource in PEM format link.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder keyResource(String keyResource) {
             setProperty("keyResource", keyResource);
@@ -1068,8 +1250,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Identifies the security negotiation type used for HTTP/2
          * communication.
-         * The option is a <code>io.grpc.netty.NegotiationType</code> type.
-         * @group security
+         * 
+         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder negotiationType(
                 NegotiationType negotiationType) {
@@ -1079,9 +1263,11 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Identifies the security negotiation type used for HTTP/2
          * communication.
+         * 
          * The option will be converted to a
          * <code>io.grpc.netty.NegotiationType</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder negotiationType(String negotiationType) {
             setProperty("negotiationType", negotiationType);
@@ -1090,8 +1276,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder serviceAccountResource(
                 String serviceAccountResource) {
@@ -1101,8 +1289,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default GrpcEndpointBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
@@ -1123,8 +1313,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1134,8 +1326,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1145,8 +1339,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1155,8 +1351,10 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

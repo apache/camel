@@ -42,8 +42,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder masterUrl(
                 String masterUrl) {
@@ -52,8 +54,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder apiVersion(
                 String apiVersion) {
@@ -62,8 +66,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder dnsDomain(
                 String dnsDomain) {
@@ -72,9 +78,11 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -83,9 +91,11 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -94,8 +104,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -103,8 +115,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder portProtocol(
                 String portProtocol) {
@@ -113,8 +127,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder caCertData(
                 String caCertData) {
@@ -123,8 +139,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder caCertFile(
                 String caCertFile) {
@@ -133,8 +151,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -143,8 +163,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -153,8 +175,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -163,8 +187,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder clientKeyData(
                 String clientKeyData) {
@@ -173,8 +199,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -183,8 +211,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -193,8 +223,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder oauthToken(
                 String oauthToken) {
@@ -203,8 +235,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -212,8 +246,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder trustCerts(
                 Boolean trustCerts) {
@@ -222,9 +258,11 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder trustCerts(
                 String trustCerts) {
@@ -233,8 +271,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesResourcesQuotaEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -255,8 +295,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -266,8 +308,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -277,8 +321,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -288,9 +334,11 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -300,8 +348,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -311,8 +361,10 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder synchronous(
                 String synchronous) {

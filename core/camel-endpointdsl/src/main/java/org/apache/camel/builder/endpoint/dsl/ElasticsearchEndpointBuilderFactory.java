@@ -42,8 +42,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Name of the cluster.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
@@ -51,8 +53,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The time in ms to wait before connection will timeout.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -61,8 +65,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The time in ms to wait before connection will timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -71,8 +77,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Disconnect after it finish calling the producer.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
@@ -80,8 +88,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Disconnect after it finish calling the producer.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
@@ -89,8 +99,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable SSL.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
             setProperty("enableSSL", enableSSL);
@@ -98,8 +110,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable SSL.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
             setProperty("enableSSL", enableSSL);
@@ -108,8 +122,11 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Comma separated list with ip:port formatted remote transport
          * addresses to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder hostAddresses(String hostAddresses) {
             setProperty("hostAddresses", hostAddresses);
@@ -117,8 +134,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The name of the index to act against.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder indexName(String indexName) {
             setProperty("indexName", indexName);
@@ -126,8 +145,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The type of the index to act against.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder indexType(String indexType) {
             setProperty("indexType", indexType);
@@ -135,8 +156,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The time in ms before retry.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
             setProperty("maxRetryTimeout", maxRetryTimeout);
@@ -144,8 +167,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The time in ms before retry.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(
                 String maxRetryTimeout) {
@@ -154,9 +179,11 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * What operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder operation(
                 ElasticsearchOperation operation) {
@@ -165,9 +192,11 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * What operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.elasticsearch.ElasticsearchOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -175,8 +204,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Time in ms during which elasticsearch will keep search context alive.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 int scrollKeepAliveMs) {
@@ -185,8 +216,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Time in ms during which elasticsearch will keep search context alive.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 String scrollKeepAliveMs) {
@@ -195,8 +228,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The timeout in ms to wait before the socket will timeout.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder socketTimeout(int socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
@@ -204,8 +239,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * The timeout in ms to wait before the socket will timeout.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder socketTimeout(String socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
@@ -213,8 +250,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable scroll usage.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder useScroll(boolean useScroll) {
             setProperty("useScroll", useScroll);
@@ -222,8 +261,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         }
         /**
          * Enable scroll usage.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder useScroll(String useScroll) {
             setProperty("useScroll", useScroll);
@@ -232,8 +273,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Index creation waits for the write consistency number of shards to be
          * available.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 int waitForActiveShards) {
@@ -243,8 +286,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Index creation waits for the write consistency number of shards to be
          * available.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 String waitForActiveShards) {
@@ -265,8 +310,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -276,8 +323,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -287,8 +336,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -298,8 +349,10 @@ public interface ElasticsearchEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 String synchronous) {

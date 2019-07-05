@@ -45,8 +45,10 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Name of direct-vm endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DirectVmEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -60,8 +62,10 @@ public interface DirectVmEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,8 +80,10 @@ public interface DirectVmEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -100,9 +106,11 @@ public interface DirectVmEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -114,9 +122,11 @@ public interface DirectVmEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -125,8 +135,10 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -135,9 +147,11 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -147,8 +161,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -158,8 +174,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -169,8 +187,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 boolean propagateProperties) {
@@ -180,8 +200,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 String propagateProperties) {
@@ -191,8 +213,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -202,8 +226,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -223,8 +249,10 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Name of direct-vm endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DirectVmEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -234,8 +262,10 @@ public interface DirectVmEndpointBuilderFactory {
          * If sending a message to a direct endpoint which has no active
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder block(boolean block) {
             setProperty("block", block);
@@ -245,8 +275,10 @@ public interface DirectVmEndpointBuilderFactory {
          * If sending a message to a direct endpoint which has no active
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder block(String block) {
             setProperty("block", block);
@@ -255,8 +287,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the producer should fail by throwing an exception, when
          * sending to a Direct-VM endpoint with no active consumers.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
@@ -266,8 +300,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the producer should fail by throwing an exception, when
          * sending to a Direct-VM endpoint with no active consumers.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
@@ -284,8 +320,10 @@ public interface DirectVmEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -302,8 +340,10 @@ public interface DirectVmEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -312,8 +352,10 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * The timeout value to use if block is enabled.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -321,8 +363,10 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * The timeout value to use if block is enabled.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DirectVmEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -343,9 +387,11 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets a HeaderFilterStrategy that will only be applied on producer
          * endpoints (on both directions: request and response). Default value:
          * none.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -356,9 +402,11 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets a HeaderFilterStrategy that will only be applied on producer
          * endpoints (on both directions: request and response). Default value:
          * none.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -368,8 +416,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -379,8 +429,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -390,8 +442,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 boolean propagateProperties) {
@@ -401,8 +455,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 String propagateProperties) {
@@ -412,8 +468,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -423,8 +481,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -444,8 +504,10 @@ public interface DirectVmEndpointBuilderFactory {
         }
         /**
          * Name of direct-vm endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DirectVmEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -465,8 +527,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -476,8 +540,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -487,8 +553,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder propagateProperties(
                 boolean propagateProperties) {
@@ -498,8 +566,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder propagateProperties(
                 String propagateProperties) {
@@ -509,8 +579,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -519,8 +591,10 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

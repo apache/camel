@@ -43,8 +43,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * What operation to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -52,8 +54,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -61,8 +65,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The server URL to connect.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointConsumerBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
@@ -76,8 +82,10 @@ public interface ZendeskEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -92,8 +100,10 @@ public interface ZendeskEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -102,8 +112,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The OAuth token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointConsumerBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -111,8 +123,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -120,8 +134,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The security token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointConsumerBuilder token(String token) {
             setProperty("token", token);
@@ -129,8 +145,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The user name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -152,9 +170,11 @@ public interface ZendeskEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -166,9 +186,11 @@ public interface ZendeskEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -177,8 +199,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -187,9 +211,11 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZendeskEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -199,8 +225,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -210,8 +238,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -221,8 +251,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -232,8 +264,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -253,8 +287,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * What operation to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -262,8 +298,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -271,8 +309,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The server URL to connect.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointProducerBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
@@ -288,8 +328,10 @@ public interface ZendeskEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ZendeskEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -306,8 +348,10 @@ public interface ZendeskEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ZendeskEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -316,8 +360,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The OAuth token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointProducerBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -325,8 +371,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -334,8 +382,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The security token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointProducerBuilder token(String token) {
             setProperty("token", token);
@@ -343,8 +393,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The user name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -364,8 +416,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -375,8 +429,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -386,8 +442,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -397,8 +455,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -418,8 +478,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * What operation to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -427,8 +489,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -436,8 +500,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The server URL to connect.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZendeskEndpointBuilder serverUrl(String serverUrl) {
             setProperty("serverUrl", serverUrl);
@@ -445,8 +511,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The OAuth token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -454,8 +522,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -463,8 +533,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The security token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointBuilder token(String token) {
             setProperty("token", token);
@@ -472,8 +544,10 @@ public interface ZendeskEndpointBuilderFactory {
         }
         /**
          * The user name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ZendeskEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -493,8 +567,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -504,8 +580,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -515,8 +593,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -525,8 +605,10 @@ public interface ZendeskEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

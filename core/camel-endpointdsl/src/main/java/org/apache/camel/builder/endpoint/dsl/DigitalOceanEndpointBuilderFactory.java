@@ -42,9 +42,11 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * The operation to perform to the given resource.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder operation(
                 DigitalOceanOperations operation) {
@@ -53,9 +55,11 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * The operation to perform to the given resource.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -63,8 +67,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * Use for pagination. Force the page number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder page(Integer page) {
             setProperty("page", page);
@@ -72,9 +78,11 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * Use for pagination. Force the page number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder page(String page) {
             setProperty("page", page);
@@ -83,8 +91,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Use for pagination. Set the number of item per request. The maximum
          * number of results per page is 200.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder perPage(Integer perPage) {
             setProperty("perPage", perPage);
@@ -93,9 +103,11 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Use for pagination. Set the number of item per request. The maximum
          * number of results per page is 200.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder perPage(String perPage) {
             setProperty("perPage", perPage);
@@ -103,9 +115,12 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * The DigitalOcean resource type on which perform the operation.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder resource(
                 DigitalOceanResources resource) {
@@ -114,9 +129,12 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * The DigitalOcean resource type on which perform the operation.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanResources</code> type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default DigitalOceanEndpointBuilder resource(String resource) {
             setProperty("resource", resource);
@@ -124,8 +142,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * Set a proxy host if needed.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyHost(String httpProxyHost) {
             setProperty("httpProxyHost", httpProxyHost);
@@ -133,8 +153,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * Set a proxy password if needed.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -143,8 +165,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * Set a proxy port if needed.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
@@ -152,9 +176,11 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * Set a proxy port if needed.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyPort(String httpProxyPort) {
             setProperty("httpProxyPort", httpProxyPort);
@@ -162,8 +188,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * Set a proxy host if needed.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default DigitalOceanEndpointBuilder httpProxyUser(String httpProxyUser) {
             setProperty("httpProxyUser", httpProxyUser);
@@ -171,8 +199,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * DigitalOcean OAuth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default DigitalOceanEndpointBuilder oAuthToken(String oAuthToken) {
             setProperty("oAuthToken", oAuthToken);
@@ -192,8 +222,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -203,8 +235,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -213,9 +247,11 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * To use a existing configured DigitalOceanClient as client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 Object digitalOceanClient) {
@@ -224,9 +260,11 @@ public interface DigitalOceanEndpointBuilderFactory {
         }
         /**
          * To use a existing configured DigitalOceanClient as client.
+         * 
          * The option will be converted to a
          * <code>com.myjeeva.digitalocean.impl.DigitalOceanClient</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder digitalOceanClient(
                 String digitalOceanClient) {
@@ -236,8 +274,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -247,8 +287,10 @@ public interface DigitalOceanEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder synchronous(
                 String synchronous) {
