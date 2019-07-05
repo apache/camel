@@ -17,14 +17,14 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+=== URI format
 
-[source,java]
+[source,text]
 ----------------------
 pulsar:[persistent|non-persistent]://tenant/namespace/topic
 ----------------------
 
-### Options
+=== Options
 
 
 // component options: START
@@ -50,18 +50,21 @@ The Apache Pulsar component supports 4 options, which are listed below.
 The Apache Pulsar endpoint is configured using URI syntax:
 
 ----
-pulsar:uri
+pulsar:persistence://tenant/namespace/topic
 ----
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+==== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *topicUri* | The Topic's full URI path including type, tenant and namespace |  | String
+| *persistence* | *Required* Whether the topic is persistent or non-persistent |  | String
+| *tenant* | *Required* The tenant |  | String
+| *namespace* | *Required* The namespace |  | String
+| *topic* | *Required* The topic |  | String
 |===
 
 
@@ -86,6 +89,7 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 

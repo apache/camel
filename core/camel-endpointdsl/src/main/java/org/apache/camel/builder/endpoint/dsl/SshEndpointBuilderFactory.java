@@ -581,8 +581,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the password to use in loading certResource, if certResource is
          * an encrypted key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointConsumerBuilder certResourcePassword(
                 String certResourcePassword) {
@@ -1021,8 +1023,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the password to use in loading certResource, if certResource is
          * an encrypted key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointProducerBuilder certResourcePassword(
                 String certResourcePassword) {
@@ -1329,8 +1333,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the password to use in loading certResource, if certResource is
          * an encrypted key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointBuilder certResourcePassword(
                 String certResourcePassword) {
