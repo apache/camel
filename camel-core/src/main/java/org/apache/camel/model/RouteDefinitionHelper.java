@@ -151,7 +151,6 @@ public final class RouteDefinitionHelper {
                         if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
                             route.setId(id);
                             customIds.add(id);
-                            break;
                         }
                     }
                 }
@@ -225,13 +224,20 @@ public final class RouteDefinitionHelper {
      * Find verb associated with the route by mapping uri
      */
     private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) {
+        VerbDefinition ret = null;
+        String preVerbUri = "";
         for (VerbDefinition verb : rest.getVerbs()) {
             String verbUri = rest.buildFromUri(verb);
-            if (endpointUri.startsWith(verbUri)) {
-                return verb;
+            if (endpointUri.startsWith(verbUri)
+                && preVerbUri.length() < verbUri.length()) {
+                //if there are multiple verb uri match, select the most specific one
+                //for example if the endpoint Uri is rest:get:/user:/{id}/user?produces=text%2Fplain
+                //then the verbUri rest:get:/user:/{id}/user should overweigh the est:get:/user:/{id}
+                preVerbUri = verbUri;
+                ret = verb;
             }
         }
-        return null;
+        return ret;
     }
 
     /**
