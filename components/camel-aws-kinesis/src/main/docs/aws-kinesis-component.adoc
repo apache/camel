@@ -77,7 +77,7 @@ with the following path and query parameters:
 | *amazonKinesisClient* (common) | Amazon Kinesis client to use for all requests for this endpoint |  | AmazonKinesis
 | *proxyHost* (common) | To define a proxy host when instantiating the DDBStreams client |  | String
 | *proxyPort* (common) | To define a proxy port when instantiating the DDBStreams client |  | Integer
-| *region* (common) | The region in which Kinesis client needs to work |  | String
+| *region* (common) | The region in which Kinesis client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the Kinesis stream to start getting records | TRIM_HORIZON | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll | 1 | int
