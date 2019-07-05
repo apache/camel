@@ -50,7 +50,7 @@ The Apache Pulsar component supports 4 options, which are listed below.
 The Apache Pulsar endpoint is configured using URI syntax:
 
 ----
-pulsar:persistence://tenant/namespace/topic
+pulsar:uri
 ----
 
 with the following path and query parameters:
@@ -61,7 +61,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *topic* | The Topic's full URI path including type, tenant and namespace |  | String
+| *topicUri* | The Topic's full URI path including type, tenant and namespace |  | String
 |===
 
 
