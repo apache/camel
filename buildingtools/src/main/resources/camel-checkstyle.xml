@@ -76,7 +76,7 @@ lengths, if/try depths, etc...
     </module>
     
     <module name="FileLength">
-        <property name="max" value="5000"/>
+        <property name="max" value="10000"/>
     </module>
     
     <module name="FileTabCharacter">
@@ -154,7 +154,7 @@ lengths, if/try depths, etc...
             <property name="max" value="180"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="250"/>
+            <property name="max" value="1500"/>
         </module>
         <module name="MethodLength">
             <property name="max" value="200"/>
