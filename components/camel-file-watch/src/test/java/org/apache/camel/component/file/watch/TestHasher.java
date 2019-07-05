@@ -22,12 +22,15 @@ import java.nio.file.Path;
 import io.methvin.watcher.hashing.FileHasher;
 import io.methvin.watcher.hashing.HashCode;
 
+/**
+ * For unit test only!
+ */
 public class TestHasher implements FileHasher {
     @Override
     public HashCode hash(Path path) throws IOException {
         // Always return constant
         // This should cause every event is triggered only once (hashcode remains the same), so we can test this.
-        // Never use this outside junit
+        // Never use this in production code
         return HashCode.fromLong(1L);
     }
 }
