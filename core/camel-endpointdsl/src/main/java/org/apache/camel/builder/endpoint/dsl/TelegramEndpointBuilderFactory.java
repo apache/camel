@@ -48,29 +48,6 @@ public interface TelegramEndpointBuilderFactory {
             return (AdvancedTelegramEndpointConsumerBuilder) this;
         }
         /**
-         * The endpoint type. Currently, only the 'bots' type is supported.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TelegramEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * The authorization token for using the bot (ask the BotFather).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default TelegramEndpointConsumerBuilder authorizationToken(
-                String authorizationToken) {
-            setProperty("authorizationToken", authorizationToken);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -732,29 +709,6 @@ public interface TelegramEndpointBuilderFactory {
             return (AdvancedTelegramEndpointProducerBuilder) this;
         }
         /**
-         * The endpoint type. Currently, only the 'bots' type is supported.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TelegramEndpointProducerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * The authorization token for using the bot (ask the BotFather).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default TelegramEndpointProducerBuilder authorizationToken(
-                String authorizationToken) {
-            setProperty("authorizationToken", authorizationToken);
-            return this;
-        }
-        /**
          * The identifier of the chat that will receive the produced messages.
          * Chat ids can be first obtained from incoming messages (eg. when a
          * telegram user starts a conversation with a bot, its client sends
@@ -917,29 +871,6 @@ public interface TelegramEndpointBuilderFactory {
                 TelegramEndpointConsumerBuilder, TelegramEndpointProducerBuilder {
         default AdvancedTelegramEndpointBuilder advanced() {
             return (AdvancedTelegramEndpointBuilder) this;
-        }
-        /**
-         * The endpoint type. Currently, only the 'bots' type is supported.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TelegramEndpointBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * The authorization token for using the bot (ask the BotFather).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default TelegramEndpointBuilder authorizationToken(
-                String authorizationToken) {
-            setProperty("authorizationToken", authorizationToken);
-            return this;
         }
         /**
          * HTTP proxy host which could be used when sending out the message.

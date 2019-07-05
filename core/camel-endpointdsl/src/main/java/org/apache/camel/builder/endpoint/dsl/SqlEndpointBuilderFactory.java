@@ -48,18 +48,6 @@ public interface SqlEndpointBuilderFactory {
             return (AdvancedSqlEndpointConsumerBuilder) this;
         }
         /**
-         * Sets the SQL query to perform. You can externalize the query by using
-         * file: or classpath: as prefix and specify the location of the file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SqlEndpointConsumerBuilder query(String query) {
-            setProperty("query", query);
-            return this;
-        }
-        /**
          * Whether to allow using named parameters in the queries.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1169,18 +1157,6 @@ public interface SqlEndpointBuilderFactory {
             return (AdvancedSqlEndpointProducerBuilder) this;
         }
         /**
-         * Sets the SQL query to perform. You can externalize the query by using
-         * file: or classpath: as prefix and specify the location of the file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SqlEndpointProducerBuilder query(String query) {
-            setProperty("query", query);
-            return this;
-        }
-        /**
          * Whether to allow using named parameters in the queries.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1685,18 +1661,6 @@ public interface SqlEndpointBuilderFactory {
                 SqlEndpointConsumerBuilder, SqlEndpointProducerBuilder {
         default AdvancedSqlEndpointBuilder advanced() {
             return (AdvancedSqlEndpointBuilder) this;
-        }
-        /**
-         * Sets the SQL query to perform. You can externalize the query by using
-         * file: or classpath: as prefix and specify the location of the file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SqlEndpointBuilder query(String query) {
-            setProperty("query", query);
-            return this;
         }
         /**
          * Whether to allow using named parameters in the queries.

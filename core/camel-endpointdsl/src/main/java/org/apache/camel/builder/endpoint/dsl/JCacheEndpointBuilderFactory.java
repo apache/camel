@@ -45,17 +45,6 @@ public interface JCacheEndpointBuilderFactory {
             return (AdvancedJCacheEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JCacheEndpointConsumerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * A Configuration for the Cache.
          * 
          * The option is a: <code>javax.cache.configuration.Configuration</code>
@@ -621,17 +610,6 @@ public interface JCacheEndpointBuilderFactory {
             return (AdvancedJCacheEndpointProducerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JCacheEndpointProducerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * A Configuration for the Cache.
          * 
          * The option is a: <code>javax.cache.configuration.Configuration</code>
@@ -1053,17 +1031,6 @@ public interface JCacheEndpointBuilderFactory {
                 JCacheEndpointConsumerBuilder, JCacheEndpointProducerBuilder {
         default AdvancedJCacheEndpointBuilder advanced() {
             return (AdvancedJCacheEndpointBuilder) this;
-        }
-        /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JCacheEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * A Configuration for the Cache.

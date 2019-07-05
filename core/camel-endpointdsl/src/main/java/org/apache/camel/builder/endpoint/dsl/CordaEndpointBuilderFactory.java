@@ -42,32 +42,6 @@ public interface CordaEndpointBuilderFactory {
             return (AdvancedCordaEndpointConsumerBuilder) this;
         }
         /**
-         * URL to the corda node.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.corda.CordaConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CordaEndpointConsumerBuilder configuration(Object configuration) {
-            setProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * URL to the corda node.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.corda.CordaConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CordaEndpointConsumerBuilder configuration(String configuration) {
-            setProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -235,32 +209,6 @@ public interface CordaEndpointBuilderFactory {
             return (AdvancedCordaEndpointProducerBuilder) this;
         }
         /**
-         * URL to the corda node.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.corda.CordaConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CordaEndpointProducerBuilder configuration(Object configuration) {
-            setProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * URL to the corda node.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.corda.CordaConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CordaEndpointProducerBuilder configuration(String configuration) {
-            setProperty("configuration", configuration);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -373,32 +321,6 @@ public interface CordaEndpointBuilderFactory {
                 CordaEndpointConsumerBuilder, CordaEndpointProducerBuilder {
         default AdvancedCordaEndpointBuilder advanced() {
             return (AdvancedCordaEndpointBuilder) this;
-        }
-        /**
-         * URL to the corda node.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.corda.CordaConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CordaEndpointBuilder configuration(Object configuration) {
-            setProperty("configuration", configuration);
-            return this;
-        }
-        /**
-         * URL to the corda node.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.corda.CordaConfiguration</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CordaEndpointBuilder configuration(String configuration) {
-            setProperty("configuration", configuration);
-            return this;
         }
     }
 

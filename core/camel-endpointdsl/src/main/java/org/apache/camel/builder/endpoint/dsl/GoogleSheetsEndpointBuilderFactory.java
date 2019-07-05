@@ -42,42 +42,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return (AdvancedGoogleSheetsEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointConsumerBuilder apiName(
-                GoogleSheetsApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -319,42 +283,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return (AdvancedGoogleSheetsEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointProducerBuilder apiName(
-                GoogleSheetsApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -543,41 +471,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             return (AdvancedGoogleSheetsEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointBuilder apiName(GoogleSheetsApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleSheetsEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -711,15 +604,6 @@ public interface GoogleSheetsEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName</code> enum.
-     */
-    enum GoogleSheetsApiName {
-        SPREADSHEETS,
-        DATA;
     }
     /**
      * Google Sheets (camel-google-sheets)

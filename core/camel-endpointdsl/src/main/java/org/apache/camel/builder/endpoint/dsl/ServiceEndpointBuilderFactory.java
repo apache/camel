@@ -38,17 +38,6 @@ public interface ServiceEndpointBuilderFactory {
         default AdvancedServiceEndpointBuilder advanced() {
             return (AdvancedServiceEndpointBuilder) this;
         }
-        /**
-         * The endpoint uri to expose as service.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default ServiceEndpointBuilder delegateUri(String delegateUri) {
-            setProperty("delegateUri", delegateUri);
-            return this;
-        }
     }
 
     /**

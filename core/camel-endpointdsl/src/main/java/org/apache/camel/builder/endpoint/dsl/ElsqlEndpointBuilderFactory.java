@@ -49,32 +49,6 @@ public interface ElsqlEndpointBuilderFactory {
             return (AdvancedElsqlEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the elsql to use (is NAMED in the elsql file).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ElsqlEndpointConsumerBuilder elsqlName(String elsqlName) {
-            setProperty("elsqlName", elsqlName);
-            return this;
-        }
-        /**
-         * The resource file which contains the elsql SQL statements to use. You
-         * can specify multiple resources separated by comma. The resources are
-         * loaded on the classpath by default, you can prefix with file: to load
-         * from file system. Notice you can set this option on the component and
-         * then you do not have to configure this on the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ElsqlEndpointConsumerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether to allow using named parameters in the queries.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1247,32 +1221,6 @@ public interface ElsqlEndpointBuilderFactory {
             return (AdvancedElsqlEndpointProducerBuilder) this;
         }
         /**
-         * The name of the elsql to use (is NAMED in the elsql file).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ElsqlEndpointProducerBuilder elsqlName(String elsqlName) {
-            setProperty("elsqlName", elsqlName);
-            return this;
-        }
-        /**
-         * The resource file which contains the elsql SQL statements to use. You
-         * can specify multiple resources separated by comma. The resources are
-         * loaded on the classpath by default, you can prefix with file: to load
-         * from file system. Notice you can set this option on the component and
-         * then you do not have to configure this on the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ElsqlEndpointProducerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether to allow using named parameters in the queries.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1838,32 +1786,6 @@ public interface ElsqlEndpointBuilderFactory {
                 ElsqlEndpointConsumerBuilder, ElsqlEndpointProducerBuilder {
         default AdvancedElsqlEndpointBuilder advanced() {
             return (AdvancedElsqlEndpointBuilder) this;
-        }
-        /**
-         * The name of the elsql to use (is NAMED in the elsql file).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ElsqlEndpointBuilder elsqlName(String elsqlName) {
-            setProperty("elsqlName", elsqlName);
-            return this;
-        }
-        /**
-         * The resource file which contains the elsql SQL statements to use. You
-         * can specify multiple resources separated by comma. The resources are
-         * loaded on the classpath by default, you can prefix with file: to load
-         * from file system. Notice you can set this option on the component and
-         * then you do not have to configure this on the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ElsqlEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
         }
         /**
          * Whether to allow using named parameters in the queries.

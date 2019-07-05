@@ -41,17 +41,6 @@ public interface BeanValidatorEndpointBuilderFactory {
             return (AdvancedBeanValidatorEndpointBuilder) this;
         }
         /**
-         * Where label is an arbitrary text value describing the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default BeanValidatorEndpointBuilder label(String label) {
-            setProperty("label", label);
-            return this;
-        }
-        /**
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option is a:

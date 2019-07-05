@@ -38,50 +38,6 @@ public interface PrinterEndpointBuilderFactory {
             return (AdvancedPrinterEndpointBuilder) this;
         }
         /**
-         * Hostname of the printer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default PrinterEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number of the printer.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default PrinterEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number of the printer.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default PrinterEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the printer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default PrinterEndpointBuilder printername(String printername) {
-            setProperty("printername", printername);
-            return this;
-        }
-        /**
          * Number of copies to print.
          * 
          * The option is a: <code>int</code> type.

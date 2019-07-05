@@ -39,30 +39,6 @@ public interface PdfEndpointBuilderFactory {
             return (AdvancedPdfEndpointBuilder) this;
         }
         /**
-         * Operation type.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.pdf.PdfOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default PdfEndpointBuilder operation(PdfOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Operation type.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.pdf.PdfOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default PdfEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Font.
          * 
          * The option is a: <code>org.apache.pdfbox.pdmodel.font.PDFont</code>
@@ -321,16 +297,6 @@ public interface PdfEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.pdf.PdfOperation</code>
-     * enum.
-     */
-    enum PdfOperation {
-        create,
-        append,
-        extractText;
     }
 
     /**

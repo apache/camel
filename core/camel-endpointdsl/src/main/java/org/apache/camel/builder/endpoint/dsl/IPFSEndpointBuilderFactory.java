@@ -40,17 +40,6 @@ public interface IPFSEndpointBuilderFactory {
             return (AdvancedIPFSEndpointBuilder) this;
         }
         /**
-         * The ipfs command.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default IPFSEndpointBuilder ipfsCmd(String ipfsCmd) {
-            setProperty("ipfsCmd", ipfsCmd);
-            return this;
-        }
-        /**
          * The ipfs output directory.
          * 
          * The option is a: <code>java.nio.file.Path</code> type.

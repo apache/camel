@@ -42,74 +42,6 @@ public interface AvroEndpointBuilderFactory {
             return (AdvancedAvroEndpointConsumerBuilder) this;
         }
         /**
-         * Transport to use, can be either http or netty.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.avro.AvroTransport</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointConsumerBuilder transport(AvroTransport transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Transport to use, can be either http or netty.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.avro.AvroTransport</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointConsumerBuilder transport(String transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Port number to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Hostname to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The name of the message to send.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointConsumerBuilder messageName(String messageName) {
-            setProperty("messageName", messageName);
-            return this;
-        }
-        /**
          * Avro protocol to use.
          * 
          * The option is a: <code>org.apache.avro.Protocol</code> type.
@@ -389,74 +321,6 @@ public interface AvroEndpointBuilderFactory {
             return (AdvancedAvroEndpointProducerBuilder) this;
         }
         /**
-         * Transport to use, can be either http or netty.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.avro.AvroTransport</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointProducerBuilder transport(AvroTransport transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Transport to use, can be either http or netty.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.avro.AvroTransport</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointProducerBuilder transport(String transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Port number to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Hostname to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The name of the message to send.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointProducerBuilder messageName(String messageName) {
-            setProperty("messageName", messageName);
-            return this;
-        }
-        /**
          * Avro protocol to use.
          * 
          * The option is a: <code>org.apache.avro.Protocol</code> type.
@@ -683,74 +547,6 @@ public interface AvroEndpointBuilderFactory {
             return (AdvancedAvroEndpointBuilder) this;
         }
         /**
-         * Transport to use, can be either http or netty.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.avro.AvroTransport</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointBuilder transport(AvroTransport transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Transport to use, can be either http or netty.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.avro.AvroTransport</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointBuilder transport(String transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Port number to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Hostname to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The name of the message to send.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AvroEndpointBuilder messageName(String messageName) {
-            setProperty("messageName", messageName);
-            return this;
-        }
-        /**
          * Avro protocol to use.
          * 
          * The option is a: <code>org.apache.avro.Protocol</code> type.
@@ -918,15 +714,6 @@ public interface AvroEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.avro.AvroTransport</code>
-     * enum.
-     */
-    enum AvroTransport {
-        http,
-        netty;
     }
     /**
      * Avro (camel-avro)

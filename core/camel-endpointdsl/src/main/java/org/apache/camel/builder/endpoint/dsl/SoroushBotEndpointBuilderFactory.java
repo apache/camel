@@ -42,30 +42,6 @@ public interface SoroushBotEndpointBuilderFactory {
             return (AdvancedSoroushBotEndpointConsumerBuilder) this;
         }
         /**
-         * The action to do.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * 
-         * Group: common
-         */
-        default SoroushBotEndpointConsumerBuilder action(SoroushAction action) {
-            setProperty("action", action);
-            return this;
-        }
-        /**
-         * The action to do.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * 
-         * Group: common
-         */
-        default SoroushBotEndpointConsumerBuilder action(String action) {
-            setProperty("action", action);
-            return this;
-        }
-        /**
          * Connection timeout in ms when connecting to soroush API.
          * 
          * The option is a: <code>int</code> type.
@@ -517,30 +493,6 @@ public interface SoroushBotEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedSoroushBotEndpointProducerBuilder advanced() {
             return (AdvancedSoroushBotEndpointProducerBuilder) this;
-        }
-        /**
-         * The action to do.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * 
-         * Group: common
-         */
-        default SoroushBotEndpointProducerBuilder action(SoroushAction action) {
-            setProperty("action", action);
-            return this;
-        }
-        /**
-         * The action to do.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * 
-         * Group: common
-         */
-        default SoroushBotEndpointProducerBuilder action(String action) {
-            setProperty("action", action);
-            return this;
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
@@ -1018,30 +970,6 @@ public interface SoroushBotEndpointBuilderFactory {
             return (AdvancedSoroushBotEndpointBuilder) this;
         }
         /**
-         * The action to do.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * 
-         * Group: common
-         */
-        default SoroushBotEndpointBuilder action(SoroushAction action) {
-            setProperty("action", action);
-            return this;
-        }
-        /**
-         * The action to do.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * 
-         * Group: common
-         */
-        default SoroushBotEndpointBuilder action(String action) {
-            setProperty("action", action);
-            return this;
-        }
-        /**
          * Connection timeout in ms when connecting to soroush API.
          * 
          * The option is a: <code>int</code> type.
@@ -1319,18 +1247,6 @@ public interface SoroushBotEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code>
-     * enum.
-     */
-    enum SoroushAction {
-        sendMessage,
-        getMessage,
-        uploadFile,
-        downloadFile;
     }
     /**
      * Soroush (camel-soroush)

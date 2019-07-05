@@ -42,21 +42,6 @@ public interface SpringIntegrationEndpointBuilderFactory {
             return (AdvancedSpringIntegrationEndpointConsumerBuilder) this;
         }
         /**
-         * The default channel name which is used by the Spring Integration
-         * Spring context. It will equal to the inputChannel name for the Spring
-         * Integration consumer and the outputChannel name for the Spring
-         * Integration provider.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SpringIntegrationEndpointConsumerBuilder defaultChannel(
-                String defaultChannel) {
-            setProperty("defaultChannel", defaultChannel);
-            return this;
-        }
-        /**
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
@@ -264,21 +249,6 @@ public interface SpringIntegrationEndpointBuilderFactory {
             return (AdvancedSpringIntegrationEndpointProducerBuilder) this;
         }
         /**
-         * The default channel name which is used by the Spring Integration
-         * Spring context. It will equal to the inputChannel name for the Spring
-         * Integration consumer and the outputChannel name for the Spring
-         * Integration provider.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SpringIntegrationEndpointProducerBuilder defaultChannel(
-                String defaultChannel) {
-            setProperty("defaultChannel", defaultChannel);
-            return this;
-        }
-        /**
          * The exchange pattern that the Spring integration endpoint should use.
          * If inOut=true then a reply channel is expected, either from the
          * Spring Integration Message header or configured on the endpoint.
@@ -431,21 +401,6 @@ public interface SpringIntegrationEndpointBuilderFactory {
                 SpringIntegrationEndpointConsumerBuilder, SpringIntegrationEndpointProducerBuilder {
         default AdvancedSpringIntegrationEndpointBuilder advanced() {
             return (AdvancedSpringIntegrationEndpointBuilder) this;
-        }
-        /**
-         * The default channel name which is used by the Spring Integration
-         * Spring context. It will equal to the inputChannel name for the Spring
-         * Integration consumer and the outputChannel name for the Spring
-         * Integration provider.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SpringIntegrationEndpointBuilder defaultChannel(
-                String defaultChannel) {
-            setProperty("defaultChannel", defaultChannel);
-            return this;
         }
         /**
          * The exchange pattern that the Spring integration endpoint should use.

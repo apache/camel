@@ -45,18 +45,6 @@ public interface BlobServiceEndpointBuilderFactory {
             return (AdvancedBlobServiceEndpointConsumerBuilder) this;
         }
         /**
-         * Container or Blob compact Uri.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BlobServiceEndpointConsumerBuilder containerOrBlobUri(
-                String containerOrBlobUri) {
-            setProperty("containerOrBlobUri", containerOrBlobUri);
-            return this;
-        }
-        /**
          * The blob service client.
          * 
          * The option is a:
@@ -431,18 +419,6 @@ public interface BlobServiceEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedBlobServiceEndpointProducerBuilder advanced() {
             return (AdvancedBlobServiceEndpointProducerBuilder) this;
-        }
-        /**
-         * Container or Blob compact Uri.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BlobServiceEndpointProducerBuilder containerOrBlobUri(
-                String containerOrBlobUri) {
-            setProperty("containerOrBlobUri", containerOrBlobUri);
-            return this;
         }
         /**
          * The blob service client.
@@ -900,18 +876,6 @@ public interface BlobServiceEndpointBuilderFactory {
                 BlobServiceEndpointConsumerBuilder, BlobServiceEndpointProducerBuilder {
         default AdvancedBlobServiceEndpointBuilder advanced() {
             return (AdvancedBlobServiceEndpointBuilder) this;
-        }
-        /**
-         * Container or Blob compact Uri.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BlobServiceEndpointBuilder containerOrBlobUri(
-                String containerOrBlobUri) {
-            setProperty("containerOrBlobUri", containerOrBlobUri);
-            return this;
         }
         /**
          * The blob service client.

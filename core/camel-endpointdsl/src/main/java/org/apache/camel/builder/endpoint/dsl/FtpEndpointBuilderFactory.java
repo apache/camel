@@ -54,50 +54,6 @@ public interface FtpEndpointBuilderFactory {
             return (AdvancedFtpEndpointConsumerBuilder) this;
         }
         /**
-         * Hostname of the FTP server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointConsumerBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
@@ -2763,50 +2719,6 @@ public interface FtpEndpointBuilderFactory {
             return (AdvancedFtpEndpointProducerBuilder) this;
         }
         /**
-         * Hostname of the FTP server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointProducerBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
@@ -4069,50 +3981,6 @@ public interface FtpEndpointBuilderFactory {
                 FtpEndpointConsumerBuilder, FtpEndpointProducerBuilder {
         default AdvancedFtpEndpointBuilder advanced() {
             return (AdvancedFtpEndpointBuilder) this;
-        }
-        /**
-         * Hostname of the FTP server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FtpEndpointBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
         }
         /**
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII

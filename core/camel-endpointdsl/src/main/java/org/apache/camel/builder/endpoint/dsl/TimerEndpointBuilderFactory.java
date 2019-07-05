@@ -41,17 +41,6 @@ public interface TimerEndpointBuilderFactory {
             return (AdvancedTimerEndpointBuilder) this;
         }
         /**
-         * The name of the timer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default TimerEndpointBuilder timerName(String timerName) {
-            setProperty("timerName", timerName);
-            return this;
-        }
-        /**
          * The number of milliseconds to wait before the first event is
          * generated. Should not be used in conjunction with the time option.
          * The default value is 1000. You can also specify time values using

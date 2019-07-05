@@ -303,6 +303,11 @@ public class EndpointDslMojo extends AbstractMojo {
 
         for (EndpointOptionModel option : model.getEndpointOptions()) {
 
+            // skip all @UriPath parameters as the endpoint DSL is for query parameters
+            if ("path".equals(option.getKind())) {
+                continue;
+            }
+
             List<JavaClass> targets = new ArrayList<>();
             if (option.getLabel() != null) {
                 if (option.getLabel().contains("producer")) {

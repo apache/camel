@@ -43,51 +43,6 @@ public interface CometdEndpointBuilderFactory {
             return (AdvancedCometdEndpointConsumerBuilder) this;
         }
         /**
-         * Hostname.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The channelName represents a topic that can be subscribed to by the
-         * Camel endpoints.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointConsumerBuilder channelName(String channelName) {
-            setProperty("channelName", channelName);
-            return this;
-        }
-        /**
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
          * 
@@ -492,51 +447,6 @@ public interface CometdEndpointBuilderFactory {
             return (AdvancedCometdEndpointProducerBuilder) this;
         }
         /**
-         * Hostname.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The channelName represents a topic that can be subscribed to by the
-         * Camel endpoints.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointProducerBuilder channelName(String channelName) {
-            setProperty("channelName", channelName);
-            return this;
-        }
-        /**
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
          * 
@@ -888,51 +798,6 @@ public interface CometdEndpointBuilderFactory {
                 CometdEndpointConsumerBuilder, CometdEndpointProducerBuilder {
         default AdvancedCometdEndpointBuilder advanced() {
             return (AdvancedCometdEndpointBuilder) this;
-        }
-        /**
-         * Hostname.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The channelName represents a topic that can be subscribed to by the
-         * Camel endpoints.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CometdEndpointBuilder channelName(String channelName) {
-            setProperty("channelName", channelName);
-            return this;
         }
         /**
          * The origins domain that support to cross, if the crosssOriginFilterOn

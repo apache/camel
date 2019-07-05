@@ -49,30 +49,6 @@ public interface JpaEndpointBuilderFactory {
             return (AdvancedJpaEndpointConsumerBuilder) this;
         }
         /**
-         * The JPA annotated class to use as entity.
-         * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointConsumerBuilder entityType(Class<Object> entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
-         * The JPA annotated class to use as entity.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointConsumerBuilder entityType(String entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example if you use LOCAL_RESOURCE
          * and join transaction doesn't work with your JPA provider. This option
@@ -1084,30 +1060,6 @@ public interface JpaEndpointBuilderFactory {
             return (AdvancedJpaEndpointProducerBuilder) this;
         }
         /**
-         * The JPA annotated class to use as entity.
-         * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointProducerBuilder entityType(Class<Object> entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
-         * The JPA annotated class to use as entity.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointProducerBuilder entityType(String entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
          * The camel-jpa component will join transaction by default. You can use
          * this option to turn this off, for example if you use LOCAL_RESOURCE
          * and join transaction doesn't work with your JPA provider. This option
@@ -1577,30 +1529,6 @@ public interface JpaEndpointBuilderFactory {
                 JpaEndpointConsumerBuilder, JpaEndpointProducerBuilder {
         default AdvancedJpaEndpointBuilder advanced() {
             return (AdvancedJpaEndpointBuilder) this;
-        }
-        /**
-         * The JPA annotated class to use as entity.
-         * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointBuilder entityType(Class<Object> entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
-         * The JPA annotated class to use as entity.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JpaEndpointBuilder entityType(String entityType) {
-            setProperty("entityType", entityType);
-            return this;
         }
         /**
          * The camel-jpa component will join transaction by default. You can use

@@ -44,30 +44,6 @@ public interface AMQPEndpointBuilderFactory {
             return (AdvancedAMQPEndpointConsumerBuilder) this;
         }
         /**
-         * The kind of destination to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AMQPEndpointConsumerBuilder destinationType(
-                String destinationType) {
-            setProperty("destinationType", destinationType);
-            return this;
-        }
-        /**
-         * Name of the queue or topic to use as destination.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AMQPEndpointConsumerBuilder destinationName(
-                String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
-        }
-        /**
          * Sets the JMS client ID to use. Note that this value, if specified,
          * must be unique and can only be used by a single JMS connection
          * instance. It is typically only required for durable topic
@@ -2073,30 +2049,6 @@ public interface AMQPEndpointBuilderFactory {
             return (AdvancedAMQPEndpointProducerBuilder) this;
         }
         /**
-         * The kind of destination to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AMQPEndpointProducerBuilder destinationType(
-                String destinationType) {
-            setProperty("destinationType", destinationType);
-            return this;
-        }
-        /**
-         * Name of the queue or topic to use as destination.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AMQPEndpointProducerBuilder destinationName(
-                String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
-        }
-        /**
          * Sets the JMS client ID to use. Note that this value, if specified,
          * must be unique and can only be used by a single JMS connection
          * instance. It is typically only required for durable topic
@@ -4023,28 +3975,6 @@ public interface AMQPEndpointBuilderFactory {
                 AMQPEndpointConsumerBuilder, AMQPEndpointProducerBuilder {
         default AdvancedAMQPEndpointBuilder advanced() {
             return (AdvancedAMQPEndpointBuilder) this;
-        }
-        /**
-         * The kind of destination to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AMQPEndpointBuilder destinationType(String destinationType) {
-            setProperty("destinationType", destinationType);
-            return this;
-        }
-        /**
-         * Name of the queue or topic to use as destination.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AMQPEndpointBuilder destinationName(String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
         }
         /**
          * Sets the JMS client ID to use. Note that this value, if specified,

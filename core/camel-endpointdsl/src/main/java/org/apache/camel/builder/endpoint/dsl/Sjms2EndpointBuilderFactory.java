@@ -101,31 +101,6 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The kind of destination to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Sjms2EndpointConsumerBuilder destinationType(
-                String destinationType) {
-            setProperty("destinationType", destinationType);
-            return this;
-        }
-        /**
-         * DestinationName is a JMS queue or topic name. By default, the
-         * destinationName is interpreted as a queue name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Sjms2EndpointConsumerBuilder destinationName(
-                String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
-        }
-        /**
          * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
          * CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE.
          * 
@@ -911,31 +886,6 @@ public interface Sjms2EndpointBuilderFactory {
             return (AdvancedSjms2EndpointProducerBuilder) this;
         }
         /**
-         * The kind of destination to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Sjms2EndpointProducerBuilder destinationType(
-                String destinationType) {
-            setProperty("destinationType", destinationType);
-            return this;
-        }
-        /**
-         * DestinationName is a JMS queue or topic name. By default, the
-         * destinationName is interpreted as a queue name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Sjms2EndpointProducerBuilder destinationName(
-                String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
-        }
-        /**
          * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
          * CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE.
          * 
@@ -1626,29 +1576,6 @@ public interface Sjms2EndpointBuilderFactory {
                 Sjms2EndpointConsumerBuilder, Sjms2EndpointProducerBuilder {
         default AdvancedSjms2EndpointBuilder advanced() {
             return (AdvancedSjms2EndpointBuilder) this;
-        }
-        /**
-         * The kind of destination to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Sjms2EndpointBuilder destinationType(String destinationType) {
-            setProperty("destinationType", destinationType);
-            return this;
-        }
-        /**
-         * DestinationName is a JMS queue or topic name. By default, the
-         * destinationName is interpreted as a queue name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Sjms2EndpointBuilder destinationName(String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
         }
         /**
          * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,

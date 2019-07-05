@@ -39,41 +39,6 @@ public interface MetricsEndpointBuilderFactory {
             return (AdvancedMetricsEndpointBuilder) this;
         }
         /**
-         * Type of metrics.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.metrics.MetricsType</code> type.
-         * 
-         * Group: producer
-         */
-        default MetricsEndpointBuilder metricsType(MetricsType metricsType) {
-            setProperty("metricsType", metricsType);
-            return this;
-        }
-        /**
-         * Type of metrics.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.metrics.MetricsType</code> type.
-         * 
-         * Group: producer
-         */
-        default MetricsEndpointBuilder metricsType(String metricsType) {
-            setProperty("metricsType", metricsType);
-            return this;
-        }
-        /**
-         * Name of metrics.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MetricsEndpointBuilder metricsName(String metricsName) {
-            setProperty("metricsName", metricsName);
-            return this;
-        }
-        /**
          * Action when using timer type.
          * 
          * The option is a:
@@ -270,18 +235,6 @@ public interface MetricsEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.metrics.MetricsType</code> enum.
-     */
-    enum MetricsType {
-        gauge,
-        counter,
-        histogram,
-        meter,
-        timer;
     }
 
     /**

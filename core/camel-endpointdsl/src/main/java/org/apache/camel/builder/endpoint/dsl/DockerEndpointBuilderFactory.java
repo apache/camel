@@ -42,31 +42,6 @@ public interface DockerEndpointBuilderFactory {
             return (AdvancedDockerEndpointConsumerBuilder) this;
         }
         /**
-         * Which operation to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.docker.DockerOperation</code> type.
-         * 
-         * Group: common
-         */
-        default DockerEndpointConsumerBuilder operation(
-                DockerOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Which operation to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.docker.DockerOperation</code> type.
-         * 
-         * Group: common
-         */
-        default DockerEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Email address associated with the user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -527,31 +502,6 @@ public interface DockerEndpointBuilderFactory {
             return (AdvancedDockerEndpointProducerBuilder) this;
         }
         /**
-         * Which operation to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.docker.DockerOperation</code> type.
-         * 
-         * Group: common
-         */
-        default DockerEndpointProducerBuilder operation(
-                DockerOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Which operation to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.docker.DockerOperation</code> type.
-         * 
-         * Group: common
-         */
-        default DockerEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Email address associated with the user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -959,30 +909,6 @@ public interface DockerEndpointBuilderFactory {
             return (AdvancedDockerEndpointBuilder) this;
         }
         /**
-         * Which operation to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.docker.DockerOperation</code> type.
-         * 
-         * Group: common
-         */
-        default DockerEndpointBuilder operation(DockerOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Which operation to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.docker.DockerOperation</code> type.
-         * 
-         * Group: common
-         */
-        default DockerEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Email address associated with the user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1332,50 +1258,6 @@ public interface DockerEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.docker.DockerOperation</code> enum.
-     */
-    enum DockerOperation {
-        events,
-        stats,
-        auth,
-        info,
-        ping,
-        version,
-        imagebuild,
-        imagecreate,
-        imageinspect,
-        imagelist,
-        imagepull,
-        imagepush,
-        imageremove,
-        imagesearch,
-        imagetag,
-        containerattach,
-        containercommit,
-        containercopyfile,
-        containercreate,
-        containerdiff,
-        inspectcontainer,
-        containerkill,
-        containerlist,
-        containerlog,
-        containerpause,
-        containerrestart,
-        containerremove,
-        containerstart,
-        containerstop,
-        containertop,
-        containerunpause,
-        networkcreate,
-        networkremove,
-        networkconnect,
-        containerwait,
-        execcreate,
-        execstart;
     }
     /**
      * Docker (camel-docker)

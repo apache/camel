@@ -43,17 +43,6 @@ public interface EventAdminEndpointBuilderFactory {
             return (AdvancedEventAdminEndpointConsumerBuilder) this;
         }
         /**
-         * Name of topic to listen or send to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EventAdminEndpointConsumerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
-        }
-        /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
          * 
@@ -246,17 +235,6 @@ public interface EventAdminEndpointBuilderFactory {
             return (AdvancedEventAdminEndpointProducerBuilder) this;
         }
         /**
-         * Name of topic to listen or send to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EventAdminEndpointProducerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
-        }
-        /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
          * 
@@ -394,17 +372,6 @@ public interface EventAdminEndpointBuilderFactory {
                 EventAdminEndpointConsumerBuilder, EventAdminEndpointProducerBuilder {
         default AdvancedEventAdminEndpointBuilder advanced() {
             return (AdvancedEventAdminEndpointBuilder) this;
-        }
-        /**
-         * Name of topic to listen or send to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EventAdminEndpointBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
         }
         /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async

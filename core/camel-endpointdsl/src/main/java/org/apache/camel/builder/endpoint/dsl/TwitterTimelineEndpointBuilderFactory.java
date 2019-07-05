@@ -49,34 +49,6 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return (AdvancedTwitterTimelineEndpointConsumerBuilder) this;
         }
         /**
-         * The timeline type to produce/consume.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.twitter.data.TimelineType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default TwitterTimelineEndpointConsumerBuilder timelineType(
-                TimelineType timelineType) {
-            setProperty("timelineType", timelineType);
-            return this;
-        }
-        /**
-         * The timeline type to produce/consume.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.twitter.data.TimelineType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default TwitterTimelineEndpointConsumerBuilder timelineType(
-                String timelineType) {
-            setProperty("timelineType", timelineType);
-            return this;
-        }
-        /**
          * The username when using timelineType=user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1115,34 +1087,6 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return (AdvancedTwitterTimelineEndpointProducerBuilder) this;
         }
         /**
-         * The timeline type to produce/consume.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.twitter.data.TimelineType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default TwitterTimelineEndpointProducerBuilder timelineType(
-                TimelineType timelineType) {
-            setProperty("timelineType", timelineType);
-            return this;
-        }
-        /**
-         * The timeline type to produce/consume.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.twitter.data.TimelineType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default TwitterTimelineEndpointProducerBuilder timelineType(
-                String timelineType) {
-            setProperty("timelineType", timelineType);
-            return this;
-        }
-        /**
          * The username when using timelineType=user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1387,33 +1331,6 @@ public interface TwitterTimelineEndpointBuilderFactory {
             return (AdvancedTwitterTimelineEndpointBuilder) this;
         }
         /**
-         * The timeline type to produce/consume.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.twitter.data.TimelineType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default TwitterTimelineEndpointBuilder timelineType(
-                TimelineType timelineType) {
-            setProperty("timelineType", timelineType);
-            return this;
-        }
-        /**
-         * The timeline type to produce/consume.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.twitter.data.TimelineType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default TwitterTimelineEndpointBuilder timelineType(String timelineType) {
-            setProperty("timelineType", timelineType);
-            return this;
-        }
-        /**
          * The username when using timelineType=user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1603,19 +1520,6 @@ public interface TwitterTimelineEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.twitter.data.TimelineType</code> enum.
-     */
-    enum TimelineType {
-        PUBLIC,
-        HOME,
-        USER,
-        MENTIONS,
-        RETWEETSOFME,
-        UNKNOWN;
     }
 
     /**

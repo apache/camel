@@ -38,17 +38,6 @@ public interface MockEndpointBuilderFactory {
         default AdvancedMockEndpointBuilder advanced() {
             return (AdvancedMockEndpointBuilder) this;
         }
-        /**
-         * Name of mock endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MockEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
     }
 
     /**

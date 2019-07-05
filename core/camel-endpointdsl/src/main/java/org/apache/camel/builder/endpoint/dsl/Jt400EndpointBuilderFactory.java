@@ -49,75 +49,6 @@ public interface Jt400EndpointBuilderFactory {
             return (AdvancedJt400EndpointConsumerBuilder) this;
         }
         /**
-         * Returns the ID of the AS/400 user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder userID(String userID) {
-            setProperty("userID", userID);
-            return this;
-        }
-        /**
-         * Returns the password of the AS/400 user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
-            return this;
-        }
-        /**
-         * Returns the name of the AS/400 system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder systemName(String systemName) {
-            setProperty("systemName", systemName);
-            return this;
-        }
-        /**
-         * Returns the fully qualified integrated file system path name of the
-         * target object of this endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder objectPath(String objectPath) {
-            setProperty("objectPath", objectPath);
-            return this;
-        }
-        /**
-         * Whether to work with data queues or remote program call.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder type(Jt400Type type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Whether to work with data queues or remote program call.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * Sets the CCSID to use for the connection with the AS/400 system.
          * 
          * The option is a: <code>int</code> type.
@@ -927,75 +858,6 @@ public interface Jt400EndpointBuilderFactory {
             return (AdvancedJt400EndpointProducerBuilder) this;
         }
         /**
-         * Returns the ID of the AS/400 user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder userID(String userID) {
-            setProperty("userID", userID);
-            return this;
-        }
-        /**
-         * Returns the password of the AS/400 user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder password(String password) {
-            setProperty("password", password);
-            return this;
-        }
-        /**
-         * Returns the name of the AS/400 system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder systemName(String systemName) {
-            setProperty("systemName", systemName);
-            return this;
-        }
-        /**
-         * Returns the fully qualified integrated file system path name of the
-         * target object of this endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder objectPath(String objectPath) {
-            setProperty("objectPath", objectPath);
-            return this;
-        }
-        /**
-         * Whether to work with data queues or remote program call.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder type(Jt400Type type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Whether to work with data queues or remote program call.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * Sets the CCSID to use for the connection with the AS/400 system.
          * 
          * The option is a: <code>int</code> type.
@@ -1322,75 +1184,6 @@ public interface Jt400EndpointBuilderFactory {
             return (AdvancedJt400EndpointBuilder) this;
         }
         /**
-         * Returns the ID of the AS/400 user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder userID(String userID) {
-            setProperty("userID", userID);
-            return this;
-        }
-        /**
-         * Returns the password of the AS/400 user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder password(String password) {
-            setProperty("password", password);
-            return this;
-        }
-        /**
-         * Returns the name of the AS/400 system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder systemName(String systemName) {
-            setProperty("systemName", systemName);
-            return this;
-        }
-        /**
-         * Returns the fully qualified integrated file system path name of the
-         * target object of this endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder objectPath(String objectPath) {
-            setProperty("objectPath", objectPath);
-            return this;
-        }
-        /**
-         * Whether to work with data queues or remote program call.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder type(Jt400Type type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Whether to work with data queues or remote program call.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * Sets the CCSID to use for the connection with the AS/400 system.
          * 
          * The option is a: <code>int</code> type.
@@ -1663,16 +1456,6 @@ public interface Jt400EndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.jt400.Jt400Type</code>
-     * enum.
-     */
-    enum Jt400Type {
-        DTAQ,
-        PGM,
-        SRVPGM;
     }
 
     /**

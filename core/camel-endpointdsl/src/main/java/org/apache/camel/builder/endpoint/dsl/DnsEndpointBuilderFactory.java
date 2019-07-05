@@ -37,30 +37,6 @@ public interface DnsEndpointBuilderFactory {
         default AdvancedDnsEndpointBuilder advanced() {
             return (AdvancedDnsEndpointBuilder) this;
         }
-        /**
-         * The type of the lookup.
-         * 
-         * The option is a: <code>org.apache.camel.component.dns.DnsType</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default DnsEndpointBuilder dnsType(DnsType dnsType) {
-            setProperty("dnsType", dnsType);
-            return this;
-        }
-        /**
-         * The type of the lookup.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.dns.DnsType</code> type.
-         * 
-         * Group: producer
-         */
-        default DnsEndpointBuilder dnsType(String dnsType) {
-            setProperty("dnsType", dnsType);
-            return this;
-        }
     }
 
     /**
@@ -122,16 +98,6 @@ public interface DnsEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.dns.DnsType</code> enum.
-     */
-    enum DnsType {
-        dig,
-        ip,
-        lookup,
-        wikipedia;
     }
     /**
      * DNS (camel-dns)

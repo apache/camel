@@ -49,41 +49,6 @@ public interface EtcdEndpointBuilderFactory {
             return (AdvancedEtcdEndpointConsumerBuilder) this;
         }
         /**
-         * The API namespace to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointConsumerBuilder namespace(EtcdNamespace namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The API namespace to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointConsumerBuilder namespace(String namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The path the endpoint refers to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointConsumerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * To apply an action recursively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -816,41 +781,6 @@ public interface EtcdEndpointBuilderFactory {
             return (AdvancedEtcdEndpointProducerBuilder) this;
         }
         /**
-         * The API namespace to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointProducerBuilder namespace(EtcdNamespace namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The API namespace to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointProducerBuilder namespace(String namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The path the endpoint refers to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointProducerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * To apply an action recursively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1102,41 +1032,6 @@ public interface EtcdEndpointBuilderFactory {
             return (AdvancedEtcdEndpointBuilder) this;
         }
         /**
-         * The API namespace to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointBuilder namespace(EtcdNamespace namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The API namespace to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.etcd.EtcdNamespace</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointBuilder namespace(String namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The path the endpoint refers to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EtcdEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * To apply an action recursively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1311,16 +1206,6 @@ public interface EtcdEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.etcd.EtcdNamespace</code>
-     * enum.
-     */
-    enum EtcdNamespace {
-        stats,
-        watch,
-        keys;
     }
     /**
      * etcd (camel-etcd)

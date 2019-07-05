@@ -38,19 +38,6 @@ public interface GrapeEndpointBuilderFactory {
         default AdvancedGrapeEndpointBuilder advanced() {
             return (AdvancedGrapeEndpointBuilder) this;
         }
-        /**
-         * Maven coordinates to use as default to grab if the message body is
-         * empty.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GrapeEndpointBuilder defaultCoordinates(
-                String defaultCoordinates) {
-            setProperty("defaultCoordinates", defaultCoordinates);
-            return this;
-        }
     }
 
     /**

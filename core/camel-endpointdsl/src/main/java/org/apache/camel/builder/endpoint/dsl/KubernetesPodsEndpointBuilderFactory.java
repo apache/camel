@@ -43,17 +43,6 @@ public interface KubernetesPodsEndpointBuilderFactory {
             return (AdvancedKubernetesPodsEndpointConsumerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesPodsEndpointConsumerBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -544,17 +533,6 @@ public interface KubernetesPodsEndpointBuilderFactory {
             return (AdvancedKubernetesPodsEndpointProducerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesPodsEndpointProducerBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -933,17 +911,6 @@ public interface KubernetesPodsEndpointBuilderFactory {
                 KubernetesPodsEndpointConsumerBuilder, KubernetesPodsEndpointProducerBuilder {
         default AdvancedKubernetesPodsEndpointBuilder advanced() {
             return (AdvancedKubernetesPodsEndpointBuilder) this;
-        }
-        /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesPodsEndpointBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
         }
         /**
          * The Kubernetes API Version to use.

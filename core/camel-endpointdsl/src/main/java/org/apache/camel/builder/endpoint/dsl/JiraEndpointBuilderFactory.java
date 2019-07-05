@@ -42,34 +42,6 @@ public interface JiraEndpointBuilderFactory {
             return (AdvancedJiraEndpointConsumerBuilder) this;
         }
         /**
-         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-         * Watchers. See this class javadoc description for more information.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jira.JiraType</code> type.
-         * 
-         * Group: common
-         */
-        default JiraEndpointConsumerBuilder type(JiraType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-         * Watchers. See this class javadoc description for more information.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jira.JiraType</code> type.
-         * 
-         * Group: common
-         */
-        default JiraEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * Time in milliseconds to elapse for the next poll.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -383,34 +355,6 @@ public interface JiraEndpointBuilderFactory {
             return (AdvancedJiraEndpointProducerBuilder) this;
         }
         /**
-         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-         * Watchers. See this class javadoc description for more information.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jira.JiraType</code> type.
-         * 
-         * Group: common
-         */
-        default JiraEndpointProducerBuilder type(JiraType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-         * Watchers. See this class javadoc description for more information.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jira.JiraType</code> type.
-         * 
-         * Group: common
-         */
-        default JiraEndpointProducerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * Time in milliseconds to elapse for the next poll.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -633,34 +577,6 @@ public interface JiraEndpointBuilderFactory {
             return (AdvancedJiraEndpointBuilder) this;
         }
         /**
-         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-         * Watchers. See this class javadoc description for more information.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jira.JiraType</code> type.
-         * 
-         * Group: common
-         */
-        default JiraEndpointBuilder type(JiraType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Operation to perform. Consumers: NewIssues, NewComments. Producers:
-         * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
-         * Watchers. See this class javadoc description for more information.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jira.JiraType</code> type.
-         * 
-         * Group: common
-         */
-        default JiraEndpointBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * Time in milliseconds to elapse for the next poll.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -828,22 +744,6 @@ public interface JiraEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.jira.JiraType</code>
-     * enum.
-     */
-    enum JiraType {
-        ADDCOMMENT,
-        ADDISSUE,
-        ATTACH,
-        DELETEISSUE,
-        NEWISSUES,
-        NEWCOMMENTS,
-        UPDATEISSUE,
-        TRANSITIONISSUE,
-        WATCHERS;
     }
     /**
      * Jira (camel-jira)

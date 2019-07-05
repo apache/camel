@@ -43,17 +43,6 @@ public interface IgniteMessagingEndpointBuilderFactory {
             return (AdvancedIgniteMessagingEndpointConsumerBuilder) this;
         }
         /**
-         * The topic name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IgniteMessagingEndpointConsumerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
-        }
-        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -272,17 +261,6 @@ public interface IgniteMessagingEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedIgniteMessagingEndpointProducerBuilder advanced() {
             return (AdvancedIgniteMessagingEndpointProducerBuilder) this;
-        }
-        /**
-         * The topic name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IgniteMessagingEndpointProducerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
         }
         /**
          * Sets whether to propagate the incoming body if the return type of the
@@ -525,17 +503,6 @@ public interface IgniteMessagingEndpointBuilderFactory {
                 IgniteMessagingEndpointConsumerBuilder, IgniteMessagingEndpointProducerBuilder {
         default AdvancedIgniteMessagingEndpointBuilder advanced() {
             return (AdvancedIgniteMessagingEndpointBuilder) this;
-        }
-        /**
-         * The topic name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IgniteMessagingEndpointBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
         }
         /**
          * Sets whether to propagate the incoming body if the return type of the

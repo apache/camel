@@ -49,63 +49,6 @@ public interface CassandraEndpointBuilderFactory {
             return (AdvancedCassandraEndpointConsumerBuilder) this;
         }
         /**
-         * beanRef is defined using bean:id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointConsumerBuilder beanRef(String beanRef) {
-            setProperty("beanRef", beanRef);
-            return this;
-        }
-        /**
-         * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
-         * comma.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointConsumerBuilder hosts(String hosts) {
-            setProperty("hosts", hosts);
-            return this;
-        }
-        /**
-         * Port number of cassansdra server(s).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointConsumerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number of cassansdra server(s).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Keyspace to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointConsumerBuilder keyspace(String keyspace) {
-            setProperty("keyspace", keyspace);
-            return this;
-        }
-        /**
          * To use the Cluster instance (you would normally not use this option).
          * 
          * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
@@ -863,63 +806,6 @@ public interface CassandraEndpointBuilderFactory {
             return (AdvancedCassandraEndpointProducerBuilder) this;
         }
         /**
-         * beanRef is defined using bean:id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointProducerBuilder beanRef(String beanRef) {
-            setProperty("beanRef", beanRef);
-            return this;
-        }
-        /**
-         * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
-         * comma.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointProducerBuilder hosts(String hosts) {
-            setProperty("hosts", hosts);
-            return this;
-        }
-        /**
-         * Port number of cassansdra server(s).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointProducerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number of cassansdra server(s).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Keyspace to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointProducerBuilder keyspace(String keyspace) {
-            setProperty("keyspace", keyspace);
-            return this;
-        }
-        /**
          * To use the Cluster instance (you would normally not use this option).
          * 
          * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
@@ -1213,63 +1099,6 @@ public interface CassandraEndpointBuilderFactory {
                 CassandraEndpointConsumerBuilder, CassandraEndpointProducerBuilder {
         default AdvancedCassandraEndpointBuilder advanced() {
             return (AdvancedCassandraEndpointBuilder) this;
-        }
-        /**
-         * beanRef is defined using bean:id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointBuilder beanRef(String beanRef) {
-            setProperty("beanRef", beanRef);
-            return this;
-        }
-        /**
-         * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
-         * comma.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointBuilder hosts(String hosts) {
-            setProperty("hosts", hosts);
-            return this;
-        }
-        /**
-         * Port number of cassansdra server(s).
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number of cassansdra server(s).
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Keyspace to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CassandraEndpointBuilder keyspace(String keyspace) {
-            setProperty("keyspace", keyspace);
-            return this;
         }
         /**
          * To use the Cluster instance (you would normally not use this option).

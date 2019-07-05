@@ -40,28 +40,6 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             return (AdvancedGoogleBigQuerySQLEndpointBuilder) this;
         }
         /**
-         * Google Cloud Project Id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleBigQuerySQLEndpointBuilder projectId(String projectId) {
-            setProperty("projectId", projectId);
-            return this;
-        }
-        /**
-         * BigQuery standard SQL query.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleBigQuerySQLEndpointBuilder query(String query) {
-            setProperty("query", query);
-            return this;
-        }
-        /**
          * ConnectionFactory to obtain connection to Bigquery Service. If non
          * provided the default will be used.
          * 

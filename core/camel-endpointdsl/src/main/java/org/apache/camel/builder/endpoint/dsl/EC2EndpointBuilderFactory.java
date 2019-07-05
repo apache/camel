@@ -38,17 +38,6 @@ public interface EC2EndpointBuilderFactory {
             return (AdvancedEC2EndpointBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default EC2EndpointBuilder label(String label) {
-            setProperty("label", label);
-            return this;
-        }
-        /**
          * The region in which EC2 client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.

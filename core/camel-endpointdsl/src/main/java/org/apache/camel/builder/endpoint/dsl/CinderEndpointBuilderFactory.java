@@ -39,17 +39,6 @@ public interface CinderEndpointBuilderFactory {
             return (AdvancedCinderEndpointBuilder) this;
         }
         /**
-         * OpenStack host url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default CinderEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
          * OpenStack API version.
          * 
          * The option is a: <code>java.lang.String</code> type.

@@ -43,40 +43,6 @@ public interface MllpEndpointBuilderFactory {
             return (AdvancedMllpEndpointConsumerBuilder) this;
         }
         /**
-         * Hostname or IP for connection for the TCP connection. The default
-         * value is null, which means any local IP address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointConsumerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the TCP connection.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the TCP connection.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
@@ -773,40 +739,6 @@ public interface MllpEndpointBuilderFactory {
             return (AdvancedMllpEndpointProducerBuilder) this;
         }
         /**
-         * Hostname or IP for connection for the TCP connection. The default
-         * value is null, which means any local IP address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointProducerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the TCP connection.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the TCP connection.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
@@ -1307,40 +1239,6 @@ public interface MllpEndpointBuilderFactory {
                 MllpEndpointConsumerBuilder, MllpEndpointProducerBuilder {
         default AdvancedMllpEndpointBuilder advanced() {
             return (AdvancedMllpEndpointBuilder) this;
-        }
-        /**
-         * Hostname or IP for connection for the TCP connection. The default
-         * value is null, which means any local IP address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the TCP connection.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the TCP connection.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MllpEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * Enable/Disable the automatic generation of a MLLP Acknowledgement

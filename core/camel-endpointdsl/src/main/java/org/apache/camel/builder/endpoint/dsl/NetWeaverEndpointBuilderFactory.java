@@ -39,17 +39,6 @@ public interface NetWeaverEndpointBuilderFactory {
             return (AdvancedNetWeaverEndpointBuilder) this;
         }
         /**
-         * Url to the SAP net-weaver gateway server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default NetWeaverEndpointBuilder url(String url) {
-            setProperty("url", url);
-            return this;
-        }
-        /**
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
          * 

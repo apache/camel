@@ -47,17 +47,6 @@ public interface FacebookEndpointBuilderFactory {
             return (AdvancedFacebookEndpointConsumerBuilder) this;
         }
         /**
-         * What operation to perform.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FacebookEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The unique URL of the achievement.
          * 
          * The option is a: <code>java.net.URL</code> type.
@@ -1865,17 +1854,6 @@ public interface FacebookEndpointBuilderFactory {
             return (AdvancedFacebookEndpointProducerBuilder) this;
         }
         /**
-         * What operation to perform.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FacebookEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The unique URL of the achievement.
          * 
          * The option is a: <code>java.net.URL</code> type.
@@ -3628,17 +3606,6 @@ public interface FacebookEndpointBuilderFactory {
                 FacebookEndpointConsumerBuilder, FacebookEndpointProducerBuilder {
         default AdvancedFacebookEndpointBuilder advanced() {
             return (AdvancedFacebookEndpointBuilder) this;
-        }
-        /**
-         * What operation to perform.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FacebookEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
         }
         /**
          * The unique URL of the achievement.

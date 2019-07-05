@@ -49,39 +49,6 @@ public interface SshEndpointBuilderFactory {
             return (AdvancedSshEndpointConsumerBuilder) this;
         }
         /**
-         * Sets the hostname of the remote SSH server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
@@ -873,39 +840,6 @@ public interface SshEndpointBuilderFactory {
             return (AdvancedSshEndpointProducerBuilder) this;
         }
         /**
-         * Sets the hostname of the remote SSH server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
@@ -1224,39 +1158,6 @@ public interface SshEndpointBuilderFactory {
                 SshEndpointConsumerBuilder, SshEndpointProducerBuilder {
         default AdvancedSshEndpointBuilder advanced() {
             return (AdvancedSshEndpointBuilder) this;
-        }
-        /**
-         * Sets the hostname of the remote SSH server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Sets the port number for the remote SSH server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SshEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * Specifies whether a connection to an unknown host should fail or not.

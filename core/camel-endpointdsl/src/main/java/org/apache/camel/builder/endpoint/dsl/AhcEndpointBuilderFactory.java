@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URI;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -39,28 +38,6 @@ public interface AhcEndpointBuilderFactory {
     public interface AhcEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedAhcEndpointBuilder advanced() {
             return (AdvancedAhcEndpointBuilder) this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default AhcEndpointBuilder httpUri(URI httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default AhcEndpointBuilder httpUri(String httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
         }
         /**
          * If the option is true, then the Exchange.HTTP_URI header is ignored,

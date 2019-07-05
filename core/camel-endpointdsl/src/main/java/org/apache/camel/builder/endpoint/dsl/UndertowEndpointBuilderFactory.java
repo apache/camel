@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URI;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
@@ -44,28 +43,6 @@ public interface UndertowEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedUndertowEndpointConsumerBuilder advanced() {
             return (AdvancedUndertowEndpointConsumerBuilder) this;
-        }
-        /**
-         * The url of the HTTP endpoint to use.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default UndertowEndpointConsumerBuilder httpURI(URI httpURI) {
-            setProperty("httpURI", httpURI);
-            return this;
-        }
-        /**
-         * The url of the HTTP endpoint to use.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default UndertowEndpointConsumerBuilder httpURI(String httpURI) {
-            setProperty("httpURI", httpURI);
-            return this;
         }
         /**
          * Whether or not the consumer should write access log.
@@ -494,28 +471,6 @@ public interface UndertowEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedUndertowEndpointProducerBuilder advanced() {
             return (AdvancedUndertowEndpointProducerBuilder) this;
-        }
-        /**
-         * The url of the HTTP endpoint to use.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default UndertowEndpointProducerBuilder httpURI(URI httpURI) {
-            setProperty("httpURI", httpURI);
-            return this;
-        }
-        /**
-         * The url of the HTTP endpoint to use.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default UndertowEndpointProducerBuilder httpURI(String httpURI) {
-            setProperty("httpURI", httpURI);
-            return this;
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
@@ -993,28 +948,6 @@ public interface UndertowEndpointBuilderFactory {
                 UndertowEndpointConsumerBuilder, UndertowEndpointProducerBuilder {
         default AdvancedUndertowEndpointBuilder advanced() {
             return (AdvancedUndertowEndpointBuilder) this;
-        }
-        /**
-         * The url of the HTTP endpoint to use.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default UndertowEndpointBuilder httpURI(URI httpURI) {
-            setProperty("httpURI", httpURI);
-            return this;
-        }
-        /**
-         * The url of the HTTP endpoint to use.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default UndertowEndpointBuilder httpURI(String httpURI) {
-            setProperty("httpURI", httpURI);
-            return this;
         }
         /**
          * To configure security using SSLContextParameters.

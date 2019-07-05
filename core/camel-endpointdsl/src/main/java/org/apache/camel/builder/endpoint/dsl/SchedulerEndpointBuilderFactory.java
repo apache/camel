@@ -39,17 +39,6 @@ public interface SchedulerEndpointBuilderFactory {
             return (AdvancedSchedulerEndpointBuilder) this;
         }
         /**
-         * The name of the scheduler.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SchedulerEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Number of threads used by the scheduling thread pool. Is by default
          * using a single thread.
          * 

@@ -38,17 +38,6 @@ public interface SolrEndpointBuilderFactory {
             return (AdvancedSolrEndpointBuilder) this;
         }
         /**
-         * Hostname and port for the solr server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SolrEndpointBuilder url(String url) {
-            setProperty("url", url);
-            return this;
-        }
-        /**
          * Server side must support gzip or deflate for this to have any effect.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.

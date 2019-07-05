@@ -38,19 +38,6 @@ public interface LdifEndpointBuilderFactory {
         default AdvancedLdifEndpointBuilder advanced() {
             return (AdvancedLdifEndpointBuilder) this;
         }
-        /**
-         * The name of the LdapConnection bean to pull from the registry. Note
-         * that this must be of scope prototype to avoid it being shared among
-         * threads or using a connection that has timed out.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default LdifEndpointBuilder ldapConnectionName(String ldapConnectionName) {
-            setProperty("ldapConnectionName", ldapConnectionName);
-            return this;
-        }
     }
 
     /**

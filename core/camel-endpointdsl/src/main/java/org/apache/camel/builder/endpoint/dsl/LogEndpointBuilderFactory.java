@@ -38,17 +38,6 @@ public interface LogEndpointBuilderFactory {
             return (AdvancedLogEndpointBuilder) this;
         }
         /**
-         * The logger name to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default LogEndpointBuilder loggerName(String loggerName) {
-            setProperty("loggerName", loggerName);
-            return this;
-        }
-        /**
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
          * 

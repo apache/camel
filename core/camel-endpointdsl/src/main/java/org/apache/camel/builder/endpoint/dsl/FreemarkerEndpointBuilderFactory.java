@@ -40,22 +40,6 @@ public interface FreemarkerEndpointBuilderFactory {
             return (AdvancedFreemarkerEndpointBuilder) this;
         }
         /**
-         * Path to the resource. You can prefix with: classpath, file, http,
-         * ref, or bean. classpath, file and http loads the resource using these
-         * protocols (classpath is default). ref will lookup the resource in the
-         * registry. bean will call a method on a bean to be used as the
-         * resource. For bean you can specify the method name after dot, eg
-         * bean:myBean.myMethod.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default FreemarkerEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Sets the Freemarker configuration to use.
          * 
          * The option is a: <code>freemarker.template.Configuration</code> type.

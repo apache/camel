@@ -43,18 +43,6 @@ public interface HazelcastMultimapEndpointBuilderFactory {
             return (AdvancedHazelcastMultimapEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMultimapEndpointConsumerBuilder cacheName(
-                String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -526,18 +514,6 @@ public interface HazelcastMultimapEndpointBuilderFactory {
             return (AdvancedHazelcastMultimapEndpointProducerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMultimapEndpointProducerBuilder cacheName(
-                String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -881,17 +857,6 @@ public interface HazelcastMultimapEndpointBuilderFactory {
                 HazelcastMultimapEndpointConsumerBuilder, HazelcastMultimapEndpointProducerBuilder {
         default AdvancedHazelcastMultimapEndpointBuilder advanced() {
             return (AdvancedHazelcastMultimapEndpointBuilder) this;
-        }
-        /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMultimapEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * To specify a default operation to use, if no operation header has

@@ -49,51 +49,6 @@ public interface HipchatEndpointBuilderFactory {
             return (AdvancedHipchatEndpointConsumerBuilder) this;
         }
         /**
-         * The protocol for the hipchat server, such as http.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The host for the hipchat server, such as api.hipchat.com.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port for the hipchat server. Is by default 80.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointConsumerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port for the hipchat server. Is by default 80.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * OAuth 2 auth token.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -718,51 +673,6 @@ public interface HipchatEndpointBuilderFactory {
             return (AdvancedHipchatEndpointProducerBuilder) this;
         }
         /**
-         * The protocol for the hipchat server, such as http.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The host for the hipchat server, such as api.hipchat.com.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port for the hipchat server. Is by default 80.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointProducerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port for the hipchat server. Is by default 80.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * OAuth 2 auth token.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -924,51 +834,6 @@ public interface HipchatEndpointBuilderFactory {
                 HipchatEndpointConsumerBuilder, HipchatEndpointProducerBuilder {
         default AdvancedHipchatEndpointBuilder advanced() {
             return (AdvancedHipchatEndpointBuilder) this;
-        }
-        /**
-         * The protocol for the hipchat server, such as http.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The host for the hipchat server, such as api.hipchat.com.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port for the hipchat server. Is by default 80.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port for the hipchat server. Is by default 80.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default HipchatEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * OAuth 2 auth token.

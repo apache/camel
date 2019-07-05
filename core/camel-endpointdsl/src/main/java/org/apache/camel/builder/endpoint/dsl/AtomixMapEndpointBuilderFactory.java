@@ -45,18 +45,6 @@ public interface AtomixMapEndpointBuilderFactory {
             return (AdvancedAtomixMapEndpointConsumerBuilder) this;
         }
         /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixMapEndpointConsumerBuilder resourceName(
-                String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
          * The Atomix instance to use.
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
@@ -550,18 +538,6 @@ public interface AtomixMapEndpointBuilderFactory {
             return (AdvancedAtomixMapEndpointProducerBuilder) this;
         }
         /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixMapEndpointProducerBuilder resourceName(
-                String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
          * The Atomix instance to use.
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
@@ -1000,17 +976,6 @@ public interface AtomixMapEndpointBuilderFactory {
                 AtomixMapEndpointConsumerBuilder, AtomixMapEndpointProducerBuilder {
         default AdvancedAtomixMapEndpointBuilder advanced() {
             return (AdvancedAtomixMapEndpointBuilder) this;
-        }
-        /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixMapEndpointBuilder resourceName(String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
         }
         /**
          * The Atomix instance to use.

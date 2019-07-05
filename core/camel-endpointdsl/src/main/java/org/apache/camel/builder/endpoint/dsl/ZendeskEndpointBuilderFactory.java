@@ -42,17 +42,6 @@ public interface ZendeskEndpointBuilderFactory {
             return (AdvancedZendeskEndpointConsumerBuilder) this;
         }
         /**
-         * What operation to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZendeskEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -286,17 +275,6 @@ public interface ZendeskEndpointBuilderFactory {
             return (AdvancedZendeskEndpointProducerBuilder) this;
         }
         /**
-         * What operation to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZendeskEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -475,17 +453,6 @@ public interface ZendeskEndpointBuilderFactory {
                 ZendeskEndpointConsumerBuilder, ZendeskEndpointProducerBuilder {
         default AdvancedZendeskEndpointBuilder advanced() {
             return (AdvancedZendeskEndpointBuilder) this;
-        }
-        /**
-         * What operation to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZendeskEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.

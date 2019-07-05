@@ -39,32 +39,6 @@ public interface FopEndpointBuilderFactory {
             return (AdvancedFopEndpointBuilder) this;
         }
         /**
-         * The primary output format is PDF but other output formats are also
-         * supported.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.fop.FopOutputType</code> type.
-         * 
-         * Group: producer
-         */
-        default FopEndpointBuilder outputType(FopOutputType outputType) {
-            setProperty("outputType", outputType);
-            return this;
-        }
-        /**
-         * The primary output format is PDF but other output formats are also
-         * supported.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.fop.FopOutputType</code> type.
-         * 
-         * Group: producer
-         */
-        default FopEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
-            return this;
-        }
-        /**
          * Allows to use a custom configured or implementation of
          * org.apache.fop.apps.FopFactory.
          * 
@@ -162,23 +136,6 @@ public interface FopEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.fop.FopOutputType</code>
-     * enum.
-     */
-    enum FopOutputType {
-        pdf,
-        ps,
-        pcl,
-        png,
-        jpeg,
-        svg,
-        xml,
-        mif,
-        rtf,
-        txt;
     }
     /**
      * FOP (camel-fop)

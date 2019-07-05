@@ -42,50 +42,6 @@ public interface CryptoCmsEndpointBuilderFactory {
             return (AdvancedCryptoCmsEndpointBuilder) this;
         }
         /**
-         * Set the Crypto operation from that supplied after the crypto scheme
-         * in the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
-         * Possible values: sign, verify, encrypt, or decrypt.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.CryptoOperation</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default CryptoCmsEndpointBuilder cryptoOperation(
-                CryptoOperation cryptoOperation) {
-            setProperty("cryptoOperation", cryptoOperation);
-            return this;
-        }
-        /**
-         * Set the Crypto operation from that supplied after the crypto scheme
-         * in the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
-         * Possible values: sign, verify, encrypt, or decrypt.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.crypto.cms.CryptoOperation</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default CryptoCmsEndpointBuilder cryptoOperation(String cryptoOperation) {
-            setProperty("cryptoOperation", cryptoOperation);
-            return this;
-        }
-        /**
-         * The name part in the URI can be chosen by the user to distinguish
-         * between different signer/verifier/encryptor/decryptor endpoints
-         * within the camel context.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default CryptoCmsEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Keystore which contains signer private keys, verifier public keys,
          * encryptor public keys, decryptor private keys depending on the
          * operation. Use either this parameter or the parameter
@@ -540,17 +496,6 @@ public interface CryptoCmsEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.crypto.cms.CryptoOperation</code> enum.
-     */
-    enum CryptoOperation {
-        sign,
-        verify,
-        encrypt,
-        decrypt;
     }
     /**
      * Crypto CMS (camel-crypto-cms)

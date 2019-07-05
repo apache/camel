@@ -42,18 +42,6 @@ public interface MongoDbEndpointBuilderFactory {
             return (AdvancedMongoDbEndpointConsumerBuilder) this;
         }
         /**
-         * Name of com.mongodb.Mongo to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MongoDbEndpointConsumerBuilder connectionBean(
-                String connectionBean) {
-            setProperty("connectionBean", connectionBean);
-            return this;
-        }
-        /**
          * Sets the name of the MongoDB collection to bind to this endpoint.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -591,18 +579,6 @@ public interface MongoDbEndpointBuilderFactory {
             return (AdvancedMongoDbEndpointProducerBuilder) this;
         }
         /**
-         * Name of com.mongodb.Mongo to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MongoDbEndpointProducerBuilder connectionBean(
-                String connectionBean) {
-            setProperty("connectionBean", connectionBean);
-            return this;
-        }
-        /**
          * Sets the name of the MongoDB collection to bind to this endpoint.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1074,17 +1050,6 @@ public interface MongoDbEndpointBuilderFactory {
                 MongoDbEndpointConsumerBuilder, MongoDbEndpointProducerBuilder {
         default AdvancedMongoDbEndpointBuilder advanced() {
             return (AdvancedMongoDbEndpointBuilder) this;
-        }
-        /**
-         * Name of com.mongodb.Mongo to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MongoDbEndpointBuilder connectionBean(String connectionBean) {
-            setProperty("connectionBean", connectionBean);
-            return this;
         }
         /**
          * Sets the name of the MongoDB collection to bind to this endpoint.

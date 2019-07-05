@@ -42,43 +42,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return (AdvancedGoogleCalendarEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointConsumerBuilder apiName(
-                GoogleCalendarApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointConsumerBuilder methodName(
-                String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -372,43 +335,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return (AdvancedGoogleCalendarEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointProducerBuilder apiName(
-                GoogleCalendarApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointProducerBuilder methodName(
-                String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -649,42 +575,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return (AdvancedGoogleCalendarEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointBuilder apiName(
-                GoogleCalendarApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleCalendarEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -867,21 +757,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName</code> enum.
-     */
-    enum GoogleCalendarApiName {
-        ACL,
-        LIST,
-        CALENDARS,
-        CHANNELS,
-        COLORS,
-        FREEBUSY,
-        EVENTS,
-        SETTINGS;
     }
     /**
      * Google Calendar (camel-google-calendar)

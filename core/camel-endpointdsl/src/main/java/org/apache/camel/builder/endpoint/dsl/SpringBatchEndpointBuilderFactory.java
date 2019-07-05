@@ -41,17 +41,6 @@ public interface SpringBatchEndpointBuilderFactory {
             return (AdvancedSpringBatchEndpointBuilder) this;
         }
         /**
-         * The name of the Spring Batch job located in the registry.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SpringBatchEndpointBuilder jobName(String jobName) {
-            setProperty("jobName", jobName);
-            return this;
-        }
-        /**
          * Explicitly defines if the jobName should be taken from the headers
          * instead of the URI.
          * 

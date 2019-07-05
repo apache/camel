@@ -46,19 +46,6 @@ public interface KafkaEndpointBuilderFactory {
             return (AdvancedKafkaEndpointConsumerBuilder) this;
         }
         /**
-         * Name of the topic to use. On the consumer you can use comma to
-         * separate multiple topics. A producer can only send a message to a
-         * single topic.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KafkaEndpointConsumerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
-        }
-        /**
          * URL of the Kafka brokers to use. The format is
          * host1:port1,host2:port2, and the list can be a subset of brokers or a
          * VIP pointing to a subset of brokers. This option is known as
@@ -1379,19 +1366,6 @@ public interface KafkaEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedKafkaEndpointProducerBuilder advanced() {
             return (AdvancedKafkaEndpointProducerBuilder) this;
-        }
-        /**
-         * Name of the topic to use. On the consumer you can use comma to
-         * separate multiple topics. A producer can only send a message to a
-         * single topic.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KafkaEndpointProducerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
         }
         /**
          * URL of the Kafka brokers to use. The format is
@@ -2935,19 +2909,6 @@ public interface KafkaEndpointBuilderFactory {
                 KafkaEndpointConsumerBuilder, KafkaEndpointProducerBuilder {
         default AdvancedKafkaEndpointBuilder advanced() {
             return (AdvancedKafkaEndpointBuilder) this;
-        }
-        /**
-         * Name of the topic to use. On the consumer you can use comma to
-         * separate multiple topics. A producer can only send a message to a
-         * single topic.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KafkaEndpointBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
         }
         /**
          * URL of the Kafka brokers to use. The format is

@@ -39,17 +39,6 @@ public interface IgniteSetEndpointBuilderFactory {
             return (AdvancedIgniteSetEndpointBuilder) this;
         }
         /**
-         * The set name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default IgniteSetEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 

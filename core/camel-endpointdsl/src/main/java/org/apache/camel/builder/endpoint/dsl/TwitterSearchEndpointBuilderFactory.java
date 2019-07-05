@@ -48,18 +48,6 @@ public interface TwitterSearchEndpointBuilderFactory {
             return (AdvancedTwitterSearchEndpointConsumerBuilder) this;
         }
         /**
-         * The search query, use the keywords AND, OR, - and () to narrow the
-         * search results.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TwitterSearchEndpointConsumerBuilder keywords(String keywords) {
-            setProperty("keywords", keywords);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -1082,18 +1070,6 @@ public interface TwitterSearchEndpointBuilderFactory {
             return (AdvancedTwitterSearchEndpointProducerBuilder) this;
         }
         /**
-         * The search query, use the keywords AND, OR, - and () to narrow the
-         * search results.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TwitterSearchEndpointProducerBuilder keywords(String keywords) {
-            setProperty("keywords", keywords);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1324,18 +1300,6 @@ public interface TwitterSearchEndpointBuilderFactory {
                 TwitterSearchEndpointConsumerBuilder, TwitterSearchEndpointProducerBuilder {
         default AdvancedTwitterSearchEndpointBuilder advanced() {
             return (AdvancedTwitterSearchEndpointBuilder) this;
-        }
-        /**
-         * The search query, use the keywords AND, OR, - and () to narrow the
-         * search results.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TwitterSearchEndpointBuilder keywords(String keywords) {
-            setProperty("keywords", keywords);
-            return this;
         }
         /**
          * The http proxy host which can be used for the camel-twitter. Can also

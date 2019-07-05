@@ -42,17 +42,6 @@ public interface EventEndpointBuilderFactory {
             return (AdvancedEventEndpointConsumerBuilder) this;
         }
         /**
-         * Name of endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EventEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -220,17 +209,6 @@ public interface EventEndpointBuilderFactory {
             return (AdvancedEventEndpointProducerBuilder) this;
         }
         /**
-         * Name of endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EventEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -343,17 +321,6 @@ public interface EventEndpointBuilderFactory {
                 EventEndpointConsumerBuilder, EventEndpointProducerBuilder {
         default AdvancedEventEndpointBuilder advanced() {
             return (AdvancedEventEndpointBuilder) this;
-        }
-        /**
-         * Name of endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EventEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
     }
 

@@ -43,17 +43,6 @@ public interface CMISEndpointBuilderFactory {
             return (AdvancedCMISEndpointConsumerBuilder) this;
         }
         /**
-         * URL to the cmis repository.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CMISEndpointConsumerBuilder cmsUrl(String cmsUrl) {
-            setProperty("cmsUrl", cmsUrl);
-            return this;
-        }
-        /**
          * Number of nodes to retrieve per page.
          * 
          * The option is a: <code>int</code> type.
@@ -366,17 +355,6 @@ public interface CMISEndpointBuilderFactory {
             return (AdvancedCMISEndpointProducerBuilder) this;
         }
         /**
-         * URL to the cmis repository.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CMISEndpointProducerBuilder cmsUrl(String cmsUrl) {
-            setProperty("cmsUrl", cmsUrl);
-            return this;
-        }
-        /**
          * Number of nodes to retrieve per page.
          * 
          * The option is a: <code>int</code> type.
@@ -645,17 +623,6 @@ public interface CMISEndpointBuilderFactory {
                 CMISEndpointConsumerBuilder, CMISEndpointProducerBuilder {
         default AdvancedCMISEndpointBuilder advanced() {
             return (AdvancedCMISEndpointBuilder) this;
-        }
-        /**
-         * URL to the cmis repository.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CMISEndpointBuilder cmsUrl(String cmsUrl) {
-            setProperty("cmsUrl", cmsUrl);
-            return this;
         }
         /**
          * Number of nodes to retrieve per page.

@@ -43,30 +43,6 @@ public interface WordpressEndpointBuilderFactory {
             return (AdvancedWordpressEndpointConsumerBuilder) this;
         }
         /**
-         * The endpoint operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WordpressEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The second part of an endpoint operation. Needed only when endpoint
-         * semantic is not enough, like wordpress:post:delete.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WordpressEndpointConsumerBuilder operationDetail(
-                String operationDetail) {
-            setProperty("operationDetail", operationDetail);
-            return this;
-        }
-        /**
          * The Wordpress REST API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -380,30 +356,6 @@ public interface WordpressEndpointBuilderFactory {
             return (AdvancedWordpressEndpointProducerBuilder) this;
         }
         /**
-         * The endpoint operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WordpressEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The second part of an endpoint operation. Needed only when endpoint
-         * semantic is not enough, like wordpress:post:delete.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WordpressEndpointProducerBuilder operationDetail(
-                String operationDetail) {
-            setProperty("operationDetail", operationDetail);
-            return this;
-        }
-        /**
          * The Wordpress REST API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -662,29 +614,6 @@ public interface WordpressEndpointBuilderFactory {
                 WordpressEndpointConsumerBuilder, WordpressEndpointProducerBuilder {
         default AdvancedWordpressEndpointBuilder advanced() {
             return (AdvancedWordpressEndpointBuilder) this;
-        }
-        /**
-         * The endpoint operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WordpressEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The second part of an endpoint operation. Needed only when endpoint
-         * semantic is not enough, like wordpress:post:delete.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WordpressEndpointBuilder operationDetail(String operationDetail) {
-            setProperty("operationDetail", operationDetail);
-            return this;
         }
         /**
          * The Wordpress REST API version.

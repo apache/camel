@@ -39,17 +39,6 @@ public interface NovaEndpointBuilderFactory {
             return (AdvancedNovaEndpointBuilder) this;
         }
         /**
-         * OpenStack host url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default NovaEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
          * OpenStack API version.
          * 
          * The option is a: <code>java.lang.String</code> type.

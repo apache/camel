@@ -43,51 +43,6 @@ public interface XmppEndpointBuilderFactory {
             return (AdvancedXmppEndpointConsumerBuilder) this;
         }
         /**
-         * Hostname for the chat server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number for the chat server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the chat server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * JID (Jabber ID) of person to receive messages. room parameter has
-         * precedence over participant.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointConsumerBuilder participant(String participant) {
-            setProperty("participant", participant);
-            return this;
-        }
-        /**
          * Whether to login the user.
          * 
          * The option is a: <code>boolean</code> type.
@@ -551,51 +506,6 @@ public interface XmppEndpointBuilderFactory {
             return (AdvancedXmppEndpointProducerBuilder) this;
         }
         /**
-         * Hostname for the chat server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number for the chat server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the chat server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * JID (Jabber ID) of person to receive messages. room parameter has
-         * precedence over participant.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointProducerBuilder participant(String participant) {
-            setProperty("participant", participant);
-            return this;
-        }
-        /**
          * Whether to login the user.
          * 
          * The option is a: <code>boolean</code> type.
@@ -948,51 +858,6 @@ public interface XmppEndpointBuilderFactory {
                 XmppEndpointConsumerBuilder, XmppEndpointProducerBuilder {
         default AdvancedXmppEndpointBuilder advanced() {
             return (AdvancedXmppEndpointBuilder) this;
-        }
-        /**
-         * Hostname for the chat server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number for the chat server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the chat server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * JID (Jabber ID) of person to receive messages. room parameter has
-         * precedence over participant.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XmppEndpointBuilder participant(String participant) {
-            setProperty("participant", participant);
-            return this;
         }
         /**
          * Whether to login the user.

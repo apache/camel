@@ -51,39 +51,6 @@ public interface MailEndpointBuilderFactory {
             return (AdvancedMailEndpointConsumerBuilder) this;
         }
         /**
-         * The mail server host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number of the mail server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number of the mail server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -1561,39 +1528,6 @@ public interface MailEndpointBuilderFactory {
             return (AdvancedMailEndpointProducerBuilder) this;
         }
         /**
-         * The mail server host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number of the mail server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number of the mail server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Sets the BCC email address. Separate multiple email addresses with
          * comma.
          * 
@@ -2185,39 +2119,6 @@ public interface MailEndpointBuilderFactory {
                 MailEndpointConsumerBuilder, MailEndpointProducerBuilder {
         default AdvancedMailEndpointBuilder advanced() {
             return (AdvancedMailEndpointBuilder) this;
-        }
-        /**
-         * The mail server host name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number of the mail server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number of the mail server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default MailEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * The password for login.

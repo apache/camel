@@ -49,17 +49,6 @@ public interface WeatherEndpointBuilderFactory {
             return (AdvancedWeatherEndpointConsumerBuilder) this;
         }
         /**
-         * The name value is not used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WeatherEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * APPID ID used to authenticate the user connected to the API Server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1071,17 +1060,6 @@ public interface WeatherEndpointBuilderFactory {
             return (AdvancedWeatherEndpointProducerBuilder) this;
         }
         /**
-         * The name value is not used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WeatherEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * APPID ID used to authenticate the user connected to the API Server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1630,17 +1608,6 @@ public interface WeatherEndpointBuilderFactory {
                 WeatherEndpointConsumerBuilder, WeatherEndpointProducerBuilder {
         default AdvancedWeatherEndpointBuilder advanced() {
             return (AdvancedWeatherEndpointBuilder) this;
-        }
-        /**
-         * The name value is not used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WeatherEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * APPID ID used to authenticate the user connected to the API Server.

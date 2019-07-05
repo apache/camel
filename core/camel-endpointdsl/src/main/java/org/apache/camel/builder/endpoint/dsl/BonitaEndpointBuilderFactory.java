@@ -38,32 +38,6 @@ public interface BonitaEndpointBuilderFactory {
             return (AdvancedBonitaEndpointBuilder) this;
         }
         /**
-         * Operation to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.bonita.util.BonitaOperation</code>
-         * type.
-         * 
-         * Group: consumer
-         */
-        default BonitaEndpointBuilder operation(BonitaOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Operation to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.bonita.util.BonitaOperation</code>
-         * type.
-         * 
-         * Group: consumer
-         */
-        default BonitaEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Hostname where Bonita engine runs.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -179,14 +153,6 @@ public interface BonitaEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.bonita.util.BonitaOperation</code> enum.
-     */
-    enum BonitaOperation {
-        startCase;
     }
     /**
      * Bonita (camel-bonita)

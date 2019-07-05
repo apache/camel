@@ -44,42 +44,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (AdvancedGoogleDriveEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointConsumerBuilder apiName(
-                GoogleDriveApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -377,42 +341,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (AdvancedGoogleDriveEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointProducerBuilder apiName(
-                GoogleDriveApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -657,41 +585,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             return (AdvancedGoogleDriveEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointBuilder apiName(GoogleDriveApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleDriveEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -879,26 +772,6 @@ public interface GoogleDriveEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> enum.
-     */
-    enum GoogleDriveApiName {
-        DRIVE_ABOUT,
-        DRIVE_APPS,
-        DRIVE_CHANGES,
-        DRIVE_CHANNELS,
-        DRIVE_CHILDREN,
-        DRIVE_COMMENTS,
-        DRIVE_FILES,
-        DRIVE_PARENTS,
-        DRIVE_PERMISSIONS,
-        DRIVE_PROPERTIES,
-        DRIVE_REALTIME,
-        DRIVE_REPLIES,
-        DRIVE_REVISIONS;
     }
     /**
      * Google Drive (camel-google-drive)

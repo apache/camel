@@ -45,18 +45,6 @@ public interface AtomixValueEndpointBuilderFactory {
             return (AdvancedAtomixValueEndpointConsumerBuilder) this;
         }
         /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixValueEndpointConsumerBuilder resourceName(
-                String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
          * The Atomix instance to use.
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
@@ -526,18 +514,6 @@ public interface AtomixValueEndpointBuilderFactory {
             return (AdvancedAtomixValueEndpointProducerBuilder) this;
         }
         /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixValueEndpointProducerBuilder resourceName(
-                String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
          * The Atomix instance to use.
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
@@ -952,17 +928,6 @@ public interface AtomixValueEndpointBuilderFactory {
                 AtomixValueEndpointConsumerBuilder, AtomixValueEndpointProducerBuilder {
         default AdvancedAtomixValueEndpointBuilder advanced() {
             return (AdvancedAtomixValueEndpointBuilder) this;
-        }
-        /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixValueEndpointBuilder resourceName(String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
         }
         /**
          * The Atomix instance to use.

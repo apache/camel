@@ -49,50 +49,6 @@ public interface CouchbaseEndpointBuilderFactory {
             return (AdvancedCouchbaseEndpointConsumerBuilder) this;
         }
         /**
-         * The protocol to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointConsumerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * The port number to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * The bucket to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1041,50 +997,6 @@ public interface CouchbaseEndpointBuilderFactory {
             return (AdvancedCouchbaseEndpointProducerBuilder) this;
         }
         /**
-         * The protocol to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointProducerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * The port number to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * The bucket to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1598,50 +1510,6 @@ public interface CouchbaseEndpointBuilderFactory {
                 CouchbaseEndpointConsumerBuilder, CouchbaseEndpointProducerBuilder {
         default AdvancedCouchbaseEndpointBuilder advanced() {
             return (AdvancedCouchbaseEndpointBuilder) this;
-        }
-        /**
-         * The protocol to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * The port number to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchbaseEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * The bucket to use.

@@ -38,18 +38,6 @@ public interface ExecEndpointBuilderFactory {
             return (AdvancedExecEndpointBuilder) this;
         }
         /**
-         * Sets the executable to be executed. The executable must not be empty
-         * or null.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ExecEndpointBuilder executable(String executable) {
-            setProperty("executable", executable);
-            return this;
-        }
-        /**
          * The arguments may be one or many whitespace-separated tokens.
          * 
          * The option is a: <code>java.lang.String</code> type.

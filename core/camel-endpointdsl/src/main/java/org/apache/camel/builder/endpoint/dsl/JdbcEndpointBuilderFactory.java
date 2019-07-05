@@ -40,20 +40,6 @@ public interface JdbcEndpointBuilderFactory {
             return (AdvancedJdbcEndpointBuilder) this;
         }
         /**
-         * Name of DataSource to lookup in the Registry. If the name is
-         * dataSource or default, then Camel will attempt to lookup a default
-         * DataSource from the registry, meaning if there is a only one instance
-         * of DataSource found, then this DataSource will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default JdbcEndpointBuilder dataSourceName(String dataSourceName) {
-            setProperty("dataSourceName", dataSourceName);
-            return this;
-        }
-        /**
          * Whether to allow using named parameters in the queries.
          * 
          * The option is a: <code>boolean</code> type.

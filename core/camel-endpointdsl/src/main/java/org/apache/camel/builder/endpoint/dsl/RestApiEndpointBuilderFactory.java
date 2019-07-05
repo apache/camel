@@ -39,29 +39,6 @@ public interface RestApiEndpointBuilderFactory {
             return (AdvancedRestApiEndpointBuilder) this;
         }
         /**
-         * The base path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default RestApiEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
-         * Optional CamelContext id pattern to only allow Rest APIs from rest
-         * services within CamelContext's which name matches the pattern.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default RestApiEndpointBuilder contextIdPattern(String contextIdPattern) {
-            setProperty("contextIdPattern", contextIdPattern);
-            return this;
-        }
-        /**
          * The Camel Rest API component to use for generating the API of the
          * REST services, such as swagger.
          * 

@@ -38,17 +38,6 @@ public interface KMSEndpointBuilderFactory {
             return (AdvancedKMSEndpointBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default KMSEndpointBuilder label(String label) {
-            setProperty("label", label);
-            return this;
-        }
-        /**
          * The region in which KMS client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.

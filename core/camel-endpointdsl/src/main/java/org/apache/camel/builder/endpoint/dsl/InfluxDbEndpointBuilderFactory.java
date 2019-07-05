@@ -39,17 +39,6 @@ public interface InfluxDbEndpointBuilderFactory {
             return (AdvancedInfluxDbEndpointBuilder) this;
         }
         /**
-         * Connection to the influx database, of class InfluxDB.class.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default InfluxDbEndpointBuilder connectionBean(String connectionBean) {
-            setProperty("connectionBean", connectionBean);
-            return this;
-        }
-        /**
          * Define if this operation is a batch operation or not.
          * 
          * The option is a: <code>boolean</code> type.

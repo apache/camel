@@ -38,17 +38,6 @@ public interface MQEndpointBuilderFactory {
             return (AdvancedMQEndpointBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MQEndpointBuilder label(String label) {
-            setProperty("label", label);
-            return this;
-        }
-        /**
          * The region in which MQ client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.

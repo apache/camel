@@ -42,41 +42,6 @@ public interface IrcEndpointBuilderFactory {
             return (AdvancedIrcEndpointConsumerBuilder) this;
         }
         /**
-         * Hostname for the IRC chat server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointConsumerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the IRC chat server. If no port is configured then a
-         * default port of either 6667, 6668 or 6669 is used.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the IRC chat server. If no port is configured then a
-         * default port of either 6667, 6668 or 6669 is used.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Whether to auto re-join when being kicked.
          * 
          * The option is a: <code>boolean</code> type.
@@ -675,41 +640,6 @@ public interface IrcEndpointBuilderFactory {
             return (AdvancedIrcEndpointProducerBuilder) this;
         }
         /**
-         * Hostname for the IRC chat server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointProducerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the IRC chat server. If no port is configured then a
-         * default port of either 6667, 6668 or 6669 is used.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the IRC chat server. If no port is configured then a
-         * default port of either 6667, 6668 or 6669 is used.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Whether to auto re-join when being kicked.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1253,41 +1183,6 @@ public interface IrcEndpointBuilderFactory {
                 IrcEndpointConsumerBuilder, IrcEndpointProducerBuilder {
         default AdvancedIrcEndpointBuilder advanced() {
             return (AdvancedIrcEndpointBuilder) this;
-        }
-        /**
-         * Hostname for the IRC chat server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the IRC chat server. If no port is configured then a
-         * default port of either 6667, 6668 or 6669 is used.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the IRC chat server. If no port is configured then a
-         * default port of either 6667, 6668 or 6669 is used.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default IrcEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * Whether to auto re-join when being kicked.

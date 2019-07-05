@@ -38,28 +38,6 @@ public interface MasterEndpointBuilderFactory {
         default AdvancedMasterEndpointBuilder advanced() {
             return (AdvancedMasterEndpointBuilder) this;
         }
-        /**
-         * The name of the cluster namespace to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default MasterEndpointBuilder namespace(String namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
-         * The endpoint uri to use in master/slave mode.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default MasterEndpointBuilder delegateUri(String delegateUri) {
-            setProperty("delegateUri", delegateUri);
-            return this;
-        }
     }
 
     /**

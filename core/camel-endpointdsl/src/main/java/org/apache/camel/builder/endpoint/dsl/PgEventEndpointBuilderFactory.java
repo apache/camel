@@ -43,62 +43,6 @@ public interface PgEventEndpointBuilderFactory {
             return (AdvancedPgEventEndpointConsumerBuilder) this;
         }
         /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointConsumerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The database name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointConsumerBuilder database(String database) {
-            setProperty("database", database);
-            return this;
-        }
-        /**
-         * The channel name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointConsumerBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
-        }
-        /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
@@ -314,62 +258,6 @@ public interface PgEventEndpointBuilderFactory {
             return (AdvancedPgEventEndpointProducerBuilder) this;
         }
         /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointProducerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The database name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointProducerBuilder database(String database) {
-            setProperty("database", database);
-            return this;
-        }
-        /**
-         * The channel name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointProducerBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
-        }
-        /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
@@ -530,62 +418,6 @@ public interface PgEventEndpointBuilderFactory {
                 PgEventEndpointConsumerBuilder, PgEventEndpointProducerBuilder {
         default AdvancedPgEventEndpointBuilder advanced() {
             return (AdvancedPgEventEndpointBuilder) this;
-        }
-        /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * To connect using hostname and port to the database.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The database name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointBuilder database(String database) {
-            setProperty("database", database);
-            return this;
-        }
-        /**
-         * The channel name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PgEventEndpointBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
         }
         /**
          * To connect using the given javax.sql.DataSource instead of using

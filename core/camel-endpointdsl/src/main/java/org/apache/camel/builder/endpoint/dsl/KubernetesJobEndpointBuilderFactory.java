@@ -43,17 +43,6 @@ public interface KubernetesJobEndpointBuilderFactory {
             return (AdvancedKubernetesJobEndpointConsumerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesJobEndpointConsumerBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -543,17 +532,6 @@ public interface KubernetesJobEndpointBuilderFactory {
             return (AdvancedKubernetesJobEndpointProducerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesJobEndpointProducerBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -931,17 +909,6 @@ public interface KubernetesJobEndpointBuilderFactory {
                 KubernetesJobEndpointConsumerBuilder, KubernetesJobEndpointProducerBuilder {
         default AdvancedKubernetesJobEndpointBuilder advanced() {
             return (AdvancedKubernetesJobEndpointBuilder) this;
-        }
-        /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesJobEndpointBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
         }
         /**
          * The Kubernetes API Version to use.

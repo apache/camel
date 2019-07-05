@@ -39,18 +39,6 @@ public interface DrillEndpointBuilderFactory {
             return (AdvancedDrillEndpointBuilder) this;
         }
         /**
-         * ZooKeeper host name or IP address. Use local instead of a host name
-         * or IP address to connect to the local Drillbit.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default DrillEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
          * Cluster ID
          * https://drill.apache.org/docs/using-the-jdbc-driver/#determining-the-cluster-id.
          * 

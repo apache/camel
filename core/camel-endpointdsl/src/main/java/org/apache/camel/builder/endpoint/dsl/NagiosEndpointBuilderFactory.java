@@ -38,39 +38,6 @@ public interface NagiosEndpointBuilderFactory {
             return (AdvancedNagiosEndpointBuilder) this;
         }
         /**
-         * This is the address of the Nagios host where checks should be send.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default NagiosEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number of the host.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default NagiosEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number of the host.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default NagiosEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Connection timeout in millis.
          * 
          * The option is a: <code>int</code> type.

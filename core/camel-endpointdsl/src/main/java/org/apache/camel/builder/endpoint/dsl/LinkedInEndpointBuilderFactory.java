@@ -44,41 +44,6 @@ public interface LinkedInEndpointBuilderFactory {
             return (AdvancedLinkedInEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointConsumerBuilder apiName(LinkedInApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * LinkedIn access token to avoid username and password login procedure.
          * LinkedIn responds to login forms by using a CAPTCHA. This makes it
          * impossible for a standalone, headless process to log in to LinkedIn
@@ -484,41 +449,6 @@ public interface LinkedInEndpointBuilderFactory {
             return (AdvancedLinkedInEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointProducerBuilder apiName(LinkedInApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * LinkedIn access token to avoid username and password login procedure.
          * LinkedIn responds to login forms by using a CAPTCHA. This makes it
          * impossible for a standalone, headless process to log in to LinkedIn
@@ -871,41 +801,6 @@ public interface LinkedInEndpointBuilderFactory {
             return (AdvancedLinkedInEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointBuilder apiName(LinkedInApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default LinkedInEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * LinkedIn access token to avoid username and password login procedure.
          * LinkedIn responds to login forms by using a CAPTCHA. This makes it
          * impossible for a standalone, headless process to log in to LinkedIn
@@ -1202,21 +1097,6 @@ public interface LinkedInEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.linkedin.internal.LinkedInApiName</code>
-     * enum.
-     */
-    enum LinkedInApiName {
-        COMMENTS,
-        COMPANIES,
-        GROUPS,
-        JOBS,
-        PEOPLE,
-        POSTS,
-        SEARCH;
     }
 
     /**

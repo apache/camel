@@ -43,18 +43,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return (AdvancedAtmosphereWebsocketEndpointConsumerBuilder) this;
         }
         /**
-         * Name of websocket endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtmosphereWebsocketEndpointConsumerBuilder servicePath(
-                String servicePath) {
-            setProperty("servicePath", servicePath);
-            return this;
-        }
-        /**
          * Whether to send to all (broadcast) or send to a single receiver.
          * 
          * The option is a: <code>boolean</code> type.
@@ -758,18 +746,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return (AdvancedAtmosphereWebsocketEndpointProducerBuilder) this;
         }
         /**
-         * Name of websocket endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtmosphereWebsocketEndpointProducerBuilder servicePath(
-                String servicePath) {
-            setProperty("servicePath", servicePath);
-            return this;
-        }
-        /**
          * Whether to send to all (broadcast) or send to a single receiver.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1151,18 +1127,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
                 AtmosphereWebsocketEndpointConsumerBuilder, AtmosphereWebsocketEndpointProducerBuilder {
         default AdvancedAtmosphereWebsocketEndpointBuilder advanced() {
             return (AdvancedAtmosphereWebsocketEndpointBuilder) this;
-        }
-        /**
-         * Name of websocket endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtmosphereWebsocketEndpointBuilder servicePath(
-                String servicePath) {
-            setProperty("servicePath", servicePath);
-            return this;
         }
         /**
          * Whether to send to all (broadcast) or send to a single receiver.

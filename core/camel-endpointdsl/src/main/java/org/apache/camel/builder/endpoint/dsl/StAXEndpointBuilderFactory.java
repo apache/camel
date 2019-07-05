@@ -38,18 +38,6 @@ public interface StAXEndpointBuilderFactory {
         default AdvancedStAXEndpointBuilder advanced() {
             return (AdvancedStAXEndpointBuilder) this;
         }
-        /**
-         * The FQN class name for the ContentHandler implementation to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default StAXEndpointBuilder contentHandlerClass(
-                String contentHandlerClass) {
-            setProperty("contentHandlerClass", contentHandlerClass);
-            return this;
-        }
     }
 
     /**

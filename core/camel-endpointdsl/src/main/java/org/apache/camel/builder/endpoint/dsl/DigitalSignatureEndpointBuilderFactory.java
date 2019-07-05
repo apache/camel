@@ -46,45 +46,6 @@ public interface DigitalSignatureEndpointBuilderFactory {
             return (AdvancedDigitalSignatureEndpointBuilder) this;
         }
         /**
-         * Set the Crypto operation from that supplied after the crypto scheme
-         * in the endpoint uri e.g. crypto:sign sets sign as the operation.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.crypto.CryptoOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default DigitalSignatureEndpointBuilder cryptoOperation(
-                CryptoOperation cryptoOperation) {
-            setProperty("cryptoOperation", cryptoOperation);
-            return this;
-        }
-        /**
-         * Set the Crypto operation from that supplied after the crypto scheme
-         * in the endpoint uri e.g. crypto:sign sets sign as the operation.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.crypto.CryptoOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default DigitalSignatureEndpointBuilder cryptoOperation(
-                String cryptoOperation) {
-            setProperty("cryptoOperation", cryptoOperation);
-            return this;
-        }
-        /**
-         * The logical name of this operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default DigitalSignatureEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Sets the JCE name of the Algorithm that should be used for the
          * signer.
          * 
@@ -514,15 +475,6 @@ public interface DigitalSignatureEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.crypto.CryptoOperation</code> enum.
-     */
-    enum CryptoOperation {
-        sign,
-        verify;
     }
     /**
      * Crypto (JCE) (camel-crypto)

@@ -44,17 +44,6 @@ public interface StreamEndpointBuilderFactory {
             return (AdvancedStreamEndpointConsumerBuilder) this;
         }
         /**
-         * Kind of stream to use such as System.in or System.out.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StreamEndpointConsumerBuilder kind(String kind) {
-            setProperty("kind", kind);
-            return this;
-        }
-        /**
          * You can configure the encoding (is a charset name) to use text-based
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
@@ -565,17 +554,6 @@ public interface StreamEndpointBuilderFactory {
             return (AdvancedStreamEndpointProducerBuilder) this;
         }
         /**
-         * Kind of stream to use such as System.in or System.out.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StreamEndpointProducerBuilder kind(String kind) {
-            setProperty("kind", kind);
-            return this;
-        }
-        /**
          * You can configure the encoding (is a charset name) to use text-based
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
@@ -898,17 +876,6 @@ public interface StreamEndpointBuilderFactory {
                 StreamEndpointConsumerBuilder, StreamEndpointProducerBuilder {
         default AdvancedStreamEndpointBuilder advanced() {
             return (AdvancedStreamEndpointBuilder) this;
-        }
-        /**
-         * Kind of stream to use such as System.in or System.out.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StreamEndpointBuilder kind(String kind) {
-            setProperty("kind", kind);
-            return this;
         }
         /**
          * You can configure the encoding (is a charset name) to use text-based

@@ -43,17 +43,6 @@ public interface VertxEndpointBuilderFactory {
             return (AdvancedVertxEndpointConsumerBuilder) this;
         }
         /**
-         * Sets the event bus address used to communicate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default VertxEndpointConsumerBuilder address(String address) {
-            setProperty("address", address);
-            return this;
-        }
-        /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
          * 
@@ -246,17 +235,6 @@ public interface VertxEndpointBuilderFactory {
             return (AdvancedVertxEndpointProducerBuilder) this;
         }
         /**
-         * Sets the event bus address used to communicate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default VertxEndpointProducerBuilder address(String address) {
-            setProperty("address", address);
-            return this;
-        }
-        /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
          * 
@@ -394,17 +372,6 @@ public interface VertxEndpointBuilderFactory {
                 VertxEndpointConsumerBuilder, VertxEndpointProducerBuilder {
         default AdvancedVertxEndpointBuilder advanced() {
             return (AdvancedVertxEndpointBuilder) this;
-        }
-        /**
-         * Sets the event bus address used to communicate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default VertxEndpointBuilder address(String address) {
-            setProperty("address", address);
-            return this;
         }
         /**
          * Whether to use publish/subscribe instead of point to point when

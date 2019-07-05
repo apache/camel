@@ -44,18 +44,6 @@ public interface QueueServiceEndpointBuilderFactory {
             return (AdvancedQueueServiceEndpointConsumerBuilder) this;
         }
         /**
-         * Container Queue compact Uri.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default QueueServiceEndpointConsumerBuilder containerAndQueueUri(
-                String containerAndQueueUri) {
-            setProperty("containerAndQueueUri", containerAndQueueUri);
-            return this;
-        }
-        /**
          * The queue service client.
          * 
          * The option is a:
@@ -275,18 +263,6 @@ public interface QueueServiceEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedQueueServiceEndpointProducerBuilder advanced() {
             return (AdvancedQueueServiceEndpointProducerBuilder) this;
-        }
-        /**
-         * Container Queue compact Uri.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default QueueServiceEndpointProducerBuilder containerAndQueueUri(
-                String containerAndQueueUri) {
-            setProperty("containerAndQueueUri", containerAndQueueUri);
-            return this;
         }
         /**
          * The queue service client.
@@ -539,18 +515,6 @@ public interface QueueServiceEndpointBuilderFactory {
                 QueueServiceEndpointConsumerBuilder, QueueServiceEndpointProducerBuilder {
         default AdvancedQueueServiceEndpointBuilder advanced() {
             return (AdvancedQueueServiceEndpointBuilder) this;
-        }
-        /**
-         * Container Queue compact Uri.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default QueueServiceEndpointBuilder containerAndQueueUri(
-                String containerAndQueueUri) {
-            setProperty("containerAndQueueUri", containerAndQueueUri);
-            return this;
         }
         /**
          * The queue service client.

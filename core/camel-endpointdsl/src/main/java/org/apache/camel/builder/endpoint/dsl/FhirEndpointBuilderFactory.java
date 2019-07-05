@@ -42,43 +42,6 @@ public interface FhirEndpointBuilderFactory {
             return (AdvancedFhirEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointConsumerBuilder apiName(FhirApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Encoding to use for all request.
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
@@ -713,43 +676,6 @@ public interface FhirEndpointBuilderFactory {
             return (AdvancedFhirEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointProducerBuilder apiName(FhirApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Encoding to use for all request.
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
@@ -1331,43 +1257,6 @@ public interface FhirEndpointBuilderFactory {
             return (AdvancedFhirEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointBuilder apiName(FhirApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.fhir.internal.FhirApiName</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FhirEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Encoding to use for all request.
          * 
          * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
@@ -1886,26 +1775,6 @@ public interface FhirEndpointBuilderFactory {
             setProperty("validationMode", validationMode);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.fhir.internal.FhirApiName</code> enum.
-     */
-    enum FhirApiName {
-        CAPABILITIES,
-        CREATE,
-        DELETE,
-        HISTORY,
-        LOAD_PAGE,
-        META,
-        OPERATION,
-        PATCH,
-        READ,
-        SEARCH,
-        TRANSACTION,
-        UPDATE,
-        VALIDATE;
     }
 
     /**

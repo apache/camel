@@ -46,51 +46,6 @@ public interface NettyEndpointBuilderFactory {
             return (AdvancedNettyEndpointConsumerBuilder) this;
         }
         /**
-         * The protocol to use which can be tcp or udp.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname. For the consumer the hostname is localhost or 0.0.0.0.
-         * For the producer the hostname is the remote host to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
@@ -1648,51 +1603,6 @@ public interface NettyEndpointBuilderFactory {
             return (AdvancedNettyEndpointProducerBuilder) this;
         }
         /**
-         * The protocol to use which can be tcp or udp.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname. For the consumer the hostname is localhost or 0.0.0.0.
-         * For the producer the hostname is the remote host to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
@@ -3148,51 +3058,6 @@ public interface NettyEndpointBuilderFactory {
                 NettyEndpointConsumerBuilder, NettyEndpointProducerBuilder {
         default AdvancedNettyEndpointBuilder advanced() {
             return (AdvancedNettyEndpointBuilder) this;
-        }
-        /**
-         * The protocol to use which can be tcp or udp.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname. For the consumer the hostname is localhost or 0.0.0.0.
-         * For the producer the hostname is the remote host to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * Whether or not to disconnect(close) from Netty Channel right after

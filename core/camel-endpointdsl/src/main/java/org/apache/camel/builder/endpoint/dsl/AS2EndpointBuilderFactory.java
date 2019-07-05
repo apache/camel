@@ -45,41 +45,6 @@ public interface AS2EndpointBuilderFactory {
             return (AdvancedAS2EndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointConsumerBuilder apiName(AS2ApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The value of the AS2From header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -738,41 +703,6 @@ public interface AS2EndpointBuilderFactory {
             return (AdvancedAS2EndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointProducerBuilder apiName(AS2ApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The value of the AS2From header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1378,41 +1308,6 @@ public interface AS2EndpointBuilderFactory {
             return (AdvancedAS2EndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointBuilder apiName(AS2ApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AS2EndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The value of the AS2From header of AS2 message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1957,15 +1852,6 @@ public interface AS2EndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.as2.internal.AS2ApiName</code> enum.
-     */
-    enum AS2ApiName {
-        CLIENT,
-        SERVER;
     }
 
     /**

@@ -41,39 +41,6 @@ public interface LumberjackEndpointBuilderFactory {
             return (AdvancedLumberjackEndpointBuilder) this;
         }
         /**
-         * Network interface on which to listen for Lumberjack.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default LumberjackEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Network port on which to listen for Lumberjack.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default LumberjackEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Network port on which to listen for Lumberjack.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default LumberjackEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * SSL configuration.
          * 
          * The option is a:

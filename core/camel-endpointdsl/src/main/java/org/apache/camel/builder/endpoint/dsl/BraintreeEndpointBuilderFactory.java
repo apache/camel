@@ -44,42 +44,6 @@ public interface BraintreeEndpointBuilderFactory {
             return (AdvancedBraintreeEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointConsumerBuilder apiName(
-                BraintreeApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The environment Either SANDBOX or PRODUCTION.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -400,42 +364,6 @@ public interface BraintreeEndpointBuilderFactory {
             return (AdvancedBraintreeEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder apiName(
-                BraintreeApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The environment Either SANDBOX or PRODUCTION.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -703,41 +631,6 @@ public interface BraintreeEndpointBuilderFactory {
             return (AdvancedBraintreeEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointBuilder apiName(BraintreeApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BraintreeEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * The environment Either SANDBOX or PRODUCTION.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -949,30 +842,6 @@ public interface BraintreeEndpointBuilderFactory {
             setProperty("httpLogLevel", httpLogLevel);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.braintree.internal.BraintreeApiName</code> enum.
-     */
-    enum BraintreeApiName {
-        ADDON,
-        ADDRESS,
-        CLIENTTOKEN,
-        CREDITCARDVERIFICATION,
-        CUSTOMER,
-        DISCOUNT,
-        DISPUTE,
-        DOCUMENTUPLOAD,
-        MERCHANTACCOUNT,
-        PAYMENTMETHOD,
-        PAYMENTMETHODNONCE,
-        PLAN,
-        REPORT,
-        SETTLEMENTBATCHSUMMARY,
-        SUBSCRIPTION,
-        TRANSACTION,
-        WEBHOOKNOTIFICATION;
     }
     /**
      * Braintree (camel-braintree)

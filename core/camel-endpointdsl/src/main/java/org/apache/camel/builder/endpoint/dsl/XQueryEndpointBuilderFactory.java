@@ -49,17 +49,6 @@ public interface XQueryEndpointBuilderFactory {
             return (AdvancedXQueryEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the template to load from classpath or file system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XQueryEndpointConsumerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether to allow using StAX mode.
          * 
          * The option is a: <code>boolean</code> type.
@@ -927,17 +916,6 @@ public interface XQueryEndpointBuilderFactory {
             return (AdvancedXQueryEndpointProducerBuilder) this;
         }
         /**
-         * The name of the template to load from classpath or file system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XQueryEndpointProducerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether to allow using StAX mode.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1343,17 +1321,6 @@ public interface XQueryEndpointBuilderFactory {
                 XQueryEndpointConsumerBuilder, XQueryEndpointProducerBuilder {
         default AdvancedXQueryEndpointBuilder advanced() {
             return (AdvancedXQueryEndpointBuilder) this;
-        }
-        /**
-         * The name of the template to load from classpath or file system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default XQueryEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
         }
         /**
          * Whether to allow using StAX mode.

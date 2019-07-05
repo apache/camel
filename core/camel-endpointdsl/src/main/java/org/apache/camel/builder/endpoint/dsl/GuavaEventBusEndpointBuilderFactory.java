@@ -43,18 +43,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
             return (AdvancedGuavaEventBusEndpointConsumerBuilder) this;
         }
         /**
-         * To lookup the Guava EventBus from the registry with the given name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GuavaEventBusEndpointConsumerBuilder eventBusRef(
-                String eventBusRef) {
-            setProperty("eventBusRef", eventBusRef);
-            return this;
-        }
-        /**
          * If used on the consumer side of the route, will filter events
          * received from the EventBus to the instances of the class and
          * superclasses of eventClass. Null value of this option is equal to
@@ -292,18 +280,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
             return (AdvancedGuavaEventBusEndpointProducerBuilder) this;
         }
         /**
-         * To lookup the Guava EventBus from the registry with the given name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GuavaEventBusEndpointProducerBuilder eventBusRef(
-                String eventBusRef) {
-            setProperty("eventBusRef", eventBusRef);
-            return this;
-        }
-        /**
          * If used on the consumer side of the route, will filter events
          * received from the EventBus to the instances of the class and
          * superclasses of eventClass. Null value of this option is equal to
@@ -486,17 +462,6 @@ public interface GuavaEventBusEndpointBuilderFactory {
                 GuavaEventBusEndpointConsumerBuilder, GuavaEventBusEndpointProducerBuilder {
         default AdvancedGuavaEventBusEndpointBuilder advanced() {
             return (AdvancedGuavaEventBusEndpointBuilder) this;
-        }
-        /**
-         * To lookup the Guava EventBus from the registry with the given name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GuavaEventBusEndpointBuilder eventBusRef(String eventBusRef) {
-            setProperty("eventBusRef", eventBusRef);
-            return this;
         }
         /**
          * If used on the consumer side of the route, will filter events

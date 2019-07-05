@@ -43,29 +43,6 @@ public interface JcrEndpointBuilderFactory {
             return (AdvancedJcrEndpointConsumerBuilder) this;
         }
         /**
-         * Name of the javax.jcr.Repository to lookup from the Camel registry to
-         * be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcrEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Get the base node when accessing the repository.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcrEndpointConsumerBuilder base(String base) {
-            setProperty("base", base);
-            return this;
-        }
-        /**
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
@@ -421,29 +398,6 @@ public interface JcrEndpointBuilderFactory {
             return (AdvancedJcrEndpointProducerBuilder) this;
         }
         /**
-         * Name of the javax.jcr.Repository to lookup from the Camel registry to
-         * be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcrEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Get the base node when accessing the repository.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcrEndpointProducerBuilder base(String base) {
-            setProperty("base", base);
-            return this;
-        }
-        /**
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
@@ -744,29 +698,6 @@ public interface JcrEndpointBuilderFactory {
                 JcrEndpointConsumerBuilder, JcrEndpointProducerBuilder {
         default AdvancedJcrEndpointBuilder advanced() {
             return (AdvancedJcrEndpointBuilder) this;
-        }
-        /**
-         * Name of the javax.jcr.Repository to lookup from the Camel registry to
-         * be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcrEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Get the base node when accessing the repository.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcrEndpointBuilder base(String base) {
-            setProperty("base", base);
-            return this;
         }
         /**
          * When isDeep is true, events whose associated parent node is at

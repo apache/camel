@@ -45,30 +45,6 @@ public interface ClientEndpointBuilderFactory {
             return (AdvancedClientEndpointConsumerBuilder) this;
         }
         /**
-         * The object information address.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * 
-         * Group: common
-         */
-        default ClientEndpointConsumerBuilder uriPath(Object uriPath) {
-            setProperty("uriPath", uriPath);
-            return this;
-        }
-        /**
-         * The object information address.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * 
-         * Group: common
-         */
-        default ClientEndpointConsumerBuilder uriPath(String uriPath) {
-            setProperty("uriPath", uriPath);
-            return this;
-        }
-        /**
          * Data module options.
          * 
          * The option is a:
@@ -591,30 +567,6 @@ public interface ClientEndpointBuilderFactory {
             return (AdvancedClientEndpointProducerBuilder) this;
         }
         /**
-         * The object information address.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * 
-         * Group: common
-         */
-        default ClientEndpointProducerBuilder uriPath(Object uriPath) {
-            setProperty("uriPath", uriPath);
-            return this;
-        }
-        /**
-         * The object information address.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * 
-         * Group: common
-         */
-        default ClientEndpointProducerBuilder uriPath(String uriPath) {
-            setProperty("uriPath", uriPath);
-            return this;
-        }
-        /**
          * Data module options.
          * 
          * The option is a:
@@ -1082,30 +1034,6 @@ public interface ClientEndpointBuilderFactory {
                 ClientEndpointConsumerBuilder, ClientEndpointProducerBuilder {
         default AdvancedClientEndpointBuilder advanced() {
             return (AdvancedClientEndpointBuilder) this;
-        }
-        /**
-         * The object information address.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * 
-         * Group: common
-         */
-        default ClientEndpointBuilder uriPath(Object uriPath) {
-            setProperty("uriPath", uriPath);
-            return this;
-        }
-        /**
-         * The object information address.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.iec60870.ObjectAddress</code> type.
-         * 
-         * Group: common
-         */
-        default ClientEndpointBuilder uriPath(String uriPath) {
-            setProperty("uriPath", uriPath);
-            return this;
         }
         /**
          * Data module options.

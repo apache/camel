@@ -39,29 +39,6 @@ public interface LanguageEndpointBuilderFactory {
             return (AdvancedLanguageEndpointBuilder) this;
         }
         /**
-         * Sets the name of the language to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default LanguageEndpointBuilder languageName(String languageName) {
-            setProperty("languageName", languageName);
-            return this;
-        }
-        /**
-         * Path to the resource, or a reference to lookup a bean in the Registry
-         * to use as the resource.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default LanguageEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether the script is binary content or text content. By default the
          * script is read as text content (eg java.lang.String).
          * 

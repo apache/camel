@@ -49,17 +49,6 @@ public interface S3EndpointBuilderFactory {
             return (AdvancedS3EndpointConsumerBuilder) this;
         }
         /**
-         * Bucket name or ARN.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default S3EndpointConsumerBuilder bucketNameOrArn(String bucketNameOrArn) {
-            setProperty("bucketNameOrArn", bucketNameOrArn);
-            return this;
-        }
-        /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
@@ -1170,17 +1159,6 @@ public interface S3EndpointBuilderFactory {
             return (AdvancedS3EndpointProducerBuilder) this;
         }
         /**
-         * Bucket name or ARN.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default S3EndpointProducerBuilder bucketNameOrArn(String bucketNameOrArn) {
-            setProperty("bucketNameOrArn", bucketNameOrArn);
-            return this;
-        }
-        /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
          * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
@@ -1810,17 +1788,6 @@ public interface S3EndpointBuilderFactory {
                 S3EndpointConsumerBuilder, S3EndpointProducerBuilder {
         default AdvancedS3EndpointBuilder advanced() {
             return (AdvancedS3EndpointBuilder) this;
-        }
-        /**
-         * Bucket name or ARN.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default S3EndpointBuilder bucketNameOrArn(String bucketNameOrArn) {
-            setProperty("bucketNameOrArn", bucketNameOrArn);
-            return this;
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.

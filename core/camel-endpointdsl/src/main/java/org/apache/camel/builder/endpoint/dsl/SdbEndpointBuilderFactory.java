@@ -39,17 +39,6 @@ public interface SdbEndpointBuilderFactory {
             return (AdvancedSdbEndpointBuilder) this;
         }
         /**
-         * The name of the domain currently worked with.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SdbEndpointBuilder domainName(String domainName) {
-            setProperty("domainName", domainName);
-            return this;
-        }
-        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.

@@ -49,33 +49,6 @@ public interface YammerEndpointBuilderFactory {
             return (AdvancedYammerEndpointConsumerBuilder) this;
         }
         /**
-         * The function to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.yammer.YammerFunctionType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default YammerEndpointConsumerBuilder function(
-                YammerFunctionType function) {
-            setProperty("function", function);
-            return this;
-        }
-        /**
-         * The function to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.yammer.YammerFunctionType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default YammerEndpointConsumerBuilder function(String function) {
-            setProperty("function", function);
-            return this;
-        }
-        /**
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
@@ -820,33 +793,6 @@ public interface YammerEndpointBuilderFactory {
             return (AdvancedYammerEndpointProducerBuilder) this;
         }
         /**
-         * The function to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.yammer.YammerFunctionType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default YammerEndpointProducerBuilder function(
-                YammerFunctionType function) {
-            setProperty("function", function);
-            return this;
-        }
-        /**
-         * The function to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.yammer.YammerFunctionType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default YammerEndpointProducerBuilder function(String function) {
-            setProperty("function", function);
-            return this;
-        }
-        /**
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
@@ -1022,32 +968,6 @@ public interface YammerEndpointBuilderFactory {
             return (AdvancedYammerEndpointBuilder) this;
         }
         /**
-         * The function to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.yammer.YammerFunctionType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default YammerEndpointBuilder function(YammerFunctionType function) {
-            setProperty("function", function);
-            return this;
-        }
-        /**
-         * The function to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.yammer.YammerFunctionType</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default YammerEndpointBuilder function(String function) {
-            setProperty("function", function);
-            return this;
-        }
-        /**
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
@@ -1168,22 +1088,6 @@ public interface YammerEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.yammer.YammerFunctionType</code> enum.
-     */
-    enum YammerFunctionType {
-        MESSAGES,
-        MY_FEED,
-        ALGO,
-        FOLLOWING,
-        SENT,
-        PRIVATE,
-        RECEIVED,
-        USERS,
-        CURRENT;
     }
     /**
      * Yammer (camel-yammer)

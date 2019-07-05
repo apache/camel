@@ -49,17 +49,6 @@ public interface IronMQEndpointBuilderFactory {
             return (AdvancedIronMQEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the IronMQ queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IronMQEndpointConsumerBuilder queueName(String queueName) {
-            setProperty("queueName", queueName);
-            return this;
-        }
-        /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
          * The option is a: <code>io.iron.ironmq.Client</code> type.
@@ -844,17 +833,6 @@ public interface IronMQEndpointBuilderFactory {
             return (AdvancedIronMQEndpointProducerBuilder) this;
         }
         /**
-         * The name of the IronMQ queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IronMQEndpointProducerBuilder queueName(String queueName) {
-            setProperty("queueName", queueName);
-            return this;
-        }
-        /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
          * The option is a: <code>io.iron.ironmq.Client</code> type.
@@ -1081,17 +1059,6 @@ public interface IronMQEndpointBuilderFactory {
                 IronMQEndpointConsumerBuilder, IronMQEndpointProducerBuilder {
         default AdvancedIronMQEndpointBuilder advanced() {
             return (AdvancedIronMQEndpointBuilder) this;
-        }
-        /**
-         * The name of the IronMQ queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IronMQEndpointBuilder queueName(String queueName) {
-            setProperty("queueName", queueName);
-            return this;
         }
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.

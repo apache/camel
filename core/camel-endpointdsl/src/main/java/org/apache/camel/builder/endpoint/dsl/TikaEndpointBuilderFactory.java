@@ -39,30 +39,6 @@ public interface TikaEndpointBuilderFactory {
             return (AdvancedTikaEndpointBuilder) this;
         }
         /**
-         * Tika Operation. parse or detect.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.tika.TikaOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default TikaEndpointBuilder operation(TikaOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Tika Operation. parse or detect.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.tika.TikaOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default TikaEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Tika Config.
          * 
          * The option is a: <code>org.apache.tika.config.TikaConfig</code> type.
@@ -204,15 +180,6 @@ public interface TikaEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.tika.TikaOperation</code>
-     * enum.
-     */
-    enum TikaOperation {
-        parse,
-        detect;
     }
 
     /**

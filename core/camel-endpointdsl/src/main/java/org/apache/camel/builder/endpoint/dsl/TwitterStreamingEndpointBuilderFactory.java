@@ -41,34 +41,6 @@ public interface TwitterStreamingEndpointBuilderFactory {
             return (AdvancedTwitterStreamingEndpointBuilder) this;
         }
         /**
-         * The streaming type to consume.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.twitter.data.StreamingType</code>
-         * type.
-         * 
-         * Group: consumer
-         */
-        default TwitterStreamingEndpointBuilder streamingType(
-                StreamingType streamingType) {
-            setProperty("streamingType", streamingType);
-            return this;
-        }
-        /**
-         * The streaming type to consume.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.twitter.data.StreamingType</code>
-         * type.
-         * 
-         * Group: consumer
-         */
-        default TwitterStreamingEndpointBuilder streamingType(
-                String streamingType) {
-            setProperty("streamingType", streamingType);
-            return this;
-        }
-        /**
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
@@ -247,17 +219,6 @@ public interface TwitterStreamingEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.twitter.data.StreamingType</code> enum.
-     */
-    enum StreamingType {
-        SAMPLE,
-        FILTER,
-        USER,
-        UNKNOWN;
     }
 
     /**

@@ -41,17 +41,6 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
             return (AdvancedHazelcastRingbufferEndpointBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default HazelcastRingbufferEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * Define if the endpoint will use a reliable Topic struct or not.
          * 
          * The option is a: <code>boolean</code> type.

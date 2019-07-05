@@ -43,17 +43,6 @@ public interface PropertiesEndpointBuilderFactory {
             return (AdvancedPropertiesEndpointConsumerBuilder) this;
         }
         /**
-         * Property key to use as placeholder.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PropertiesEndpointConsumerBuilder key(String key) {
-            setProperty("key", key);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -221,17 +210,6 @@ public interface PropertiesEndpointBuilderFactory {
             return (AdvancedPropertiesEndpointProducerBuilder) this;
         }
         /**
-         * Property key to use as placeholder.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PropertiesEndpointProducerBuilder key(String key) {
-            setProperty("key", key);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -344,17 +322,6 @@ public interface PropertiesEndpointBuilderFactory {
                 PropertiesEndpointConsumerBuilder, PropertiesEndpointProducerBuilder {
         default AdvancedPropertiesEndpointBuilder advanced() {
             return (AdvancedPropertiesEndpointBuilder) this;
-        }
-        /**
-         * Property key to use as placeholder.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PropertiesEndpointBuilder key(String key) {
-            setProperty("key", key);
-            return this;
         }
     }
 

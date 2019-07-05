@@ -41,30 +41,6 @@ public interface DataSetEndpointBuilderFactory {
             return (AdvancedDataSetEndpointConsumerBuilder) this;
         }
         /**
-         * Name of DataSet to lookup in the registry.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * 
-         * Group: common
-         */
-        default DataSetEndpointConsumerBuilder name(Object name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
-         * Name of DataSet to lookup in the registry.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * 
-         * Group: common
-         */
-        default DataSetEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Controls the behaviour of the CamelDataSetIndex header. For
          * Consumers: - off = the header will not be set - strict/lenient = the
          * header will be set For Producers: - off = the header value will not
@@ -246,30 +222,6 @@ public interface DataSetEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedDataSetEndpointProducerBuilder advanced() {
             return (AdvancedDataSetEndpointProducerBuilder) this;
-        }
-        /**
-         * Name of DataSet to lookup in the registry.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * 
-         * Group: common
-         */
-        default DataSetEndpointProducerBuilder name(Object name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
-         * Name of DataSet to lookup in the registry.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * 
-         * Group: common
-         */
-        default DataSetEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * Controls the behaviour of the CamelDataSetIndex header. For
@@ -730,30 +682,6 @@ public interface DataSetEndpointBuilderFactory {
                 DataSetEndpointConsumerBuilder, DataSetEndpointProducerBuilder {
         default AdvancedDataSetEndpointBuilder advanced() {
             return (AdvancedDataSetEndpointBuilder) this;
-        }
-        /**
-         * Name of DataSet to lookup in the registry.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * 
-         * Group: common
-         */
-        default DataSetEndpointBuilder name(Object name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
-         * Name of DataSet to lookup in the registry.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * 
-         * Group: common
-         */
-        default DataSetEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * Controls the behaviour of the CamelDataSetIndex header. For

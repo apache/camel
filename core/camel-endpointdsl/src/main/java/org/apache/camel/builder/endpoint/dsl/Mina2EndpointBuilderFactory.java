@@ -44,52 +44,6 @@ public interface Mina2EndpointBuilderFactory {
             return (AdvancedMina2EndpointConsumerBuilder) this;
         }
         /**
-         * Protocol to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * Hostname to use. Use localhost or 0.0.0.0 for local server as
-         * consumer. For producer use the hostname or ip address of the remote
-         * server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
@@ -791,52 +745,6 @@ public interface Mina2EndpointBuilderFactory {
             return (AdvancedMina2EndpointProducerBuilder) this;
         }
         /**
-         * Protocol to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * Hostname to use. Use localhost or 0.0.0.0 for local server as
-         * consumer. For producer use the hostname or ip address of the remote
-         * server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
@@ -1458,52 +1366,6 @@ public interface Mina2EndpointBuilderFactory {
                 Mina2EndpointConsumerBuilder, Mina2EndpointProducerBuilder {
         default AdvancedMina2EndpointBuilder advanced() {
             return (AdvancedMina2EndpointBuilder) this;
-        }
-        /**
-         * Protocol to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * Hostname to use. Use localhost or 0.0.0.0 for local server as
-         * consumer. For producer use the hostname or ip address of the remote
-         * server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default Mina2EndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * Whether or not to disconnect(close) from Mina session right after

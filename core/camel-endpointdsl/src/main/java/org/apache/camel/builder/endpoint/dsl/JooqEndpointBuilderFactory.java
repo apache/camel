@@ -49,30 +49,6 @@ public interface JooqEndpointBuilderFactory {
             return (AdvancedJooqEndpointConsumerBuilder) this;
         }
         /**
-         * JOOQ entity class.
-         * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JooqEndpointConsumerBuilder entityType(Class<Object> entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
-         * JOOQ entity class.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JooqEndpointConsumerBuilder entityType(String entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -667,30 +643,6 @@ public interface JooqEndpointBuilderFactory {
             return (AdvancedJooqEndpointProducerBuilder) this;
         }
         /**
-         * JOOQ entity class.
-         * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JooqEndpointProducerBuilder entityType(Class<Object> entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
-         * JOOQ entity class.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JooqEndpointProducerBuilder entityType(String entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -838,30 +790,6 @@ public interface JooqEndpointBuilderFactory {
                 JooqEndpointConsumerBuilder, JooqEndpointProducerBuilder {
         default AdvancedJooqEndpointBuilder advanced() {
             return (AdvancedJooqEndpointBuilder) this;
-        }
-        /**
-         * JOOQ entity class.
-         * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default JooqEndpointBuilder entityType(Class<Object> entityType) {
-            setProperty("entityType", entityType);
-            return this;
-        }
-        /**
-         * JOOQ entity class.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default JooqEndpointBuilder entityType(String entityType) {
-            setProperty("entityType", entityType);
-            return this;
         }
     }
 

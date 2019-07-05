@@ -42,17 +42,6 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointConsumerBuilder) this;
         }
         /**
-         * Specifies the location to the solver file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default OptaPlannerEndpointConsumerBuilder configFile(String configFile) {
-            setProperty("configFile", configFile);
-            return this;
-        }
-        /**
          * Specifies the solverId to user for the solver instance key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -231,17 +220,6 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (AdvancedOptaPlannerEndpointProducerBuilder) this;
         }
         /**
-         * Specifies the location to the solver file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default OptaPlannerEndpointProducerBuilder configFile(String configFile) {
-            setProperty("configFile", configFile);
-            return this;
-        }
-        /**
          * Specifies the solverId to user for the solver instance key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -411,17 +389,6 @@ public interface OptaPlannerEndpointBuilderFactory {
                 OptaPlannerEndpointConsumerBuilder, OptaPlannerEndpointProducerBuilder {
         default AdvancedOptaPlannerEndpointBuilder advanced() {
             return (AdvancedOptaPlannerEndpointBuilder) this;
-        }
-        /**
-         * Specifies the location to the solver file.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default OptaPlannerEndpointBuilder configFile(String configFile) {
-            setProperty("configFile", configFile);
-            return this;
         }
         /**
          * Specifies the solverId to user for the solver instance key.

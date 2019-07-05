@@ -39,50 +39,6 @@ public interface ScpEndpointBuilderFactory {
             return (AdvancedScpEndpointBuilder) this;
         }
         /**
-         * Hostname of the FTP server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ScpEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default ScpEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default ScpEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ScpEndpointBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
          * Whether or not to disconnect from remote FTP server right after use.
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need

@@ -39,28 +39,6 @@ public interface SparkEndpointBuilderFactory {
             return (AdvancedSparkEndpointBuilder) this;
         }
         /**
-         * get, post, put, patch, delete, head, trace, connect, or options.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SparkEndpointBuilder verb(String verb) {
-            setProperty("verb", verb);
-            return this;
-        }
-        /**
-         * The content path which support Spark syntax.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SparkEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * Accept type such as: 'text/xml', or 'application/json'. By default we
          * accept all kinds of types.
          * 

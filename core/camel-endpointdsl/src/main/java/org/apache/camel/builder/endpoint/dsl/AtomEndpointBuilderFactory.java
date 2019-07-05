@@ -39,17 +39,6 @@ public interface AtomEndpointBuilderFactory {
             return (AdvancedAtomEndpointBuilder) this;
         }
         /**
-         * The URI to the feed to poll.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default AtomEndpointBuilder feedUri(String feedUri) {
-            setProperty("feedUri", feedUri);
-            return this;
-        }
-        /**
          * Sets whether to add the feed object as a header.
          * 
          * The option is a: <code>boolean</code> type.

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URI;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -41,28 +40,6 @@ public interface JettyHttpEndpointBuilder9Factory {
                 EndpointConsumerBuilder {
         default AdvancedJettyHttpEndpointBuilder9 advanced() {
             return (AdvancedJettyHttpEndpointBuilder9) this;
-        }
-        /**
-         * The url of the HTTP endpoint to call.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default JettyHttpEndpointBuilder9 httpUri(URI httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
-        }
-        /**
-         * The url of the HTTP endpoint to call.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default JettyHttpEndpointBuilder9 httpUri(String httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
         }
         /**
          * Determines whether or not the raw input stream from Servlet is cached

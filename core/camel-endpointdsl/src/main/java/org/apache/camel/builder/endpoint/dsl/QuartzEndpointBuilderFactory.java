@@ -39,30 +39,6 @@ public interface QuartzEndpointBuilderFactory {
             return (AdvancedQuartzEndpointBuilder) this;
         }
         /**
-         * The quartz group name to use. The combination of group name and timer
-         * name should be unique.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default QuartzEndpointBuilder groupName(String groupName) {
-            setProperty("groupName", groupName);
-            return this;
-        }
-        /**
-         * The quartz timer name to use. The combination of group name and timer
-         * name should be unique.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default QuartzEndpointBuilder triggerName(String triggerName) {
-            setProperty("triggerName", triggerName);
-            return this;
-        }
-        /**
          * Specifies a cron expression to define when to trigger.
          * 
          * The option is a: <code>java.lang.String</code> type.

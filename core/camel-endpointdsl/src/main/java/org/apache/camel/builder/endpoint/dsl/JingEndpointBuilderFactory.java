@@ -38,19 +38,6 @@ public interface JingEndpointBuilderFactory {
             return (AdvancedJingEndpointBuilder) this;
         }
         /**
-         * URL to a local resource on the classpath or a full URL to a remote
-         * resource or resource on the file system which contains the schema to
-         * validate against.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default JingEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether to validate using RelaxNG compact syntax or not. By default
          * this is false for using RelaxNG XML Syntax (rng) And true is for
          * using RelaxNG Compact Syntax (rnc).

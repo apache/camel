@@ -48,18 +48,6 @@ public interface SlackEndpointBuilderFactory {
             return (AdvancedSlackEndpointConsumerBuilder) this;
         }
         /**
-         * The channel name (syntax #name) or slackuser (syntax userName) to
-         * send a message directly to an user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SlackEndpointConsumerBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -666,18 +654,6 @@ public interface SlackEndpointBuilderFactory {
             return (AdvancedSlackEndpointProducerBuilder) this;
         }
         /**
-         * The channel name (syntax #name) or slackuser (syntax userName) to
-         * send a message directly to an user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SlackEndpointProducerBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
-        }
-        /**
          * Use a Slack emoji as an avatar.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -836,18 +812,6 @@ public interface SlackEndpointBuilderFactory {
                 SlackEndpointConsumerBuilder, SlackEndpointProducerBuilder {
         default AdvancedSlackEndpointBuilder advanced() {
             return (AdvancedSlackEndpointBuilder) this;
-        }
-        /**
-         * The channel name (syntax #name) or slackuser (syntax userName) to
-         * send a message directly to an user.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SlackEndpointBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
         }
     }
 

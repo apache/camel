@@ -44,41 +44,6 @@ public interface BoxEndpointBuilderFactory {
             return (AdvancedBoxEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointConsumerBuilder apiName(BoxApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Box application client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -500,41 +465,6 @@ public interface BoxEndpointBuilderFactory {
             return (AdvancedBoxEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointProducerBuilder apiName(BoxApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Box application client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -903,41 +833,6 @@ public interface BoxEndpointBuilderFactory {
             return (AdvancedBoxEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointBuilder apiName(BoxApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BoxEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * Box application client ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1249,23 +1144,6 @@ public interface BoxEndpointBuilderFactory {
             setProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.box.internal.BoxApiName</code> enum.
-     */
-    enum BoxApiName {
-        COLLABORATIONS,
-        COMMENTS,
-        EVENT_LOGS,
-        FILES,
-        FOLDERS,
-        GROUPS,
-        EVENTS,
-        SEARCH,
-        TASKS,
-        USERS;
     }
 
     /**

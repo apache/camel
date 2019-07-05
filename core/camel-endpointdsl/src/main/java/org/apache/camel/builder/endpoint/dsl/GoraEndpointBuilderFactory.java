@@ -43,17 +43,6 @@ public interface GoraEndpointBuilderFactory {
             return (AdvancedGoraEndpointConsumerBuilder) this;
         }
         /**
-         * Instance name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoraEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The type of the dataStore.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -547,17 +536,6 @@ public interface GoraEndpointBuilderFactory {
             return (AdvancedGoraEndpointProducerBuilder) this;
         }
         /**
-         * Instance name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoraEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The type of the dataStore.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -753,17 +731,6 @@ public interface GoraEndpointBuilderFactory {
                 GoraEndpointConsumerBuilder, GoraEndpointProducerBuilder {
         default AdvancedGoraEndpointBuilder advanced() {
             return (AdvancedGoraEndpointBuilder) this;
-        }
-        /**
-         * Instance name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoraEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * The type of the dataStore.
