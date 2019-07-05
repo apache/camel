@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.watch;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,9 +79,9 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         DirectoryWatcher.Builder watcherBuilder = DirectoryWatcher.builder()
-        .path(this.baseDirectory)
-        .logger(log)
-        .listener(new FileWatchDirectoryChangeListener());
+            .path(this.baseDirectory)
+            .logger(log)
+            .listener(new FileWatchDirectoryChangeListener());
 
         if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
             // If not macOS, use FileSystem WatchService. io.methvin.watcher uses by default WatchService associated to default FileSystem.
@@ -97,9 +98,9 @@ public class FileWatchConsumer extends DefaultConsumer {
         this.watcher = watcherBuilder.build();
 
         watchDirExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-        .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
+            .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
         pollExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-        .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
+            .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
 
         for (int i = 0; i < getEndpoint().getPollThreads(); i++) {
             this.watcher.watchAsync(watchDirExecutorService);
@@ -129,17 +130,24 @@ public class FileWatchConsumer extends DefaultConsumer {
 
     private Exchange prepareExchange(FileEvent event) {
         Exchange exchange = getEndpoint().createExchange();
-        exchange.setFromEndpoint(getEndpoint());
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);
         message.setHeader(FileWatchComponent.EVENT_TYPE_HEADER, event.getEventType());
-        message.setHeader(Exchange.FILE_NAME, PathUtils.normalizeToString(baseDirectory.relativize(event.getEventPath())));
-        message.setHeader("CamelFileRelativePath", message.getHeader(Exchange.FILE_NAME));
-        message.setHeader("CamelFileAbsolutePath", PathUtils.normalizeToString(event.getEventPath().toAbsolutePath()));
-        message.setHeader("CamelFileAbsolute", true);
-        message.setHeader(Exchange.FILE_PARENT, PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
         message.setHeader(Exchange.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
+        message.setHeader("CamelFileAbsolute", true);
+
+        final String absolutePath = PathUtils.normalizeToString(event.getEventPath().toAbsolutePath());
+        message.setHeader("CamelFileAbsolutePath", absolutePath);
+        message.setHeader(Exchange.FILE_PATH, absolutePath);
+
+        final String relativePath = PathUtils.normalizeToString(baseDirectory.relativize(event.getEventPath()));
+        message.setHeader(Exchange.FILE_NAME, relativePath);
+        message.setHeader("CamelFileRelativePath", relativePath);
+        message.setHeader(Exchange.FILE_NAME_CONSUMED, relativePath);
+
+        message.setHeader(Exchange.FILE_PARENT, PathUtils.normalizeToString(event.getEventPath().getParent().toAbsolutePath()));
+        message.setHeader(Exchange.FILE_LAST_MODIFIED, event.getEventDate());
 
         return exchange;
     }
@@ -149,10 +157,17 @@ public class FileWatchConsumer extends DefaultConsumer {
             return false;
         }
 
-        if (!getEndpoint().isRecursive() && !Objects.equals(fileEvent.getEventPath().getParent(), this.baseDirectory)) {
-            // On some platforms (macOS) is WatchService always recursive,
+        if (!getEndpoint().isRecursive()) {
+            // On some platforms (eg macOS) is WatchService always recursive,
             // so we need to filter this out to make this component platform independent
-            return false;
+            try {
+                if (!Files.isSameFile(fileEvent.getEventPath().getParent(), this.baseDirectory)){
+                    return false;
+                }
+            } catch (IOException e) {
+                log.warn(String.format("Exception occurred during executing filter. Filtering file %s out.", fileEvent.getEventPath()), e);
+                return false;
+            }
         }
 
         String pattern = getEndpoint().getAntInclude();
