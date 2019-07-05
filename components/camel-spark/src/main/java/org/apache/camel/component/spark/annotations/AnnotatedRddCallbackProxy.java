@@ -27,8 +27,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.spark.RddCallback;
 import org.apache.spark.api.java.JavaRDDLike;
 
-import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
+import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
 class AnnotatedRddCallbackProxy implements RddCallback {
 
