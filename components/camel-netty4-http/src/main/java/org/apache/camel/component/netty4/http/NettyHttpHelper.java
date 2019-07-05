@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -204,23 +205,21 @@ public final class NettyHttpHelper {
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
-            
-            if (path.length() > 0) {
-                // inject the dynamic path before the query params, if there are any
-                int idx = uri.indexOf("?");
 
-                // if there are no query params
-                if (idx == -1) {
-                    // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
-                    uri = uri.endsWith("/") ? uri : uri + "/";
-                    uri = uri.concat(path);
-                } else {
-                    // there are query params, so inject the relative path in the right place
-                    String base = uri.substring(0, idx);
-                    base = base.endsWith("/") ? base : base + "/";
-                    base = base.concat(path);
-                    uri = base.concat(uri.substring(idx));
-                }
+            // inject the dynamic path before the query params, if there are any
+            int idx = uri.indexOf("?");
+
+            // if there are no query params
+            if (idx == -1) {
+                // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
+                uri = uri.endsWith("/") ? uri : uri + "/";
+                uri = uri.concat(path);
+            } else {
+                // there are query params, so inject the relative path in the right place
+                String base = uri.substring(0, idx);
+                base = base.endsWith("/") ? base : base + "/";
+                base = base.concat(path);
+                uri = base.concat(uri.substring(idx));
             }
         }
 
@@ -258,6 +257,11 @@ public final class NettyHttpHelper {
         if (queryString != null) {
             // need to encode query string
             queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
+            if (ObjectHelper.isEmpty(uri.getPath())) {
+                // If queryString is present, the path cannot be empty - CAMEL-13707
+                uri = new URI(url + "/");
+            }
+
             uri = URISupport.createURIWithQuery(uri, queryString);
         }
         return uri;

@@ -41,7 +41,6 @@ public class NettyHttpGetWithParamTest extends BaseNettyTest {
     }
 
     @Test
-    @Ignore("HTTP_QUERY not supported")
     public void testHttpGetWithParamsViaHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
