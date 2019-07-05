@@ -35,7 +35,8 @@ public class KinesisConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
     private String secretKey;
-    @UriParam(description = "The region in which Kinesis client needs to work")
+    @UriParam(description = "The region in which Kinesis client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)" 
+              + "You'll need to use the name Regions.EU_WEST_1.name()")
     private String region;
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
     private AmazonKinesis amazonKinesisClient;
