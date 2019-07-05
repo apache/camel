@@ -38,7 +38,21 @@ public interface EKSEndpointBuilderFactory {
             return (AdvancedEKSEndpointBuilder) this;
         }
         /**
-         * The region in which EKS client needs to work.
+         * Logical name.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default EKSEndpointBuilder label(String label) {
+            setProperty("label", label);
+            return this;
+        }
+        /**
+         * The region in which EKS client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name().
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
