@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -40,7 +37,6 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
@@ -72,6 +68,7 @@ import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.StringHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -281,9 +278,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             }
 
             List<String> ids = new ArrayList<>();
-            for (PropertiesLocation bp : pc.getLocations()) {
-                if ("blueprint".equals(bp.getResolver())) {
-                    ids.add(bp.getPath());
+            for (String bp : pc.getLocations()) {
+                String resolver = StringHelper.before(bp, ":");
+                String path = StringHelper.after(bp, ":");
+                if ("blueprint".equals(resolver)) {
+                    ids.add(path);
                 }
             }
             if (ids.isEmpty()) {
