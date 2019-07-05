@@ -32,7 +32,6 @@ public class PulsarProducer extends DefaultProducer {
 
     public PulsarProducer(PulsarEndpoint pulsarEndpoint) {
         super(pulsarEndpoint);
-
         this.pulsarEndpoint = pulsarEndpoint;
     }
 
@@ -52,7 +51,7 @@ public class PulsarProducer extends DefaultProducer {
 
     private synchronized void createProducer() throws org.apache.pulsar.client.api.PulsarClientException {
         if (producer == null) {
-            final String topicUri = pulsarEndpoint.getTopicUri();
+            final String topicUri = pulsarEndpoint.getUri();
             String producerName = pulsarEndpoint.getPulsarConfiguration().getProducerName();
             if (producerName == null) {
                 producerName = topicUri + "-" + Thread.currentThread().getId();
@@ -79,6 +78,7 @@ public class PulsarProducer extends DefaultProducer {
         log.debug("Stopping producer: {}", this);
         if (producer != null) {
             producer.close();
+            producer = null;
         }
     }
 }

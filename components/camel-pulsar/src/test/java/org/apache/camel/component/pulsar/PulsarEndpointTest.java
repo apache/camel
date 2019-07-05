@@ -16,13 +16,21 @@
  */
 package org.apache.camel.component.pulsar;
 
-import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class PulsarEndpointTest {
+public class PulsarEndpointTest extends CamelTestSupport {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void givenPulsarEndpointConfigurationIsNullthrowIllegalArgumentExceptionOnCreation() throws PulsarClientException {
-        PulsarEndpoint.create("", "", null, null, null);
+    @Test
+    public void testInvalidPulsarNameStructure() {
+        try {
+            // the topic is missing
+            context.getEndpoint("pulsar:persistent://myteant/mynamespace");
+            fail("Should throw exception");
+        } catch (ResolveEndpointFailedException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Pulsar name structure is invalid: was persistent://myteant/mynamespace", iae.getMessage());
+        }
     }
 }

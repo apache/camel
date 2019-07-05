@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
+import org.apache.camel.component.pulsar.utils.PulsarPath;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -45,17 +46,30 @@ public class PulsarComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
         final PulsarConfiguration configuration = new PulsarConfiguration();
-
         setProperties(configuration, parameters);
         if (autoConfiguration != null) {
             setProperties(autoConfiguration, parameters);
-
             if (autoConfiguration.isAutoConfigurable()) {
                 autoConfiguration.ensureNameSpaceAndTenant(path);
             }
         }
 
-        return PulsarEndpoint.create(uri, path, configuration, this, pulsarClient);
+        PulsarEndpoint answer = new PulsarEndpoint(uri, this);
+        answer.setPulsarConfiguration(configuration);
+        answer.setPulsarClient(pulsarClient);
+        setProperties(answer, parameters);
+
+        PulsarPath pp = new PulsarPath(path);
+        if (pp.isAutoConfigurable()) {
+            answer.setPersistence(pp.getPersistence());
+            answer.setTenant(pp.getTenant());
+            answer.setNamespace(pp.getNamespace());
+            answer.setTopic(pp.getTopic());
+        } else {
+            throw new IllegalArgumentException("Pulsar name structure is invalid: was " + path);
+        }
+
+        return answer;
     }
 
     public AutoConfiguration getAutoConfiguration() {
