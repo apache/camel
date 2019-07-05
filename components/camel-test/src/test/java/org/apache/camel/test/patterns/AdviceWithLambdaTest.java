@@ -31,6 +31,8 @@ public class AdviceWithLambdaTest extends CamelTestSupport {
 
     @Test
     public void testAdviceWith() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
         // advice the route in one line
         AdviceWithRouteBuilder.adviceWith(context, "foo", a -> a.weaveAddLast().to("mock:result"));
 
