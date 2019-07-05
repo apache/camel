@@ -93,7 +93,7 @@ with the following path and query parameters:
 | *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
-| *region* (common) | The region in which S3 client needs to work |  | String
+| *region* (common) | The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *useIAMCredentials* (common) | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | boolean
 | *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
 | *useEncryption* (common) | Define if encryption must be used or not | false | boolean
