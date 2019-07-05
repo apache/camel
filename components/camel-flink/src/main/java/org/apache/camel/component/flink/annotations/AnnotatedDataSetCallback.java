@@ -25,8 +25,8 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.flink.api.java.DataSet;
 
-import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
+import static org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation;
 
 /**
  * Provides facade for working with annotated DataSet callbacks i.e. POJO classes with an appropriate annotations on
