@@ -48,6 +48,8 @@ public class SshConfiguration implements Cloneable {
     private String keyType;
     @UriParam(label = "security")
     private String certResource;
+    @UriParam(label = "security", secret = true)
+    private String certResourcePassword;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;
     @UriParam()
@@ -260,6 +262,20 @@ public class SshConfiguration implements Cloneable {
      */
     public void setCertResource(String certResource) {
         this.certResource = certResource;
+    }
+
+    public String getCertResourcePassword() {
+        return certResourcePassword;
+    }
+
+    /**
+     * Sets the password to use in loading certResource, if certResource is an encrypted key.
+     *
+     * @param certResourcePassword
+     *            String representing password use to load the certResource key
+     */
+    public void setCertResourcePassword(String certResourcePassword) {
+        this.certResourcePassword = certResourcePassword;
     }
 
     public String getKnownHostsResource() {

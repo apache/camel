@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.sshd.client.SshClient;
@@ -38,6 +39,7 @@ import org.apache.sshd.client.future.OpenFuture;
 import org.apache.sshd.client.session.ClientSession;
 import org.apache.sshd.common.channel.Channel;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
+import org.bouncycastle.openssl.PasswordFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +85,12 @@ public final class SshHelper {
             final String certResource = configuration.getCertResource();
             if (certResource != null) {
                 LOG.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
-                keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, endpoint.getCamelContext().getClassResolver());
+                if (endpoint.getCertResourcePassword() != null) {
+                    PasswordFinder passwordFinder = () -> endpoint.getCertResourcePassword().toCharArray();
+                    keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, passwordFinder, endpoint.getCamelContext().getClassResolver());
+                } else {
+                    keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, endpoint.getCamelContext().getClassResolver());
+                }
             } else {
                 keyPairProvider = configuration.getKeyPairProvider();
             }

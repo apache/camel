@@ -31,7 +31,7 @@ ssh:[username[:password]@]host[:port][?options]
 
 
 // component options: START
-The SSH component supports 15 options, which are listed below.
+The SSH component supports 16 options, which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The SSH component supports 15 options, which are listed below.
 | *timeout* (common) | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. |  | long
 | *certFilename* (security) | *Deprecated* Sets the resource path of the certificate to use for Authentication. |  | String
 | *certResource* (security) | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
+| *certResourcePassword* (security) | Sets the password to use in loading certResource, if certResource is an encrypted key. |  | String
 | *channelType* (advanced) | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. |  | String
 | *shellPrompt* (advanced) | Sets the shellPrompt to be dropped when response is read after command execution |  | String
 | *sleepForShellPrompt* (advanced) | Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds. |  | long
@@ -79,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+==== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,6 +113,7 @@ with the following path and query parameters:
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | *certResource* (security) | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
+| *certResourcePassword* (security) | Sets the password to use in loading certResource, if certResource is an encrypted key. |  | String
 | *keyPairProvider* (security) | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
 | *keyType* (security) | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. From Camel 3.0.0 / 2.25.0, by default Camel will select the first available KeyPair that is loaded. Prior to this, a KeyType of 'ssh-rsa' was enforced by default. |  | String
 | *password* (security) | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
@@ -122,7 +124,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 30 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
@@ -130,14 +132,15 @@ The component supports 30 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.ssh.cert-resource* | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
+| *camel.component.ssh.cert-resource-password* | Sets the password to use in loading certResource, if certResource is an encrypted key. |  | String
 | *camel.component.ssh.channel-type* | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. |  | String
 | *camel.component.ssh.configuration.cert-resource* | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate, and depends on keyType setting. |  | String
+| *camel.component.ssh.configuration.cert-resource-password* | Sets the password to use in loading certResource, if certResource is an encrypted key. |  | String
 | *camel.component.ssh.configuration.channel-type* | Sets the channel type to pass to the Channel as part of command execution. Defaults to exec. | exec | String
 | *camel.component.ssh.configuration.fail-on-unknown-host* | Specifies whether a connection to an unknown host should fail or not. This value is only checked when the property knownHosts is set. | false | Boolean
 | *camel.component.ssh.configuration.host* | Sets the hostname of the remote SSH server. |  | String
 | *camel.component.ssh.configuration.key-pair-provider* | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
 | *camel.component.ssh.configuration.key-type* | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. From Camel 3.0.0 / 2.25.0, by default Camel will select the first available KeyPair that is loaded. Prior to this, a KeyType of 'ssh-rsa' was enforced by default. |  | String
->>>>> 5a0d6d7f287... CAMEL-13692 - More doc fixes
 | *camel.component.ssh.configuration.known-hosts-resource* | Sets the resource path for a known_hosts file |  | String
 | *camel.component.ssh.configuration.password* | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
 | *camel.component.ssh.configuration.poll-command* | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer, i.e. from(ssh://...) You may need to end your command with a newline, and that must be URL encoded %0A |  | String

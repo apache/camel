@@ -208,7 +208,22 @@ public class SshComponent extends UriEndpointComponent {
     public void setCertResource(String certResource) {
         getConfiguration().setCertResource(certResource);
     }
-    
+
+    public String getCertResourcePassword() {
+        return getConfiguration().getCertResourcePassword();
+    }
+
+    /**
+     * Sets the password to use in loading certResource, if certResource is an encrypted key.
+     *
+     * @param certResourcePassword
+     *            String representing password use to load the certResource key
+     */
+    @Metadata(label = "security", secret = true)
+    public void setCertResourcePassword(String certResourcePassword) {
+        getConfiguration().setCertResourcePassword(certResourcePassword);
+    }
+
     /**
      * Sets the channel type to pass to the Channel as part of command execution.
      * Defaults to "exec".
@@ -222,19 +237,19 @@ public class SshComponent extends UriEndpointComponent {
     public void setChannelType(String channelType) {
         getConfiguration().setChannelType(channelType);
     }
-    
+
     /**
      * Sets the shellPrompt to be dropped when response is read after command execution
      *
      * @param shellPrompt
-     *            String defining ending string of command line which has to be dropped when response is 
+     *            String defining ending string of command line which has to be dropped when response is
      *            read after command execution.
      */
     @Metadata(label = "advanced")
     public void setShellPrompt(String shellPrompt) {
         getConfiguration().setShellPrompt(shellPrompt);
     }
-    
+
     /**
      * Sets the sleep period in milliseconds to wait reading response from shell prompt.
      * Defaults to 100 milliseconds.

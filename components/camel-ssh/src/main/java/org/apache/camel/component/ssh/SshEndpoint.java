@@ -163,6 +163,14 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         getConfiguration().setCertResource(certResource);
     }
 
+    public String getCertResourcePassword() {
+        return getConfiguration().getCertResourcePassword();
+    }
+
+    public void setCertResourcePassword(String certResourcePassword) {
+        getConfiguration().setCertResourcePassword(certResourcePassword);
+    }
+
     public String getKnownHostsResource() {
         return getConfiguration().getKnownHostsResource();
     }
@@ -178,7 +186,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setFailOnUnknownHost(boolean failOnUnknownHost) {
         getConfiguration().setFailOnUnknownHost(failOnUnknownHost);
     }
-    
+
     public String getChannelType() {
         return getConfiguration().getChannelType();
     }
@@ -186,7 +194,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setChannelType(String channelType) {
         getConfiguration().setChannelType(channelType);
     }
-    
+
     public String getShellPrompt() {
         return getConfiguration().getShellPrompt();
     }
@@ -194,7 +202,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setShellPrompt(String shellPrompt) {
         getConfiguration().setShellPrompt(shellPrompt);
     }
-    
+
     public long getSleepForShellPrompt() {
         return getConfiguration().getSleepForShellPrompt();
     }

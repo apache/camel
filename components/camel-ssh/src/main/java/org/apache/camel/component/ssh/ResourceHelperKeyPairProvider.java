@@ -19,7 +19,16 @@ package org.apache.camel.component.ssh;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +37,21 @@ import org.apache.camel.util.ResourceHelper;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.io.IoUtils;
 import org.apache.sshd.common.util.security.SecurityUtils;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
+import org.bouncycastle.jce.spec.ECParameterSpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.PasswordFinder;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,22 +130,33 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
                 r = new PEMParser(isr);
 
                 Object o = r.readObject();
-                
+
                 JcaPEMKeyConverter pemConverter = new JcaPEMKeyConverter();
                 pemConverter.setProvider("BC");
                 if (passwordFinder != null && o instanceof PEMEncryptedKeyPair) {
                     JcePEMDecryptorProviderBuilder decryptorBuilder = new JcePEMDecryptorProviderBuilder();
                     PEMDecryptorProvider pemDecryptor = decryptorBuilder.build(passwordFinder.getPassword());
                     o = pemConverter.getKeyPair(((PEMEncryptedKeyPair) o).decryptKeyPair(pemDecryptor));
+                } else if (passwordFinder != null && o instanceof PKCS8EncryptedPrivateKeyInfo) {
+                    JceOpenSSLPKCS8DecryptorProviderBuilder jce = new JceOpenSSLPKCS8DecryptorProviderBuilder();
+                    jce.setProvider("BC");
+                    InputDecryptorProvider decProv = jce.build(passwordFinder.getPassword());
+                    o = ((PKCS8EncryptedPrivateKeyInfo)o).decryptPrivateKeyInfo(decProv);
                 }
-                
+
                 if (o instanceof PEMKeyPair) {
                     o = pemConverter.getKeyPair((PEMKeyPair)o);
                     keys.add((KeyPair) o);
                 } else if (o instanceof KeyPair) {
                     keys.add((KeyPair) o);
+                } else if (o instanceof PrivateKeyInfo) {
+                    PrivateKey privateKey = pemConverter.getPrivateKey((PrivateKeyInfo)o);
+                    PublicKey publicKey = convertPrivateToPublicKey(privateKey);
+                    if (publicKey != null) {
+                        keys.add(new KeyPair(publicKey, privateKey));
+                    }
                 }
-                
+
             } catch (Exception e) {
                 log.warn("Unable to read key", e);
             } finally {
@@ -138,5 +166,28 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
 
         return keys;
     }
-    
+
+    private PublicKey convertPrivateToPublicKey(PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        if (privateKey instanceof RSAPrivateCrtKey) {
+            KeySpec keySpec = new RSAPublicKeySpec(((RSAPrivateCrtKey)privateKey).getModulus(),
+                                                            ((RSAPrivateCrtKey)privateKey).getPublicExponent());
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(keySpec);
+        } else if (privateKey instanceof ECPrivateKey) {
+            ECPrivateKey ecPrivateKey = (ECPrivateKey)privateKey;
+
+            // Derive the public point by multiplying the generator by the private value
+            ECParameterSpec paramSpec = EC5Util.convertSpec(ecPrivateKey.getParams(), false);
+            ECPoint q = paramSpec.getG().multiply(ecPrivateKey.getS());
+
+            KeySpec keySpec = new ECPublicKeySpec(q, paramSpec);
+
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            return keyFactory.generatePublic(keySpec);
+        } else {
+            log.warn("Unable to convert private key to public key. Only RSA + ECDSA supported");
+            return null;
+        }
+    }
+
 }
