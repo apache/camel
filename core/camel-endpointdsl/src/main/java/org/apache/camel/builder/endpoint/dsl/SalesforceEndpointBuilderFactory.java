@@ -2752,10 +2752,19 @@ public interface SalesforceEndpointBuilderFactory {
      * The salesforce component is used for integrating Camel with the massive
      * Salesforce API.
      * 
-     * Syntax: <code>salesforce:operationName:topicName</code>
      * Category: api,cloud,crm
      * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
+     * 
+     * Syntax: <code>salesforce:operationName:topicName</code>
+     * 
+     * Path parameter: operationName
+     * The operation to use
+     * The value can be one of:
+     * getVersions,getResources,getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,updateSObject,deleteSObject,getSObjectWithId,upsertSObject,deleteSObjectWithId,getBlobField,query,queryMore,queryAll,search,apexCall,recent,createJob,getJob,closeJob,abortJob,createBatch,getBatch,getAllBatches,getRequest,getResults,createBatchQuery,getQueryResultIds,getQueryResult,getRecentReports,getReportDescription,executeSyncReport,executeAsyncReport,getReportInstances,getReportResults,limits,approval,approvals,composite-tree,composite-batch,composite
+     * 
+     * Path parameter: topicName
+     * The name of the topic/channel to use
      */
     default SalesforceEndpointBuilder salesforce(String path) {
         class SalesforceEndpointBuilderImpl extends AbstractEndpointBuilder implements SalesforceEndpointBuilder, AdvancedSalesforceEndpointBuilder {

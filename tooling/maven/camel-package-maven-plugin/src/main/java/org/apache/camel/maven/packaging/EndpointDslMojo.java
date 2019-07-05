@@ -413,10 +413,32 @@ public class EndpointDslMojo extends AbstractMojo {
         String desc = model.getTitle() + " (" + model.getArtifactId() + ")";
         desc += "\n" + model.getDescription();
         desc += "\n";
-        desc += "\nSyntax: <code>" + model.getSyntax() + "</code>";
         desc += "\nCategory: " + model.getLabel();
         desc += "\nAvailable as of version: " + model.getFirstVersionShort();
         desc += "\nMaven coordinates: " + project.getGroupId() + ":" + project.getArtifactId();
+
+        // include javadoc for all path parameters and mark which are required
+        desc += "\n";
+        desc += "\nSyntax: <code>" + model.getSyntax() + "</code>";
+        for (EndpointOptionModel option : model.getEndpointOptions()) {
+            if ("path".equals(option.getKind())) {
+                desc += "\n";
+                desc += "\nPath parameter: " + option.getName();
+                if ("true".equals(option.getRequired())) {
+                    desc += " (required)";
+                }
+                if ("true".equals(option.getDeprecated())) {
+                    desc += " <strong>deprecated</strong>";
+                }
+                desc += "\n" + option.getDescription();
+                if (!StringHelper.isEmpty(option.getDefaultValue())) {
+                    desc += "\nDefault value: " + option.getDefaultValue();
+                }
+                if (!StringHelper.isEmpty(option.getEnumValues())) {
+                    desc += "\nThe value can be one of: " + option.getEnumValues();
+                }
+            }
+        }
         method.getJavaDoc().setText(desc);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + builderName + "Factory.java";

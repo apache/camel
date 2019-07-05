@@ -285,10 +285,14 @@ public interface SdbEndpointBuilderFactory {
      * The aws-sdb component is for storing and retrieving data from/to Amazon's
      * SDB service.
      * 
-     * Syntax: <code>aws-sdb:domainName</code>
      * Category: cloud,database,nosql
      * Available as of version: 2.9
      * Maven coordinates: org.apache.camel:camel-aws-sdb
+     * 
+     * Syntax: <code>aws-sdb:domainName</code>
+     * 
+     * Path parameter: domainName (required)
+     * The name of the domain currently worked with.
      */
     default SdbEndpointBuilder sdb(String path) {
         class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder, AdvancedSdbEndpointBuilder {

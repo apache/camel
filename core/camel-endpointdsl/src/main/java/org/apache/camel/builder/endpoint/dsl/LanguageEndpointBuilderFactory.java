@@ -212,10 +212,20 @@ public interface LanguageEndpointBuilderFactory {
      * The language component allows you to send a message to an endpoint which
      * executes a script by any of the supported Languages in Camel.
      * 
-     * Syntax: <code>language:languageName:resourceUri</code>
      * Category: core,script
      * Available as of version: 2.5
      * Maven coordinates: org.apache.camel:camel-language
+     * 
+     * Syntax: <code>language:languageName:resourceUri</code>
+     * 
+     * Path parameter: languageName (required)
+     * Sets the name of the language to use
+     * The value can be one of:
+     * bean,constant,exchangeProperty,file,groovy,header,javascript,jsonpath,mvel,ognl,,ref,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize
+     * 
+     * Path parameter: resourceUri
+     * Path to the resource, or a reference to lookup a bean in the Registry to
+     * use as the resource
      */
     default LanguageEndpointBuilder language(String path) {
         class LanguageEndpointBuilderImpl extends AbstractEndpointBuilder implements LanguageEndpointBuilder, AdvancedLanguageEndpointBuilder {

@@ -848,10 +848,19 @@ public interface BraintreeEndpointBuilderFactory {
      * The braintree component is used for integrating with the Braintree
      * Payment System.
      * 
-     * Syntax: <code>braintree:apiName/methodName</code>
      * Category: api,cloud,payment
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
+     * 
+     * Syntax: <code>braintree:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of:
+     * ADDON,ADDRESS,CLIENTTOKEN,CREDITCARDVERIFICATION,CUSTOMER,DISCOUNT,DISPUTE,DOCUMENTUPLOAD,MERCHANTACCOUNT,PAYMENTMETHOD,PAYMENTMETHODNONCE,PLAN,REPORT,SETTLEMENTBATCHSUMMARY,SUBSCRIPTION,TRANSACTION,WEBHOOKNOTIFICATION
+     * 
+     * Path parameter: methodName
+     * What sub operation to use for the selected operation
      */
     default BraintreeEndpointBuilder braintree(String path) {
         class BraintreeEndpointBuilderImpl extends AbstractEndpointBuilder implements BraintreeEndpointBuilder, AdvancedBraintreeEndpointBuilder {

@@ -1491,10 +1491,15 @@ public interface TwitterSearchEndpointBuilderFactory {
      * Twitter Search (camel-twitter)
      * The Twitter Search component consumes search results.
      * 
-     * Syntax: <code>twitter-search:keywords</code>
      * Category: api,social
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
+     * 
+     * Syntax: <code>twitter-search:keywords</code>
+     * 
+     * Path parameter: keywords (required)
+     * The search query, use the keywords AND, OR, - and () to narrow the search
+     * results.
      */
     default TwitterSearchEndpointBuilder twitterSearch(String path) {
         class TwitterSearchEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterSearchEndpointBuilder, AdvancedTwitterSearchEndpointBuilder {

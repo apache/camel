@@ -1203,10 +1203,14 @@ public interface HazelcastMultimapEndpointBuilderFactory {
      * The hazelcast-multimap component is used to to access Hazelcast
      * distributed multimap.
      * 
-     * Syntax: <code>hazelcast-multimap:cacheName</code>
      * Category: cache,datagrid
      * Available as of version: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-multimap:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
      */
     default HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
         class HazelcastMultimapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastMultimapEndpointBuilder, AdvancedHazelcastMultimapEndpointBuilder {

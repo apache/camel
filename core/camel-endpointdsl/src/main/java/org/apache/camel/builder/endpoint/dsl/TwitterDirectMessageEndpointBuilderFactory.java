@@ -1512,10 +1512,15 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      * The Twitter Direct Message Component consumes/produces user's direct
      * messages.
      * 
-     * Syntax: <code>twitter-directmessage:user</code>
      * Category: api,social
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
+     * 
+     * Syntax: <code>twitter-directmessage:user</code>
+     * 
+     * Path parameter: user (required)
+     * The user name to send a direct message. This will be ignored for
+     * consumer.
      */
     default TwitterDirectMessageEndpointBuilder twitterDirectMessage(String path) {
         class TwitterDirectMessageEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterDirectMessageEndpointBuilder, AdvancedTwitterDirectMessageEndpointBuilder {

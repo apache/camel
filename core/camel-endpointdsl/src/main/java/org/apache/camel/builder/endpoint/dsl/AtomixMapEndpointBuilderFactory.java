@@ -1392,10 +1392,14 @@ public interface AtomixMapEndpointBuilderFactory {
      * Atomix Map (camel-atomix)
      * The atomix-map component is used to access Atomix's distributed map.
      * 
-     * Syntax: <code>atomix-map:resourceName</code>
      * Category: clustering
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
+     * 
+     * Syntax: <code>atomix-map:resourceName</code>
+     * 
+     * Path parameter: resourceName (required)
+     * The distributed resource name
      */
     default AtomixMapEndpointBuilder atomixMap(String path) {
         class AtomixMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMapEndpointBuilder, AdvancedAtomixMapEndpointBuilder {

@@ -778,10 +778,21 @@ public interface GoogleDriveEndpointBuilderFactory {
      * The google-drive component provides access to Google Drive file storage
      * service.
      * 
-     * Syntax: <code>google-drive:apiName/methodName</code>
      * Category: api,cloud,file
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-google-drive
+     * 
+     * Syntax: <code>google-drive:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of:
+     * drive-about,drive-apps,drive-changes,drive-channels,drive-children,drive-comments,drive-files,drive-parents,drive-permissions,drive-properties,drive-realtime,drive-replies,drive-revisions
+     * 
+     * Path parameter: methodName (required)
+     * What sub operation to use for the selected operation
+     * The value can be one of:
+     * copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,trash,untrash,update,watch
      */
     default GoogleDriveEndpointBuilder googleDrive(String path) {
         class GoogleDriveEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleDriveEndpointBuilder, AdvancedGoogleDriveEndpointBuilder {

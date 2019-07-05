@@ -357,10 +357,14 @@ public interface KubernetesSecretsEndpointBuilderFactory {
      * The Kubernetes Secrets component provides a producer to execute
      * kubernetes secret operations.
      * 
-     * Syntax: <code>kubernetes-secrets:masterUrl</code>
      * Category: container,cloud,paas
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-secrets:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
      */
     default KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
         class KubernetesSecretsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesSecretsEndpointBuilder, AdvancedKubernetesSecretsEndpointBuilder {

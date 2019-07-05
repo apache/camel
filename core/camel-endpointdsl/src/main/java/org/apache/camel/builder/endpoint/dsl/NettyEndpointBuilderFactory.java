@@ -4102,10 +4102,22 @@ public interface NettyEndpointBuilderFactory {
      * Netty4 (camel-netty4)
      * Socket level networking using TCP or UDP with the Netty 4.x library.
      * 
-     * Syntax: <code>netty:protocol:host:port</code>
      * Category: networking,tcp,udp
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-netty4
+     * 
+     * Syntax: <code>netty:protocol:host:port</code>
+     * 
+     * Path parameter: protocol (required)
+     * The protocol to use which can be tcp or udp.
+     * The value can be one of: tcp,udp
+     * 
+     * Path parameter: host (required)
+     * The hostname. For the consumer the hostname is localhost or 0.0.0.0. For
+     * the producer the hostname is the remote host to connect to
+     * 
+     * Path parameter: port (required)
+     * The host port number
      */
     default NettyEndpointBuilder netty(String path) {
         class NettyEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyEndpointBuilder, AdvancedNettyEndpointBuilder {

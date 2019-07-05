@@ -4468,10 +4468,26 @@ public interface NettyHttpEndpointBuilderFactory {
      * Netty4 HTTP (camel-netty4-http)
      * Netty HTTP server and client using the Netty 4.x library.
      * 
-     * Syntax: <code>netty-http:protocol:host:port/path</code>
      * Category: http
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-netty4-http
+     * 
+     * Syntax: <code>netty-http:protocol:host:port/path</code>
+     * 
+     * Path parameter: protocol (required)
+     * The protocol to use which is either http, https or proxy - a consumer
+     * only option.
+     * The value can be one of: http,https
+     * 
+     * Path parameter: host (required)
+     * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
+     * The remote HTTP server hostname when using producer.
+     * 
+     * Path parameter: port
+     * The host port number
+     * 
+     * Path parameter: path
+     * Resource path
      */
     default NettyHttpEndpointBuilder nettyHttp(String path) {
         class NettyHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyHttpEndpointBuilder, AdvancedNettyHttpEndpointBuilder {

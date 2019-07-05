@@ -457,10 +457,14 @@ public interface JGroupsEndpointBuilderFactory {
      * The jgroups component provides exchange of messages between Camel and
      * JGroups clusters.
      * 
-     * Syntax: <code>jgroups:clusterName</code>
      * Category: clustering,messaging
      * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-jgroups
+     * 
+     * Syntax: <code>jgroups:clusterName</code>
+     * 
+     * Path parameter: clusterName (required)
+     * The name of the JGroups cluster the component should connect to.
      */
     default JGroupsEndpointBuilder jGroups(String path) {
         class JGroupsEndpointBuilderImpl extends AbstractEndpointBuilder implements JGroupsEndpointBuilder, AdvancedJGroupsEndpointBuilder {

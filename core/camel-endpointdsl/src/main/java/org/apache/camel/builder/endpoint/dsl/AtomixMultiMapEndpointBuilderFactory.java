@@ -458,10 +458,14 @@ public interface AtomixMultiMapEndpointBuilderFactory {
      * The atomix-multimap component is used to access Atomix's distributed
      * multi map.
      * 
-     * Syntax: <code>atomix-multimap:resourceName</code>
      * Category: clustering
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
+     * 
+     * Syntax: <code>atomix-multimap:resourceName</code>
+     * 
+     * Path parameter: resourceName (required)
+     * The distributed resource name
      */
     default AtomixMultiMapEndpointBuilder atomixMultiMap(String path) {
         class AtomixMultiMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMultiMapEndpointBuilder, AdvancedAtomixMultiMapEndpointBuilder {

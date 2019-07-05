@@ -188,10 +188,18 @@ public interface FreemarkerEndpointBuilderFactory {
      * Freemarker (camel-freemarker)
      * Transforms the message using a FreeMarker template.
      * 
-     * Syntax: <code>freemarker:resourceUri</code>
      * Category: transformation
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-freemarker
+     * 
+     * Syntax: <code>freemarker:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
     default FreemarkerEndpointBuilder freemarker(String path) {
         class FreemarkerEndpointBuilderImpl extends AbstractEndpointBuilder implements FreemarkerEndpointBuilder, AdvancedFreemarkerEndpointBuilder {

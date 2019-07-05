@@ -390,10 +390,14 @@ public interface BrowseEndpointBuilderFactory {
      * The browse component is used for viewing the messages received on
      * endpoints that supports BrowsableEndpoint.
      * 
-     * Syntax: <code>browse:name</code>
      * Category: core,monitoring
      * Available as of version: 1.3
      * Maven coordinates: org.apache.camel:camel-browse
+     * 
+     * Syntax: <code>browse:name</code>
+     * 
+     * Path parameter: name (required)
+     * A name which can be any string to uniquely identify the endpoint
      */
     default BrowseEndpointBuilder browse(String path) {
         class BrowseEndpointBuilderImpl extends AbstractEndpointBuilder implements BrowseEndpointBuilder, AdvancedBrowseEndpointBuilder {

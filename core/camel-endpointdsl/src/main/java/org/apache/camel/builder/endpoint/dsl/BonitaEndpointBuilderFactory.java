@@ -158,10 +158,15 @@ public interface BonitaEndpointBuilderFactory {
      * Bonita (camel-bonita)
      * Used for communicating with a remote Bonita BPM process engine.
      * 
-     * Syntax: <code>bonita:operation</code>
      * Category: process
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-bonita
+     * 
+     * Syntax: <code>bonita:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation to use
+     * The value can be one of: startCase
      */
     default BonitaEndpointBuilder bonita(String path) {
         class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {

@@ -1021,10 +1021,14 @@ public interface HBaseEndpointBuilderFactory {
      * HBase (camel-hbase)
      * For reading/writing from/to an HBase store (Hadoop database).
      * 
-     * Syntax: <code>hbase:tableName</code>
      * Category: hadoop
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-hbase
+     * 
+     * Syntax: <code>hbase:tableName</code>
+     * 
+     * Path parameter: tableName (required)
+     * The name of the table
      */
     default HBaseEndpointBuilder hBase(String path) {
         class HBaseEndpointBuilderImpl extends AbstractEndpointBuilder implements HBaseEndpointBuilder, AdvancedHBaseEndpointBuilder {

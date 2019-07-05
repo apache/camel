@@ -1274,10 +1274,14 @@ public interface WsEndpointBuilderFactory {
      * AHC Websocket (camel-ahc-ws)
      * To exchange data with external Websocket servers using Async Http Client.
      * 
-     * Syntax: <code>ahc-ws:httpUri</code>
      * Category: websocket
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-ahc-ws
+     * 
+     * Syntax: <code>ahc-ws:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The URI to use such as http://hostname:port/path
      */
     default WsEndpointBuilder ws(String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {

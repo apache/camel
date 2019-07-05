@@ -377,10 +377,14 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
      * The hazelcast-ringbuffer component is used to access Hazelcast
      * distributed ringbuffer.
      * 
-     * Syntax: <code>hazelcast-ringbuffer:cacheName</code>
      * Category: cache,datagrid
      * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-ringbuffer:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
      */
     default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String path) {
         class HazelcastRingbufferEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastRingbufferEndpointBuilder, AdvancedHazelcastRingbufferEndpointBuilder {

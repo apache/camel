@@ -125,10 +125,14 @@ public interface ECSEndpointBuilderFactory {
      * AWS ECS (camel-aws-ecs)
      * The aws-kms is used for managing Amazon ECS
      * 
-     * Syntax: <code>aws-ecs:label</code>
      * Category: cloud,management
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-aws-ecs
+     * 
+     * Syntax: <code>aws-ecs:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
      */
     default ECSEndpointBuilder eCS(String path) {
         class ECSEndpointBuilderImpl extends AbstractEndpointBuilder implements ECSEndpointBuilder, AdvancedECSEndpointBuilder {

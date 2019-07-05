@@ -1494,10 +1494,14 @@ public interface SplunkEndpointBuilderFactory {
      * Splunk (camel-splunk)
      * The splunk component allows to publish or search for events in Splunk.
      * 
-     * Syntax: <code>splunk:name</code>
      * Category: log,monitoring
      * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
+     * 
+     * Syntax: <code>splunk:name</code>
+     * 
+     * Path parameter: name (required)
+     * Name has no purpose
      */
     default SplunkEndpointBuilder splunk(String path) {
         class SplunkEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkEndpointBuilder, AdvancedSplunkEndpointBuilder {

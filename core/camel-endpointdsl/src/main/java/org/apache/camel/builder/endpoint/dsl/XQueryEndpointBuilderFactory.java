@@ -1687,10 +1687,14 @@ public interface XQueryEndpointBuilderFactory {
      * XQuery (camel-saxon)
      * Transforms the message using a XQuery template using Saxon.
      * 
-     * Syntax: <code>xquery:resourceUri</code>
      * Category: transformation
      * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-saxon
+     * 
+     * Syntax: <code>xquery:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * The name of the template to load from classpath or file system
      */
     default XQueryEndpointBuilder xQuery(String path) {
         class XQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements XQueryEndpointBuilder, AdvancedXQueryEndpointBuilder {

@@ -160,10 +160,14 @@ public interface SpringLdapEndpointBuilderFactory {
      * The spring-ldap component allows you to perform searches in LDAP servers
      * using filters as the message payload.
      * 
-     * Syntax: <code>spring-ldap:templateName</code>
      * Category: spring,ldap
      * Available as of version: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-ldap
+     * 
+     * Syntax: <code>spring-ldap:templateName</code>
+     * 
+     * Path parameter: templateName (required)
+     * Name of the Spring LDAP Template bean
      */
     default SpringLdapEndpointBuilder springLdap(String path) {
         class SpringLdapEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringLdapEndpointBuilder, AdvancedSpringLdapEndpointBuilder {

@@ -392,10 +392,14 @@ public interface ConsulEndpointBuilderFactory {
      * highly available, datacenter-aware, service discovery and configuration
      * system.
      * 
-     * Syntax: <code>consul:apiEndpoint</code>
      * Category: api,cloud
      * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-consul
+     * 
+     * Syntax: <code>consul:apiEndpoint</code>
+     * 
+     * Path parameter: apiEndpoint (required)
+     * The API endpoint
      */
     default ConsulEndpointBuilder consul(String path) {
         class ConsulEndpointBuilderImpl extends AbstractEndpointBuilder implements ConsulEndpointBuilder, AdvancedConsulEndpointBuilder {

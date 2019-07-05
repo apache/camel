@@ -238,10 +238,14 @@ public interface LambdaEndpointBuilderFactory {
      * The aws-lambda is used for managing and invoking functions from Amazon
      * Lambda.
      * 
-     * Syntax: <code>aws-lambda:function</code>
      * Category: cloud,computing,serverless
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-aws-lambda
+     * 
+     * Syntax: <code>aws-lambda:function</code>
+     * 
+     * Path parameter: function (required)
+     * Name of the Lambda function.
      */
     default LambdaEndpointBuilder lambda(String path) {
         class LambdaEndpointBuilderImpl extends AbstractEndpointBuilder implements LambdaEndpointBuilder, AdvancedLambdaEndpointBuilder {

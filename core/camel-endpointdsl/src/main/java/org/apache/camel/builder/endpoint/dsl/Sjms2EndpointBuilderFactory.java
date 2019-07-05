@@ -2076,10 +2076,20 @@ public interface Sjms2EndpointBuilderFactory {
      * The sjms2 component (simple jms) allows messages to be sent to (or
      * consumed from) a JMS Queue or Topic (uses JMS 2.x API).
      * 
-     * Syntax: <code>sjms2:destinationType:destinationName</code>
      * Category: messaging
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-sjms2
+     * 
+     * Syntax: <code>sjms2:destinationType:destinationName</code>
+     * 
+     * Path parameter: destinationType
+     * The kind of destination to use
+     * Default value: queue
+     * The value can be one of: queue,topic
+     * 
+     * Path parameter: destinationName (required)
+     * DestinationName is a JMS queue or topic name. By default, the
+     * destinationName is interpreted as a queue name.
      */
     default Sjms2EndpointBuilder sjms2(String path) {
         class Sjms2EndpointBuilderImpl extends AbstractEndpointBuilder implements Sjms2EndpointBuilder, AdvancedSjms2EndpointBuilder {

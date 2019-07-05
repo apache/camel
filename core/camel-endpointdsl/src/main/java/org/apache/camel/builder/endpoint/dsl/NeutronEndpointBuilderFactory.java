@@ -210,10 +210,14 @@ public interface NeutronEndpointBuilderFactory {
      * The openstack-neutron component allows messages to be sent to an
      * OpenStack network services.
      * 
-     * Syntax: <code>openstack-neutron:host</code>
      * Category: cloud,paas
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
+     * 
+     * Syntax: <code>openstack-neutron:host</code>
+     * 
+     * Path parameter: host (required)
+     * OpenStack host url
      */
     default NeutronEndpointBuilder neutron(String path) {
         class NeutronEndpointBuilderImpl extends AbstractEndpointBuilder implements NeutronEndpointBuilder, AdvancedNeutronEndpointBuilder {

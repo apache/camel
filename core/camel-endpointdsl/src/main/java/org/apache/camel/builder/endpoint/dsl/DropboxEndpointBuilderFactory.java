@@ -778,10 +778,16 @@ public interface DropboxEndpointBuilderFactory {
      * For uploading, downloading and managing files, folders, groups,
      * collaborations, etc on dropbox DOT com.
      * 
-     * Syntax: <code>dropbox:operation</code>
      * Category: api,file
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-dropbox
+     * 
+     * Syntax: <code>dropbox:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The specific action (typically is a CRUD action) to perform on Dropbox
+     * remote folder.
+     * The value can be one of: put,del,search,get,move
      */
     default DropboxEndpointBuilder dropbox(String path) {
         class DropboxEndpointBuilderImpl extends AbstractEndpointBuilder implements DropboxEndpointBuilder, AdvancedDropboxEndpointBuilder {

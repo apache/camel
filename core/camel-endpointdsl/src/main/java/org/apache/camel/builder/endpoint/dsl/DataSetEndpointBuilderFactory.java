@@ -767,10 +767,14 @@ public interface DataSetEndpointBuilderFactory {
      * The dataset component provides a mechanism to easily perform load & soak
      * testing of your system.
      * 
-     * Syntax: <code>dataset:name</code>
      * Category: core,testing
      * Available as of version: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
+     * 
+     * Syntax: <code>dataset:name</code>
+     * 
+     * Path parameter: name (required)
+     * Name of DataSet to lookup in the registry
      */
     default DataSetEndpointBuilder dataSet(String path) {
         class DataSetEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetEndpointBuilder, AdvancedDataSetEndpointBuilder {

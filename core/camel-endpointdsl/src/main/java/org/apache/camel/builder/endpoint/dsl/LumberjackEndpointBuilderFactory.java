@@ -134,10 +134,18 @@ public interface LumberjackEndpointBuilderFactory {
      * The lumberjack retrieves logs sent over the network using the Lumberjack
      * protocol.
      * 
-     * Syntax: <code>lumberjack:host:port</code>
      * Category: log
      * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-lumberjack
+     * 
+     * Syntax: <code>lumberjack:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * Network interface on which to listen for Lumberjack
+     * 
+     * Path parameter: port
+     * Network port on which to listen for Lumberjack
+     * Default value: 5044
      */
     default LumberjackEndpointBuilder lumberjack(String path) {
         class LumberjackEndpointBuilderImpl extends AbstractEndpointBuilder implements LumberjackEndpointBuilder, AdvancedLumberjackEndpointBuilder {

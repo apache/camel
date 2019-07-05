@@ -596,10 +596,15 @@ public interface JMXEndpointBuilderFactory {
      * JMX (camel-jmx)
      * The jmx component allows to receive JMX notifications.
      * 
-     * Syntax: <code>jmx:serverURL</code>
      * Category: monitoring
      * Available as of version: 2.6
      * Maven coordinates: org.apache.camel:camel-jmx
+     * 
+     * Syntax: <code>jmx:serverURL</code>
+     * 
+     * Path parameter: serverURL
+     * Server url comes from the remaining endpoint. Use platform to connect to
+     * local JVM.
      */
     default JMXEndpointBuilder jMX(String path) {
         class JMXEndpointBuilderImpl extends AbstractEndpointBuilder implements JMXEndpointBuilder, AdvancedJMXEndpointBuilder {

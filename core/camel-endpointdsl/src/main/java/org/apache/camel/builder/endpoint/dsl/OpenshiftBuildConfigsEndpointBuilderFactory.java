@@ -363,10 +363,14 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
      * The Kubernetes Build Config component provides a producer to execute
      * kubernetes build config operations.
      * 
-     * Syntax: <code>openshift-build-configs:masterUrl</code>
      * Category: container,cloud,paas
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>openshift-build-configs:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
      */
     default OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
             String path) {

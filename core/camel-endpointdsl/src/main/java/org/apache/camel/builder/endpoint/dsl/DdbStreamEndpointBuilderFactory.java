@@ -183,10 +183,14 @@ public interface DdbStreamEndpointBuilderFactory {
      * The aws-ddbstream component is used for working with Amazon DynamoDB
      * Streams.
      * 
-     * Syntax: <code>aws-ddbstream:tableName</code>
      * Category: cloud,messaging,streams
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-ddb
+     * 
+     * Syntax: <code>aws-ddbstream:tableName</code>
+     * 
+     * Path parameter: tableName (required)
+     * Name of the dynamodb table
      */
     default DdbStreamEndpointBuilder ddbStream(String path) {
         class DdbStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbStreamEndpointBuilder, AdvancedDdbStreamEndpointBuilder {

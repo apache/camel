@@ -1500,10 +1500,14 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * To exchange data with external Websocket clients using Atmosphere.
      * 
-     * Syntax: <code>atmosphere-websocket:servicePath</code>
      * Category: websocket
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
+     * 
+     * Syntax: <code>atmosphere-websocket:servicePath</code>
+     * 
+     * Path parameter: servicePath (required)
+     * Name of websocket endpoint
      */
     default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String path) {
         class AtmosphereWebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosphereWebsocketEndpointBuilder, AdvancedAtmosphereWebsocketEndpointBuilder {

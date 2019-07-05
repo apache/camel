@@ -1196,10 +1196,14 @@ public interface HazelcastTopicEndpointBuilderFactory {
      * The hazelcast-topic component is used to access Hazelcast distributed
      * topic.
      * 
-     * Syntax: <code>hazelcast-topic:cacheName</code>
      * Category: cache,datagrid
      * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-topic:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
      */
     default HazelcastTopicEndpointBuilder hazelcastTopic(String path) {
         class HazelcastTopicEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastTopicEndpointBuilder, AdvancedHazelcastTopicEndpointBuilder {

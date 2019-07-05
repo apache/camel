@@ -873,10 +873,14 @@ public interface SedaEndpointBuilderFactory {
      * The seda component provides asynchronous call to another endpoint from
      * any CamelContext in the same JVM.
      * 
-     * Syntax: <code>seda:name</code>
      * Category: core,endpoint
      * Available as of version: 1.1
      * Maven coordinates: org.apache.camel:camel-seda
+     * 
+     * Syntax: <code>seda:name</code>
+     * 
+     * Path parameter: name (required)
+     * Name of queue
      */
     default SedaEndpointBuilder seda(String path) {
         class SedaEndpointBuilderImpl extends AbstractEndpointBuilder implements SedaEndpointBuilder, AdvancedSedaEndpointBuilder {

@@ -1257,10 +1257,15 @@ public interface SWFEndpointBuilderFactory {
      * The aws-swf component is used for managing workflows from Amazon Simple
      * Workflow.
      * 
-     * Syntax: <code>aws-swf:type</code>
      * Category: cloud,workflow
      * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-aws-swf
+     * 
+     * Syntax: <code>aws-swf:type</code>
+     * 
+     * Path parameter: type (required)
+     * Activity or workflow
+     * The value can be one of: activity,workflow
      */
     default SWFEndpointBuilder sWF(String path) {
         class SWFEndpointBuilderImpl extends AbstractEndpointBuilder implements SWFEndpointBuilder, AdvancedSWFEndpointBuilder {

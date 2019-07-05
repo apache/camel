@@ -140,10 +140,21 @@ public interface ChatScriptEndpointBuilderFactory {
      * ChatScript (camel-chatscript)
      * Represents a ChatScript endpoint.
      * 
-     * Syntax: <code>chatscript:host:port/botname</code>
      * Category: ai,chatscript
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-chatscript
+     * 
+     * Syntax: <code>chatscript:host:port/botname</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname or IP of the server on which CS server is running
+     * 
+     * Path parameter: port
+     * Port on which ChatScript is listening to
+     * Default value: 1024
+     * 
+     * Path parameter: botName (required)
+     * Name of the Bot in CS to converse with
      */
     default ChatScriptEndpointBuilder chatScript(String path) {
         class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder, AdvancedChatScriptEndpointBuilder {

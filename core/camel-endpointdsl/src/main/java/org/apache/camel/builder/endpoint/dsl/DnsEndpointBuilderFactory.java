@@ -103,10 +103,15 @@ public interface DnsEndpointBuilderFactory {
      * DNS (camel-dns)
      * To lookup domain information and run DNS queries using DNSJava.
      * 
-     * Syntax: <code>dns:dnsType</code>
      * Category: networking
      * Available as of version: 2.7
      * Maven coordinates: org.apache.camel:camel-dns
+     * 
+     * Syntax: <code>dns:dnsType</code>
+     * 
+     * Path parameter: dnsType (required)
+     * The type of the lookup.
+     * The value can be one of: dig,ip,lookup,wikipedia
      */
     default DnsEndpointBuilder dns(String path) {
         class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {

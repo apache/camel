@@ -246,10 +246,18 @@ public interface JsonValidatorEndpointBuilderFactory {
      * JSON Schema Validator (camel-json-validator)
      * Validates the payload of a message using NetworkNT JSON Schema library.
      * 
-     * Syntax: <code>json-validator:resourceUri</code>
      * Category: validation
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-json-validator
+     * 
+     * Syntax: <code>json-validator:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
     default JsonValidatorEndpointBuilder jsonValidator(String path) {
         class JsonValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonValidatorEndpointBuilder, AdvancedJsonValidatorEndpointBuilder {

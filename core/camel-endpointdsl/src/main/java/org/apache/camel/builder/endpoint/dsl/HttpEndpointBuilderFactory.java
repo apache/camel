@@ -666,10 +666,14 @@ public interface HttpEndpointBuilderFactory {
      * HTTP4 (camel-http4)
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
      * 
-     * Syntax: <code>http:httpUri</code>
      * Category: http
      * Available as of version: 2.3
      * Maven coordinates: org.apache.camel:camel-http4
+     * 
+     * Syntax: <code>http:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The url of the HTTP endpoint to call.
      */
     default HttpEndpointBuilder http(String path) {
         class HttpEndpointBuilderImpl extends AbstractEndpointBuilder implements HttpEndpointBuilder, AdvancedHttpEndpointBuilder {

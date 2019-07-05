@@ -4793,10 +4793,20 @@ public interface FtpEndpointBuilderFactory {
      * The ftp component is used for uploading or downloading files from FTP
      * servers.
      * 
-     * Syntax: <code>ftp:host:port/directoryName</code>
      * Category: file
      * Available as of version: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
+     * 
+     * Syntax: <code>ftp:host:port/directoryName</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
      */
     default FtpEndpointBuilder ftp(String path) {
         class FtpEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpEndpointBuilder, AdvancedFtpEndpointBuilder {

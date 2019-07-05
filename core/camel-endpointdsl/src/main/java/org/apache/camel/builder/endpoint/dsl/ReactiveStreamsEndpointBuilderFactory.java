@@ -573,10 +573,14 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      * Reactive Streams (camel-reactive-streams)
      * Reactive Camel using reactive streams
      * 
-     * Syntax: <code>reactive-streams:stream</code>
      * Category: reactive,streams
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-reactive-streams
+     * 
+     * Syntax: <code>reactive-streams:stream</code>
+     * 
+     * Path parameter: stream
+     * Name of the stream channel used by the endpoint to exchange messages.
      */
     default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
         class ReactiveStreamsEndpointBuilderImpl extends AbstractEndpointBuilder implements ReactiveStreamsEndpointBuilder, AdvancedReactiveStreamsEndpointBuilder {

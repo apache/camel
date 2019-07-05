@@ -176,10 +176,15 @@ public interface SchematronEndpointBuilderFactory {
      * Schematron (camel-schematron)
      * Validates the payload of a message using the Schematron Library.
      * 
-     * Syntax: <code>schematron:path</code>
      * Category: validation
      * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-schematron
+     * 
+     * Syntax: <code>schematron:path</code>
+     * 
+     * Path parameter: path (required)
+     * The path to the schematron rules file. Can either be in class path or
+     * location in the file system.
      */
     default SchematronEndpointBuilder schematron(String path) {
         class SchematronEndpointBuilderImpl extends AbstractEndpointBuilder implements SchematronEndpointBuilder, AdvancedSchematronEndpointBuilder {

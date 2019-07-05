@@ -1149,10 +1149,18 @@ public interface Olingo2EndpointBuilderFactory {
      * Olingo2 (camel-olingo2)
      * Communicates with OData 2.0 services using Apache Olingo.
      * 
-     * Syntax: <code>olingo2:apiName/methodName</code>
      * Category: cloud
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-olingo2
+     * 
+     * Syntax: <code>olingo2:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of: DEFAULT
+     * 
+     * Path parameter: methodName (required)
+     * What sub operation to use for the selected operation
      */
     default Olingo2EndpointBuilder olingo2(String path) {
         class Olingo2EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo2EndpointBuilder, AdvancedOlingo2EndpointBuilder {

@@ -503,10 +503,22 @@ public interface CryptoCmsEndpointBuilderFactory {
      * Data format, decrypting CMS Enveloped Data, signing data in CMS Signed
      * Data format, and verifying CMS Signed Data.
      * 
-     * Syntax: <code>crypto-cms:cryptoOperation:name</code>
      * Category: security,transformation
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-crypto-cms
+     * 
+     * Syntax: <code>crypto-cms:cryptoOperation:name</code>
+     * 
+     * Path parameter: cryptoOperation (required)
+     * Set the Crypto operation from that supplied after the crypto scheme in
+     * the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
+     * Possible values: sign, verify, encrypt, or decrypt.
+     * The value can be one of: sign,verify,encrypt,decrypt
+     * 
+     * Path parameter: name (required)
+     * The name part in the URI can be chosen by the user to distinguish between
+     * different signer/verifier/encryptor/decryptor endpoints within the camel
+     * context.
      */
     default CryptoCmsEndpointBuilder cryptoCms(String path) {
         class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder, AdvancedCryptoCmsEndpointBuilder {

@@ -312,10 +312,15 @@ public interface PdfEndpointBuilderFactory {
      * The pdf components provides the ability to create, modify or extract
      * content from PDF documents.
      * 
-     * Syntax: <code>pdf:operation</code>
      * Category: document,transformation,printing
      * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
+     * 
+     * Syntax: <code>pdf:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Operation type
+     * The value can be one of: create,append,extractText
      */
     default PdfEndpointBuilder pdf(String path) {
         class PdfEndpointBuilderImpl extends AbstractEndpointBuilder implements PdfEndpointBuilder, AdvancedPdfEndpointBuilder {

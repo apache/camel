@@ -235,10 +235,15 @@ public interface TwitterStreamingEndpointBuilderFactory {
      * The Twitter Streaming component consumes twitter statuses using Streaming
      * API.
      * 
-     * Syntax: <code>twitter-streaming:streamingType</code>
      * Category: api,social
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
+     * 
+     * Syntax: <code>twitter-streaming:streamingType</code>
+     * 
+     * Path parameter: streamingType (required)
+     * The streaming type to consume.
+     * The value can be one of: SAMPLE,FILTER,USER,UNKNOWN
      */
     default TwitterStreamingEndpointBuilder twitterStreaming(String path) {
         class TwitterStreamingEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterStreamingEndpointBuilder, AdvancedTwitterStreamingEndpointBuilder {

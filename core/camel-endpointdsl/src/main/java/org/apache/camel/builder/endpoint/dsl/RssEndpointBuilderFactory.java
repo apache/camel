@@ -270,10 +270,14 @@ public interface RssEndpointBuilderFactory {
      * RSS (camel-rss)
      * The rss component is used for consuming RSS feeds.
      * 
-     * Syntax: <code>rss:feedUri</code>
      * Category: rss
      * Available as of version: 2.0
      * Maven coordinates: org.apache.camel:camel-rss
+     * 
+     * Syntax: <code>rss:feedUri</code>
+     * 
+     * Path parameter: feedUri (required)
+     * The URI to the feed to poll.
      */
     default RssEndpointBuilder rss(String path) {
         class RssEndpointBuilderImpl extends AbstractEndpointBuilder implements RssEndpointBuilder, AdvancedRssEndpointBuilder {

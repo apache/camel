@@ -2565,10 +2565,17 @@ public interface MailEndpointBuilderFactory {
      * IMAP (camel-mail)
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
-     * Syntax: <code>imap:host:port</code>
      * Category: mail
      * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>imap:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
      */
     default MailEndpointBuilder mail(String path) {
         class MailEndpointBuilderImpl extends AbstractEndpointBuilder implements MailEndpointBuilder, AdvancedMailEndpointBuilder {

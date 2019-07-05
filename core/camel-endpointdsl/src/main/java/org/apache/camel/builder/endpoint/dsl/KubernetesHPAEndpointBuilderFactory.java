@@ -1223,10 +1223,14 @@ public interface KubernetesHPAEndpointBuilderFactory {
      * The Kubernetes HPA component provides a producer to execute kubernetes
      * hpa operations and a consumer to consume HPA events.
      * 
-     * Syntax: <code>kubernetes-hpa:masterUrl</code>
      * Category: container,cloud,paas
      * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-hpa:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
      */
     default KubernetesHPAEndpointBuilder kubernetesHPA(String path) {
         class KubernetesHPAEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesHPAEndpointBuilder, AdvancedKubernetesHPAEndpointBuilder {

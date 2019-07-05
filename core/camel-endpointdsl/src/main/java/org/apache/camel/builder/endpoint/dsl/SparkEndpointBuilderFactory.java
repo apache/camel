@@ -301,10 +301,19 @@ public interface SparkEndpointBuilderFactory {
      * The spark-rest component is used for hosting REST services which has been
      * defined using Camel rest-dsl.
      * 
-     * Syntax: <code>spark-rest:verb:path</code>
      * Category: rest
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-spark-rest
+     * 
+     * Syntax: <code>spark-rest:verb:path</code>
+     * 
+     * Path parameter: verb (required)
+     * get, post, put, patch, delete, head, trace, connect, or options.
+     * The value can be one of:
+     * get,post,put,patch,delete,head,trace,connect,options
+     * 
+     * Path parameter: path (required)
+     * The content path which support Spark syntax.
      */
     default SparkEndpointBuilder spark(String path) {
         class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder, AdvancedSparkEndpointBuilder {
