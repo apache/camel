@@ -499,6 +499,17 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the password to use in loading certResource, if certResource is
+         * an encrypted key.
+         * The option is a <code>java.lang.String</code> type.
+         * @group security
+         */
+        default SshEndpointConsumerBuilder certResourcePassword(
+                String certResourcePassword) {
+            setProperty("certResourcePassword", certResourcePassword);
+            return this;
+        }
+        /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
          * The option is a
@@ -868,6 +879,17 @@ public interface SshEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the password to use in loading certResource, if certResource is
+         * an encrypted key.
+         * The option is a <code>java.lang.String</code> type.
+         * @group security
+         */
+        default SshEndpointProducerBuilder certResourcePassword(
+                String certResourcePassword) {
+            setProperty("certResourcePassword", certResourcePassword);
+            return this;
+        }
+        /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
          * The option is a
@@ -1118,6 +1140,17 @@ public interface SshEndpointBuilderFactory {
          */
         default SshEndpointBuilder certResource(String certResource) {
             setProperty("certResource", certResource);
+            return this;
+        }
+        /**
+         * Sets the password to use in loading certResource, if certResource is
+         * an encrypted key.
+         * The option is a <code>java.lang.String</code> type.
+         * @group security
+         */
+        default SshEndpointBuilder certResourcePassword(
+                String certResourcePassword) {
+            setProperty("certResourcePassword", certResourcePassword);
             return this;
         }
         /**

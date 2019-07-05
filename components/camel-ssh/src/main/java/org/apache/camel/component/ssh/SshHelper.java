@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.sshd.client.SshClient;
@@ -83,7 +84,12 @@ public final class SshHelper {
             final String certResource = configuration.getCertResource();
             if (certResource != null) {
                 LOG.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
-                keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, endpoint.getCamelContext());
+                if (endpoint.getCertResourcePassword() != null) {
+                    Supplier<char[]> passwordFinder = () -> endpoint.getCertResourcePassword().toCharArray();
+                    keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, passwordFinder, endpoint.getCamelContext());
+                } else {
+                    keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, endpoint.getCamelContext());
+                }
             } else {
                 keyPairProvider = configuration.getKeyPairProvider();
             }
