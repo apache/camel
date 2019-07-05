@@ -1698,8 +1698,13 @@ public interface Jt400EndpointBuilderFactory {
         GE;
     }
     /**
+     * JT400 (camel-jt400)
      * The jt400 component allows you to exchanges messages with an AS/400
      * system using data queues or program call.
+     * 
+     * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
+     * Category: messaging
+     * Available as of version: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
      */
     default Jt400EndpointBuilder jt400(String path) {

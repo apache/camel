@@ -217,8 +217,13 @@ public interface SwiftEndpointBuilderFactory {
         }
     }
     /**
+     * OpenStack Swift (camel-openstack)
      * The openstack-swift component allows messages to be sent to an OpenStack
      * object storage services.
+     * 
+     * Syntax: <code>openstack-swift:host</code>
+     * Category: cloud,paas
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      */
     default SwiftEndpointBuilder swift(String path) {

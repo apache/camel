@@ -187,7 +187,12 @@ public interface StringTemplateEndpointBuilderFactory {
         }
     }
     /**
+     * String Template (camel-stringtemplate)
      * Transforms the message using a String template.
+     * 
+     * Syntax: <code>string-template:resourceUri</code>
+     * Category: transformation
+     * Available as of version: 1.2
      * Maven coordinates: org.apache.camel:camel-stringtemplate
      */
     default StringTemplateEndpointBuilder stringTemplate(String path) {

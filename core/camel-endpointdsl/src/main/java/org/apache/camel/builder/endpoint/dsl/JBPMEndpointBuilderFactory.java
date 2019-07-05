@@ -1963,8 +1963,13 @@ public interface JBPMEndpointBuilderFactory {
         }
     }
     /**
+     * JBPM (camel-jbpm)
      * The jbpm component provides integration with jBPM (Business Process
      * Management).
+     * 
+     * Syntax: <code>jbpm:connectionURL</code>
+     * Category: process
+     * Available as of version: 2.6
      * Maven coordinates: org.apache.camel:camel-jbpm
      */
     default JBPMEndpointBuilder jBPM(String path) {

@@ -846,7 +846,12 @@ public interface JiraEndpointBuilderFactory {
         WATCHERS;
     }
     /**
+     * Jira (camel-jira)
      * The jira component interacts with the JIRA issue tracker.
+     * 
+     * Syntax: <code>jira:type</code>
+     * Category: api,reporting
+     * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-jira
      */
     default JiraEndpointBuilder jira(String path) {

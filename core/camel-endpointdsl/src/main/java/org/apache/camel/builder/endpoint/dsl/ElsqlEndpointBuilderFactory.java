@@ -2326,8 +2326,13 @@ public interface ElsqlEndpointBuilderFactory {
         StreamList;
     }
     /**
+     * ElSQL (camel-elsql)
      * The elsql component is an extension to the existing SQL Component that
      * uses ElSql to define the SQL queries.
+     * 
+     * Syntax: <code>elsql:elsqlName:resourceUri</code>
+     * Category: database,sql
+     * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-elsql
      */
     default ElsqlEndpointBuilder elsql(String path) {

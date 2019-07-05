@@ -360,8 +360,13 @@ public interface DigitalOceanEndpointBuilderFactory {
         tags;
     }
     /**
+     * DigitalOcean (camel-digitalocean)
      * The DigitalOcean component allows you to manage Droplets and resources
      * within the DigitalOcean cloud.
+     * 
+     * Syntax: <code>digitalocean:operation</code>
+     * Category: cloud,management
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-digitalocean
      */
     default DigitalOceanEndpointBuilder digitalOcean(String path) {

@@ -185,7 +185,12 @@ public interface VelocityEndpointBuilderFactory {
         }
     }
     /**
+     * Velocity (camel-velocity)
      * Transforms the message using a Velocity template.
+     * 
+     * Syntax: <code>velocity:resourceUri</code>
+     * Category: transformation
+     * Available as of version: 1.2
      * Maven coordinates: org.apache.camel:camel-velocity
      */
     default VelocityEndpointBuilder velocity(String path) {

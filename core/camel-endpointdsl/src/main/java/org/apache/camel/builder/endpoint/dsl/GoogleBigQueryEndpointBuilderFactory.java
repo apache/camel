@@ -176,7 +176,12 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         }
     }
     /**
+     * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
+     * 
+     * Syntax: <code>google-bigquery:projectId:datasetId:tableName</code>
+     * Category: cloud,messaging
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      */
     default GoogleBigQueryEndpointBuilder googleBigQuery(String path) {

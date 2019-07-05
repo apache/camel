@@ -494,8 +494,13 @@ public interface EventAdminEndpointBuilderFactory {
         }
     }
     /**
+     * OSGi EventAdmin (camel-eventadmin)
      * The eventadmin component can be used in an OSGi environment to receive
      * OSGi EventAdmin events and process them.
+     * 
+     * Syntax: <code>eventadmin:topic</code>
+     * Category: eventbus
+     * Available as of version: 2.6
      * Maven coordinates: org.apache.camel:camel-eventadmin
      */
     default EventAdminEndpointBuilder eventAdmin(String path) {

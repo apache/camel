@@ -1091,8 +1091,13 @@ public interface SpringWebserviceEndpointBuilderFactory {
         BEANNAME;
     }
     /**
+     * Spring WebService (camel-spring-ws)
      * The spring-ws component is used for SOAP WebServices using Spring
      * WebServices.
+     * 
+     * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
+     * Category: spring,soap,webservice
+     * Available as of version: 2.6
      * Maven coordinates: org.apache.camel:camel-spring-ws
      */
     default SpringWebserviceEndpointBuilder springWebservice(String path) {

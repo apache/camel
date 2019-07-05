@@ -1346,7 +1346,12 @@ public interface AtomixValueEndpointBuilderFactory {
         LOCAL;
     }
     /**
+     * Atomix Value (camel-atomix)
      * The atomix-value component is used to access Atomix's distributed value.
+     * 
+     * Syntax: <code>atomix-value:resourceName</code>
+     * Category: clustering
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
      */
     default AtomixValueEndpointBuilder atomixValue(String path) {

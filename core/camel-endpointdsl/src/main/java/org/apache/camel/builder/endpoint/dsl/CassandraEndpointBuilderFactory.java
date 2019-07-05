@@ -1533,8 +1533,13 @@ public interface CassandraEndpointBuilderFactory {
         LOCAL_ONE;
     }
     /**
+     * Cassandra CQL (camel-cassandraql)
      * The cql component aims at integrating Cassandra 2.0 using the CQL3 API
      * (not the Thrift API).
+     * 
+     * Syntax: <code>cql:beanRef:hosts:port/keyspace</code>
+     * Category: database,nosql
+     * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-cassandraql
      */
     default CassandraEndpointBuilder cassandra(String path) {

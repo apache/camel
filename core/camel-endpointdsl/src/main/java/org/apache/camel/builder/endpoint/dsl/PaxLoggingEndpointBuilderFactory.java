@@ -116,8 +116,13 @@ public interface PaxLoggingEndpointBuilderFactory {
         }
     }
     /**
+     * OSGi PAX Logging (camel-paxlogging)
      * The paxlogging component can be used in an OSGi environment to receive
      * PaxLogging events and process them.
+     * 
+     * Syntax: <code>paxlogging:appender</code>
+     * Category: monitoring
+     * Available as of version: 2.6
      * Maven coordinates: org.apache.camel:camel-paxlogging
      */
     default PaxLoggingEndpointBuilder paxLogging(String path) {

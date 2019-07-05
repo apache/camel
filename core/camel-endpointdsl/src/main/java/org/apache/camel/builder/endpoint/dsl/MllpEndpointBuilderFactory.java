@@ -1710,8 +1710,13 @@ public interface MllpEndpointBuilderFactory {
         }
     }
     /**
+     * MLLP (camel-mllp)
      * Provides functionality required by Healthcare providers to communicate
      * with other systems using the MLLP protocol.
+     * 
+     * Syntax: <code>mllp:hostname:port</code>
+     * Category: mllp
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
      */
     default MllpEndpointBuilder mllp(String path) {

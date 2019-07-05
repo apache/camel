@@ -650,7 +650,12 @@ public interface PulsarEndpointBuilderFactory {
         FAILOVER;
     }
     /**
+     * Apache Pulsar (camel-pulsar)
      * Camel Apache Pulsar Component
+     * 
+     * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>
+     * Category: messaging
+     * Available as of version: 2.24
      * Maven coordinates: org.apache.camel:camel-pulsar
      */
     default PulsarEndpointBuilder pulsar(String path) {

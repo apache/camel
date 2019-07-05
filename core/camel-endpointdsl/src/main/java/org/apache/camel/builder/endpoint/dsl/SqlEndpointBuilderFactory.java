@@ -2085,8 +2085,13 @@ public interface SqlEndpointBuilderFactory {
         StreamList;
     }
     /**
+     * SQL (camel-sql)
      * The sql component allows you to work with databases using JDBC SQL
      * queries.
+     * 
+     * Syntax: <code>sql:query</code>
+     * Category: database,sql
+     * Available as of version: 1.4
      * Maven coordinates: org.apache.camel:camel-sql
      */
     default SqlEndpointBuilder sql(String path) {

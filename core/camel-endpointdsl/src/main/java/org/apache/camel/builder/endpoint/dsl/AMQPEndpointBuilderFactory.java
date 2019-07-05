@@ -5315,7 +5315,12 @@ public interface AMQPEndpointBuilderFactory {
         Exclusive;
     }
     /**
+     * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
+     * 
+     * Syntax: <code>amqp:destinationType:destinationName</code>
+     * Category: messaging
+     * Available as of version: 1.2
      * Maven coordinates: org.apache.camel:camel-amqp
      */
     default AMQPEndpointBuilder aMQP(String path) {

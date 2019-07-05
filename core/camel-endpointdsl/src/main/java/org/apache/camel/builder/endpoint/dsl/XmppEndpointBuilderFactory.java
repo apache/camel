@@ -1295,7 +1295,12 @@ public interface XmppEndpointBuilderFactory {
         }
     }
     /**
+     * XMPP (camel-xmpp)
      * To send and receive messages from a XMPP (chat) server.
+     * 
+     * Syntax: <code>xmpp:host:port/participant</code>
+     * Category: chat,messaging
+     * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-xmpp
      */
     default XmppEndpointBuilder xmpp(String path) {

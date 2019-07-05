@@ -3159,8 +3159,13 @@ public interface RabbitMQEndpointBuilderFactory {
         }
     }
     /**
+     * RabbitMQ (camel-rabbitmq)
      * The rabbitmq component allows you produce and consume messages from
      * RabbitMQ instances.
+     * 
+     * Syntax: <code>rabbitmq:exchangeName</code>
+     * Category: messaging
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-rabbitmq
      */
     default RabbitMQEndpointBuilder rabbitMQ(String path) {

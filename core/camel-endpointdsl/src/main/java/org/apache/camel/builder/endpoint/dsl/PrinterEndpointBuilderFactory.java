@@ -296,8 +296,13 @@ public interface PrinterEndpointBuilderFactory {
         }
     }
     /**
+     * Printer (camel-printer)
      * The printer component is used for sending messages to printers as print
      * jobs.
+     * 
+     * Syntax: <code>lpr:hostname:port/printername</code>
+     * Category: printing
+     * Available as of version: 2.1
      * Maven coordinates: org.apache.camel:camel-printer
      */
     default PrinterEndpointBuilder printer(String path) {

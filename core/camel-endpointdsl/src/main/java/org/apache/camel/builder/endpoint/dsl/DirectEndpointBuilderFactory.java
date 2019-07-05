@@ -493,8 +493,13 @@ public interface DirectEndpointBuilderFactory {
         }
     }
     /**
+     * Direct (camel-direct)
      * The direct component provides direct, synchronous call to another
      * endpoint from the same CamelContext.
+     * 
+     * Syntax: <code>direct:name</code>
+     * Category: core,endpoint
+     * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-direct
      */
     default DirectEndpointBuilder direct(String path) {

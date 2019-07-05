@@ -196,8 +196,13 @@ public interface DrillEndpointBuilderFactory {
         DRILLBIT;
     }
     /**
+     * Drill (camel-drill)
      * The drill component gives you the ability to quering into apache drill
      * cluster.
+     * 
+     * Syntax: <code>drill:host</code>
+     * Category: database,sql
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-drill
      */
     default DrillEndpointBuilder drill(String path) {

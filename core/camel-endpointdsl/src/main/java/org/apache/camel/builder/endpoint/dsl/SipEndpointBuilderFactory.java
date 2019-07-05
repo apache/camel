@@ -2884,8 +2884,13 @@ public interface SipEndpointBuilderFactory {
         }
     }
     /**
+     * SIP (camel-sip)
      * To send and receive messages using the SIP protocol (used in telco and
      * mobile).
+     * 
+     * Syntax: <code>sip:uri</code>
+     * Category: mobile
+     * Available as of version: 2.5
      * Maven coordinates: org.apache.camel:camel-sip
      */
     default SipEndpointBuilder sip(String path) {

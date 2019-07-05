@@ -133,7 +133,12 @@ public interface MSKEndpointBuilderFactory {
         describeCluster;
     }
     /**
+     * AWS MSK (camel-aws-msk)
      * The aws-kms is used for managing Amazon KMS
+     * 
+     * Syntax: <code>aws-msk:label</code>
+     * Category: cloud,management
+     * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-aws-msk
      */
     default MSKEndpointBuilder mSK(String path) {

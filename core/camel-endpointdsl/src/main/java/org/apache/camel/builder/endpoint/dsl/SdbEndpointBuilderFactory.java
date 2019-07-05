@@ -292,8 +292,13 @@ public interface SdbEndpointBuilderFactory {
         Select;
     }
     /**
+     * AWS SimpleDB (camel-aws-sdb)
      * The aws-sdb component is for storing and retrieving data from/to Amazon's
      * SDB service.
+     * 
+     * Syntax: <code>aws-sdb:domainName</code>
+     * Category: cloud,database,nosql
+     * Available as of version: 2.9
      * Maven coordinates: org.apache.camel:camel-aws-sdb
      */
     default SdbEndpointBuilder sdb(String path) {

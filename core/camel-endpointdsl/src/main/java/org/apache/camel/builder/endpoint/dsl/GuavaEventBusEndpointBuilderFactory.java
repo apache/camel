@@ -631,8 +631,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
         }
     }
     /**
+     * Guava EventBus (camel-guava-eventbus)
      * The guava-eventbus component provides integration bridge between Camel
      * and Google Guava EventBus.
+     * 
+     * Syntax: <code>guava-eventbus:eventBusRef</code>
+     * Category: eventbus
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-guava-eventbus
      */
     default GuavaEventBusEndpointBuilder guavaEventBus(String path) {

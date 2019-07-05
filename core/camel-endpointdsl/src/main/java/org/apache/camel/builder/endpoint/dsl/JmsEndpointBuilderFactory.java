@@ -5314,8 +5314,13 @@ public interface JmsEndpointBuilderFactory {
         Exclusive;
     }
     /**
+     * JMS (camel-jms)
      * The jms component allows messages to be sent to (or consumed from) a JMS
      * Queue or Topic.
+     * 
+     * Syntax: <code>jms:destinationType:destinationName</code>
+     * Category: messaging
+     * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-jms
      */
     default JmsEndpointBuilder jms(String path) {

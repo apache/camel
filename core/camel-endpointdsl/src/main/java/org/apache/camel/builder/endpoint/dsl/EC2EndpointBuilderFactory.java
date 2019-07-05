@@ -140,7 +140,12 @@ public interface EC2EndpointBuilderFactory {
         deleteTags;
     }
     /**
+     * AWS EC2 (camel-aws-ec2)
      * The aws-ec2 is used for managing Amazon EC2 instances.
+     * 
+     * Syntax: <code>aws-ec2:label</code>
+     * Category: cloud,management
+     * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-aws-ec2
      */
     default EC2EndpointBuilder eC2(String path) {

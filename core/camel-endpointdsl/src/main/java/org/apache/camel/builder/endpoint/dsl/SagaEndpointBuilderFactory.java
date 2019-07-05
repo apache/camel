@@ -134,8 +134,13 @@ public interface SagaEndpointBuilderFactory {
         COMPENSATE;
     }
     /**
+     * Saga (camel-saga)
      * The saga component provides access to advanced options for managing the
      * flow in the Saga EIP.
+     * 
+     * Syntax: <code>saga:action</code>
+     * Category: core,endpoint
+     * Available as of version: 2.21
      * Maven coordinates: org.apache.camel:camel-saga
      */
     default SagaEndpointBuilder saga(String path) {

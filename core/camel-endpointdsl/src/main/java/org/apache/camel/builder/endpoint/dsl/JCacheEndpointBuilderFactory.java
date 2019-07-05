@@ -1432,8 +1432,13 @@ public interface JCacheEndpointBuilderFactory {
         EXPIRED;
     }
     /**
+     * JCache (camel-jcache)
      * The jcache component enables you to perform caching operations using
      * JSR107/JCache as cache implementation.
+     * 
+     * Syntax: <code>jcache:cacheName</code>
+     * Category: cache,datagrid,clustering
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
      */
     default JCacheEndpointBuilder jCache(String path) {

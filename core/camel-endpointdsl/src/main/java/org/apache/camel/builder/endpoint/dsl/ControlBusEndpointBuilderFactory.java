@@ -248,8 +248,13 @@ public interface ControlBusEndpointBuilderFactory {
         }
     }
     /**
+     * Control Bus (camel-controlbus)
      * The controlbus component provides easy management of Camel applications
      * based on the Control Bus EIP pattern.
+     * 
+     * Syntax: <code>controlbus:command:language</code>
+     * Category: core,monitoring
+     * Available as of version: 2.11
      * Maven coordinates: org.apache.camel:camel-controlbus
      */
     default ControlBusEndpointBuilder controlBus(String path) {

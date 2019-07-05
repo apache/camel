@@ -186,8 +186,13 @@ public interface LdapEndpointBuilderFactory {
         }
     }
     /**
+     * LDAP (camel-ldap)
      * The ldap component allows you to perform searches in LDAP servers using
      * filters as the message payload.
+     * 
+     * Syntax: <code>ldap:dirContextName</code>
+     * Category: ldap
+     * Available as of version: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
      */
     default LdapEndpointBuilder ldap(String path) {

@@ -720,7 +720,12 @@ public interface GoogleMailEndpointBuilderFactory {
         USERS;
     }
     /**
+     * Google Mail (camel-google-mail)
      * The google-mail component provides access to Google Mail.
+     * 
+     * Syntax: <code>google-mail:apiName/methodName</code>
+     * Category: api,cloud,mail
+     * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-google-mail
      */
     default GoogleMailEndpointBuilder googleMail(String path) {

@@ -231,8 +231,13 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
     }
     /**
+     * Bean Validator (camel-bean-validator)
      * The Validator component performs bean validation of the message body
      * using the Java Bean Validation API.
+     * 
+     * Syntax: <code>bean-validator:label</code>
+     * Category: validation
+     * Available as of version: 2.3
      * Maven coordinates: org.apache.camel:camel-bean-validator
      */
     default BeanValidatorEndpointBuilder beanValidator(String path) {

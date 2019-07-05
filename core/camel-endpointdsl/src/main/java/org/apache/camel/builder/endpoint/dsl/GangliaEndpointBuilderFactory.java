@@ -398,8 +398,13 @@ public interface GangliaEndpointBuilderFactory {
         DOUBLE;
     }
     /**
+     * Ganglia (camel-ganglia)
      * The ganglia component is used for sending metrics to the Ganglia
      * monitoring system.
+     * 
+     * Syntax: <code>ganglia:host:port</code>
+     * Category: monitoring
+     * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-ganglia
      */
     default GangliaEndpointBuilder ganglia(String path) {

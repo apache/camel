@@ -114,8 +114,13 @@ public interface LdifEndpointBuilderFactory {
         }
     }
     /**
+     * LDIF (camel-ldif)
      * The ldif component allows you to do updates on an LDAP server from a LDIF
      * body content.
+     * 
+     * Syntax: <code>ldif:ldapConnectionName</code>
+     * Category: ldap
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-ldif
      */
     default LdifEndpointBuilder ldif(String path) {

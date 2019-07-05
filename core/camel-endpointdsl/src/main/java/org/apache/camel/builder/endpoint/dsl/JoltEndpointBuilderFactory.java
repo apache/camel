@@ -238,8 +238,13 @@ public interface JoltEndpointBuilderFactory {
         Sortr;
     }
     /**
+     * JOLT (camel-jolt)
      * The jolt component allows you to process a JSON messages using an JOLT
      * specification (such as JSON-JSON transformation).
+     * 
+     * Syntax: <code>jolt:resourceUri</code>
+     * Category: transformation
+     * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
      */
     default JoltEndpointBuilder jolt(String path) {

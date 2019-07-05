@@ -1279,8 +1279,13 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
         }
     }
     /**
+     * Kubernetes Deployments (camel-kubernetes)
      * The Kubernetes Nodes component provides a producer to execute kubernetes
      * node operations and a consumer to consume node events.
+     * 
+     * Syntax: <code>kubernetes-deployments:masterUrl</code>
+     * Category: container,cloud,paas
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesDeploymentsEndpointBuilder kubernetesDeployments(

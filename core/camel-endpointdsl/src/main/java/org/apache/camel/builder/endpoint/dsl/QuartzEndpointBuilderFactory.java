@@ -498,8 +498,12 @@ public interface QuartzEndpointBuilderFactory {
         }
     }
     /**
+     * Quartz2 (camel-quartz2)
      * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
      * 
+     * Syntax: <code>quartz2:groupName/triggerName</code>
+     * Category: scheduling
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-quartz2
      */
     default QuartzEndpointBuilder quartz(String path) {

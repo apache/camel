@@ -950,8 +950,12 @@ public interface CaffeineCacheEndpointBuilderFactory {
         time_based;
     }
     /**
+     * Caffeine Cache (camel-caffeine)
      * The caffeine-cache component is used for integration with Caffeine Cache.
      * 
+     * Syntax: <code>caffeine-cache:cacheName</code>
+     * Category: cache,datagrid,clustering
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
      */
     default CaffeineCacheEndpointBuilder caffeineCache(String path) {

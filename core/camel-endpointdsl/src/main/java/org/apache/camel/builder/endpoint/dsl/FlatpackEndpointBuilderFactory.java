@@ -1355,8 +1355,13 @@ public interface FlatpackEndpointBuilderFactory {
         delim;
     }
     /**
+     * Flatpack (camel-flatpack)
      * The flatpack component supports fixed width and delimited file parsing
      * via the FlatPack library.
+     * 
+     * Syntax: <code>flatpack:type:resourceUri</code>
+     * Category: transformation
+     * Available as of version: 1.4
      * Maven coordinates: org.apache.camel:camel-flatpack
      */
     default FlatpackEndpointBuilder flatpack(String path) {

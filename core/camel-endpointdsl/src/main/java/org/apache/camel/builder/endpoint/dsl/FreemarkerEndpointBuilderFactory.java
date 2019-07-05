@@ -201,7 +201,12 @@ public interface FreemarkerEndpointBuilderFactory {
         }
     }
     /**
+     * Freemarker (camel-freemarker)
      * Transforms the message using a FreeMarker template.
+     * 
+     * Syntax: <code>freemarker:resourceUri</code>
+     * Category: transformation
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-freemarker
      */
     default FreemarkerEndpointBuilder freemarker(String path) {

@@ -958,8 +958,13 @@ public interface ThriftEndpointBuilderFactory {
         SASL;
     }
     /**
+     * Thrift (camel-thrift)
      * The Thrift component allows to call and expose remote procedures (RPC)
      * with Apache Thrift data format and serialization mechanism
+     * 
+     * Syntax: <code>thrift:host:port/service</code>
+     * Category: rpc
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-thrift
      */
     default ThriftEndpointBuilder thrift(String path) {

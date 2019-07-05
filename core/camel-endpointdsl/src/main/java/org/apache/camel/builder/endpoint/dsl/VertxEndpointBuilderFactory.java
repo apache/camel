@@ -494,8 +494,13 @@ public interface VertxEndpointBuilderFactory {
         }
     }
     /**
+     * Vert.x (camel-vertx)
      * The vertx component is used for sending and receive messages from a vertx
      * event bus.
+     * 
+     * Syntax: <code>vertx:address</code>
+     * Category: eventbus,reactive
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-vertx
      */
     default VertxEndpointBuilder vertx(String path) {

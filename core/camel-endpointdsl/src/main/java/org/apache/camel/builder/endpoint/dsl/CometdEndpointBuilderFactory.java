@@ -1205,8 +1205,13 @@ public interface CometdEndpointBuilderFactory {
         }
     }
     /**
+     * CometD (camel-cometd)
      * The cometd component is a transport for working with the Jetty
      * implementation of the cometd/bayeux protocol.
+     * 
+     * Syntax: <code>cometd:host:port/channelName</code>
+     * Category: websocket
+     * Available as of version: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
      */
     default CometdEndpointBuilder cometd(String path) {

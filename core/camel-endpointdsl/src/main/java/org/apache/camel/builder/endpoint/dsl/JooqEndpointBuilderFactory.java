@@ -936,8 +936,13 @@ public interface JooqEndpointBuilderFactory {
         NONE;
     }
     /**
+     * JOOQ (camel-jooq)
      * The jooq component enables you to store and retrieve entities from
      * databases using JOOQ
+     * 
+     * Syntax: <code>jooq:entityType</code>
+     * Category: database
+     * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-jooq
      */
     default JooqEndpointBuilder jooq(String path) {

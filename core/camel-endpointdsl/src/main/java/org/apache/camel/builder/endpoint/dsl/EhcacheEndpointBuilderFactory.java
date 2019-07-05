@@ -1139,8 +1139,13 @@ public interface EhcacheEndpointBuilderFactory {
         UPDATED;
     }
     /**
+     * Ehcache (camel-ehcache)
      * The ehcache component enables you to perform caching operations using
      * Ehcache as cache implementation.
+     * 
+     * Syntax: <code>ehcache:cacheName</code>
+     * Category: cache,datagrid,clustering
+     * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-ehcache
      */
     default EhcacheEndpointBuilder ehcache(String path) {

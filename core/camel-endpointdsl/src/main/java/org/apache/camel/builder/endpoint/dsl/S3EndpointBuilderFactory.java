@@ -2242,8 +2242,13 @@ public interface S3EndpointBuilderFactory {
         getObject;
     }
     /**
+     * AWS S3 Storage Service (camel-aws-s3)
      * The aws-s3 component is used for storing and retrieving objecct from
      * Amazon S3 Storage Service.
+     * 
+     * Syntax: <code>aws-s3:bucketNameOrArn</code>
+     * Category: cloud,file
+     * Available as of version: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-s3
      */
     default S3EndpointBuilder s3(String path) {

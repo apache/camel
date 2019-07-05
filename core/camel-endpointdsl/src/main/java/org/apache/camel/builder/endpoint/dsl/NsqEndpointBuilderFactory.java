@@ -804,7 +804,12 @@ public interface NsqEndpointBuilderFactory {
         }
     }
     /**
+     * NSQ (camel-nsq)
      * Represents a nsq endpoint.
+     * 
+     * Syntax: <code>nsq:servers</code>
+     * Category: messaging
+     * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-nsq
      */
     default NsqEndpointBuilder nsq(String path) {

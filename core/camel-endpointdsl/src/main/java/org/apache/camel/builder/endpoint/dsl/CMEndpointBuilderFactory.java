@@ -189,7 +189,12 @@ public interface CMEndpointBuilderFactory {
         }
     }
     /**
+     * CM SMS Gateway (camel-cm-sms)
      * The cm-sms component allows to integrate with CM SMS Gateway.
+     * 
+     * Syntax: <code>cm-sms:host</code>
+     * Category: mobile
+     * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-cm-sms
      */
     default CMEndpointBuilder cM(String path) {

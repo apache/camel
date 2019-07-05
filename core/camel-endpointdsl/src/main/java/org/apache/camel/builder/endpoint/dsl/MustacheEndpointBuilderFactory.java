@@ -171,7 +171,12 @@ public interface MustacheEndpointBuilderFactory {
         }
     }
     /**
+     * Mustache (camel-mustache)
      * Transforms the message using a Mustache template.
+     * 
+     * Syntax: <code>mustache:resourceUri</code>
+     * Category: transformation
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-mustache
      */
     default MustacheEndpointBuilder mustache(String path) {

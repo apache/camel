@@ -1093,8 +1093,13 @@ public interface MyBatisEndpointBuilderFactory {
         DeleteList;
     }
     /**
+     * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
      * using MyBatis.
+     * 
+     * Syntax: <code>mybatis:statement</code>
+     * Category: database,sql
+     * Available as of version: 2.7
      * Maven coordinates: org.apache.camel:camel-mybatis
      */
     default MyBatisEndpointBuilder myBatis(String path) {

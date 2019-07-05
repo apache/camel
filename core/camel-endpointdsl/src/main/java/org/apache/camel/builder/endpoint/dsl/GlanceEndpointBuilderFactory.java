@@ -205,8 +205,13 @@ public interface GlanceEndpointBuilderFactory {
         }
     }
     /**
+     * OpenStack Glance (camel-openstack)
      * The openstack-glance component allows messages to be sent to an OpenStack
      * image services.
+     * 
+     * Syntax: <code>openstack-glance:host</code>
+     * Category: cloud,paas
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      */
     default GlanceEndpointBuilder glance(String path) {

@@ -446,8 +446,13 @@ public interface JdbcEndpointBuilderFactory {
         StreamList;
     }
     /**
+     * JDBC (camel-jdbc)
      * The jdbc component enables you to access databases through JDBC, where
      * SQL queries are sent in the message body.
+     * 
+     * Syntax: <code>jdbc:dataSourceName</code>
+     * Category: database,sql
+     * Available as of version: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
      */
     default JdbcEndpointBuilder jdbc(String path) {

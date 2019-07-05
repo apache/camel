@@ -782,8 +782,13 @@ public interface RestEndpointBuilderFactory {
         json_xml;
     }
     /**
+     * REST (camel-rest)
      * The rest component is used for either hosting REST services (consumer) or
      * calling external REST services (producer).
+     * 
+     * Syntax: <code>rest:method:path:uriTemplate</code>
+     * Category: core,rest
+     * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-rest
      */
     default RestEndpointBuilder restEndpoint(String path) {

@@ -358,8 +358,13 @@ public interface ServletEndpointBuilderFactory {
         }
     }
     /**
+     * Servlet (camel-servlet)
      * To use a HTTP Servlet as entry for Camel routes when running in a servlet
      * container.
+     * 
+     * Syntax: <code>servlet:contextPath</code>
+     * Category: http
+     * Available as of version: 2.0
      * Maven coordinates: org.apache.camel:camel-servlet
      */
     default ServletEndpointBuilder servlet(String path) {

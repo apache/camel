@@ -1082,8 +1082,13 @@ public interface HipchatEndpointBuilderFactory {
         }
     }
     /**
+     * Hipchat (camel-hipchat)
      * The hipchat component supports producing and consuming messages from/to
      * Hipchat service.
+     * 
+     * Syntax: <code>hipchat:protocol:host:port</code>
+     * Category: api,cloud
+     * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-hipchat
      */
     default HipchatEndpointBuilder hipchat(String path) {

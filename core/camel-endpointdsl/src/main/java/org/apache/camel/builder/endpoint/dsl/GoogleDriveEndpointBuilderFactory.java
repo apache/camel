@@ -901,8 +901,13 @@ public interface GoogleDriveEndpointBuilderFactory {
         DRIVE_REVISIONS;
     }
     /**
+     * Google Drive (camel-google-drive)
      * The google-drive component provides access to Google Drive file storage
      * service.
+     * 
+     * Syntax: <code>google-drive:apiName/methodName</code>
+     * Category: api,cloud,file
+     * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-google-drive
      */
     default GoogleDriveEndpointBuilder googleDrive(String path) {

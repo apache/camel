@@ -1052,7 +1052,12 @@ public interface XmlSignatureEndpointBuilderFactory {
         verify;
     }
     /**
+     * XML Security (camel-xmlsecurity)
      * Used to sign and verify exchanges using the XML signature specification.
+     * 
+     * Syntax: <code>xmlsecurity:command:name</code>
+     * Category: security,transformation
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
      */
     default XmlSignatureEndpointBuilder xmlSignature(String path) {

@@ -463,7 +463,12 @@ public interface CordaEndpointBuilderFactory {
         }
     }
     /**
+     * corda (camel-corda)
      * The corda component uses the corda-rpc to interact with corda nodes.
+     * 
+     * Syntax: <code>corda:configuration</code>
+     * Category: corda,blockchain
+     * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-corda
      */
     default CordaEndpointBuilder corda(String path) {

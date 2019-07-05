@@ -5250,8 +5250,13 @@ public interface SftpEndpointBuilderFactory {
         TryRename;
     }
     /**
+     * SFTP (camel-ftp)
      * The sftp (FTP over SSH) component is used for uploading or downloading
      * files from SFTP servers.
+     * 
+     * Syntax: <code>sftp:host:port/directoryName</code>
+     * Category: file
+     * Available as of version: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
      */
     default SftpEndpointBuilder sftp(String path) {

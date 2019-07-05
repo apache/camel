@@ -136,8 +136,13 @@ public interface IPFSEndpointBuilderFactory {
         }
     }
     /**
+     * IPFS (camel-ipfs)
      * The camel-ipfs component provides access to the Interplanetary File
      * System (IPFS).
+     * 
+     * Syntax: <code>ipfs:host:port/cmd</code>
+     * Category: file,ipfs
+     * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-ipfs
      */
     default IPFSEndpointBuilder iPFS(String path) {

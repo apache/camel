@@ -1100,8 +1100,13 @@ public interface StreamEndpointBuilderFactory {
         }
     }
     /**
+     * Stream (camel-stream)
      * The stream: component provides access to the system-in, system-out and
      * system-err streams as well as allowing streaming of file and URL.
+     * 
+     * Syntax: <code>stream:kind</code>
+     * Category: file,system
+     * Available as of version: 1.3
      * Maven coordinates: org.apache.camel:camel-stream
      */
     default StreamEndpointBuilder stream(String path) {

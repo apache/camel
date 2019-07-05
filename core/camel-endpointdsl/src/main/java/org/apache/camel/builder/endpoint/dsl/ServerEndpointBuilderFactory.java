@@ -1613,9 +1613,14 @@ public interface ServerEndpointBuilderFactory {
         SIZE_3;
     }
     /**
+     * IEC 60870 Server (camel-iec60870)
      * IEC 60870 component used for telecontrol (supervisory control and data
      * acquisition) such as controlling electric power transmission grids and
      * other geographically widespread control systems.
+     * 
+     * Syntax: <code>iec60870-server:uriPath</code>
+     * Category: iot
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-iec60870
      */
     default ServerEndpointBuilder server(String path) {

@@ -1236,8 +1236,13 @@ public interface LinkedInEndpointBuilderFactory {
         W_SHARE;
     }
     /**
+     * Linkedin (camel-linkedin)
      * The linkedin component is used for retrieving LinkedIn user profiles,
      * connections, companies, groups, posts, etc.
+     * 
+     * Syntax: <code>linkedin:apiName/methodName</code>
+     * Category: api,cloud,social
+     * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-linkedin
      */
     default LinkedInEndpointBuilder linkedIn(String path) {

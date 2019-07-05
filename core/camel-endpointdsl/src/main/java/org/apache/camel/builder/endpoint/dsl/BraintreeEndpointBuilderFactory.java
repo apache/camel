@@ -975,8 +975,13 @@ public interface BraintreeEndpointBuilderFactory {
         WEBHOOKNOTIFICATION;
     }
     /**
+     * Braintree (camel-braintree)
      * The braintree component is used for integrating with the Braintree
      * Payment System.
+     * 
+     * Syntax: <code>braintree:apiName/methodName</code>
+     * Category: api,cloud,payment
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      */
     default BraintreeEndpointBuilder braintree(String path) {

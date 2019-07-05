@@ -1524,7 +1524,12 @@ public interface TwitterSearchEndpointBuilderFactory {
         EVENT;
     }
     /**
+     * Twitter Search (camel-twitter)
      * The Twitter Search component consumes search results.
+     * 
+     * Syntax: <code>twitter-search:keywords</code>
+     * Category: api,social
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      */
     default TwitterSearchEndpointBuilder twitterSearch(String path) {

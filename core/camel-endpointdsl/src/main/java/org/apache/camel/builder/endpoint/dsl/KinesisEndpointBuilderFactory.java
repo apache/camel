@@ -1244,8 +1244,13 @@ public interface KinesisEndpointBuilderFactory {
         silent;
     }
     /**
+     * AWS Kinesis (camel-aws-kinesis)
      * The aws-kinesis component is for consuming and producing records from
      * Amazon Kinesis Streams.
+     * 
+     * Syntax: <code>aws-kinesis:streamName</code>
+     * Category: cloud,messaging
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-kinesis
      */
     default KinesisEndpointBuilder kinesis(String path) {

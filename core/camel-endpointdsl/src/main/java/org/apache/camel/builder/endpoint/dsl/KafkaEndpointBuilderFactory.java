@@ -3438,8 +3438,13 @@ public interface KafkaEndpointBuilderFactory {
         }
     }
     /**
+     * Kafka (camel-kafka)
      * The kafka component allows messages to be sent to (or consumed from)
      * Apache Kafka brokers.
+     * 
+     * Syntax: <code>kafka:topic</code>
+     * Category: messaging
+     * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-kafka
      */
     default KafkaEndpointBuilder kafka(String path) {

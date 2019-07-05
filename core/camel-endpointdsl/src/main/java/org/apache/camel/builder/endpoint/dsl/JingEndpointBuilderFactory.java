@@ -139,8 +139,13 @@ public interface JingEndpointBuilderFactory {
         }
     }
     /**
+     * Jing (camel-jing)
      * Validates the payload of a message using RelaxNG Syntax using Jing
      * library.
+     * 
+     * Syntax: <code>jing:resourceUri</code>
+     * Category: validation
+     * Available as of version: 1.1
      * Maven coordinates: org.apache.camel:camel-jing
      */
     default JingEndpointBuilder jing(String path) {

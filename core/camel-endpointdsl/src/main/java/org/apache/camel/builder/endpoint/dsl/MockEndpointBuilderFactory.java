@@ -112,8 +112,13 @@ public interface MockEndpointBuilderFactory {
         }
     }
     /**
+     * Mock (camel-mock)
      * The mock component is used for testing routes and mediation rules using
      * mocks.
+     * 
+     * Syntax: <code>mock:name</code>
+     * Category: core,testing
+     * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-mock
      */
     default MockEndpointBuilder mock(String path) {

@@ -2034,8 +2034,13 @@ public interface Mina2EndpointBuilderFactory {
         MAC;
     }
     /**
+     * Mina2 (camel-mina2)
      * Socket level networking using TCP or UDP with the Apache Mina 2.x
      * library.
+     * 
+     * Syntax: <code>mina:protocol:host:port</code>
+     * Category: networking,tcp,udp
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-mina2
      */
     default Mina2EndpointBuilder mina2(String path) {

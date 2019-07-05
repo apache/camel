@@ -1901,8 +1901,13 @@ public interface JpaEndpointBuilderFactory {
         NONE;
     }
     /**
+     * JPA (camel-jpa)
      * The jpa component enables you to store and retrieve Java objects from
      * databases using JPA.
+     * 
+     * Syntax: <code>jpa:entityType</code>
+     * Category: database,sql
+     * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-jpa
      */
     default JpaEndpointBuilder jpa(String path) {

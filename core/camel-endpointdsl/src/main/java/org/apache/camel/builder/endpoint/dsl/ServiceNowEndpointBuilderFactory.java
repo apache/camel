@@ -986,8 +986,13 @@ public interface ServiceNowEndpointBuilderFactory {
         HELSINKI;
     }
     /**
+     * ServiceNow (camel-servicenow)
      * The servicenow component is used to integrate Camel with ServiceNow cloud
      * services.
+     * 
+     * Syntax: <code>servicenow:instanceName</code>
+     * Category: api,cloud,management
+     * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-servicenow
      */
     default ServiceNowEndpointBuilder serviceNow(String path) {

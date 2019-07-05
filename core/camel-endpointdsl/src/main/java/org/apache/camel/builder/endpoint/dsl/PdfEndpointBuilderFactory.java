@@ -342,8 +342,13 @@ public interface PdfEndpointBuilderFactory {
         lineTermination;
     }
     /**
+     * PDF (camel-pdf)
      * The pdf components provides the ability to create, modify or extract
      * content from PDF documents.
+     * 
+     * Syntax: <code>pdf:operation</code>
+     * Category: document,transformation,printing
+     * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
      */
     default PdfEndpointBuilder pdf(String path) {
