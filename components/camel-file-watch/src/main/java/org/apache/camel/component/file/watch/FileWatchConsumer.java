@@ -112,9 +112,15 @@ public class FileWatchConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        this.watcher.close();
-        getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(watchDirExecutorService);
-        getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(pollExecutorService);
+        if (this.watcher != null) {
+            this.watcher.close();
+        }
+        if (watchDirExecutorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(watchDirExecutorService);
+        }
+        if (pollExecutorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(pollExecutorService);
+        }
         super.doStop();
     }
 
@@ -161,7 +167,7 @@ public class FileWatchConsumer extends DefaultConsumer {
             // On some platforms (eg macOS) is WatchService always recursive,
             // so we need to filter this out to make this component platform independent
             try {
-                if (!Files.isSameFile(fileEvent.getEventPath().getParent(), this.baseDirectory)){
+                if (!Files.isSameFile(fileEvent.getEventPath().getParent(), this.baseDirectory)) {
                     return false;
                 }
             } catch (IOException e) {

@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultComponent;
  */
 @Component("file-watch")
 public class FileWatchComponent extends DefaultComponent {
-    public static final String EVENT_TYPE_HEADER = "FileEventType";
+    public static final String EVENT_TYPE_HEADER = "CamelFileEventType";
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new FileWatchEndpoint(uri, remaining, this);

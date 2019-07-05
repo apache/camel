@@ -24,18 +24,20 @@ import io.methvin.watcher.DirectoryChangeEvent;
 public class FileEvent {
     private FileEventEnum eventType;
     private Path eventPath;
-    private Date eventDate;
+    private long eventDate;
 
     private FileEvent() {
-        this.eventDate = new Date();
+        this.eventDate = System.currentTimeMillis();
     }
 
     public FileEvent(FileEventEnum eventType, Path eventPath) {
+        this();
         this.eventType = eventType;
         this.eventPath = eventPath;
     }
 
     public FileEvent(DirectoryChangeEvent event) {
+        this();
         this.eventType = FileEventEnum.valueOf(event.eventType());
         this.eventPath = event.path();
     }
@@ -48,7 +50,7 @@ public class FileEvent {
         return eventPath;
     }
 
-    public Date getEventDate() {
+    public long getEventDate() {
         return this.eventDate;
     }
 }

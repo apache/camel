@@ -90,11 +90,30 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== TODO
+This component can be used to watch file modification events in folder. It is based on https://github.com/gmethvin/directory-watcher[gmethvin/directory-watcher].
 
+=== Examples:
+
+==== Recursive watch all events (file creation, file deletion, file modification):
 [source,java]
 ----
-TODO
+from("file-watch://some-directory")
+    .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
+----
+
+==== Recursive watch for creation and deletion of txt files:
+[source,java]
+----
+from("file-watch://some-directory?events=DELETE,CREATE&antInclude=**/*.txt")
+    .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
+----
+
+==== Create snapshot of file when modified:
+[source,java]
+----
+from("file-watch://some-directory?events=MODIFY&recursive=false")
+    .setHeader(Exchange.FILE_NAME, simple("${header.CamelFileName}.${header.CamelFileLastModified}"))
+    .to("file:some-directory/snapshots");
 ----
 
 === Message Headers
@@ -106,6 +125,9 @@ The following headers are supported by this component:
 [width="100%",cols="10%,90%",options="header",]
 |===
 |Header |Description
+
+|`CamelFileEventType` |Type of event. Possible values: CREATE, DELETE, MODIFY.
+The java type of this header is `org.apache.camel.component.file.watch.constants.FileEventEnum`
 
 |`CamelFileName` |Name of the consumed file as a relative file path with offset from the
 starting directory configured on the endpoint.
@@ -128,55 +150,5 @@ relative filename. For absolute files this is the absolute path.
 
 |`CamelFileParent` |The parent path.
 
-|`CamelFileLength` |A `long` value containing the file size.
-
-|`CamelFileLastModified` |A `Long` value containing the last modified timestamp of the file. In
-*Camel 2.10.3 and older* the type is `Date`.
+|`CamelFileLastModified` |A `Long` value containing the last modified timestamp of the file.
 |===
-
-=== Filtering using ANT path matcher
-
-The file paths is matched with the following rules:
-
-* `?` matches one character
-* `*` matches zero or more characters
-* `**` matches zero or more directories in a path
-
-TIP: *New options from Camel 2.10 onwards*
-There are now `antInclude` and `antExclude` options to make it easy to
-specify ANT style include/exclude without having to define the filter.
-See the URI options above for more information.
-
-The sample below demonstrates how to use it:
-
-=== Using consumer.bridgeErrorHandler
-
-If you want to use the Camel Error Handler to
-deal with any exception occurring in the file consumer, then you can
-enable the `consumer.bridgeErrorHandler` option as shown below:
-
-[source,java]
-----
-// to handle any IOException being thrown
-onException(IOException.class)
-    .handled(true)
-    .log("IOException occurred due: ${exception.message}")
-    .transform().simple("Error ${exception.message}")
-    .to("mock:error");
-
-// this is the file route that pickup files, notice how we bridge the consumer to use the Camel routing error handler
-// the exclusiveReadLockStrategy is only configured because this is from an unit test, so we use that to simulate exceptions
-from("file-watch:target/nospace?consumer.bridgeErrorHandler=true")
-    .convertBodyTo(String.class)
-    .to("mock:result");
-----
-
-So all you have to do is to enable this option, and the error handler in
-the route will take it from there.
-
-IMPORTANT: *Important when using consumer.bridgeErrorHandler*
-When using consumer.bridgeErrorHandler, then
-interceptors, OnCompletions
-does *not* apply. The Exchange is processed directly
-by the Camel Error Handler, and does not allow
-prior actions such as interceptors, onCompletion to take action.
