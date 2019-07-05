@@ -64,7 +64,6 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
     }
 
     @Override
-    @After
     public void tearDown() throws Exception {
         super.tearDown();
         cleanTestDir(new File(testPath()));
