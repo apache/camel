@@ -163,7 +163,10 @@ public class SesComponentConfiguration
          */
         private Integer proxyPort;
         /**
-         * The region in which SES client needs to work
+         * The region in which SES client needs to work. When using this
+         * parameter, the configuration will expect the capitalized name of the
+         * region (for example AP_EAST_1) You'll need to use the name
+         * Regions.EU_WEST_1.name()
          */
         private String region;
 
