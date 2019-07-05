@@ -91,6 +91,11 @@ public class SshComponentConfiguration
      */
     private String certResource;
     /**
+     * Sets the password to use in loading certResource, if certResource is an
+     * encrypted key.
+     */
+    private String certResourcePassword;
+    /**
      * Sets the channel type to pass to the Channel as part of command
      * execution. Defaults to exec.
      */
@@ -198,6 +203,14 @@ public class SshComponentConfiguration
         this.certResource = certResource;
     }
 
+    public String getCertResourcePassword() {
+        return certResourcePassword;
+    }
+
+    public void setCertResourcePassword(String certResourcePassword) {
+        this.certResourcePassword = certResourcePassword;
+    }
+
     public String getChannelType() {
         return channelType;
     }
@@ -291,6 +304,11 @@ public class SshComponentConfiguration
          * certificate, and depends on keyType setting.
          */
         private String certResource;
+        /**
+         * Sets the password to use in loading certResource, if certResource is
+         * an encrypted key.
+         */
+        private String certResourcePassword;
         /**
          * Sets the resource path for a known_hosts file
          */
@@ -397,6 +415,14 @@ public class SshComponentConfiguration
 
         public void setCertResource(String certResource) {
             this.certResource = certResource;
+        }
+
+        public String getCertResourcePassword() {
+            return certResourcePassword;
+        }
+
+        public void setCertResourcePassword(String certResourcePassword) {
+            this.certResourcePassword = certResourcePassword;
         }
 
         public String getKnownHostsResource() {
