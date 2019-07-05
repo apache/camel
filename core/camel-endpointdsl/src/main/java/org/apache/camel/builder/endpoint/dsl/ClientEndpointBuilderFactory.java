@@ -1476,10 +1476,14 @@ public interface ClientEndpointBuilderFactory {
      * acquisition) such as controlling electric power transmission grids and
      * other geographically widespread control systems.
      * 
-     * Syntax: <code>iec60870-client:uriPath</code>
      * Category: iot
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-iec60870
+     * 
+     * Syntax: <code>iec60870-client:uriPath</code>
+     * 
+     * Path parameter: uriPath (required)
+     * The object information address
      */
     default ClientEndpointBuilder client(String path) {
         class ClientEndpointBuilderImpl extends AbstractEndpointBuilder implements ClientEndpointBuilder, AdvancedClientEndpointBuilder {

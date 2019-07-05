@@ -127,10 +127,14 @@ public interface KMSEndpointBuilderFactory {
      * AWS KMS (camel-aws-kms)
      * The aws-kms is used for managing Amazon KMS
      * 
-     * Syntax: <code>aws-kms:label</code>
      * Category: cloud,management
      * Available as of version: 2.21
      * Maven coordinates: org.apache.camel:camel-aws-kms
+     * 
+     * Syntax: <code>aws-kms:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
      */
     default KMSEndpointBuilder kMS(String path) {
         class KMSEndpointBuilderImpl extends AbstractEndpointBuilder implements KMSEndpointBuilder, AdvancedKMSEndpointBuilder {

@@ -1546,10 +1546,14 @@ public interface ServerEndpointBuilderFactory {
      * acquisition) such as controlling electric power transmission grids and
      * other geographically widespread control systems.
      * 
-     * Syntax: <code>iec60870-server:uriPath</code>
      * Category: iot
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-iec60870
+     * 
+     * Syntax: <code>iec60870-server:uriPath</code>
+     * 
+     * Path parameter: uriPath (required)
+     * The object information address
      */
     default ServerEndpointBuilder server(String path) {
         class ServerEndpointBuilderImpl extends AbstractEndpointBuilder implements ServerEndpointBuilder, AdvancedServerEndpointBuilder {

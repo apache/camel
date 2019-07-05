@@ -1211,10 +1211,14 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
      * The hazelcast-replicatedmap component is used to access Hazelcast
      * replicated map.
      * 
-     * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
      * Category: cache,datagrid
      * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-replicatedmap:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
      */
     default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
             String path) {

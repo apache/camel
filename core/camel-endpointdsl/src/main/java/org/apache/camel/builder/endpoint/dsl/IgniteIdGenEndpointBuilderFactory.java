@@ -174,10 +174,14 @@ public interface IgniteIdGenEndpointBuilderFactory {
      * The Ignite ID Generator endpoint is one of camel-ignite endpoints which
      * allows you to interact with Ignite Atomic Sequences and ID Generators.
      * 
-     * Syntax: <code>ignite-idgen:name</code>
      * Category: nosql,cache,compute
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
+     * 
+     * Syntax: <code>ignite-idgen:name</code>
+     * 
+     * Path parameter: name (required)
+     * The sequence name.
      */
     default IgniteIdGenEndpointBuilder igniteIdGen(String path) {
         class IgniteIdGenEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteIdGenEndpointBuilder, AdvancedIgniteIdGenEndpointBuilder {

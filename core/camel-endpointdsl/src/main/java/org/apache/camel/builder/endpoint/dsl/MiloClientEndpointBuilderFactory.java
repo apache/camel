@@ -1642,10 +1642,14 @@ public interface MiloClientEndpointBuilderFactory {
      * Connect to OPC UA servers using the binary protocol for acquiring
      * telemetry data
      * 
-     * Syntax: <code>milo-client:endpointUri</code>
      * Category: iot
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-milo
+     * 
+     * Syntax: <code>milo-client:endpointUri</code>
+     * 
+     * Path parameter: endpointUri (required)
+     * The OPC UA server endpoint
      */
     default MiloClientEndpointBuilder miloClient(String path) {
         class MiloClientEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloClientEndpointBuilder, AdvancedMiloClientEndpointBuilder {

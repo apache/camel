@@ -1616,10 +1616,15 @@ public interface NatsEndpointBuilderFactory {
      * Nats (camel-nats)
      * The nats component allows you produce and consume messages from NATS.
      * 
-     * Syntax: <code>nats:servers</code>
      * Category: messaging
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-nats
+     * 
+     * Syntax: <code>nats:servers</code>
+     * 
+     * Path parameter: servers (required)
+     * URLs to one or more NAT servers. Use comma to separate URLs when
+     * specifying multiple servers.
      */
     default NatsEndpointBuilder nats(String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {

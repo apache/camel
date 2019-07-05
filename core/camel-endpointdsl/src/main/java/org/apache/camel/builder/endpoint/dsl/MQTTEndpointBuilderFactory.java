@@ -2623,10 +2623,14 @@ public interface MQTTEndpointBuilderFactory {
      * Component for communicating with MQTT M2M message brokers using
      * FuseSource MQTT Client.
      * 
-     * Syntax: <code>mqtt:name</code>
      * Category: messaging,iot
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-mqtt
+     * 
+     * Syntax: <code>mqtt:name</code>
+     * 
+     * Path parameter: name (required)
+     * A logical name to use which is not the topic name.
      */
     default MQTTEndpointBuilder mQTT(String path) {
         class MQTTEndpointBuilderImpl extends AbstractEndpointBuilder implements MQTTEndpointBuilder, AdvancedMQTTEndpointBuilder {

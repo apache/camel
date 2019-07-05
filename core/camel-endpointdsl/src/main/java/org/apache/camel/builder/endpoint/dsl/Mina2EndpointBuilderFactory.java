@@ -1900,10 +1900,21 @@ public interface Mina2EndpointBuilderFactory {
      * Socket level networking using TCP or UDP with the Apache Mina 2.x
      * library.
      * 
-     * Syntax: <code>mina:protocol:host:port</code>
      * Category: networking,tcp,udp
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-mina2
+     * 
+     * Syntax: <code>mina:protocol:host:port</code>
+     * 
+     * Path parameter: protocol (required)
+     * Protocol to use
+     * 
+     * Path parameter: host (required)
+     * Hostname to use. Use localhost or 0.0.0.0 for local server as consumer.
+     * For producer use the hostname or ip address of the remote server.
+     * 
+     * Path parameter: port (required)
+     * Port number
      */
     default Mina2EndpointBuilder mina2(String path) {
         class Mina2EndpointBuilderImpl extends AbstractEndpointBuilder implements Mina2EndpointBuilder, AdvancedMina2EndpointBuilder {

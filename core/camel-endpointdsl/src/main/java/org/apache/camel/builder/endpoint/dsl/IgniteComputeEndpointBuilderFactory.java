@@ -179,10 +179,14 @@ public interface IgniteComputeEndpointBuilderFactory {
      * IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of
      * them, along with their parameters if necessary.
      * 
-     * Syntax: <code>ignite-compute:endpointId</code>
      * Category: nosql,cache,compute
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
+     * 
+     * Syntax: <code>ignite-compute:endpointId</code>
+     * 
+     * Path parameter: endpointId (required)
+     * The endpoint ID (not used).
      */
     default IgniteComputeEndpointBuilder igniteCompute(String path) {
         class IgniteComputeEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteComputeEndpointBuilder, AdvancedIgniteComputeEndpointBuilder {

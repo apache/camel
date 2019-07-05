@@ -197,10 +197,15 @@ public interface TikaEndpointBuilderFactory {
      * This component integrates with Apache Tika to extract content and
      * metadata from thousands of file types.
      * 
-     * Syntax: <code>tika:operation</code>
      * Category: document,transformation
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-tika
+     * 
+     * Syntax: <code>tika:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Tika Operation. parse or detect
+     * The value can be one of: parse,detect
      */
     default TikaEndpointBuilder tika(String path) {
         class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {

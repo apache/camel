@@ -496,10 +496,17 @@ public interface SpringIntegrationEndpointBuilderFactory {
      * Spring Integration (camel-spring-integration)
      * Bridges Camel with Spring Integration.
      * 
-     * Syntax: <code>spring-integration:defaultChannel</code>
      * Category: spring,eventbus
      * Available as of version: 1.4
      * Maven coordinates: org.apache.camel:camel-spring-integration
+     * 
+     * Syntax: <code>spring-integration:defaultChannel</code>
+     * 
+     * Path parameter: defaultChannel (required)
+     * The default channel name which is used by the Spring Integration Spring
+     * context. It will equal to the inputChannel name for the Spring
+     * Integration consumer and the outputChannel name for the Spring
+     * Integration provider.
      */
     default SpringIntegrationEndpointBuilder springIntegration(String path) {
         class SpringIntegrationEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringIntegrationEndpointBuilder, AdvancedSpringIntegrationEndpointBuilder {

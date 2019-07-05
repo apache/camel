@@ -226,10 +226,18 @@ public interface JoltEndpointBuilderFactory {
      * The jolt component allows you to process a JSON messages using an JOLT
      * specification (such as JSON-JSON transformation).
      * 
-     * Syntax: <code>jolt:resourceUri</code>
      * Category: transformation
      * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
+     * 
+     * Syntax: <code>jolt:resourceUri</code>
+     * 
+     * Path parameter: resourceUri (required)
+     * Path to the resource. You can prefix with: classpath, file, http, ref, or
+     * bean. classpath, file and http loads the resource using these protocols
+     * (classpath is default). ref will lookup the resource in the registry.
+     * bean will call a method on a bean to be used as the resource. For bean
+     * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
     default JoltEndpointBuilder jolt(String path) {
         class JoltEndpointBuilderImpl extends AbstractEndpointBuilder implements JoltEndpointBuilder, AdvancedJoltEndpointBuilder {

@@ -1272,10 +1272,14 @@ public interface InfinispanEndpointBuilderFactory {
      * For reading/writing from/to Infinispan distributed key/value store and
      * data grid.
      * 
-     * Syntax: <code>infinispan:cacheName</code>
      * Category: cache,datagrid,clustering
      * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan
+     * 
+     * Syntax: <code>infinispan:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The cache to use
      */
     default InfinispanEndpointBuilder infinispan(String path) {
         class InfinispanEndpointBuilderImpl extends AbstractEndpointBuilder implements InfinispanEndpointBuilder, AdvancedInfinispanEndpointBuilder {

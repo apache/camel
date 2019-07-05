@@ -249,10 +249,15 @@ public interface ExecEndpointBuilderFactory {
      * Exec (camel-exec)
      * The exec component can be used to execute OS system commands.
      * 
-     * Syntax: <code>exec:executable</code>
      * Category: system
      * Available as of version: 2.3
      * Maven coordinates: org.apache.camel:camel-exec
+     * 
+     * Syntax: <code>exec:executable</code>
+     * 
+     * Path parameter: executable (required)
+     * Sets the executable to be executed. The executable must not be empty or
+     * null.
      */
     default ExecEndpointBuilder exec(String path) {
         class ExecEndpointBuilderImpl extends AbstractEndpointBuilder implements ExecEndpointBuilder, AdvancedExecEndpointBuilder {

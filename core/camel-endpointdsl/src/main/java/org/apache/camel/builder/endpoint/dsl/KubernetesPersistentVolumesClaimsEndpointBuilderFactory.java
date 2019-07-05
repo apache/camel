@@ -369,10 +369,14 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
      * The Kubernetes Persistent Volumes Claims component provides a producer to
      * execute kubernetes persistent volume claim operations.
      * 
-     * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
      * Category: container,cloud,paas
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-persistent-volumes-claims:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
      */
     default KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
             String path) {

@@ -2815,10 +2815,15 @@ public interface SipEndpointBuilderFactory {
      * To send and receive messages using the SIP protocol (used in telco and
      * mobile).
      * 
-     * Syntax: <code>sip:uri</code>
      * Category: mobile
      * Available as of version: 2.5
      * Maven coordinates: org.apache.camel:camel-sip
+     * 
+     * Syntax: <code>sip:uri</code>
+     * 
+     * Path parameter: uri (required)
+     * URI of the SIP server to connect to (the username and password can be
+     * included such as: john:secretmyserver:9999)
      */
     default SipEndpointBuilder sip(String path) {
         class SipEndpointBuilderImpl extends AbstractEndpointBuilder implements SipEndpointBuilder, AdvancedSipEndpointBuilder {

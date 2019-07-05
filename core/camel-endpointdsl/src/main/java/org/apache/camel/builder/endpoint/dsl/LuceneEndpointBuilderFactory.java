@@ -206,10 +206,18 @@ public interface LuceneEndpointBuilderFactory {
      * Lucene (camel-lucene)
      * To insert or query from Apache Lucene databases.
      * 
-     * Syntax: <code>lucene:host:operation</code>
      * Category: database,search
      * Available as of version: 2.2
      * Maven coordinates: org.apache.camel:camel-lucene
+     * 
+     * Syntax: <code>lucene:host:operation</code>
+     * 
+     * Path parameter: host (required)
+     * The URL to the lucene server
+     * 
+     * Path parameter: operation (required)
+     * Operation to do such as insert or query.
+     * The value can be one of: insert,query
      */
     default LuceneEndpointBuilder lucene(String path) {
         class LuceneEndpointBuilderImpl extends AbstractEndpointBuilder implements LuceneEndpointBuilder, AdvancedLuceneEndpointBuilder {

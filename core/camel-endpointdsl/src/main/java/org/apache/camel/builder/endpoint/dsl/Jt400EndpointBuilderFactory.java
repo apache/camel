@@ -1485,10 +1485,28 @@ public interface Jt400EndpointBuilderFactory {
      * The jt400 component allows you to exchanges messages with an AS/400
      * system using data queues or program call.
      * 
-     * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
      * Category: messaging
      * Available as of version: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
+     * 
+     * Syntax: <code>jt400:userID:password/systemName/objectPath.type</code>
+     * 
+     * Path parameter: userID (required)
+     * Returns the ID of the AS/400 user.
+     * 
+     * Path parameter: password (required)
+     * Returns the password of the AS/400 user.
+     * 
+     * Path parameter: systemName (required)
+     * Returns the name of the AS/400 system.
+     * 
+     * Path parameter: objectPath (required)
+     * Returns the fully qualified integrated file system path name of the
+     * target object of this endpoint.
+     * 
+     * Path parameter: type (required)
+     * Whether to work with data queues or remote program call
+     * The value can be one of: DTAQ,PGM,SRVPGM
      */
     default Jt400EndpointBuilder jt400(String path) {
         class Jt400EndpointBuilderImpl extends AbstractEndpointBuilder implements Jt400EndpointBuilder, AdvancedJt400EndpointBuilder {

@@ -2175,10 +2175,14 @@ public interface SqsEndpointBuilderFactory {
      * The aws-sqs component is used for sending and receiving messages to
      * Amazon's SQS service.
      * 
-     * Syntax: <code>aws-sqs:queueNameOrArn</code>
      * Category: cloud,messaging
      * Available as of version: 2.6
      * Maven coordinates: org.apache.camel:camel-aws-sqs
+     * 
+     * Syntax: <code>aws-sqs:queueNameOrArn</code>
+     * 
+     * Path parameter: queueNameOrArn (required)
+     * Queue name or ARN
      */
     default SqsEndpointBuilder sqs(String path) {
         class SqsEndpointBuilderImpl extends AbstractEndpointBuilder implements SqsEndpointBuilder, AdvancedSqsEndpointBuilder {

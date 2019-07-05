@@ -1182,10 +1182,24 @@ public interface WebsocketEndpointBuilderFactory {
      * The websocket component provides websocket endpoints with Jetty for
      * communicating with clients using websocket.
      * 
-     * Syntax: <code>websocket:host:port/resourceUri</code>
      * Category: websocket
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-websocket
+     * 
+     * Syntax: <code>websocket:host:port/resourceUri</code>
+     * 
+     * Path parameter: host
+     * The hostname. The default value is 0.0.0.0. Setting this option on the
+     * component will use the component configured value as default.
+     * Default value: 0.0.0.0
+     * 
+     * Path parameter: port
+     * The port number. The default value is 9292. Setting this option on the
+     * component will use the component configured value as default.
+     * Default value: 9292
+     * 
+     * Path parameter: resourceUri (required)
+     * Name of the websocket channel to use
      */
     default WebsocketEndpointBuilder websocket(String path) {
         class WebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements WebsocketEndpointBuilder, AdvancedWebsocketEndpointBuilder {

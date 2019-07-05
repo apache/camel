@@ -609,10 +609,19 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * Google Sheets (camel-google-sheets)
      * The google-sheets component provides access to Google Sheets.
      * 
-     * Syntax: <code>google-sheets:apiName/methodName</code>
      * Category: api,cloud,sheets
      * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
+     * 
+     * Syntax: <code>google-sheets:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of: SPREADSHEETS,DATA
+     * 
+     * Path parameter: methodName (required)
+     * What sub operation to use for the selected operation
+     * The value can be one of: create,get,update,append,batchUpdate,clear
      */
     default GoogleSheetsEndpointBuilder googleSheets(String path) {
         class GoogleSheetsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsEndpointBuilder, AdvancedGoogleSheetsEndpointBuilder {

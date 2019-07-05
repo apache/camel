@@ -118,10 +118,18 @@ public interface MyBatisBeanEndpointBuilderFactory {
      * Performs a query, insert, update or delete in a relational database using
      * MyBatis.
      * 
-     * Syntax: <code>mybatis-bean:beanName:methodName</code>
      * Category: database,sql
      * Available as of version: 2.22
      * Maven coordinates: org.apache.camel:camel-mybatis
+     * 
+     * Syntax: <code>mybatis-bean:beanName:methodName</code>
+     * 
+     * Path parameter: beanName (required)
+     * Name of the bean with the MyBatis annotations. This can either by a type
+     * alias or a FQN class name.
+     * 
+     * Path parameter: methodName (required)
+     * Name of the method on the bean that has the SQL query to be executed.
      */
     default MyBatisBeanEndpointBuilder myBatisBean(String path) {
         class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder, AdvancedMyBatisBeanEndpointBuilder {

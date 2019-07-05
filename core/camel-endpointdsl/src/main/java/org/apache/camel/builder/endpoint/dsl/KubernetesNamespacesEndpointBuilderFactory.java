@@ -1244,10 +1244,14 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
      * kubernetes namespace operations and a consumer to consume namespace
      * events.
      * 
-     * Syntax: <code>kubernetes-namespaces:masterUrl</code>
      * Category: container,cloud,paas
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
+     * 
+     * Syntax: <code>kubernetes-namespaces:masterUrl</code>
+     * 
+     * Path parameter: masterUrl (required)
+     * Kubernetes Master url
      */
     default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
         class KubernetesNamespacesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNamespacesEndpointBuilder, AdvancedKubernetesNamespacesEndpointBuilder {

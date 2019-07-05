@@ -954,10 +954,18 @@ public interface JcrEndpointBuilderFactory {
      * The jcr component allows you to add/read nodes to/from a JCR compliant
      * content repository.
      * 
-     * Syntax: <code>jcr:host/base</code>
      * Category: cms,database
      * Available as of version: 1.3
      * Maven coordinates: org.apache.camel:camel-jcr
+     * 
+     * Syntax: <code>jcr:host/base</code>
+     * 
+     * Path parameter: host (required)
+     * Name of the javax.jcr.Repository to lookup from the Camel registry to be
+     * used.
+     * 
+     * Path parameter: base
+     * Get the base node when accessing the repository
      */
     default JcrEndpointBuilder jcr(String path) {
         class JcrEndpointBuilderImpl extends AbstractEndpointBuilder implements JcrEndpointBuilder, AdvancedJcrEndpointBuilder {

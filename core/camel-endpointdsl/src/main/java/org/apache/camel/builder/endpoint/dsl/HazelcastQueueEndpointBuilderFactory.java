@@ -1196,10 +1196,14 @@ public interface HazelcastQueueEndpointBuilderFactory {
      * The hazelcast-queue component is used to access Hazelcast distributed
      * queue.
      * 
-     * Syntax: <code>hazelcast-queue:cacheName</code>
      * Category: cache,datagrid
      * Available as of version: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-queue:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
      */
     default HazelcastQueueEndpointBuilder hazelcastQueue(String path) {
         class HazelcastQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastQueueEndpointBuilder, AdvancedHazelcastQueueEndpointBuilder {

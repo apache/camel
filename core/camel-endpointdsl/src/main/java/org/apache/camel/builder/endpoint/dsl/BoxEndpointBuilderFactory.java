@@ -1159,10 +1159,19 @@ public interface BoxEndpointBuilderFactory {
      * For uploading downloading and managing files folders groups
      * collaborations etc on box DOT com.
      * 
-     * Syntax: <code>box:apiName/methodName</code>
      * Category: api,file,cloud
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-box
+     * 
+     * Syntax: <code>box:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of:
+     * COLLABORATIONS,COMMENTS,EVENT_LOGS,FILES,FOLDERS,GROUPS,EVENTS,SEARCH,TASKS,USERS
+     * 
+     * Path parameter: methodName (required)
+     * What sub operation to use for the selected operation
      */
     default BoxEndpointBuilder box(String path) {
         class BoxEndpointBuilderImpl extends AbstractEndpointBuilder implements BoxEndpointBuilder, AdvancedBoxEndpointBuilder {

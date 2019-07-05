@@ -136,10 +136,17 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics (using SQL queries).
      * 
-     * Syntax: <code>google-bigquery-sql:query</code>
      * Category: cloud,messaging
      * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
+     * 
+     * Syntax: <code>google-bigquery-sql:query</code>
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project Id
+     * 
+     * Path parameter: query (required)
+     * BigQuery standard SQL query
      */
     default GoogleBigQuerySQLEndpointBuilder googleBigQuerySQL(String path) {
         class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder, AdvancedGoogleBigQuerySQLEndpointBuilder {

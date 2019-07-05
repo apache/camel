@@ -1412,10 +1412,14 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * The atomix-messaging component is used to access Atomix's group
      * messaging.
      * 
-     * Syntax: <code>atomix-messaging:resourceName</code>
      * Category: clustering
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
+     * 
+     * Syntax: <code>atomix-messaging:resourceName</code>
+     * 
+     * Path parameter: resourceName (required)
+     * The distributed resource name
      */
     default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
         class AtomixMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMessagingEndpointBuilder, AdvancedAtomixMessagingEndpointBuilder {

@@ -873,10 +873,14 @@ public interface StubEndpointBuilderFactory {
      * The stub component provides a simple way to stub out any physical
      * endpoints while in development or testing.
      * 
-     * Syntax: <code>stub:name</code>
      * Category: core,testing
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-stub
+     * 
+     * Syntax: <code>stub:name</code>
+     * 
+     * Path parameter: name (required)
+     * Name of queue
      */
     default StubEndpointBuilder stub(String path) {
         class StubEndpointBuilderImpl extends AbstractEndpointBuilder implements StubEndpointBuilder, AdvancedStubEndpointBuilder {

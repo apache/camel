@@ -134,10 +134,14 @@ public interface IAMEndpointBuilderFactory {
      * AWS IAM (camel-aws-iam)
      * The aws-iam is used for managing Amazon IAM
      * 
-     * Syntax: <code>aws-iam:label</code>
      * Category: cloud,management
      * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-aws-iam
+     * 
+     * Syntax: <code>aws-iam:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
      */
     default IAMEndpointBuilder iAM(String path) {
         class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder, AdvancedIAMEndpointBuilder {

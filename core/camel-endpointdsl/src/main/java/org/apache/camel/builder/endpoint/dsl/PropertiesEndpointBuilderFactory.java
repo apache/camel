@@ -391,10 +391,14 @@ public interface PropertiesEndpointBuilderFactory {
      * The properties component is used for using property placeholders in
      * endpoint uris.
      * 
-     * Syntax: <code>properties:key</code>
      * Category: core,endpoint
      * Available as of version: 2.3
      * Maven coordinates: org.apache.camel:camel-properties
+     * 
+     * Syntax: <code>properties:key</code>
+     * 
+     * Path parameter: key (required)
+     * Property key to use as placeholder
      */
     default PropertiesEndpointBuilder properties(String path) {
         class PropertiesEndpointBuilderImpl extends AbstractEndpointBuilder implements PropertiesEndpointBuilder, AdvancedPropertiesEndpointBuilder {

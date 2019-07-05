@@ -536,10 +536,19 @@ public interface JcloudsEndpointBuilderFactory {
      * JClouds (camel-jclouds)
      * For interacting with cloud compute & blobstore service via jclouds.
      * 
-     * Syntax: <code>jclouds:command:providerId</code>
      * Category: api,cloud
      * Available as of version: 2.9
      * Maven coordinates: org.apache.camel:camel-jclouds
+     * 
+     * Syntax: <code>jclouds:command:providerId</code>
+     * 
+     * Path parameter: command (required)
+     * What command to execute such as blobstore or compute.
+     * The value can be one of: blobstore,compute
+     * 
+     * Path parameter: providerId (required)
+     * The name of the cloud provider that provides the target service (e.g.
+     * aws-s3 or aws_ec2).
      */
     default JcloudsEndpointBuilder jclouds(String path) {
         class JcloudsEndpointBuilderImpl extends AbstractEndpointBuilder implements JcloudsEndpointBuilder, AdvancedJcloudsEndpointBuilder {

@@ -1094,10 +1094,16 @@ public interface YammerEndpointBuilderFactory {
      * The yammer component allows you to interact with the Yammer enterprise
      * social network.
      * 
-     * Syntax: <code>yammer:function</code>
      * Category: social
      * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-yammer
+     * 
+     * Syntax: <code>yammer:function</code>
+     * 
+     * Path parameter: function (required)
+     * The function to use
+     * The value can be one of:
+     * MESSAGES,MY_FEED,ALGO,FOLLOWING,SENT,PRIVATE,RECEIVED,USERS,CURRENT
      */
     default YammerEndpointBuilder yammer(String path) {
         class YammerEndpointBuilderImpl extends AbstractEndpointBuilder implements YammerEndpointBuilder, AdvancedYammerEndpointBuilder {

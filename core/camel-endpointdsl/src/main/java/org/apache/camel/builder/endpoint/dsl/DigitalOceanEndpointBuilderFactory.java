@@ -296,10 +296,16 @@ public interface DigitalOceanEndpointBuilderFactory {
      * The DigitalOcean component allows you to manage Droplets and resources
      * within the DigitalOcean cloud.
      * 
-     * Syntax: <code>digitalocean:operation</code>
      * Category: cloud,management
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-digitalocean
+     * 
+     * Syntax: <code>digitalocean:operation</code>
+     * 
+     * Path parameter: operation
+     * The operation to perform to the given resource.
+     * The value can be one of:
+     * create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors,enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,attach,detach,assign,unassign,tag,untag
      */
     default DigitalOceanEndpointBuilder digitalOcean(String path) {
         class DigitalOceanEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalOceanEndpointBuilder, AdvancedDigitalOceanEndpointBuilder {

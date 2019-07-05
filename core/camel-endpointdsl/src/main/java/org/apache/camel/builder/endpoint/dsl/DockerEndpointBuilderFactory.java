@@ -1263,10 +1263,16 @@ public interface DockerEndpointBuilderFactory {
      * Docker (camel-docker)
      * The docker component is used for managing Docker containers.
      * 
-     * Syntax: <code>docker:operation</code>
      * Category: container,cloud,paas
      * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
+     * 
+     * Syntax: <code>docker:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * Which operation to use
+     * The value can be one of:
+     * events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepushimageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiffinspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstartcontainerstop,containertop,containerunpause,containerwait,execcreate,execstart
      */
     default DockerEndpointBuilder docker(String path) {
         class DockerEndpointBuilderImpl extends AbstractEndpointBuilder implements DockerEndpointBuilder, AdvancedDockerEndpointBuilder {

@@ -879,10 +879,15 @@ public interface SlackEndpointBuilderFactory {
      * Slack (camel-slack)
      * The slack component allows you to send messages to Slack.
      * 
-     * Syntax: <code>slack:channel</code>
      * Category: social
      * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-slack
+     * 
+     * Syntax: <code>slack:channel</code>
+     * 
+     * Path parameter: channel (required)
+     * The channel name (syntax #name) or slackuser (syntax userName) to send a
+     * message directly to an user.
      */
     default SlackEndpointBuilder slack(String path) {
         class SlackEndpointBuilderImpl extends AbstractEndpointBuilder implements SlackEndpointBuilder, AdvancedSlackEndpointBuilder {

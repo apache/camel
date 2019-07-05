@@ -1149,10 +1149,18 @@ public interface Olingo4EndpointBuilderFactory {
      * Olingo4 (camel-olingo4)
      * Communicates with OData 4.0 services using Apache Olingo OData API.
      * 
-     * Syntax: <code>olingo4:apiName/methodName</code>
      * Category: cloud
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-olingo4
+     * 
+     * Syntax: <code>olingo4:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of: DEFAULT
+     * 
+     * Path parameter: methodName (required)
+     * What sub operation to use for the selected operation
      */
     default Olingo4EndpointBuilder olingo4(String path) {
         class Olingo4EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo4EndpointBuilder, AdvancedOlingo4EndpointBuilder {

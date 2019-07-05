@@ -171,10 +171,21 @@ public interface LdapEndpointBuilderFactory {
      * The ldap component allows you to perform searches in LDAP servers using
      * filters as the message payload.
      * 
-     * Syntax: <code>ldap:dirContextName</code>
      * Category: ldap
      * Available as of version: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
+     * 
+     * Syntax: <code>ldap:dirContextName</code>
+     * 
+     * Path parameter: dirContextName (required)
+     * Name of either a javax.naming.directory.DirContext, or
+     * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
+     * is either a Hashtable or Map then a new javax.naming.directory.DirContext
+     * instance is created for each use. If the bean is a
+     * javax.naming.directory.DirContext then the bean is used as given. The
+     * latter may not be possible in all situations where the
+     * javax.naming.directory.DirContext must not be shared, and in those
+     * situations it can be better to use java.util.Hashtable or Map instead.
      */
     default LdapEndpointBuilder ldap(String path) {
         class LdapEndpointBuilderImpl extends AbstractEndpointBuilder implements LdapEndpointBuilder, AdvancedLdapEndpointBuilder {

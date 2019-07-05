@@ -858,10 +858,14 @@ public interface GoraEndpointBuilderFactory {
      * The gora component allows you to work with NoSQL databases using the
      * Apache Gora framework.
      * 
-     * Syntax: <code>gora:name</code>
      * Category: database,hadoop,nosql
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-gora
+     * 
+     * Syntax: <code>gora:name</code>
+     * 
+     * Path parameter: name (required)
+     * Instance name
      */
     default GoraEndpointBuilder gora(String path) {
         class GoraEndpointBuilderImpl extends AbstractEndpointBuilder implements GoraEndpointBuilder, AdvancedGoraEndpointBuilder {

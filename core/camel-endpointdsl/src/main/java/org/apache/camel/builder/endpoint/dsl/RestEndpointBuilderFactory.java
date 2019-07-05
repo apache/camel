@@ -687,10 +687,22 @@ public interface RestEndpointBuilderFactory {
      * The rest component is used for either hosting REST services (consumer) or
      * calling external REST services (producer).
      * 
-     * Syntax: <code>rest:method:path:uriTemplate</code>
      * Category: core,rest
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-rest
+     * 
+     * Syntax: <code>rest:method:path:uriTemplate</code>
+     * 
+     * Path parameter: method (required)
+     * HTTP method to use.
+     * The value can be one of:
+     * get,post,put,delete,patch,head,trace,connect,options
+     * 
+     * Path parameter: path (required)
+     * The base path
+     * 
+     * Path parameter: uriTemplate
+     * The uri template
      */
     default RestEndpointBuilder restEndpoint(String path) {
         class RestEndpointBuilderImpl extends AbstractEndpointBuilder implements RestEndpointBuilder, AdvancedRestEndpointBuilder {

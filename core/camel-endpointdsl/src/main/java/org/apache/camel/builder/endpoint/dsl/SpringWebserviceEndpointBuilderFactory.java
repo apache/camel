@@ -1009,10 +1009,33 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * The spring-ws component is used for SOAP WebServices using Spring
      * WebServices.
      * 
-     * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
      * Category: spring,soap,webservice
      * Available as of version: 2.6
      * Maven coordinates: org.apache.camel:camel-spring-ws
+     * 
+     * Syntax: <code>spring-ws:type:lookupKey:webServiceEndpointUri</code>
+     * 
+     * Path parameter: type
+     * Endpoint mapping type if endpoint mapping is used. rootqname - Offers the
+     * option to map web service requests based on the qualified name of the
+     * root element contained in the message. soapaction - Used to map web
+     * service requests based on the SOAP action specified in the header of the
+     * message. uri - In order to map web service requests that target a
+     * specific URI. xpathresult - Used to map web service requests based on the
+     * evaluation of an XPath expression against the incoming message. The
+     * result of the evaluation should match the XPath result specified in the
+     * endpoint URI. beanname - Allows you to reference an
+     * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher object
+     * in order to integrate with existing (legacy) endpoint mappings like
+     * PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc
+     * The value can be one of:
+     * ROOT_QNAME,ACTION,TO,SOAP_ACTION,XPATHRESULT,URI,URI_PATH,BEANNAME
+     * 
+     * Path parameter: lookupKey
+     * Endpoint mapping key if endpoint mapping is used
+     * 
+     * Path parameter: webServiceEndpointUri
+     * The default Web Service endpoint uri to use for the producer.
      */
     default SpringWebserviceEndpointBuilder springWebservice(String path) {
         class SpringWebserviceEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringWebserviceEndpointBuilder, AdvancedSpringWebserviceEndpointBuilder {

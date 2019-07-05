@@ -204,10 +204,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
      * The aws-kinesis-firehose component is used for producing Amazon's Kinesis
      * Firehose streams.
      * 
-     * Syntax: <code>aws-kinesis-firehose:streamName</code>
      * Category: cloud,messaging
      * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-aws-kinesis
+     * 
+     * Syntax: <code>aws-kinesis-firehose:streamName</code>
+     * 
+     * Path parameter: streamName (required)
+     * Name of the stream
      */
     default KinesisFirehoseEndpointBuilder kinesisFirehose(String path) {
         class KinesisFirehoseEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisFirehoseEndpointBuilder, AdvancedKinesisFirehoseEndpointBuilder {

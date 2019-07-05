@@ -183,10 +183,14 @@ public interface WebhookEndpointBuilderFactory {
      * notifications to expose webhook endpoints and automatically register them
      * with their own webhook provider.
      * 
-     * Syntax: <code>webhook:endpointUri</code>
      * Category: cloud
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-webhook
+     * 
+     * Syntax: <code>webhook:endpointUri</code>
+     * 
+     * Path parameter: endpointUri
+     * The delegate uri. Must belong to a component that supports webhooks.
      */
     default WebhookEndpointBuilder webhook(String path) {
         class WebhookEndpointBuilderImpl extends AbstractEndpointBuilder implements WebhookEndpointBuilder, AdvancedWebhookEndpointBuilder {

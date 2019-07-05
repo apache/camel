@@ -270,10 +270,14 @@ public interface AtomEndpointBuilderFactory {
      * Atom (camel-atom)
      * The atom component is used for consuming Atom RSS feeds.
      * 
-     * Syntax: <code>atom:feedUri</code>
      * Category: rss
      * Available as of version: 1.2
      * Maven coordinates: org.apache.camel:camel-atom
+     * 
+     * Syntax: <code>atom:feedUri</code>
+     * 
+     * Path parameter: feedUri (required)
+     * The URI to the feed to poll.
      */
     default AtomEndpointBuilder atom(String path) {
         class AtomEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomEndpointBuilder, AdvancedAtomEndpointBuilder {

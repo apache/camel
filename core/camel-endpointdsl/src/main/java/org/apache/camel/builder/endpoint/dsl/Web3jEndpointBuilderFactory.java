@@ -1483,10 +1483,14 @@ public interface Web3jEndpointBuilderFactory {
      * The web3j component uses the Web3j client API and allows you to add/read
      * nodes to/from a web3j compliant content repositories.
      * 
-     * Syntax: <code>web3j:nodeAddress</code>
      * Category: bitcoin,blockchain
      * Available as of version: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
+     * 
+     * Syntax: <code>web3j:nodeAddress</code>
+     * 
+     * Path parameter: nodeAddress (required)
+     * Sets the node address used to communicate
      */
     default Web3jEndpointBuilder web3j(String path) {
         class Web3jEndpointBuilderImpl extends AbstractEndpointBuilder implements Web3jEndpointBuilder, AdvancedWeb3jEndpointBuilder {

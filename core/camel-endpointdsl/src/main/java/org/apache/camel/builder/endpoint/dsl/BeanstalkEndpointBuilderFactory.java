@@ -1213,10 +1213,14 @@ public interface BeanstalkEndpointBuilderFactory {
      * The beanstalk component is used for job retrieval and post-processing of
      * Beanstalk jobs.
      * 
-     * Syntax: <code>beanstalk:connectionSettings</code>
      * Category: messaging
      * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-beanstalk
+     * 
+     * Syntax: <code>beanstalk:connectionSettings</code>
+     * 
+     * Path parameter: connectionSettings
+     * Connection settings host:port/tube
      */
     default BeanstalkEndpointBuilder beanstalk(String path) {
         class BeanstalkEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanstalkEndpointBuilder, AdvancedBeanstalkEndpointBuilder {

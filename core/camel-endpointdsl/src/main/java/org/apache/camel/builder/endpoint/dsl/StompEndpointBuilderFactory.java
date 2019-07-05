@@ -688,10 +688,14 @@ public interface StompEndpointBuilderFactory {
      * The stomp component is used for communicating with Stomp compliant
      * message brokers.
      * 
-     * Syntax: <code>stomp:destination</code>
      * Category: messaging
      * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-stomp
+     * 
+     * Syntax: <code>stomp:destination</code>
+     * 
+     * Path parameter: destination (required)
+     * Name of the queue
      */
     default StompEndpointBuilder stomp(String path) {
         class StompEndpointBuilderImpl extends AbstractEndpointBuilder implements StompEndpointBuilder, AdvancedStompEndpointBuilder {

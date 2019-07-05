@@ -423,10 +423,20 @@ public interface TwilioEndpointBuilderFactory {
      * The Twilio component allows you to interact with the Twilio REST APIs
      * using Twilio Java SDK.
      * 
-     * Syntax: <code>twilio:apiName/methodName</code>
      * Category: api,messaging,cloud
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-twilio
+     * 
+     * Syntax: <code>twilio:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of:
+     * ACCOUNT,ADDRESS,APPLICATION,AVAILABLE_PHONE_NUMBER_COUNTRY,CALL,CONFERENCE,CONNECT_APP,INCOMING_PHONE_NUMBER,KEY,MESSAGE,NEW_KEY,NEW_SIGNING_KEY,NOTIFICATION,OUTGOING_CALLER_ID,QUEUE,RECORDING,SHORT_CODE,SIGNING_KEY,TOKEN,TRANSCRIPTION,VALIDATION_REQUEST,ADDRESS_DEPENDENT_PHONE_NUMBER,AVAILABLE_PHONE_NUMBER_COUNTRY_LOCAL,AVAILABLE_PHONE_NUMBER_COUNTRY_MOBILE,AVAILABLE_PHONE_NUMBER_COUNTRY_TOLL_FREE,CALL_FEEDBACK,CALL_FEEDBACK_SUMMARY,CALL_NOTIFICATION,CALL_RECORDING,CONFERENCE_PARTICIPANT,INCOMING_PHONE_NUMBER_LOCAL,INCOMING_PHONE_NUMBER_MOBILE,INCOMING_PHONE_NUMBER_TOLL_FREE,MESSAGE_FEEDBACK,MESSAGE_MEDIA,QUEUE_MEMBER,RECORDING_ADD_ON_RESULT,RECORDING_TRANSCRIPTION,RECORDING_ADD_ON_RESULT_PAYLOAD,SIP_CREDENTIAL_LIST,SIP_DOMAIN,SIP_IP_ACCESS_CONTROL_LIST,SIP_CREDENTIAL_LIST_CREDENTIAL,SIP_DOMAIN_CREDENTIAL_LIST_MAPPING,SIP_DOMAIN_IP_ACCESS_CONTROL_LIST_MAPPING,SIP_IP_ACCESS_CONTROL_LIST_IP_ADDRESS,USAGE_RECORD,USAGE_TRIGGER,USAGE_RECORD_ALL_TIME,USAGE_RECORD_DAILY,USAGE_RECORD_LAST_MONTH,USAGE_RECORD_MONTHLY,USAGE_RECORD_THIS_MONTH,USAGE_RECORD_TODAY,USAGE_RECORD_YEARLY,USAGE_RECORD_YESTERDAY
+     * 
+     * Path parameter: methodName (required)
+     * What sub operation to use for the selected operation
+     * The value can be one of: create,delete,fetch,read,update
      */
     default TwilioEndpointBuilder twilio(String path) {
         class TwilioEndpointBuilderImpl extends AbstractEndpointBuilder implements TwilioEndpointBuilder, AdvancedTwilioEndpointBuilder {

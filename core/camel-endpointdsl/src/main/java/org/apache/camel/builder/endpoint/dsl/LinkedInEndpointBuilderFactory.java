@@ -1120,10 +1120,21 @@ public interface LinkedInEndpointBuilderFactory {
      * The linkedin component is used for retrieving LinkedIn user profiles,
      * connections, companies, groups, posts, etc.
      * 
-     * Syntax: <code>linkedin:apiName/methodName</code>
      * Category: api,cloud,social
      * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-linkedin
+     * 
+     * Syntax: <code>linkedin:apiName/methodName</code>
+     * 
+     * Path parameter: apiName (required)
+     * What kind of operation to perform
+     * The value can be one of:
+     * comments,companies,groups,jobs,people,posts,search
+     * 
+     * Path parameter: methodName (required)
+     * What sub operation to use for the selected operation
+     * The value can be one of:
+     * addActivity,addComment,addCompanyUpdateComment,addCompanyUpdateCommentAsCompany,addGroupMembership,addInvite,addJob,addJobBookmark,addPost,addShare,addUpdateComment,editJob,flagCategory,followCompany,followPost,getComment,getCompanies,getCompanyById,getCompanyByName,getCompanyUpdateComments,getCompanyUpdateLikes,getCompanyUpdates,getConnections,getConnectionsById,getConnectionsByUrl,getFollowedCompanies,getGroup,getGroupMemberships,getGroupMembershipSettings,getHistoricalFollowStatistics,getHistoricalStatusUpdateStatistics,getJob,getJobBookmarks,getNetworkStats,getNetworkUpdates,getNetworkUpdatesById,getNumberOfFollowers,getPerson,getPersonById,getPersonByUrl,getPost,getPostComments,getPosts,getStatistics,getSuggestedCompanies,getSuggestedGroupPosts,getSuggestedGroups,getSuggestedJobs,getUpdateComments,getUpdateLikes,isShareEnabled,isViewerShareEnabled,likeCompanyUpdate,likePost,likeUpdate,removeComment,removeGroupMembership,removeGroupSuggestion,removeJob,removeJobBookmark,removePost,searchCompanies,searchJobs,searchPeople,share,stopFollowingCompany,updateGroupMembership
      */
     default LinkedInEndpointBuilder linkedIn(String path) {
         class LinkedInEndpointBuilderImpl extends AbstractEndpointBuilder implements LinkedInEndpointBuilder, AdvancedLinkedInEndpointBuilder {

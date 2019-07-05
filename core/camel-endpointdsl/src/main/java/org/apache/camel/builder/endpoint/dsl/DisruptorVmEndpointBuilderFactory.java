@@ -721,10 +721,14 @@ public interface DisruptorVmEndpointBuilderFactory {
      * The disruptor component provides asynchronous SEDA behavior using LMAX
      * Disruptor.
      * 
-     * Syntax: <code>disruptor-vm:name</code>
      * Category: endpoint
      * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
+     * 
+     * Syntax: <code>disruptor-vm:name</code>
+     * 
+     * Path parameter: name (required)
+     * Name of queue
      */
     default DisruptorVmEndpointBuilder disruptorVm(String path) {
         class DisruptorVmEndpointBuilderImpl extends AbstractEndpointBuilder implements DisruptorVmEndpointBuilder, AdvancedDisruptorVmEndpointBuilder {

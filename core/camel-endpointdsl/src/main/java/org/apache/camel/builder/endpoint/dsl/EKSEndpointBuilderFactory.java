@@ -125,10 +125,14 @@ public interface EKSEndpointBuilderFactory {
      * AWS EKS (camel-aws-eks)
      * The aws-kms is used for managing Amazon EKS
      * 
-     * Syntax: <code>aws-eks:label</code>
      * Category: cloud,management
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-aws-eks
+     * 
+     * Syntax: <code>aws-eks:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
      */
     default EKSEndpointBuilder eKS(String path) {
         class EKSEndpointBuilderImpl extends AbstractEndpointBuilder implements EKSEndpointBuilder, AdvancedEKSEndpointBuilder {

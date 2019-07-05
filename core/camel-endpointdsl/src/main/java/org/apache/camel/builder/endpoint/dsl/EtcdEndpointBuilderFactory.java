@@ -1212,10 +1212,18 @@ public interface EtcdEndpointBuilderFactory {
      * The camel etcd component allows you to work with Etcd, a distributed
      * reliable key-value store.
      * 
-     * Syntax: <code>etcd:namespace/path</code>
      * Category: clustering,database
      * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-etcd
+     * 
+     * Syntax: <code>etcd:namespace/path</code>
+     * 
+     * Path parameter: namespace (required)
+     * The API namespace to use
+     * The value can be one of: keys,stats,watch
+     * 
+     * Path parameter: path
+     * The path the endpoint refers to
      */
     default EtcdEndpointBuilder etcd(String path) {
         class EtcdEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdEndpointBuilder, AdvancedEtcdEndpointBuilder {

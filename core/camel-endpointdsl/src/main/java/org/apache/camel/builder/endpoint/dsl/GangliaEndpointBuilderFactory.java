@@ -369,10 +369,19 @@ public interface GangliaEndpointBuilderFactory {
      * The ganglia component is used for sending metrics to the Ganglia
      * monitoring system.
      * 
-     * Syntax: <code>ganglia:host:port</code>
      * Category: monitoring
      * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-ganglia
+     * 
+     * Syntax: <code>ganglia:host:port</code>
+     * 
+     * Path parameter: host
+     * Host name for Ganglia server
+     * Default value: 239.2.11.71
+     * 
+     * Path parameter: port
+     * Port for Ganglia server
+     * Default value: 8649
      */
     default GangliaEndpointBuilder ganglia(String path) {
         class GangliaEndpointBuilderImpl extends AbstractEndpointBuilder implements GangliaEndpointBuilder, AdvancedGangliaEndpointBuilder {

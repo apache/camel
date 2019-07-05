@@ -183,10 +183,14 @@ public interface SpringBatchEndpointBuilderFactory {
      * The spring-batch component allows to send messages to Spring Batch for
      * further processing.
      * 
-     * Syntax: <code>spring-batch:jobName</code>
      * Category: spring,batch,scheduling
      * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
+     * 
+     * Syntax: <code>spring-batch:jobName</code>
+     * 
+     * Path parameter: jobName (required)
+     * The name of the Spring Batch job located in the registry.
      */
     default SpringBatchEndpointBuilder springBatch(String path) {
         class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder, AdvancedSpringBatchEndpointBuilder {

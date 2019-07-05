@@ -501,10 +501,15 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      * Javax Websocket (camel-websocket-jsr356)
      * Camel WebSocket using JSR356 (javax)
      * 
-     * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
      * Category: jsr356
      * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-websocket-jsr356
+     * 
+     * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
+     * 
+     * Path parameter: websocketPathOrUri
+     * If a path (/foo) it will deploy locally the endpoint, if an uri it will
+     * connect to the corresponding server
      */
     default JSR356WebSocketEndpointBuilder jSR356WebSocket(String path) {
         class JSR356WebSocketEndpointBuilderImpl extends AbstractEndpointBuilder implements JSR356WebSocketEndpointBuilder, AdvancedJSR356WebSocketEndpointBuilder {

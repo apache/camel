@@ -995,10 +995,14 @@ public interface PahoEndpointBuilderFactory {
      * Component for communicating with MQTT M2M message brokers using Eclipse
      * Paho MQTT Client.
      * 
-     * Syntax: <code>paho:topic</code>
      * Category: messaging,iot
      * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-paho
+     * 
+     * Syntax: <code>paho:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic
      */
     default PahoEndpointBuilder paho(String path) {
         class PahoEndpointBuilderImpl extends AbstractEndpointBuilder implements PahoEndpointBuilder, AdvancedPahoEndpointBuilder {

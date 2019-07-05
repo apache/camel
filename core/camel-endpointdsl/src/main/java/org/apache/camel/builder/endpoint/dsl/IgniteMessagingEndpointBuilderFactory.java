@@ -634,10 +634,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
      * The Ignite Messaging endpoint is one of camel-ignite endpoints which
      * allows you to send and consume messages from an Ignite topic.
      * 
-     * Syntax: <code>ignite-messaging:topic</code>
      * Category: nosql,cache,messaging
      * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
+     * 
+     * Syntax: <code>ignite-messaging:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * The topic name.
      */
     default IgniteMessagingEndpointBuilder igniteMessaging(String path) {
         class IgniteMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteMessagingEndpointBuilder, AdvancedIgniteMessagingEndpointBuilder {

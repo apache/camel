@@ -824,10 +824,20 @@ public interface WordpressEndpointBuilderFactory {
      * Wordpress (camel-wordpress)
      * Integrates Camel with Wordpress.
      * 
-     * Syntax: <code>wordpress:operationDetail</code>
      * Category: cms
      * Available as of version: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
+     * 
+     * Syntax: <code>wordpress:operationDetail</code>
+     * 
+     * Path parameter: operation (required)
+     * The endpoint operation.
+     * The value can be one of: post, user
+     * 
+     * Path parameter: operationDetail
+     * The second part of an endpoint operation. Needed only when endpoint
+     * semantic is not enough, like wordpress:post:delete
+     * The value can be one of: delete
      */
     default WordpressEndpointBuilder wordpress(String path) {
         class WordpressEndpointBuilderImpl extends AbstractEndpointBuilder implements WordpressEndpointBuilder, AdvancedWordpressEndpointBuilder {
