@@ -46,8 +46,10 @@ public interface XsltEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -55,8 +57,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * Whether to allow using StAX as the javax.xml.transform.Source.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder allowStAX(boolean allowStAX) {
             setProperty("allowStAX", allowStAX);
@@ -64,8 +68,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * Whether to allow using StAX as the javax.xml.transform.Source.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder allowStAX(String allowStAX) {
             setProperty("allowStAX", allowStAX);
@@ -77,8 +83,10 @@ public interface XsltEndpointBuilderFactory {
          * message processing. This is good for development. A cached stylesheet
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -90,8 +98,10 @@ public interface XsltEndpointBuilderFactory {
          * message processing. This is good for development. A cached stylesheet
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -102,8 +112,10 @@ public interface XsltEndpointBuilderFactory {
          * output file should be deleted when the Exchange is done processing.
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder deleteOutputFile(boolean deleteOutputFile) {
             setProperty("deleteOutputFile", deleteOutputFile);
@@ -114,8 +126,10 @@ public interface XsltEndpointBuilderFactory {
          * output file should be deleted when the Exchange is done processing.
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder deleteOutputFile(String deleteOutputFile) {
             setProperty("deleteOutputFile", deleteOutputFile);
@@ -123,8 +137,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * Whether or not to throw an exception if the input body is null.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
@@ -132,8 +148,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * Whether or not to throw an exception if the input body is null.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder failOnNullBody(String failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
@@ -147,9 +165,11 @@ public interface XsltEndpointBuilderFactory {
          * Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any
          * paths leading to the filename must be created beforehand, otherwise
          * an exception is thrown at runtime.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder output(XsltOutput output) {
             setProperty("output", output);
@@ -163,9 +183,11 @@ public interface XsltEndpointBuilderFactory {
          * Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any
          * paths leading to the filename must be created beforehand, otherwise
          * an exception is thrown at runtime.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder output(String output) {
             setProperty("output", output);
@@ -175,8 +197,10 @@ public interface XsltEndpointBuilderFactory {
          * Whether to use Saxon as the transformerFactoryClass. If enabled then
          * the class net.sf.saxon.TransformerFactoryImpl. You would need to add
          * Saxon to the classpath.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder saxon(boolean saxon) {
             setProperty("saxon", saxon);
@@ -186,8 +210,10 @@ public interface XsltEndpointBuilderFactory {
          * Whether to use Saxon as the transformerFactoryClass. If enabled then
          * the class net.sf.saxon.TransformerFactoryImpl. You would need to add
          * Saxon to the classpath.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder saxon(String saxon) {
             setProperty("saxon", saxon);
@@ -196,8 +222,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder transformerCacheSize(
                 int transformerCacheSize) {
@@ -207,8 +235,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default XsltEndpointBuilder transformerCacheSize(
                 String transformerCacheSize) {
@@ -229,8 +259,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -240,8 +272,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -251,8 +285,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * To use a custom org.xml.sax.EntityResolver with
          * javax.xml.transform.sax.SAXSource.
-         * The option is a <code>org.xml.sax.EntityResolver</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>org.xml.sax.EntityResolver</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder entityResolver(Object entityResolver) {
             setProperty("entityResolver", entityResolver);
@@ -261,9 +297,11 @@ public interface XsltEndpointBuilderFactory {
         /**
          * To use a custom org.xml.sax.EntityResolver with
          * javax.xml.transform.sax.SAXSource.
+         * 
          * The option will be converted to a
          * <code>org.xml.sax.EntityResolver</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder entityResolver(String entityResolver) {
             setProperty("entityResolver", entityResolver);
@@ -275,8 +313,10 @@ public interface XsltEndpointBuilderFactory {
          * default error listener which captures any errors or fatal errors and
          * store information on the Exchange as properties is not in use. So
          * only use this option for special use-cases.
-         * The option is a <code>javax.xml.transform.ErrorListener</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>javax.xml.transform.ErrorListener</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder errorListener(Object errorListener) {
             setProperty("errorListener", errorListener);
@@ -288,9 +328,11 @@ public interface XsltEndpointBuilderFactory {
          * default error listener which captures any errors or fatal errors and
          * store information on the Exchange as properties is not in use. So
          * only use this option for special use-cases.
+         * 
          * The option will be converted to a
          * <code>javax.xml.transform.ErrorListener</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder errorListener(String errorListener) {
             setProperty("errorListener", errorListener);
@@ -300,10 +342,12 @@ public interface XsltEndpointBuilderFactory {
          * Allows you to use a custom
          * org.apache.camel.builder.xml.ResultHandlerFactory which is capable of
          * using custom org.apache.camel.builder.xml.ResultHandler types.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 Object resultHandlerFactory) {
@@ -314,10 +358,12 @@ public interface XsltEndpointBuilderFactory {
          * Allows you to use a custom
          * org.apache.camel.builder.xml.ResultHandlerFactory which is capable of
          * using custom org.apache.camel.builder.xml.ResultHandler types.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
@@ -326,8 +372,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * To use a custom Saxon configuration.
-         * The option is a <code>java.lang.Object</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder saxonConfiguration(
                 Object saxonConfiguration) {
@@ -336,8 +384,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * To use a custom Saxon configuration.
+         * 
          * The option will be converted to a <code>java.lang.Object</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder saxonConfiguration(
                 String saxonConfiguration) {
@@ -349,9 +399,11 @@ public interface XsltEndpointBuilderFactory {
          * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
          * camel-saxon to the classpath. The function is looked up in the
          * registry, where you can comma to separate multiple values to lookup.
-         * The option is a <code>java.util.List&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
                 List<Object> saxonExtensionFunctions) {
@@ -363,9 +415,11 @@ public interface XsltEndpointBuilderFactory {
          * net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add
          * camel-saxon to the classpath. The function is looked up in the
          * registry, where you can comma to separate multiple values to lookup.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder saxonExtensionFunctions(
                 String saxonExtensionFunctions) {
@@ -375,8 +429,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -385,8 +441,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -394,9 +452,11 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * To use a custom XSLT transformer factory.
-         * The option is a <code>javax.xml.transform.TransformerFactory</code>
+         * 
+         * The option is a: <code>javax.xml.transform.TransformerFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
                 Object transformerFactory) {
@@ -405,9 +465,11 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * To use a custom XSLT transformer factory.
+         * 
          * The option will be converted to a
          * <code>javax.xml.transform.TransformerFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactory(
                 String transformerFactory) {
@@ -417,8 +479,10 @@ public interface XsltEndpointBuilderFactory {
         /**
          * To use a custom XSLT transformer factory, specified as a FQN class
          * name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder transformerFactoryClass(
                 String transformerFactoryClass) {
@@ -427,8 +491,10 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * To use a custom javax.xml.transform.URIResolver.
-         * The option is a <code>javax.xml.transform.URIResolver</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder uriResolver(Object uriResolver) {
             setProperty("uriResolver", uriResolver);
@@ -436,9 +502,11 @@ public interface XsltEndpointBuilderFactory {
         }
         /**
          * To use a custom javax.xml.transform.URIResolver.
+         * 
          * The option will be converted to a
          * <code>javax.xml.transform.URIResolver</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedXsltEndpointBuilder uriResolver(String uriResolver) {
             setProperty("uriResolver", uriResolver);

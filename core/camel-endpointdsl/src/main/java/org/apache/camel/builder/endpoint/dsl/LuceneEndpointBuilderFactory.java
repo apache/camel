@@ -40,8 +40,10 @@ public interface LuceneEndpointBuilderFactory {
         }
         /**
          * The URL to the lucene server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -49,9 +51,11 @@ public interface LuceneEndpointBuilderFactory {
         }
         /**
          * Operation to do such as insert or query.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.lucene.LuceneOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder operation(LuceneOperation operation) {
             setProperty("operation", operation);
@@ -59,9 +63,11 @@ public interface LuceneEndpointBuilderFactory {
         }
         /**
          * Operation to do such as insert or query.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.lucene.LuceneOperation</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -73,9 +79,11 @@ public interface LuceneEndpointBuilderFactory {
          * for analyzer can be any class that extends the abstract class
          * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of
          * analyzers out of the box.
-         * The option is a <code>org.apache.lucene.analysis.Analyzer</code>
+         * 
+         * The option is a: <code>org.apache.lucene.analysis.Analyzer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder analyzer(Object analyzer) {
             setProperty("analyzer", analyzer);
@@ -87,9 +95,11 @@ public interface LuceneEndpointBuilderFactory {
          * for analyzer can be any class that extends the abstract class
          * org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of
          * analyzers out of the box.
+         * 
          * The option will be converted to a
          * <code>org.apache.lucene.analysis.Analyzer</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder analyzer(String analyzer) {
             setProperty("analyzer", analyzer);
@@ -98,8 +108,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer.
-         * The option is a <code>java.io.File</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.io.File</code> type.
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder indexDir(File indexDir) {
             setProperty("indexDir", indexDir);
@@ -108,8 +120,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * A file system directory in which index files are created upon
          * analysis of the document by the specified analyzer.
+         * 
          * The option will be converted to a <code>java.io.File</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder indexDir(String indexDir) {
             setProperty("indexDir", indexDir);
@@ -117,8 +131,10 @@ public interface LuceneEndpointBuilderFactory {
         }
         /**
          * An integer value that limits the result set of the search operation.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder maxHits(int maxHits) {
             setProperty("maxHits", maxHits);
@@ -126,8 +142,10 @@ public interface LuceneEndpointBuilderFactory {
         }
         /**
          * An integer value that limits the result set of the search operation.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder maxHits(String maxHits) {
             setProperty("maxHits", maxHits);
@@ -136,8 +154,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
-         * The option is a <code>java.io.File</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.io.File</code> type.
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder srcDir(File srcDir) {
             setProperty("srcDir", srcDir);
@@ -146,8 +166,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * An optional directory containing files to be used to be analyzed and
          * added to the index at producer startup.
+         * 
          * The option will be converted to a <code>java.io.File</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LuceneEndpointBuilder srcDir(String srcDir) {
             setProperty("srcDir", srcDir);
@@ -167,8 +189,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -178,8 +202,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -189,8 +215,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -199,8 +227,10 @@ public interface LuceneEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

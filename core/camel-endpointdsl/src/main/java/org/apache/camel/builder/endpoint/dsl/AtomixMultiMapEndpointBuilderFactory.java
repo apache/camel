@@ -45,8 +45,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The distributed resource name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder resourceName(String resourceName) {
             setProperty("resourceName", resourceName);
@@ -54,8 +56,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
-         * The option is a <code>io.atomix.AtomixClient</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
@@ -63,9 +67,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
+         * 
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
@@ -73,8 +79,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The Atomix configuration uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder configurationUri(
                 String configurationUri) {
@@ -83,9 +91,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The default action.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder defaultAction(Action defaultAction) {
             setProperty("defaultAction", defaultAction);
@@ -93,9 +103,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The default action.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder defaultAction(String defaultAction) {
             setProperty("defaultAction", defaultAction);
@@ -104,8 +116,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * The key to use if none is set in the header or to listen for events
          * for a specific key.
-         * The option is a <code>java.lang.Object</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder key(Object key) {
             setProperty("key", key);
@@ -114,8 +128,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * The key to use if none is set in the header or to listen for events
          * for a specific key.
+         * 
          * The option will be converted to a <code>java.lang.Object</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder key(String key) {
             setProperty("key", key);
@@ -123,9 +139,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
@@ -133,9 +151,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
@@ -143,8 +163,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The header that wil carry the result.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder resultHeader(String resultHeader) {
             setProperty("resultHeader", resultHeader);
@@ -152,9 +174,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder transport(Class<Object> transport) {
             setProperty("transport", transport);
@@ -162,9 +186,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder transport(String transport) {
             setProperty("transport", transport);
@@ -172,8 +198,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The resource ttl.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder ttl(long ttl) {
             setProperty("ttl", ttl);
@@ -181,8 +209,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The resource ttl.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixMultiMapEndpointBuilder ttl(String ttl) {
             setProperty("ttl", ttl);
@@ -202,8 +232,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -213,8 +245,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -223,8 +257,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
@@ -233,9 +269,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
@@ -244,8 +282,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
@@ -254,9 +294,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
@@ -267,8 +309,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder ephemeral(
                 boolean ephemeral) {
@@ -279,8 +323,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder ephemeral(String ephemeral) {
             setProperty("ephemeral", ephemeral);
@@ -288,8 +334,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
-         * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
@@ -298,9 +347,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
+         * 
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder readConsistency(
                 String readConsistency) {
@@ -309,9 +360,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
@@ -320,10 +373,12 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
@@ -332,9 +387,11 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
@@ -343,10 +400,12 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder resourceOptions(
                 String resourceOptions) {
@@ -356,8 +415,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -367,8 +428,10 @@ public interface AtomixMultiMapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder synchronous(
                 String synchronous) {

@@ -44,8 +44,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -53,8 +55,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
@@ -62,9 +66,11 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default PgEventEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -72,8 +78,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * The database name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointConsumerBuilder database(String database) {
             setProperty("database", database);
@@ -81,8 +89,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * The channel name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointConsumerBuilder channel(String channel) {
             setProperty("channel", channel);
@@ -91,8 +101,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
-         * The option is a <code>javax.sql.DataSource</code> type.
-         * @group common
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointConsumerBuilder datasource(Object datasource) {
             setProperty("datasource", datasource);
@@ -101,9 +113,11 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
+         * 
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default PgEventEndpointConsumerBuilder datasource(String datasource) {
             setProperty("datasource", datasource);
@@ -117,8 +131,10 @@ public interface PgEventEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -133,8 +149,10 @@ public interface PgEventEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -143,8 +161,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Password for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default PgEventEndpointConsumerBuilder pass(String pass) {
             setProperty("pass", pass);
@@ -152,8 +172,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Username for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default PgEventEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
@@ -176,9 +198,11 @@ public interface PgEventEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -190,9 +214,11 @@ public interface PgEventEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -201,8 +227,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -211,9 +239,11 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -223,8 +253,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -234,8 +266,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -245,8 +279,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -256,8 +292,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -277,8 +315,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -286,8 +326,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
@@ -295,9 +337,11 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default PgEventEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -305,8 +349,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * The database name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointProducerBuilder database(String database) {
             setProperty("database", database);
@@ -314,8 +360,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * The channel name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointProducerBuilder channel(String channel) {
             setProperty("channel", channel);
@@ -324,8 +372,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
-         * The option is a <code>javax.sql.DataSource</code> type.
-         * @group common
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointProducerBuilder datasource(Object datasource) {
             setProperty("datasource", datasource);
@@ -334,9 +384,11 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
+         * 
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default PgEventEndpointProducerBuilder datasource(String datasource) {
             setProperty("datasource", datasource);
@@ -352,8 +404,10 @@ public interface PgEventEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -370,8 +424,10 @@ public interface PgEventEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -380,8 +436,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Password for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default PgEventEndpointProducerBuilder pass(String pass) {
             setProperty("pass", pass);
@@ -389,8 +447,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Username for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default PgEventEndpointProducerBuilder user(String user) {
             setProperty("user", user);
@@ -411,8 +471,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -422,8 +484,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -433,8 +497,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -444,8 +510,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -465,8 +533,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -474,8 +544,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointBuilder port(Integer port) {
             setProperty("port", port);
@@ -483,9 +555,11 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * To connect using hostname and port to the database.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default PgEventEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -493,8 +567,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * The database name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointBuilder database(String database) {
             setProperty("database", database);
@@ -502,8 +578,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * The channel name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointBuilder channel(String channel) {
             setProperty("channel", channel);
@@ -512,8 +590,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
-         * The option is a <code>javax.sql.DataSource</code> type.
-         * @group common
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: common
          */
         default PgEventEndpointBuilder datasource(Object datasource) {
             setProperty("datasource", datasource);
@@ -522,9 +602,11 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
+         * 
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default PgEventEndpointBuilder datasource(String datasource) {
             setProperty("datasource", datasource);
@@ -532,8 +614,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Password for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default PgEventEndpointBuilder pass(String pass) {
             setProperty("pass", pass);
@@ -541,8 +625,10 @@ public interface PgEventEndpointBuilderFactory {
         }
         /**
          * Username for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default PgEventEndpointBuilder user(String user) {
             setProperty("user", user);
@@ -562,8 +648,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -573,8 +661,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -584,8 +674,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -594,8 +686,10 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

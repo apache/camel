@@ -50,8 +50,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the SQL query to perform. You can externalize the query by using
          * file: or classpath: as prefix and specify the location of the file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
@@ -59,8 +61,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether to allow using named parameters in the queries.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
@@ -69,8 +73,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether to allow using named parameters in the queries.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder allowNamedParameters(
                 String allowNamedParameters) {
@@ -79,8 +85,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
-         * The option is a <code>javax.sql.DataSource</code> type.
-         * @group common
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
@@ -88,9 +96,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
+         * 
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
@@ -99,8 +109,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the reference to a DataSource to lookup from the registry, to
          * use for communicating with the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default SqlEndpointConsumerBuilder dataSourceRef(String dataSourceRef) {
@@ -110,8 +122,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
@@ -123,8 +137,10 @@ public interface SqlEndpointBuilderFactory {
          * message body, any existing content in the message body is discarded.
          * If outputHeader is set, the value is used as the name of the header
          * to store the query result and the original message body is preserved.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
@@ -141,9 +157,11 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
@@ -160,9 +178,11 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
@@ -173,8 +193,10 @@ public interface SqlEndpointBuilderFactory {
          * (if the body is a String type), to be inserted at # placeholders.
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
-         * The option is a <code>char</code> type.
-         * @group common
+         * 
+         * The option is a: <code>char</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder separator(char separator) {
             setProperty("separator", separator);
@@ -185,8 +207,10 @@ public interface SqlEndpointBuilderFactory {
          * (if the body is a String type), to be inserted at # placeholders.
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
+         * 
          * The option will be converted to a <code>char</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointConsumerBuilder separator(String separator) {
             setProperty("separator", separator);
@@ -194,8 +218,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to break batch if onConsume failed.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 boolean breakBatchOnConsumeFail) {
@@ -204,8 +230,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets whether to break batch if onConsume failed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
                 String breakBatchOnConsumeFail) {
@@ -220,8 +248,10 @@ public interface SqlEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -236,8 +266,10 @@ public interface SqlEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -246,8 +278,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets an expected update count to validate when using onConsume.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder expectedUpdateCount(
                 int expectedUpdateCount) {
@@ -256,8 +290,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets an expected update count to validate when using onConsume.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder expectedUpdateCount(
                 String expectedUpdateCount) {
@@ -266,8 +302,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the maximum number of messages to poll.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -276,8 +314,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the maximum number of messages to poll.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -288,8 +328,10 @@ public interface SqlEndpointBuilderFactory {
          * After processing each row then this query can be executed, if the
          * Exchange was processed successfully, for example to mark the row as
          * processed. The query can have parameter.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder onConsume(String onConsume) {
             setProperty("onConsume", onConsume);
@@ -298,8 +340,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * After processing the entire batch, this query can be executed to bulk
          * update rows etc. The query cannot have parameters.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder onConsumeBatchComplete(
                 String onConsumeBatchComplete) {
@@ -310,8 +354,10 @@ public interface SqlEndpointBuilderFactory {
          * After processing each row then this query can be executed, if the
          * Exchange failed, for example to mark the row as failed. The query can
          * have parameter.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder onConsumeFailed(
                 String onConsumeFailed) {
@@ -321,8 +367,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether empty resultset should be allowed to be sent to the next
          * hop. Defaults to false. So the empty resultset will be filtered out.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder routeEmptyResultSet(
                 boolean routeEmptyResultSet) {
@@ -332,8 +380,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether empty resultset should be allowed to be sent to the next
          * hop. Defaults to false. So the empty resultset will be filtered out.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder routeEmptyResultSet(
                 String routeEmptyResultSet) {
@@ -343,8 +393,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -354,8 +406,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -366,8 +420,10 @@ public interface SqlEndpointBuilderFactory {
          * Enables or disables transaction. If enabled then if processing an
          * exchange failed then the consumer break out processing any further
          * exchanges to cause a rollback eager.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
@@ -377,8 +433,10 @@ public interface SqlEndpointBuilderFactory {
          * Enables or disables transaction. If enabled then if processing an
          * exchange failed then the consumer break out processing any further
          * exchanges to cause a rollback eager.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
@@ -387,8 +445,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets how resultset should be delivered to route. Indicates delivery
          * as either a list or individual object. defaults to true.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder useIterator(boolean useIterator) {
             setProperty("useIterator", useIterator);
@@ -397,8 +457,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets how resultset should be delivered to route. Indicates delivery
          * as either a list or individual object. defaults to true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SqlEndpointConsumerBuilder useIterator(String useIterator) {
             setProperty("useIterator", useIterator);
@@ -407,8 +469,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -418,8 +482,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -429,8 +495,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -440,8 +508,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -455,8 +525,10 @@ public interface SqlEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -470,8 +542,10 @@ public interface SqlEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -482,8 +556,10 @@ public interface SqlEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -493,8 +569,10 @@ public interface SqlEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -503,8 +581,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -513,8 +593,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -524,8 +606,10 @@ public interface SqlEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -535,8 +619,10 @@ public interface SqlEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -545,8 +631,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -556,9 +644,11 @@ public interface SqlEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -569,9 +659,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -582,9 +674,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -594,10 +688,12 @@ public interface SqlEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -607,10 +703,12 @@ public interface SqlEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -619,9 +717,11 @@ public interface SqlEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -631,10 +731,12 @@ public interface SqlEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -643,8 +745,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder startScheduler(boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -652,8 +756,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -661,8 +767,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -670,9 +778,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -681,8 +791,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -691,8 +803,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SqlEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -714,9 +828,11 @@ public interface SqlEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -728,9 +844,11 @@ public interface SqlEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -739,8 +857,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -749,9 +869,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -763,9 +885,11 @@ public interface SqlEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -777,9 +901,11 @@ public interface SqlEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -790,10 +916,12 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlProcessingStrategy to execute
          * queries when the consumer has processed the rows/batch.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder processingStrategy(
                 Object processingStrategy) {
@@ -804,10 +932,12 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlProcessingStrategy to execute
          * queries when the consumer has processed the rows/batch.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlProcessingStrategy</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSqlEndpointConsumerBuilder processingStrategy(
                 String processingStrategy) {
@@ -821,8 +951,10 @@ public interface SqlEndpointBuilderFactory {
          * this is false then the populateStatement is only invoked if there is
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
@@ -836,8 +968,10 @@ public interface SqlEndpointBuilderFactory {
          * this is false then the populateStatement is only invoked if there is
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
@@ -847,8 +981,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -858,8 +994,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -871,8 +1009,10 @@ public interface SqlEndpointBuilderFactory {
          * parameters to replace instead of querying via JDBC metadata API. This
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder parametersCount(
                 int parametersCount) {
@@ -884,8 +1024,10 @@ public interface SqlEndpointBuilderFactory {
          * parameters to replace instead of querying via JDBC metadata API. This
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder parametersCount(
                 String parametersCount) {
@@ -896,8 +1038,10 @@ public interface SqlEndpointBuilderFactory {
          * Specifies a character that will be replaced to in SQL query. Notice,
          * that it is simple String.replaceAll() operation and no SQL parsing is
          * involved (quoted strings will also change).
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder placeholder(
                 String placeholder) {
@@ -908,9 +1052,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlPrepareStatementStrategy to control
          * preparation of the query and prepared statement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
@@ -921,9 +1067,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlPrepareStatementStrategy to control
          * preparation of the query and prepared statement.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
@@ -933,8 +1081,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -944,8 +1094,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -954,9 +1106,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
@@ -965,10 +1119,12 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder templateOptions(
                 String templateOptions) {
@@ -978,8 +1134,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
                 boolean usePlaceholder) {
@@ -989,8 +1147,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
                 String usePlaceholder) {
@@ -1011,8 +1171,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the SQL query to perform. You can externalize the query by using
          * file: or classpath: as prefix and specify the location of the file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder query(String query) {
             setProperty("query", query);
@@ -1020,8 +1182,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether to allow using named parameters in the queries.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
@@ -1030,8 +1194,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether to allow using named parameters in the queries.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder allowNamedParameters(
                 String allowNamedParameters) {
@@ -1040,8 +1206,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
-         * The option is a <code>javax.sql.DataSource</code> type.
-         * @group common
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
@@ -1049,9 +1217,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
+         * 
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
@@ -1060,8 +1230,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the reference to a DataSource to lookup from the registry, to
          * use for communicating with the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default SqlEndpointProducerBuilder dataSourceRef(String dataSourceRef) {
@@ -1071,8 +1243,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
@@ -1084,8 +1258,10 @@ public interface SqlEndpointBuilderFactory {
          * message body, any existing content in the message body is discarded.
          * If outputHeader is set, the value is used as the name of the header
          * to store the query result and the original message body is preserved.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
@@ -1102,9 +1278,11 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
@@ -1121,9 +1299,11 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
@@ -1134,8 +1314,10 @@ public interface SqlEndpointBuilderFactory {
          * (if the body is a String type), to be inserted at # placeholders.
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
-         * The option is a <code>char</code> type.
-         * @group common
+         * 
+         * The option is a: <code>char</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder separator(char separator) {
             setProperty("separator", separator);
@@ -1146,8 +1328,10 @@ public interface SqlEndpointBuilderFactory {
          * (if the body is a String type), to be inserted at # placeholders.
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
+         * 
          * The option will be converted to a <code>char</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointProducerBuilder separator(String separator) {
             setProperty("separator", separator);
@@ -1155,8 +1339,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Enables or disables batch mode.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder batch(boolean batch) {
             setProperty("batch", batch);
@@ -1164,8 +1350,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Enables or disables batch mode.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder batch(String batch) {
             setProperty("batch", batch);
@@ -1181,8 +1369,10 @@ public interface SqlEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1199,8 +1389,10 @@ public interface SqlEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1210,8 +1402,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * If set, will ignore the results of the SQL query and use the existing
          * IN message as the OUT message for the continuation of processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder noop(boolean noop) {
             setProperty("noop", noop);
@@ -1220,8 +1414,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * If set, will ignore the results of the SQL query and use the existing
          * IN message as the OUT message for the continuation of processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder noop(String noop) {
             setProperty("noop", noop);
@@ -1231,8 +1427,10 @@ public interface SqlEndpointBuilderFactory {
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
          * used.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder useMessageBodyForSql(
                 boolean useMessageBodyForSql) {
@@ -1243,8 +1441,10 @@ public interface SqlEndpointBuilderFactory {
          * Whether to use the message body as the SQL and then headers for
          * parameters. If this option is enabled then the SQL in the uri is not
          * used.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlEndpointProducerBuilder useMessageBodyForSql(
                 String useMessageBodyForSql) {
@@ -1269,8 +1469,10 @@ public interface SqlEndpointBuilderFactory {
          * this is false then the populateStatement is only invoked if there is
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
@@ -1284,8 +1486,10 @@ public interface SqlEndpointBuilderFactory {
          * this is false then the populateStatement is only invoked if there is
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
@@ -1295,8 +1499,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1306,8 +1512,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1319,8 +1527,10 @@ public interface SqlEndpointBuilderFactory {
          * parameters to replace instead of querying via JDBC metadata API. This
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder parametersCount(
                 int parametersCount) {
@@ -1332,8 +1542,10 @@ public interface SqlEndpointBuilderFactory {
          * parameters to replace instead of querying via JDBC metadata API. This
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder parametersCount(
                 String parametersCount) {
@@ -1344,8 +1556,10 @@ public interface SqlEndpointBuilderFactory {
          * Specifies a character that will be replaced to in SQL query. Notice,
          * that it is simple String.replaceAll() operation and no SQL parsing is
          * involved (quoted strings will also change).
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder placeholder(
                 String placeholder) {
@@ -1356,9 +1570,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlPrepareStatementStrategy to control
          * preparation of the query and prepared statement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
@@ -1369,9 +1585,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlPrepareStatementStrategy to control
          * preparation of the query and prepared statement.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
@@ -1381,8 +1599,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1392,8 +1612,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1402,9 +1624,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder templateOptions(
                 Map<String, Object> templateOptions) {
@@ -1413,10 +1637,12 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder templateOptions(
                 String templateOptions) {
@@ -1426,8 +1652,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder usePlaceholder(
                 boolean usePlaceholder) {
@@ -1437,8 +1665,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder usePlaceholder(
                 String usePlaceholder) {
@@ -1459,8 +1689,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the SQL query to perform. You can externalize the query by using
          * file: or classpath: as prefix and specify the location of the file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -1468,8 +1700,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether to allow using named parameters in the queries.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
@@ -1478,8 +1712,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Whether to allow using named parameters in the queries.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
@@ -1488,8 +1724,10 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
-         * The option is a <code>javax.sql.DataSource</code> type.
-         * @group common
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
@@ -1497,9 +1735,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
+         * 
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
@@ -1508,8 +1748,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets the reference to a DataSource to lookup from the registry, to
          * use for communicating with the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default SqlEndpointBuilder dataSourceRef(String dataSourceRef) {
@@ -1519,8 +1761,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Specify the full package and class name to use as conversion when
          * outputType=SelectOne.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder outputClass(String outputClass) {
             setProperty("outputClass", outputClass);
@@ -1532,8 +1776,10 @@ public interface SqlEndpointBuilderFactory {
          * message body, any existing content in the message body is discarded.
          * If outputHeader is set, the value is used as the name of the header
          * to store the query result and the original message body is preserved.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
@@ -1550,9 +1796,11 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder outputType(SqlOutputType outputType) {
             setProperty("outputType", outputType);
@@ -1569,9 +1817,11 @@ public interface SqlEndpointBuilderFactory {
          * setters that match the column names. It will assume your class has a
          * default constructor to create instance with. d) If the query resulted
          * in more than one rows, it throws an non-unique result exception.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
@@ -1582,8 +1832,10 @@ public interface SqlEndpointBuilderFactory {
          * (if the body is a String type), to be inserted at # placeholders.
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
-         * The option is a <code>char</code> type.
-         * @group common
+         * 
+         * The option is a: <code>char</code> type.
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder separator(char separator) {
             setProperty("separator", separator);
@@ -1594,8 +1846,10 @@ public interface SqlEndpointBuilderFactory {
          * (if the body is a String type), to be inserted at # placeholders.
          * Notice if you use named parameters, then a Map type is used instead.
          * The default value is comma.
+         * 
          * The option will be converted to a <code>char</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SqlEndpointBuilder separator(String separator) {
             setProperty("separator", separator);
@@ -1619,8 +1873,10 @@ public interface SqlEndpointBuilderFactory {
          * this is false then the populateStatement is only invoked if there is
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
                 boolean alwaysPopulateStatement) {
@@ -1634,8 +1890,10 @@ public interface SqlEndpointBuilderFactory {
          * this is false then the populateStatement is only invoked if there is
          * 1 or more expected parameters to be set; for example this avoids
          * reading the message body/headers for SQL queries with no parameters.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
                 String alwaysPopulateStatement) {
@@ -1645,8 +1903,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1656,8 +1916,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1669,8 +1931,10 @@ public interface SqlEndpointBuilderFactory {
          * parameters to replace instead of querying via JDBC metadata API. This
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder parametersCount(int parametersCount) {
             setProperty("parametersCount", parametersCount);
@@ -1681,8 +1945,10 @@ public interface SqlEndpointBuilderFactory {
          * parameters to replace instead of querying via JDBC metadata API. This
          * is useful if the JDBC vendor could not return correct parameters
          * count, then user may override instead.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder parametersCount(
                 String parametersCount) {
@@ -1693,8 +1959,10 @@ public interface SqlEndpointBuilderFactory {
          * Specifies a character that will be replaced to in SQL query. Notice,
          * that it is simple String.replaceAll() operation and no SQL parsing is
          * involved (quoted strings will also change).
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder placeholder(String placeholder) {
             setProperty("placeholder", placeholder);
@@ -1704,9 +1972,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlPrepareStatementStrategy to control
          * preparation of the query and prepared statement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
@@ -1717,9 +1987,11 @@ public interface SqlEndpointBuilderFactory {
          * Allows to plugin to use a custom
          * org.apache.camel.component.sql.SqlPrepareStatementStrategy to control
          * preparation of the query and prepared statement.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlPrepareStatementStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
@@ -1729,8 +2001,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1739,8 +2013,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -1748,9 +2024,11 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder templateOptions(
                 Map<String, Object> templateOptions) {
@@ -1759,10 +2037,12 @@ public interface SqlEndpointBuilderFactory {
         }
         /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder templateOptions(
                 String templateOptions) {
@@ -1772,8 +2052,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder usePlaceholder(boolean usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);
@@ -1782,8 +2064,10 @@ public interface SqlEndpointBuilderFactory {
         /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlEndpointBuilder usePlaceholder(String usePlaceholder) {
             setProperty("usePlaceholder", usePlaceholder);

@@ -44,8 +44,10 @@ public interface RefEndpointBuilderFactory {
         }
         /**
          * Name of endpoint to lookup in the registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RefEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -59,8 +61,10 @@ public interface RefEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RefEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,8 +79,10 @@ public interface RefEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RefEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -99,9 +105,11 @@ public interface RefEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -113,9 +121,11 @@ public interface RefEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -124,8 +134,10 @@ public interface RefEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -134,9 +146,11 @@ public interface RefEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRefEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -146,8 +160,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -157,8 +173,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -168,8 +186,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -179,8 +199,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -200,8 +222,10 @@ public interface RefEndpointBuilderFactory {
         }
         /**
          * Name of endpoint to lookup in the registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RefEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -217,8 +241,10 @@ public interface RefEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default RefEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -235,8 +261,10 @@ public interface RefEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RefEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -257,8 +285,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -268,8 +298,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -279,8 +311,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -290,8 +324,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -311,8 +347,10 @@ public interface RefEndpointBuilderFactory {
         }
         /**
          * Name of endpoint to lookup in the registry.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RefEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -332,8 +370,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -343,8 +383,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -354,8 +396,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -364,8 +408,10 @@ public interface RefEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRefEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

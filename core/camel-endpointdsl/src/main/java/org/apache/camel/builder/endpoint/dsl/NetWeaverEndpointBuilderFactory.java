@@ -40,8 +40,10 @@ public interface NetWeaverEndpointBuilderFactory {
         }
         /**
          * Url to the SAP net-weaver gateway server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default NetWeaverEndpointBuilder url(String url) {
             setProperty("url", url);
@@ -50,8 +52,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(boolean flatternMap) {
             setProperty("flatternMap", flatternMap);
@@ -60,8 +64,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * If the JSON Map contains only a single entry, then flattern by
          * storing that single entry value as the message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(String flatternMap) {
             setProperty("flatternMap", flatternMap);
@@ -70,8 +76,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Whether to return data in JSON format. If this option is false, then
          * XML is returned in Atom format.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default NetWeaverEndpointBuilder json(boolean json) {
             setProperty("json", json);
@@ -80,8 +88,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Whether to return data in JSON format. If this option is false, then
          * XML is returned in Atom format.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NetWeaverEndpointBuilder json(String json) {
             setProperty("json", json);
@@ -89,8 +99,10 @@ public interface NetWeaverEndpointBuilderFactory {
         }
         /**
          * To transform the JSON from a String to a Map in the message body.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(boolean jsonAsMap) {
             setProperty("jsonAsMap", jsonAsMap);
@@ -98,8 +110,10 @@ public interface NetWeaverEndpointBuilderFactory {
         }
         /**
          * To transform the JSON from a String to a Map in the message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(String jsonAsMap) {
             setProperty("jsonAsMap", jsonAsMap);
@@ -107,8 +121,11 @@ public interface NetWeaverEndpointBuilderFactory {
         }
         /**
          * Password for account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default NetWeaverEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -116,8 +133,11 @@ public interface NetWeaverEndpointBuilderFactory {
         }
         /**
          * Username for account.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default NetWeaverEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -137,8 +157,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -148,8 +170,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -159,8 +183,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -169,8 +195,10 @@ public interface NetWeaverEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

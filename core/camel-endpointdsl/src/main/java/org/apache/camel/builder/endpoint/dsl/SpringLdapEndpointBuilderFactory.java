@@ -42,8 +42,10 @@ public interface SpringLdapEndpointBuilderFactory {
         }
         /**
          * Name of the Spring LDAP Template bean.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SpringLdapEndpointBuilder templateName(String templateName) {
             setProperty("templateName", templateName);
@@ -51,10 +53,13 @@ public interface SpringLdapEndpointBuilderFactory {
         }
         /**
          * The LDAP operation to be performed.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.springldap.LdapOperation</code>
          * type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default SpringLdapEndpointBuilder operation(LdapOperation operation) {
             setProperty("operation", operation);
@@ -62,10 +67,13 @@ public interface SpringLdapEndpointBuilderFactory {
         }
         /**
          * The LDAP operation to be performed.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.springldap.LdapOperation</code>
          * type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default SpringLdapEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -73,8 +81,10 @@ public interface SpringLdapEndpointBuilderFactory {
         }
         /**
          * The scope of the search operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SpringLdapEndpointBuilder scope(String scope) {
             setProperty("scope", scope);
@@ -94,8 +104,10 @@ public interface SpringLdapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -105,8 +117,10 @@ public interface SpringLdapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -116,8 +130,10 @@ public interface SpringLdapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -127,8 +143,10 @@ public interface SpringLdapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

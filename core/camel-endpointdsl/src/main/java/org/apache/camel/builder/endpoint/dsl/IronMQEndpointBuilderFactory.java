@@ -50,8 +50,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * The name of the IronMQ queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder queueName(String queueName) {
             setProperty("queueName", queueName);
@@ -59,8 +61,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
-         * The option is a <code>io.iron.ironmq.Client</code> type.
-         * @group common
+         * 
+         * The option is a: <code>io.iron.ironmq.Client</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder client(Object client) {
             setProperty("client", client);
@@ -68,9 +72,11 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
+         * 
          * The option will be converted to a <code>io.iron.ironmq.Client</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder client(String client) {
             setProperty("client", client);
@@ -80,8 +86,10 @@ public interface IronMQEndpointBuilderFactory {
          * IronMq Cloud url. Urls for public clusters:
          * https://mq-aws-us-east-1-1.iron.io (US) and
          * https://mq-aws-eu-west-1-1.iron.io (EU).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder ironMQCloud(String ironMQCloud) {
             setProperty("ironMQCloud", ironMQCloud);
@@ -92,8 +100,10 @@ public interface IronMQEndpointBuilderFactory {
          * will add the Camel headers to the Iron MQ message as a json payload
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder preserveHeaders(
                 boolean preserveHeaders) {
@@ -105,8 +115,10 @@ public interface IronMQEndpointBuilderFactory {
          * will add the Camel headers to the Iron MQ message as a json payload
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder preserveHeaders(
                 String preserveHeaders) {
@@ -115,8 +127,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * IronMQ projectId.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -124,8 +138,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * IronMQ token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointConsumerBuilder token(String token) {
             setProperty("token", token);
@@ -136,8 +152,10 @@ public interface IronMQEndpointBuilderFactory {
          * of api requests since messages are deleted in one request, instead of
          * one pr. exchange. If enabled care should be taken that the consumer
          * is idempotent when processing exchanges.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder batchDelete(boolean batchDelete) {
             setProperty("batchDelete", batchDelete);
@@ -148,8 +166,10 @@ public interface IronMQEndpointBuilderFactory {
          * of api requests since messages are deleted in one request, instead of
          * one pr. exchange. If enabled care should be taken that the consumer
          * is idempotent when processing exchanges.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder batchDelete(String batchDelete) {
             setProperty("batchDelete", batchDelete);
@@ -163,8 +183,10 @@ public interface IronMQEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -179,8 +201,10 @@ public interface IronMQEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -189,8 +213,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * The number of concurrent consumers.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -199,8 +225,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * The number of concurrent consumers.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -209,8 +237,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Number of messages to poll pr. call. Maximum is 100.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -219,8 +249,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Number of messages to poll pr. call. Maximum is 100.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -230,8 +262,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -241,8 +275,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -251,8 +287,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * After timeout (in seconds), item will be placed back onto the queue.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -260,8 +298,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * After timeout (in seconds), item will be placed back onto the queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -270,8 +310,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Time in seconds to wait for a message to become available. This
          * enables long polling. Default is 0 (does not wait), maximum is 30.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder wait(int wait) {
             setProperty("wait", wait);
@@ -280,8 +322,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Time in seconds to wait for a message to become available. This
          * enables long polling. Default is 0 (does not wait), maximum is 30.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default IronMQEndpointConsumerBuilder wait(String wait) {
             setProperty("wait", wait);
@@ -290,8 +334,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -301,8 +347,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -312,8 +360,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -323,8 +373,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -338,8 +390,10 @@ public interface IronMQEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -353,8 +407,10 @@ public interface IronMQEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -365,8 +421,10 @@ public interface IronMQEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -376,8 +434,10 @@ public interface IronMQEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -386,8 +446,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -396,8 +458,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -407,8 +471,10 @@ public interface IronMQEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -418,8 +484,10 @@ public interface IronMQEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -428,8 +496,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -439,9 +509,11 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -452,9 +524,11 @@ public interface IronMQEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -465,9 +539,11 @@ public interface IronMQEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -477,10 +553,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -490,10 +568,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -502,9 +582,11 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -514,10 +596,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -526,8 +610,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -536,8 +622,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -546,8 +634,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -555,9 +645,11 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -566,8 +658,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -577,8 +671,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -600,9 +696,11 @@ public interface IronMQEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -614,9 +712,11 @@ public interface IronMQEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -625,8 +725,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -635,9 +737,11 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -649,9 +753,11 @@ public interface IronMQEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -663,9 +769,11 @@ public interface IronMQEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -675,8 +783,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -686,8 +796,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -697,8 +809,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -708,8 +822,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -729,8 +845,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * The name of the IronMQ queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder queueName(String queueName) {
             setProperty("queueName", queueName);
@@ -738,8 +856,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
-         * The option is a <code>io.iron.ironmq.Client</code> type.
-         * @group common
+         * 
+         * The option is a: <code>io.iron.ironmq.Client</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder client(Object client) {
             setProperty("client", client);
@@ -747,9 +867,11 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
+         * 
          * The option will be converted to a <code>io.iron.ironmq.Client</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder client(String client) {
             setProperty("client", client);
@@ -759,8 +881,10 @@ public interface IronMQEndpointBuilderFactory {
          * IronMq Cloud url. Urls for public clusters:
          * https://mq-aws-us-east-1-1.iron.io (US) and
          * https://mq-aws-eu-west-1-1.iron.io (EU).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder ironMQCloud(String ironMQCloud) {
             setProperty("ironMQCloud", ironMQCloud);
@@ -771,8 +895,10 @@ public interface IronMQEndpointBuilderFactory {
          * will add the Camel headers to the Iron MQ message as a json payload
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder preserveHeaders(
                 boolean preserveHeaders) {
@@ -784,8 +910,10 @@ public interface IronMQEndpointBuilderFactory {
          * will add the Camel headers to the Iron MQ message as a json payload
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder preserveHeaders(
                 String preserveHeaders) {
@@ -794,8 +922,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * IronMQ projectId.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -803,8 +933,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * IronMQ token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointProducerBuilder token(String token) {
             setProperty("token", token);
@@ -820,8 +952,10 @@ public interface IronMQEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default IronMQEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -838,8 +972,10 @@ public interface IronMQEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default IronMQEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -849,8 +985,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The item will not be available on the queue until this many seconds
          * have passed. Default is 0 seconds.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
                 int visibilityDelay) {
@@ -860,8 +998,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The item will not be available on the queue until this many seconds
          * have passed. Default is 0 seconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
                 String visibilityDelay) {
@@ -882,8 +1022,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -893,8 +1035,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -904,8 +1048,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -915,8 +1061,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -936,8 +1084,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * The name of the IronMQ queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder queueName(String queueName) {
             setProperty("queueName", queueName);
@@ -945,8 +1095,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
-         * The option is a <code>io.iron.ironmq.Client</code> type.
-         * @group common
+         * 
+         * The option is a: <code>io.iron.ironmq.Client</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder client(Object client) {
             setProperty("client", client);
@@ -954,9 +1106,11 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
+         * 
          * The option will be converted to a <code>io.iron.ironmq.Client</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder client(String client) {
             setProperty("client", client);
@@ -966,8 +1120,10 @@ public interface IronMQEndpointBuilderFactory {
          * IronMq Cloud url. Urls for public clusters:
          * https://mq-aws-us-east-1-1.iron.io (US) and
          * https://mq-aws-eu-west-1-1.iron.io (EU).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder ironMQCloud(String ironMQCloud) {
             setProperty("ironMQCloud", ironMQCloud);
@@ -978,8 +1134,10 @@ public interface IronMQEndpointBuilderFactory {
          * will add the Camel headers to the Iron MQ message as a json payload
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder preserveHeaders(boolean preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
@@ -990,8 +1148,10 @@ public interface IronMQEndpointBuilderFactory {
          * will add the Camel headers to the Iron MQ message as a json payload
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder preserveHeaders(String preserveHeaders) {
             setProperty("preserveHeaders", preserveHeaders);
@@ -999,8 +1159,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * IronMQ projectId.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -1008,8 +1170,10 @@ public interface IronMQEndpointBuilderFactory {
         }
         /**
          * IronMQ token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default IronMQEndpointBuilder token(String token) {
             setProperty("token", token);
@@ -1029,8 +1193,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1040,8 +1206,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1051,8 +1219,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1061,8 +1231,10 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

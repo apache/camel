@@ -42,8 +42,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         }
         /**
          * The name of the cache.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -51,8 +53,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HazelcastAtomicnumberEndpointBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
@@ -60,8 +64,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastAtomicnumberEndpointBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
@@ -70,10 +76,12 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -83,10 +91,12 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -96,9 +106,11 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
-         * The option is a <code>com.hazelcast.core.HazelcastInstance</code>
+         * 
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -108,9 +120,11 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -121,8 +135,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * The hazelcast instance reference name which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -131,8 +147,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -141,8 +159,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -152,8 +172,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -163,8 +185,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -176,8 +200,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
@@ -188,8 +214,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder pollTimeout(
                 String pollTimeout) {
@@ -200,8 +228,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder transacted(
                 boolean transacted) {
@@ -212,8 +242,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder transacted(
                 String transacted) {
@@ -223,8 +255,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder transferExchange(
                 boolean transferExchange) {
@@ -234,8 +268,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastAtomicnumberEndpointBuilder transferExchange(
                 String transferExchange) {
@@ -256,8 +292,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -267,8 +305,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -278,8 +318,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -289,8 +331,10 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder synchronous(
                 String synchronous) {

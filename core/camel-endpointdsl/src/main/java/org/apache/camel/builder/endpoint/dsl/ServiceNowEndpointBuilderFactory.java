@@ -43,8 +43,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The ServiceNow instance name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder instanceName(String instanceName) {
             setProperty("instanceName", instanceName);
@@ -55,8 +57,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * indicator Display field is selected. Set this parameter to all to
          * return scorecards with any Display field value. This parameter is
          * true by default.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder display(String display) {
             setProperty("display", display);
@@ -65,8 +69,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Return the display value (true), actual value (false), or both (all)
          * for reference fields (default: false).
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder displayValue(String displayValue) {
             setProperty("displayValue", displayValue);
@@ -75,8 +81,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * True to exclude Table API links for reference fields (default:
          * false).
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder excludeReferenceLink(
                 Boolean excludeReferenceLink) {
@@ -86,9 +94,11 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * True to exclude Table API links for reference fields (default:
          * false).
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder excludeReferenceLink(
                 String excludeReferenceLink) {
@@ -98,8 +108,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Set this parameter to true to return only scorecards that are
          * favorites of the querying user.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder favorites(Boolean favorites) {
             setProperty("favorites", favorites);
@@ -108,9 +120,11 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Set this parameter to true to return only scorecards that are
          * favorites of the querying user.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder favorites(String favorites) {
             setProperty("favorites", favorites);
@@ -121,8 +135,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * for an indicator, including when an aggregate has already been
          * applied. If a value is not specified, this parameter defaults to
          * false and returns no aggregates.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeAggregates(
                 Boolean includeAggregates) {
@@ -134,9 +150,11 @@ public interface ServiceNowEndpointBuilderFactory {
          * for an indicator, including when an aggregate has already been
          * applied. If a value is not specified, this parameter defaults to
          * false and returns no aggregates.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeAggregates(
                 String includeAggregates) {
@@ -148,8 +166,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * indicator when no aggregate has been applied. If a value is not
          * specified, this parameter defaults to false and returns no
          * aggregates.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableAggregates(
                 Boolean includeAvailableAggregates) {
@@ -161,9 +181,11 @@ public interface ServiceNowEndpointBuilderFactory {
          * indicator when no aggregate has been applied. If a value is not
          * specified, this parameter defaults to false and returns no
          * aggregates.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableAggregates(
                 String includeAvailableAggregates) {
@@ -174,8 +196,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return all available breakdowns for an
          * indicator. If a value is not specified, this parameter defaults to
          * false and returns no breakdowns.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableBreakdowns(
                 Boolean includeAvailableBreakdowns) {
@@ -186,9 +210,11 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return all available breakdowns for an
          * indicator. If a value is not specified, this parameter defaults to
          * false and returns no breakdowns.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeAvailableBreakdowns(
                 String includeAvailableBreakdowns) {
@@ -199,8 +225,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return all notes associated with the
          * score. The note element contains the note text as well as the author
          * and timestamp when the note was added.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeScoreNotes(
                 Boolean includeScoreNotes) {
@@ -211,9 +239,11 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return all notes associated with the
          * score. The note element contains the note text as well as the author
          * and timestamp when the note was added.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeScoreNotes(
                 String includeScoreNotes) {
@@ -224,8 +254,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return all scores for a scorecard. If a
          * value is not specified, this parameter defaults to false and returns
          * only the most recent score value.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeScores(Boolean includeScores) {
             setProperty("includeScores", includeScores);
@@ -235,9 +267,11 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to return all scores for a scorecard. If a
          * value is not specified, this parameter defaults to false and returns
          * only the most recent score value.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder includeScores(String includeScores) {
             setProperty("includeScores", includeScores);
@@ -245,8 +279,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * True to set raw value of input fields (default: false).
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder inputDisplayValue(
                 Boolean inputDisplayValue) {
@@ -255,9 +291,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * True to set raw value of input fields (default: false).
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder inputDisplayValue(
                 String inputDisplayValue) {
@@ -267,8 +305,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Set this parameter to true to return only scorecards for key
          * indicators.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder key(Boolean key) {
             setProperty("key", key);
@@ -277,9 +317,11 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Set this parameter to true to return only scorecards for key
          * indicators.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder key(String key) {
             setProperty("key", key);
@@ -287,9 +329,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Defines both request and response models.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder models(
                 Map<String, Class<Object>> models) {
@@ -298,10 +342,12 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Defines both request and response models.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder models(String models) {
             setProperty("models", models);
@@ -310,8 +356,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Enter the maximum number of scorecards each query can return. By
          * default this value is 10, and the maximum is 100.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder perPage(Integer perPage) {
             setProperty("perPage", perPage);
@@ -320,9 +368,11 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Enter the maximum number of scorecards each query can return. By
          * default this value is 10, and the maximum is 100.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder perPage(String perPage) {
             setProperty("perPage", perPage);
@@ -331,10 +381,12 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The ServiceNow release to target, default to Helsinki See
          * https://docs.servicenow.com.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder release(ServiceNowRelease release) {
             setProperty("release", release);
@@ -343,10 +395,12 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The ServiceNow release to target, default to Helsinki See
          * https://docs.servicenow.com.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder release(String release) {
             setProperty("release", release);
@@ -354,9 +408,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Defines the request model.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder requestModels(
                 Map<String, Class<Object>> requestModels) {
@@ -365,10 +421,12 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Defines the request model.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder requestModels(String requestModels) {
             setProperty("requestModels", requestModels);
@@ -377,8 +435,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * The default resource, can be overridden by header
          * CamelServiceNowResource.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder resource(String resource) {
             setProperty("resource", resource);
@@ -386,9 +446,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Defines the response model.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder responseModels(
                 Map<String, Class<Object>> responseModels) {
@@ -397,10 +459,12 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Defines the response model.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder responseModels(String responseModels) {
             setProperty("responseModels", responseModels);
@@ -409,8 +473,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Specify the value to use when sorting results. By default, queries
          * sort records by value.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder sortBy(String sortBy) {
             setProperty("sortBy", sortBy);
@@ -420,8 +486,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * Specify the sort direction, ascending or descending. By default,
          * queries sort records in descending order. Use sysparm_sortdir=asc to
          * sort in ascending order.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder sortDir(String sortDir) {
             setProperty("sortDir", sortDir);
@@ -429,8 +497,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * True to suppress auto generation of system fields (default: false).
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder suppressAutoSysField(
                 Boolean suppressAutoSysField) {
@@ -439,9 +509,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * True to suppress auto generation of system fields (default: false).
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder suppressAutoSysField(
                 String suppressAutoSysField) {
@@ -452,8 +524,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this value to true to remove the Link header from the response.
          * The Link header allows you to request additional pages of data when
          * the number of records matching your query exceeds the query limit.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder suppressPaginationHeader(
                 Boolean suppressPaginationHeader) {
@@ -464,9 +538,11 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this value to true to remove the Link header from the response.
          * The Link header allows you to request additional pages of data when
          * the number of records matching your query exceeds the query limit.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder suppressPaginationHeader(
                 String suppressPaginationHeader) {
@@ -475,8 +551,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The default table, can be overridden by header CamelServiceNowTable.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder table(String table) {
             setProperty("table", table);
@@ -485,8 +563,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Set this parameter to true to return only scorecards that have a
          * target.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder target(Boolean target) {
             setProperty("target", target);
@@ -495,9 +575,11 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Set this parameter to true to return only scorecards that have a
          * target.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder target(String target) {
             setProperty("target", target);
@@ -505,8 +587,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Gets only those categories whose parent is a catalog.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder topLevelOnly(Boolean topLevelOnly) {
             setProperty("topLevelOnly", topLevelOnly);
@@ -514,9 +598,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Gets only those categories whose parent is a catalog.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ServiceNowEndpointBuilder topLevelOnly(String topLevelOnly) {
             setProperty("topLevelOnly", topLevelOnly);
@@ -524,8 +610,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The proxy host name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -533,8 +621,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -542,9 +632,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -552,8 +644,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The ServiceNow REST API url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder apiUrl(String apiUrl) {
             setProperty("apiUrl", apiUrl);
@@ -561,8 +655,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * OAuth2 ClientID.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder oauthClientId(String oauthClientId) {
             setProperty("oauthClientId", oauthClientId);
@@ -570,8 +666,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * OAuth2 ClientSecret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder oauthClientSecret(
                 String oauthClientSecret) {
@@ -580,8 +678,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * OAuth token Url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder oauthTokenUrl(String oauthTokenUrl) {
             setProperty("oauthTokenUrl", oauthTokenUrl);
@@ -589,8 +689,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * ServiceNow account password, MUST be provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default ServiceNowEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -598,8 +701,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Password for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder proxyPassword(String proxyPassword) {
             setProperty("proxyPassword", proxyPassword);
@@ -607,8 +712,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Username for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder proxyUserName(String proxyUserName) {
             setProperty("proxyUserName", proxyUserName);
@@ -617,9 +724,11 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * To configure security using SSLContextParameters. See
          * http://camel.apache.org/camel-configuration-utilities.html.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -629,9 +738,11 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * To configure security using SSLContextParameters. See
          * http://camel.apache.org/camel-configuration-utilities.html.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default ServiceNowEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -640,8 +751,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * ServiceNow user account name, MUST be provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default ServiceNowEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
@@ -660,8 +774,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The ServiceNow REST API version, default latest.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
@@ -670,8 +786,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -681,8 +799,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -691,8 +811,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The date format used for Json serialization/deserialization.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder dateFormat(String dateFormat) {
             setProperty("dateFormat", dateFormat);
@@ -700,8 +822,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The date-time format used for Json serialization/deserialization.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder dateTimeFormat(
                 String dateTimeFormat) {
@@ -710,9 +834,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * To configure http-client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder httpClientPolicy(
                 Object httpClientPolicy) {
@@ -721,9 +847,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * To configure http-client.
+         * 
          * The option will be converted to a
          * <code>org.apache.cxf.transports.http.configuration.HTTPClientPolicy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder httpClientPolicy(
                 String httpClientPolicy) {
@@ -732,9 +860,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Sets Jackson's ObjectMapper to use for request/reply.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder mapper(Object mapper) {
             setProperty("mapper", mapper);
@@ -742,9 +872,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * Sets Jackson's ObjectMapper to use for request/reply.
+         * 
          * The option will be converted to a
          * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder mapper(String mapper) {
             setProperty("mapper", mapper);
@@ -752,9 +884,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * To configure proxy authentication.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
                 Object proxyAuthorizationPolicy) {
@@ -763,9 +897,11 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * To configure proxy authentication.
+         * 
          * The option will be converted to a
          * <code>org.apache.cxf.configuration.security.ProxyAuthorizationPolicy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
                 String proxyAuthorizationPolicy) {
@@ -776,8 +912,10 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to retrieve the target record when using
          * import set api. The import set result is then replaced by the target
          * record.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
                 Boolean retrieveTargetRecordOnImport) {
@@ -788,9 +926,11 @@ public interface ServiceNowEndpointBuilderFactory {
          * Set this parameter to true to retrieve the target record when using
          * import set api. The import set result is then replaced by the target
          * record.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
                 String retrieveTargetRecordOnImport) {
@@ -800,8 +940,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -811,8 +953,10 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -820,8 +964,10 @@ public interface ServiceNowEndpointBuilderFactory {
         }
         /**
          * The time format used for Json serialization/deserialization.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder timeFormat(String timeFormat) {
             setProperty("timeFormat", timeFormat);

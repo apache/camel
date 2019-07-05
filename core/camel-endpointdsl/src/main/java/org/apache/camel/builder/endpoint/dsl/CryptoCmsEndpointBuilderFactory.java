@@ -45,10 +45,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Set the Crypto operation from that supplied after the crypto scheme
          * in the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
          * Possible values: sign, verify, encrypt, or decrypt.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.crypto.cms.CryptoOperation</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CryptoCmsEndpointBuilder cryptoOperation(
                 CryptoOperation cryptoOperation) {
@@ -59,10 +61,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Set the Crypto operation from that supplied after the crypto scheme
          * in the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
          * Possible values: sign, verify, encrypt, or decrypt.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.crypto.cms.CryptoOperation</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CryptoCmsEndpointBuilder cryptoOperation(String cryptoOperation) {
             setProperty("cryptoOperation", cryptoOperation);
@@ -72,8 +76,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * The name part in the URI can be chosen by the user to distinguish
          * between different signer/verifier/encryptor/decryptor endpoints
          * within the camel context.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CryptoCmsEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -84,8 +90,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * encryptor public keys, decryptor private keys depending on the
          * operation. Use either this parameter or the parameter
          * 'keyStoreParameters'.
-         * The option is a <code>java.security.KeyStore</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.security.KeyStore</code> type.
+         * 
+         * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(KeyStore keyStore) {
             setProperty("keyStore", keyStore);
@@ -96,9 +104,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * encryptor public keys, decryptor private keys depending on the
          * operation. Use either this parameter or the parameter
          * 'keyStoreParameters'.
+         * 
          * The option will be converted to a <code>java.security.KeyStore</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(String keyStore) {
             setProperty("keyStore", keyStore);
@@ -108,9 +118,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Keystore containing signer private keys, verifier public keys,
          * encryptor public keys, decryptor private keys depending on the
          * operation. Use either this parameter or the parameter 'keystore'.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
@@ -121,9 +133,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Keystore containing signer private keys, verifier public keys,
          * encryptor public keys, decryptor private keys depending on the
          * operation. Use either this parameter or the parameter 'keystore'.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
@@ -135,8 +149,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * keys in the keystore have the same password. If not set then it is
          * assumed that the password of the private keys is given by the
          * keystore password given in the KeyStoreParameters.
-         * The option is a <code>char[]</code> type.
-         * @group decrypt
+         * 
+         * The option is a: <code>char[]</code> type.
+         * 
+         * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(Character[] password) {
             setProperty("password", password);
@@ -147,8 +163,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * keys in the keystore have the same password. If not set then it is
          * assumed that the password of the private keys is given by the
          * keystore password given in the KeyStoreParameters.
+         * 
          * The option will be converted to a <code>char[]</code> type.
-         * @group decrypt
+         * 
+         * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -157,8 +175,10 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group decrypt_verify
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: decrypt_verify
          */
         default CryptoCmsEndpointBuilder fromBase64(Boolean fromBase64) {
             setProperty("fromBase64", fromBase64);
@@ -167,9 +187,11 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group decrypt_verify
+         * 
+         * Group: decrypt_verify
          */
         default CryptoCmsEndpointBuilder fromBase64(String fromBase64) {
             setProperty("fromBase64", fromBase64);
@@ -179,8 +201,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Encryption algorithm, for example DESede/CBC/PKCS5Padding. Further
          * possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding,
          * Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding.
-         * The option is a <code>java.lang.String</code> type.
-         * @group encrypt
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder contentEncryptionAlgorithm(
                 String contentEncryptionAlgorithm) {
@@ -191,9 +215,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Provider for the originator info. See
          * https://tools.ietf.org/html/rfc5652#section-6.1. The default value is
          * null.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
-         * @group encrypt
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 Object originatorInformationProvider) {
@@ -204,9 +230,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Provider for the originator info. See
          * https://tools.ietf.org/html/rfc5652#section-6.1. The default value is
          * null.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
-         * @group encrypt
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 String originatorInformationProvider) {
@@ -216,9 +244,11 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Recipient Info: reference to a bean which implements the interface
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
-         * @group encrypt
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
             setProperty("recipient", recipient);
@@ -227,9 +257,11 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Recipient Info: reference to a bean which implements the interface
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
-         * @group encrypt
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(String recipient) {
             setProperty("recipient", recipient);
@@ -245,8 +277,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * strong encryption is enabled then for AES/CBC/PKCS5Padding and
          * Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are
          * possible.
-         * The option is a <code>int</code> type.
-         * @group encrypt
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(int secretKeyLength) {
             setProperty("secretKeyLength", secretKeyLength);
@@ -262,8 +296,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * strong encryption is enabled then for AES/CBC/PKCS5Padding and
          * Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are
          * possible.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group encrypt
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(String secretKeyLength) {
             setProperty("secretKeyLength", secretKeyLength);
@@ -274,9 +310,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * value is null which means no unprotected attribute is added to the
          * Enveloped Data object. See
          * https://tools.ietf.org/html/rfc5652#section-6.1.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
-         * @group encrypt
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 Object unprotectedAttributesGeneratorProvider) {
@@ -288,9 +326,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * value is null which means no unprotected attribute is added to the
          * Enveloped Data object. See
          * https://tools.ietf.org/html/rfc5652#section-6.1.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
-         * @group encrypt
+         * 
+         * Group: encrypt
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 String unprotectedAttributesGeneratorProvider) {
@@ -300,8 +340,10 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Indicates whether the Signed Data or Enveloped Data instance shall be
          * base 64 encoded. Default value is false.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group encrypt_sign
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: encrypt_sign
          */
         default CryptoCmsEndpointBuilder toBase64(Boolean toBase64) {
             setProperty("toBase64", toBase64);
@@ -310,9 +352,11 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Indicates whether the Signed Data or Enveloped Data instance shall be
          * base 64 encoded. Default value is false.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group encrypt_sign
+         * 
+         * Group: encrypt_sign
          */
         default CryptoCmsEndpointBuilder toBase64(String toBase64) {
             setProperty("toBase64", toBase64);
@@ -322,8 +366,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Indicates whether the signed content should be included into the
          * Signed Data instance. If false then a detached Signed Data instance
          * is created in the header CamelCryptoCmsSignedData.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group sign
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: sign
          */
         default CryptoCmsEndpointBuilder includeContent(Boolean includeContent) {
             setProperty("includeContent", includeContent);
@@ -333,9 +379,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Indicates whether the signed content should be included into the
          * Signed Data instance. If false then a detached Signed Data instance
          * is created in the header CamelCryptoCmsSignedData.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default CryptoCmsEndpointBuilder includeContent(String includeContent) {
             setProperty("includeContent", includeContent);
@@ -345,9 +393,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Signer information: reference to bean(s) which implements
          * org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values
          * can be separated by comma.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(List<Object> signer) {
             setProperty("signer", signer);
@@ -357,9 +407,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Signer information: reference to bean(s) which implements
          * org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values
          * can be separated by comma.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.sig.SignerInfo&gt;</code> type.
-         * @group sign
+         * 
+         * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(String signer) {
             setProperty("signer", signer);
@@ -370,8 +422,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * base64 encoded. Default value is false. Only relevant for detached
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group verify
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: verify
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 Boolean signedDataHeaderBase64) {
@@ -383,9 +437,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * base64 encoded. Default value is false. Only relevant for detached
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 String signedDataHeaderBase64) {
@@ -397,8 +453,10 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Data object are verified. If false then only one signature whose
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group verify
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: verify
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 Boolean verifySignaturesOfAllSigners) {
@@ -410,9 +468,11 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Data object are verified. If false then only one signature whose
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group verify
+         * 
+         * Group: verify
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 String verifySignaturesOfAllSigners) {
@@ -433,8 +493,10 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -444,8 +506,10 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -455,8 +519,10 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -465,8 +531,10 @@ public interface CryptoCmsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

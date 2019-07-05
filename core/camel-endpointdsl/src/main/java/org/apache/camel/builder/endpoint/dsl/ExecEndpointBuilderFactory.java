@@ -40,8 +40,10 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Sets the executable to be executed. The executable must not be empty
          * or null.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder executable(String executable) {
             setProperty("executable", executable);
@@ -49,8 +51,10 @@ public interface ExecEndpointBuilderFactory {
         }
         /**
          * The arguments may be one or many whitespace-separated tokens.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder args(String args) {
             setProperty("args", args);
@@ -58,9 +62,11 @@ public interface ExecEndpointBuilderFactory {
         }
         /**
          * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.exec.ExecBinding</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder binding(Object binding) {
             setProperty("binding", binding);
@@ -68,9 +74,11 @@ public interface ExecEndpointBuilderFactory {
         }
         /**
          * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.exec.ExecBinding</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder binding(String binding) {
             setProperty("binding", binding);
@@ -81,10 +89,12 @@ public interface ExecEndpointBuilderFactory {
          * Registry that customizes the command execution. The default command
          * executor utilizes the commons-exec library, which adds a shutdown
          * hook for every executed command.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(Object commandExecutor) {
             setProperty("commandExecutor", commandExecutor);
@@ -95,10 +105,12 @@ public interface ExecEndpointBuilderFactory {
          * Registry that customizes the command execution. The default command
          * executor utilizes the commons-exec library, which adds a shutdown
          * hook for every executed command.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(String commandExecutor) {
             setProperty("commandExecutor", commandExecutor);
@@ -108,8 +120,10 @@ public interface ExecEndpointBuilderFactory {
          * The name of a file, created by the executable, that should be
          * considered as its output. If no outFile is set, the standard output
          * (stdout) of the executable will be used instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder outFile(String outFile) {
             setProperty("outFile", outFile);
@@ -119,8 +133,10 @@ public interface ExecEndpointBuilderFactory {
          * The timeout, in milliseconds, after which the executable should be
          * terminated. If execution has not completed within the timeout, the
          * component will send a termination request.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -130,8 +146,10 @@ public interface ExecEndpointBuilderFactory {
          * The timeout, in milliseconds, after which the executable should be
          * terminated. If execution has not completed within the timeout, the
          * component will send a termination request.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -141,8 +159,10 @@ public interface ExecEndpointBuilderFactory {
          * A boolean indicating that when stdout is empty, this component will
          * populate the Camel Message Body with stderr. This behavior is
          * disabled (false) by default.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 boolean useStderrOnEmptyStdout) {
@@ -153,8 +173,10 @@ public interface ExecEndpointBuilderFactory {
          * A boolean indicating that when stdout is empty, this component will
          * populate the Camel Message Body with stderr. This behavior is
          * disabled (false) by default.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 String useStderrOnEmptyStdout) {
@@ -164,8 +186,10 @@ public interface ExecEndpointBuilderFactory {
         /**
          * The directory in which the command should be executed. If null, the
          * working directory of the current process will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ExecEndpointBuilder workingDir(String workingDir) {
             setProperty("workingDir", workingDir);
@@ -185,8 +209,10 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedExecEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -196,8 +222,10 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedExecEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -207,8 +235,10 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedExecEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -217,8 +247,10 @@ public interface ExecEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedExecEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

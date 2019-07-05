@@ -43,8 +43,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * The protocol to use for communicating with the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
@@ -52,8 +54,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Hostname of the running couchdb instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointConsumerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -61,8 +65,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Port number for the running couchdb instance.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -70,8 +76,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Port number for the running couchdb instance.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CouchDbEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -79,8 +87,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Name of the database to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointConsumerBuilder database(String database) {
             setProperty("database", database);
@@ -88,8 +98,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Creates the database if it does not already exist.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointConsumerBuilder createDatabase(
                 boolean createDatabase) {
@@ -98,8 +110,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Creates the database if it does not already exist.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CouchDbEndpointConsumerBuilder createDatabase(
                 String createDatabase) {
@@ -114,8 +128,10 @@ public interface CouchDbEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -130,8 +146,10 @@ public interface CouchDbEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -140,8 +158,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Document deletes are published as events.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder deletes(boolean deletes) {
             setProperty("deletes", deletes);
@@ -149,8 +169,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Document deletes are published as events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder deletes(String deletes) {
             setProperty("deletes", deletes);
@@ -158,8 +180,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * How often to send an empty message to keep socket alive in millis.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder heartbeat(long heartbeat) {
             setProperty("heartbeat", heartbeat);
@@ -167,8 +191,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * How often to send an empty message to keep socket alive in millis.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder heartbeat(String heartbeat) {
             setProperty("heartbeat", heartbeat);
@@ -177,8 +203,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Start tracking changes immediately after the given update sequence.
          * The default, null, will start monitoring from the latest sequence.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder since(String since) {
             setProperty("since", since);
@@ -189,8 +217,10 @@ public interface CouchDbEndpointBuilderFactory {
          * default, main_only, will only return the current winning revision;
          * all_docs will return all leaf revisions (including conflicts and
          * deleted former conflicts.).
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder style(String style) {
             setProperty("style", style);
@@ -198,8 +228,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Document inserts/updates are published as events.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder updates(boolean updates) {
             setProperty("updates", updates);
@@ -207,8 +239,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Document inserts/updates are published as events.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder updates(String updates) {
             setProperty("updates", updates);
@@ -216,8 +250,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Password for authenticated databases.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CouchDbEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -225,8 +261,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Username in case of authenticated databases.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CouchDbEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -248,9 +286,11 @@ public interface CouchDbEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -262,9 +302,11 @@ public interface CouchDbEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -273,8 +315,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -283,9 +327,11 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -295,8 +341,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -306,8 +354,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -317,8 +367,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -328,8 +380,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -349,8 +403,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * The protocol to use for communicating with the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
@@ -358,8 +414,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Hostname of the running couchdb instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointProducerBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -367,8 +425,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Port number for the running couchdb instance.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -376,8 +436,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Port number for the running couchdb instance.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CouchDbEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -385,8 +447,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Name of the database to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointProducerBuilder database(String database) {
             setProperty("database", database);
@@ -394,8 +458,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Creates the database if it does not already exist.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointProducerBuilder createDatabase(
                 boolean createDatabase) {
@@ -404,8 +470,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Creates the database if it does not already exist.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CouchDbEndpointProducerBuilder createDatabase(
                 String createDatabase) {
@@ -422,8 +490,10 @@ public interface CouchDbEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CouchDbEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -440,8 +510,10 @@ public interface CouchDbEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CouchDbEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -450,8 +522,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Password for authenticated databases.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CouchDbEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -459,8 +533,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Username in case of authenticated databases.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CouchDbEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -480,8 +556,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -491,8 +569,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -502,8 +582,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -513,8 +595,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -534,8 +618,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * The protocol to use for communicating with the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
@@ -543,8 +629,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Hostname of the running couchdb instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -552,8 +640,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Port number for the running couchdb instance.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -561,8 +651,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Port number for the running couchdb instance.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CouchDbEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -570,8 +662,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Name of the database to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointBuilder database(String database) {
             setProperty("database", database);
@@ -579,8 +673,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Creates the database if it does not already exist.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CouchDbEndpointBuilder createDatabase(boolean createDatabase) {
             setProperty("createDatabase", createDatabase);
@@ -588,8 +684,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Creates the database if it does not already exist.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CouchDbEndpointBuilder createDatabase(String createDatabase) {
             setProperty("createDatabase", createDatabase);
@@ -597,8 +695,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Password for authenticated databases.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CouchDbEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -606,8 +706,10 @@ public interface CouchDbEndpointBuilderFactory {
         }
         /**
          * Username in case of authenticated databases.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CouchDbEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -627,8 +729,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -638,8 +742,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -649,8 +755,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -659,8 +767,10 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

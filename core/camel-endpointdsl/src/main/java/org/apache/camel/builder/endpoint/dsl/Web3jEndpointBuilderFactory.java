@@ -47,8 +47,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Sets the node address used to communicate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder nodeAddress(String nodeAddress) {
             setProperty("nodeAddress", nodeAddress);
@@ -56,9 +58,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Contract address or a list of addresses.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder addresses(List<String> addresses) {
             setProperty("addresses", addresses);
@@ -66,9 +70,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Contract address or a list of addresses.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder addresses(String addresses) {
             setProperty("addresses", addresses);
@@ -76,8 +82,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The address the transaction is send from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder fromAddress(String fromAddress) {
             setProperty("fromAddress", fromAddress);
@@ -86,9 +94,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder fromBlock(Object fromBlock) {
             setProperty("fromBlock", fromBlock);
@@ -97,9 +107,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder fromBlock(String fromBlock) {
             setProperty("fromBlock", fromBlock);
@@ -108,8 +120,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder fullTransactionObjects(
                 boolean fullTransactionObjects) {
@@ -119,8 +133,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder fullTransactionObjects(
                 String fullTransactionObjects) {
@@ -129,8 +145,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The maximum gas allowed in this block.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder gasLimit(BigInteger gasLimit) {
             setProperty("gasLimit", gasLimit);
@@ -138,9 +156,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The maximum gas allowed in this block.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder gasLimit(String gasLimit) {
             setProperty("gasLimit", gasLimit);
@@ -148,9 +168,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder privateFor(List<String> privateFor) {
             setProperty("privateFor", privateFor);
@@ -158,9 +180,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder privateFor(String privateFor) {
             setProperty("privateFor", privateFor);
@@ -168,8 +192,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * If true, this will support Quorum API.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder quorumAPI(boolean quorumAPI) {
             setProperty("quorumAPI", quorumAPI);
@@ -177,8 +203,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * If true, this will support Quorum API.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder quorumAPI(String quorumAPI) {
             setProperty("quorumAPI", quorumAPI);
@@ -186,8 +214,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The address the transaction is directed to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder toAddress(String toAddress) {
             setProperty("toAddress", toAddress);
@@ -196,9 +226,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder toBlock(Object toBlock) {
             setProperty("toBlock", toBlock);
@@ -207,9 +239,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder toBlock(String toBlock) {
             setProperty("toBlock", toBlock);
@@ -218,9 +252,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder topics(List<String> topics) {
             setProperty("topics", topics);
@@ -229,9 +265,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder topics(String topics) {
             setProperty("topics", topics);
@@ -239,8 +277,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The preconfigured Web3j object.
-         * The option is a <code>org.web3j.protocol.Web3j</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.web3j.protocol.Web3j</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder web3j(Object web3j) {
             setProperty("web3j", web3j);
@@ -248,9 +288,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The preconfigured Web3j object.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.Web3j</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointConsumerBuilder web3j(String web3j) {
             setProperty("web3j", web3j);
@@ -264,8 +306,10 @@ public interface Web3jEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default Web3jEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -280,8 +324,10 @@ public interface Web3jEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default Web3jEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -305,9 +351,11 @@ public interface Web3jEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -319,9 +367,11 @@ public interface Web3jEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -330,8 +380,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -340,9 +392,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeb3jEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -352,8 +406,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -363,8 +419,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -374,8 +432,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -385,8 +445,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -407,8 +469,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Sets the node address used to communicate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder nodeAddress(String nodeAddress) {
             setProperty("nodeAddress", nodeAddress);
@@ -416,9 +480,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Contract address or a list of addresses.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder addresses(List<String> addresses) {
             setProperty("addresses", addresses);
@@ -426,9 +492,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Contract address or a list of addresses.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder addresses(String addresses) {
             setProperty("addresses", addresses);
@@ -436,8 +504,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The address the transaction is send from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder fromAddress(String fromAddress) {
             setProperty("fromAddress", fromAddress);
@@ -446,9 +516,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder fromBlock(Object fromBlock) {
             setProperty("fromBlock", fromBlock);
@@ -457,9 +529,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder fromBlock(String fromBlock) {
             setProperty("fromBlock", fromBlock);
@@ -468,8 +542,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder fullTransactionObjects(
                 boolean fullTransactionObjects) {
@@ -479,8 +555,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder fullTransactionObjects(
                 String fullTransactionObjects) {
@@ -489,8 +567,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The maximum gas allowed in this block.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder gasLimit(BigInteger gasLimit) {
             setProperty("gasLimit", gasLimit);
@@ -498,9 +578,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The maximum gas allowed in this block.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder gasLimit(String gasLimit) {
             setProperty("gasLimit", gasLimit);
@@ -508,9 +590,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder privateFor(List<String> privateFor) {
             setProperty("privateFor", privateFor);
@@ -518,9 +602,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder privateFor(String privateFor) {
             setProperty("privateFor", privateFor);
@@ -528,8 +614,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * If true, this will support Quorum API.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder quorumAPI(boolean quorumAPI) {
             setProperty("quorumAPI", quorumAPI);
@@ -537,8 +625,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * If true, this will support Quorum API.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder quorumAPI(String quorumAPI) {
             setProperty("quorumAPI", quorumAPI);
@@ -546,8 +636,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The address the transaction is directed to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder toAddress(String toAddress) {
             setProperty("toAddress", toAddress);
@@ -556,9 +648,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder toBlock(Object toBlock) {
             setProperty("toBlock", toBlock);
@@ -567,9 +661,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder toBlock(String toBlock) {
             setProperty("toBlock", toBlock);
@@ -578,9 +674,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder topics(List<String> topics) {
             setProperty("topics", topics);
@@ -589,9 +687,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder topics(String topics) {
             setProperty("topics", topics);
@@ -599,8 +699,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The preconfigured Web3j object.
-         * The option is a <code>org.web3j.protocol.Web3j</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.web3j.protocol.Web3j</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder web3j(Object web3j) {
             setProperty("web3j", web3j);
@@ -608,9 +710,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The preconfigured Web3j object.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.Web3j</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointProducerBuilder web3j(String web3j) {
             setProperty("web3j", web3j);
@@ -618,8 +722,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Contract address.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder address(String address) {
             setProperty("address", address);
@@ -628,9 +734,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder atBlock(Object atBlock) {
             setProperty("atBlock", atBlock);
@@ -639,9 +747,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder atBlock(String atBlock) {
             setProperty("atBlock", atBlock);
@@ -649,8 +759,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Hash of the block where this transaction was in.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder blockHash(String blockHash) {
             setProperty("blockHash", blockHash);
@@ -658,8 +770,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A random hexadecimal(32 bytes) ID identifying the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -668,8 +782,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The compiled code of a contract OR the hash of the invoked method
          * signature and encoded parameters.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder data(String data) {
             setProperty("data", data);
@@ -677,8 +793,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The local database name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder databaseName(String databaseName) {
             setProperty("databaseName", databaseName);
@@ -686,8 +804,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The filter id to use.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder filterId(BigInteger filterId) {
             setProperty("filterId", filterId);
@@ -695,9 +815,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The filter id to use.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder filterId(String filterId) {
             setProperty("filterId", filterId);
@@ -705,8 +827,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Gas price used for each paid gas.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder gasPrice(BigInteger gasPrice) {
             setProperty("gasPrice", gasPrice);
@@ -714,9 +838,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Gas price used for each paid gas.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder gasPrice(String gasPrice) {
             setProperty("gasPrice", gasPrice);
@@ -724,8 +850,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A hexadecimal string representation (32 bytes) of the hash rate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder hashrate(String hashrate) {
             setProperty("hashrate", hashrate);
@@ -734,8 +862,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The header's pow-hash (256 bits) used for submitting a proof-of-work
          * solution.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder headerPowHash(String headerPowHash) {
             setProperty("headerPowHash", headerPowHash);
@@ -743,8 +873,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The transactions/uncle index position in the block.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder index(BigInteger index) {
             setProperty("index", index);
@@ -752,9 +884,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The transactions/uncle index position in the block.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder index(String index) {
             setProperty("index", index);
@@ -762,8 +896,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The key name in the database.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder keyName(String keyName) {
             setProperty("keyName", keyName);
@@ -779,8 +915,10 @@ public interface Web3jEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -797,8 +935,10 @@ public interface Web3jEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -808,8 +948,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The mix digest (256 bits) used for submitting a proof-of-work
          * solution.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder mixDigest(String mixDigest) {
             setProperty("mixDigest", mixDigest);
@@ -818,8 +960,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The nonce found (64 bits) used for submitting a proof-of-work
          * solution.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder nonce(String nonce) {
             setProperty("nonce", nonce);
@@ -827,8 +971,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Operation to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -836,8 +982,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The transaction index position withing a block.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder position(BigInteger position) {
             setProperty("position", position);
@@ -845,9 +993,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The transaction index position withing a block.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder position(String position) {
             setProperty("position", position);
@@ -855,8 +1005,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The priority of a whisper message.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder priority(BigInteger priority) {
             setProperty("priority", priority);
@@ -864,9 +1016,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The priority of a whisper message.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder priority(String priority) {
             setProperty("priority", priority);
@@ -874,8 +1028,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Message to sign by calculating an Ethereum specific signature.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder sha3HashOfDataToSign(
                 String sha3HashOfDataToSign) {
@@ -885,8 +1041,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The signed transaction data for a new message call transaction or a
          * contract creation for signed transactions.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder signedTransactionData(
                 String signedTransactionData) {
@@ -895,8 +1053,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The source code to compile.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder sourceCode(String sourceCode) {
             setProperty("sourceCode", sourceCode);
@@ -904,8 +1064,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The information about a transaction requested by transaction hash.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder transactionHash(
                 String transactionHash) {
@@ -914,8 +1076,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The time to live in seconds of a whisper message.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder ttl(BigInteger ttl) {
             setProperty("ttl", ttl);
@@ -923,9 +1087,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The time to live in seconds of a whisper message.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder ttl(String ttl) {
             setProperty("ttl", ttl);
@@ -933,8 +1099,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The value sent within a transaction.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder value(BigInteger value) {
             setProperty("value", value);
@@ -942,9 +1110,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The value sent within a transaction.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Web3jEndpointProducerBuilder value(String value) {
             setProperty("value", value);
@@ -965,8 +1135,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -976,8 +1148,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -987,8 +1161,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -998,8 +1174,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1019,8 +1197,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Sets the node address used to communicate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder nodeAddress(String nodeAddress) {
             setProperty("nodeAddress", nodeAddress);
@@ -1028,9 +1208,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Contract address or a list of addresses.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder addresses(List<String> addresses) {
             setProperty("addresses", addresses);
@@ -1038,9 +1220,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * Contract address or a list of addresses.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder addresses(String addresses) {
             setProperty("addresses", addresses);
@@ -1048,8 +1232,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The address the transaction is send from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder fromAddress(String fromAddress) {
             setProperty("fromAddress", fromAddress);
@@ -1058,9 +1244,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder fromBlock(Object fromBlock) {
             setProperty("fromBlock", fromBlock);
@@ -1069,9 +1257,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder fromBlock(String fromBlock) {
             setProperty("fromBlock", fromBlock);
@@ -1080,8 +1270,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder fullTransactionObjects(
                 boolean fullTransactionObjects) {
@@ -1091,8 +1283,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * If true it returns the full transaction objects, if false only the
          * hashes of the transactions.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder fullTransactionObjects(
                 String fullTransactionObjects) {
@@ -1101,8 +1295,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The maximum gas allowed in this block.
-         * The option is a <code>java.math.BigInteger</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.math.BigInteger</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder gasLimit(BigInteger gasLimit) {
             setProperty("gasLimit", gasLimit);
@@ -1110,9 +1306,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The maximum gas allowed in this block.
+         * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder gasLimit(String gasLimit) {
             setProperty("gasLimit", gasLimit);
@@ -1120,9 +1318,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder privateFor(List<String> privateFor) {
             setProperty("privateFor", privateFor);
@@ -1130,9 +1330,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder privateFor(String privateFor) {
             setProperty("privateFor", privateFor);
@@ -1140,8 +1342,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * If true, this will support Quorum API.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder quorumAPI(boolean quorumAPI) {
             setProperty("quorumAPI", quorumAPI);
@@ -1149,8 +1353,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * If true, this will support Quorum API.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder quorumAPI(String quorumAPI) {
             setProperty("quorumAPI", quorumAPI);
@@ -1158,8 +1364,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The address the transaction is directed to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder toAddress(String toAddress) {
             setProperty("toAddress", toAddress);
@@ -1168,9 +1376,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder toBlock(Object toBlock) {
             setProperty("toBlock", toBlock);
@@ -1179,9 +1389,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder toBlock(String toBlock) {
             setProperty("toBlock", toBlock);
@@ -1190,9 +1402,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder topics(List<String> topics) {
             setProperty("topics", topics);
@@ -1201,9 +1415,11 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Topics are order-dependent. Each topic can also be a list of topics.
          * Specify multiple topics separated by comma.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder topics(String topics) {
             setProperty("topics", topics);
@@ -1211,8 +1427,10 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The preconfigured Web3j object.
-         * The option is a <code>org.web3j.protocol.Web3j</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.web3j.protocol.Web3j</code> type.
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder web3j(Object web3j) {
             setProperty("web3j", web3j);
@@ -1220,9 +1438,11 @@ public interface Web3jEndpointBuilderFactory {
         }
         /**
          * The preconfigured Web3j object.
+         * 
          * The option will be converted to a
          * <code>org.web3j.protocol.Web3j</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Web3jEndpointBuilder web3j(String web3j) {
             setProperty("web3j", web3j);
@@ -1243,8 +1463,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1254,8 +1476,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1265,8 +1489,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1275,8 +1501,10 @@ public interface Web3jEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -43,8 +43,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * The name of the cache.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -53,10 +55,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -66,10 +70,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
@@ -79,9 +85,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
-         * The option is a <code>com.hazelcast.core.HazelcastInstance</code>
+         * 
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -91,9 +99,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -104,8 +114,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * The hazelcast instance reference name which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -114,8 +126,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
@@ -123,8 +137,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointConsumerBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
@@ -138,8 +154,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -154,8 +172,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -164,8 +184,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define the polling timeout of the Queue consumer in Poll mode.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder pollingTimeout(
                 long pollingTimeout) {
@@ -174,8 +196,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define the polling timeout of the Queue consumer in Poll mode.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder pollingTimeout(
                 String pollingTimeout) {
@@ -184,8 +208,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define the Pool size for Queue Consumer Executor.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder poolSize(int poolSize) {
             setProperty("poolSize", poolSize);
@@ -193,8 +219,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define the Pool size for Queue Consumer Executor.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder poolSize(String poolSize) {
             setProperty("poolSize", poolSize);
@@ -202,9 +230,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define the Queue Consumer mode: Listen or Poll.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder queueConsumerMode(
                 HazelcastQueueConsumerMode queueConsumerMode) {
@@ -213,9 +243,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define the Queue Consumer mode: Listen or Poll.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder queueConsumerMode(
                 String queueConsumerMode) {
@@ -224,8 +256,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -234,8 +268,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -245,8 +281,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -256,8 +294,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -269,8 +309,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder pollTimeout(
                 int pollTimeout) {
@@ -282,8 +324,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
@@ -294,8 +338,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder transacted(
                 boolean transacted) {
@@ -306,8 +352,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder transacted(
                 String transacted) {
@@ -317,8 +365,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
@@ -328,8 +378,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
@@ -353,9 +405,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -367,9 +421,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -378,8 +434,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -388,9 +446,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -400,8 +460,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -411,8 +473,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -422,8 +486,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -433,8 +499,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -454,8 +522,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * The name of the cache.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -464,10 +534,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -477,10 +549,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
@@ -490,9 +564,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
-         * The option is a <code>com.hazelcast.core.HazelcastInstance</code>
+         * 
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -502,9 +578,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -515,8 +593,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * The hazelcast instance reference name which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -525,8 +605,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
@@ -534,8 +616,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointProducerBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
@@ -551,8 +635,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HazelcastQueueEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -569,8 +655,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HazelcastQueueEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -579,8 +667,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -589,8 +679,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -600,8 +692,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -611,8 +705,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -624,8 +720,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder pollTimeout(
                 int pollTimeout) {
@@ -637,8 +735,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder pollTimeout(
                 String pollTimeout) {
@@ -649,8 +749,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder transacted(
                 boolean transacted) {
@@ -661,8 +763,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder transacted(
                 String transacted) {
@@ -672,8 +776,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
@@ -683,8 +789,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointProducerBuilder transferExchange(
                 String transferExchange) {
@@ -706,8 +814,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -717,8 +827,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -728,8 +840,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -739,8 +853,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -760,8 +876,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * The name of the cache.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -770,10 +888,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -783,10 +903,12 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -796,9 +918,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
-         * The option is a <code>com.hazelcast.core.HazelcastInstance</code>
+         * 
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -808,9 +932,11 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -821,8 +947,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * The hazelcast instance reference name which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -831,8 +959,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
@@ -840,8 +970,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastQueueEndpointBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
@@ -849,8 +981,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -859,8 +993,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -870,8 +1006,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder onErrorDelay(int onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
@@ -880,8 +1018,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder onErrorDelay(String onErrorDelay) {
             setProperty("onErrorDelay", onErrorDelay);
@@ -892,8 +1032,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
@@ -904,8 +1046,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder pollTimeout(String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
@@ -915,8 +1059,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
@@ -926,8 +1072,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
@@ -936,8 +1084,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder transferExchange(
                 boolean transferExchange) {
@@ -947,8 +1097,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastQueueEndpointBuilder transferExchange(
                 String transferExchange) {
@@ -969,8 +1121,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -980,8 +1134,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -991,8 +1147,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1002,8 +1160,10 @@ public interface HazelcastQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointBuilder synchronous(
                 String synchronous) {

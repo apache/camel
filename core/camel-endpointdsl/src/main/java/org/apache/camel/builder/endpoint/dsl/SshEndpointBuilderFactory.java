@@ -50,8 +50,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the hostname of the remote SSH server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -59,8 +61,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the port number for the remote SSH server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -68,8 +72,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the port number for the remote SSH server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -78,8 +84,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder failOnUnknownHost(
                 boolean failOnUnknownHost) {
@@ -89,8 +97,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder failOnUnknownHost(
                 String failOnUnknownHost) {
@@ -99,8 +109,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the resource path for a known_hosts file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder knownHostsResource(
                 String knownHostsResource) {
@@ -110,8 +122,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
-         * The option is a <code>long</code> type.
-         * @group common
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -120,8 +134,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -135,8 +151,10 @@ public interface SshEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SshEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -151,8 +169,10 @@ public interface SshEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SshEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -164,8 +184,10 @@ public interface SshEndpointBuilderFactory {
          * poll cycle. Only works with camel-ssh component being used as a
          * consumer, i.e. from(ssh://...) You may need to end your command with
          * a newline, and that must be URL encoded %0A.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SshEndpointConsumerBuilder pollCommand(String pollCommand) {
             setProperty("pollCommand", pollCommand);
@@ -174,8 +196,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SshEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -185,8 +209,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SshEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -196,8 +222,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -207,8 +235,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -218,8 +248,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -229,8 +261,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -244,8 +278,10 @@ public interface SshEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -259,8 +295,10 @@ public interface SshEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -271,8 +309,10 @@ public interface SshEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -282,8 +322,10 @@ public interface SshEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -292,8 +334,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -302,8 +346,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -313,8 +359,10 @@ public interface SshEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -324,8 +372,10 @@ public interface SshEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -334,8 +384,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -345,9 +397,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -358,9 +412,11 @@ public interface SshEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -371,9 +427,11 @@ public interface SshEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -383,10 +441,12 @@ public interface SshEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -396,10 +456,12 @@ public interface SshEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -408,9 +470,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -420,10 +484,12 @@ public interface SshEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -432,8 +498,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder startScheduler(boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -441,8 +509,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -450,8 +520,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -459,9 +531,11 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -470,8 +544,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -480,8 +556,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SshEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -491,8 +569,10 @@ public interface SshEndpointBuilderFactory {
          * Sets the resource path of the certificate to use for Authentication.
          * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointConsumerBuilder certResource(String certResource) {
             setProperty("certResource", certResource);
@@ -512,9 +592,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SshEndpointConsumerBuilder keyPairProvider(
                 Object keyPairProvider) {
@@ -524,9 +606,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
+         * 
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SshEndpointConsumerBuilder keyPairProvider(
                 String keyPairProvider) {
@@ -539,8 +623,10 @@ public interface SshEndpointBuilderFactory {
          * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
          * first available KeyPair that is loaded. Prior to this, a KeyType of
          * 'ssh-rsa' was enforced by default.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointConsumerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -549,8 +635,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -558,8 +646,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the username to use in logging into the remote SSH server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -581,9 +671,11 @@ public interface SshEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -595,9 +687,11 @@ public interface SshEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -606,8 +700,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -616,9 +712,11 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -630,9 +728,11 @@ public interface SshEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -644,9 +744,11 @@ public interface SshEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSshEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -656,8 +758,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -667,8 +771,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -678,8 +784,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the channel type to pass to the Channel as part of command
          * execution. Defaults to exec.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder channelType(
                 String channelType) {
@@ -689,8 +797,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder shellPrompt(
                 String shellPrompt) {
@@ -700,8 +810,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder sleepForShellPrompt(
                 long sleepForShellPrompt) {
@@ -711,8 +823,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder sleepForShellPrompt(
                 String sleepForShellPrompt) {
@@ -722,8 +836,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -733,8 +849,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -754,8 +872,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the hostname of the remote SSH server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -763,8 +883,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the port number for the remote SSH server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -772,8 +894,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the port number for the remote SSH server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -782,8 +906,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder failOnUnknownHost(
                 boolean failOnUnknownHost) {
@@ -793,8 +919,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder failOnUnknownHost(
                 String failOnUnknownHost) {
@@ -803,8 +931,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the resource path for a known_hosts file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder knownHostsResource(
                 String knownHostsResource) {
@@ -814,8 +944,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
-         * The option is a <code>long</code> type.
-         * @group common
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -824,8 +956,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -841,8 +975,10 @@ public interface SshEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SshEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -859,8 +995,10 @@ public interface SshEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SshEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -871,8 +1009,10 @@ public interface SshEndpointBuilderFactory {
          * Sets the resource path of the certificate to use for Authentication.
          * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointProducerBuilder certResource(String certResource) {
             setProperty("certResource", certResource);
@@ -892,9 +1032,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SshEndpointProducerBuilder keyPairProvider(
                 Object keyPairProvider) {
@@ -904,9 +1046,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
+         * 
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SshEndpointProducerBuilder keyPairProvider(
                 String keyPairProvider) {
@@ -919,8 +1063,10 @@ public interface SshEndpointBuilderFactory {
          * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
          * first available KeyPair that is loaded. Prior to this, a KeyType of
          * 'ssh-rsa' was enforced by default.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointProducerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -929,8 +1075,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -938,8 +1086,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the username to use in logging into the remote SSH server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -959,8 +1109,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -970,8 +1122,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -981,8 +1135,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the channel type to pass to the Channel as part of command
          * execution. Defaults to exec.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder channelType(
                 String channelType) {
@@ -992,8 +1148,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder shellPrompt(
                 String shellPrompt) {
@@ -1003,8 +1161,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder sleepForShellPrompt(
                 long sleepForShellPrompt) {
@@ -1014,8 +1174,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder sleepForShellPrompt(
                 String sleepForShellPrompt) {
@@ -1025,8 +1187,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1036,8 +1200,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1057,8 +1223,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the hostname of the remote SSH server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -1066,8 +1234,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the port number for the remote SSH server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -1075,8 +1245,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the port number for the remote SSH server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -1085,8 +1257,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointBuilder failOnUnknownHost(boolean failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
@@ -1095,8 +1269,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointBuilder failOnUnknownHost(String failOnUnknownHost) {
             setProperty("failOnUnknownHost", failOnUnknownHost);
@@ -1104,8 +1280,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the resource path for a known_hosts file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointBuilder knownHostsResource(String knownHostsResource) {
             setProperty("knownHostsResource", knownHostsResource);
@@ -1114,8 +1292,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
-         * The option is a <code>long</code> type.
-         * @group common
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: common
          */
         default SshEndpointBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -1124,8 +1304,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SshEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -1135,8 +1317,10 @@ public interface SshEndpointBuilderFactory {
          * Sets the resource path of the certificate to use for Authentication.
          * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointBuilder certResource(String certResource) {
             setProperty("certResource", certResource);
@@ -1156,9 +1340,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SshEndpointBuilder keyPairProvider(Object keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
@@ -1167,9 +1353,11 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
+         * 
          * The option will be converted to a
          * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SshEndpointBuilder keyPairProvider(String keyPairProvider) {
             setProperty("keyPairProvider", keyPairProvider);
@@ -1181,8 +1369,10 @@ public interface SshEndpointBuilderFactory {
          * value. From Camel 3.0.0 / 2.25.0, by default Camel will select the
          * first available KeyPair that is loaded. Prior to this, a KeyType of
          * 'ssh-rsa' was enforced by default.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -1191,8 +1381,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -1200,8 +1392,10 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Sets the username to use in logging into the remote SSH server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SshEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1221,8 +1415,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1232,8 +1428,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1243,8 +1441,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the channel type to pass to the Channel as part of command
          * execution. Defaults to exec.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder channelType(String channelType) {
             setProperty("channelType", channelType);
@@ -1253,8 +1453,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder shellPrompt(String shellPrompt) {
             setProperty("shellPrompt", shellPrompt);
@@ -1263,8 +1465,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder sleepForShellPrompt(
                 long sleepForShellPrompt) {
@@ -1274,8 +1478,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder sleepForShellPrompt(
                 String sleepForShellPrompt) {
@@ -1285,8 +1491,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1295,8 +1503,10 @@ public interface SshEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSshEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

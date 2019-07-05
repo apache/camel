@@ -40,8 +40,10 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * OpenStack host url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KeystoneEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -49,9 +51,11 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * OpenStack configuration.
-         * The option is a <code>org.openstack4j.core.transport.Config</code>
+         * 
+         * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KeystoneEndpointBuilder config(Object config) {
             setProperty("config", config);
@@ -59,9 +63,11 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * OpenStack configuration.
+         * 
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KeystoneEndpointBuilder config(String config) {
             setProperty("config", config);
@@ -69,8 +75,10 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * Authentication domain.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KeystoneEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
@@ -78,8 +86,10 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * The operation to do.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KeystoneEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -87,8 +97,11 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * OpenStack password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default KeystoneEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -96,8 +109,11 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * The project ID.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default KeystoneEndpointBuilder project(String project) {
             setProperty("project", project);
@@ -105,8 +121,11 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * OpenStack Keystone subsystem.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default KeystoneEndpointBuilder subsystem(String subsystem) {
             setProperty("subsystem", subsystem);
@@ -114,8 +133,11 @@ public interface KeystoneEndpointBuilderFactory {
         }
         /**
          * OpenStack username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default KeystoneEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -135,8 +157,10 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -146,8 +170,10 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -157,8 +183,10 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -167,8 +195,10 @@ public interface KeystoneEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -44,8 +44,10 @@ public interface EventAdminEndpointBuilderFactory {
         }
         /**
          * Name of topic to listen or send to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EventAdminEndpointConsumerBuilder topic(String topic) {
             setProperty("topic", topic);
@@ -54,8 +56,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default EventAdminEndpointConsumerBuilder send(boolean send) {
             setProperty("send", send);
@@ -64,8 +68,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EventAdminEndpointConsumerBuilder send(String send) {
             setProperty("send", send);
@@ -79,8 +85,10 @@ public interface EventAdminEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default EventAdminEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -95,8 +103,10 @@ public interface EventAdminEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default EventAdminEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -120,9 +130,11 @@ public interface EventAdminEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -134,9 +146,11 @@ public interface EventAdminEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -145,8 +159,10 @@ public interface EventAdminEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -155,9 +171,11 @@ public interface EventAdminEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedEventAdminEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -167,8 +185,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -178,8 +198,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -189,8 +211,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -200,8 +224,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -221,8 +247,10 @@ public interface EventAdminEndpointBuilderFactory {
         }
         /**
          * Name of topic to listen or send to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EventAdminEndpointProducerBuilder topic(String topic) {
             setProperty("topic", topic);
@@ -231,8 +259,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default EventAdminEndpointProducerBuilder send(boolean send) {
             setProperty("send", send);
@@ -241,8 +271,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EventAdminEndpointProducerBuilder send(String send) {
             setProperty("send", send);
@@ -258,8 +290,10 @@ public interface EventAdminEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default EventAdminEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -276,8 +310,10 @@ public interface EventAdminEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default EventAdminEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -299,8 +335,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -310,8 +348,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -321,8 +361,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -332,8 +374,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -353,8 +397,10 @@ public interface EventAdminEndpointBuilderFactory {
         }
         /**
          * Name of topic to listen or send to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default EventAdminEndpointBuilder topic(String topic) {
             setProperty("topic", topic);
@@ -363,8 +409,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default EventAdminEndpointBuilder send(boolean send) {
             setProperty("send", send);
@@ -373,8 +421,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether to use 'send' or 'synchronous' deliver. Default false (async
          * delivery).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default EventAdminEndpointBuilder send(String send) {
             setProperty("send", send);
@@ -394,8 +444,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -405,8 +457,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -416,8 +470,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -427,8 +483,10 @@ public interface EventAdminEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEventAdminEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

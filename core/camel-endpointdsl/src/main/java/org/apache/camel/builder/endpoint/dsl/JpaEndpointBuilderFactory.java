@@ -50,9 +50,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA annotated class to use as entity.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder entityType(Class<Object> entityType) {
             setProperty("entityType", entityType);
@@ -60,9 +62,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA annotated class to use as entity.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder entityType(String entityType) {
             setProperty("entityType", entityType);
@@ -74,8 +78,10 @@ public interface JpaEndpointBuilderFactory {
          * and join transaction doesn't work with your JPA provider. This option
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder joinTransaction(
                 boolean joinTransaction) {
@@ -88,8 +94,10 @@ public interface JpaEndpointBuilderFactory {
          * and join transaction doesn't work with your JPA provider. This option
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder joinTransaction(
                 String joinTransaction) {
@@ -98,8 +106,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Set the maximum number of results to retrieve on the Query.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder maximumResults(int maximumResults) {
             setProperty("maximumResults", maximumResults);
@@ -107,8 +117,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Set the maximum number of results to retrieve on the Query.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder maximumResults(String maximumResults) {
             setProperty("maximumResults", maximumResults);
@@ -116,8 +128,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To use a named query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder namedQuery(String namedQuery) {
             setProperty("namedQuery", namedQuery);
@@ -126,8 +140,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom native query. You may want to use the option
          * resultClass also when using native queries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder nativeQuery(String nativeQuery) {
             setProperty("nativeQuery", nativeQuery);
@@ -141,9 +157,11 @@ public interface JpaEndpointBuilderFactory {
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder parameters(
                 Map<String, Object> parameters) {
@@ -158,10 +176,12 @@ public interface JpaEndpointBuilderFactory {
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
@@ -169,8 +189,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA persistence unit used by default.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default JpaEndpointConsumerBuilder persistenceUnit(
                 String persistenceUnit) {
@@ -179,8 +202,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To use a custom query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
@@ -192,9 +217,11 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.createNativeQuery(nativeQuery)). Without this option,
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder resultClass(Class<Object> resultClass) {
             setProperty("resultClass", resultClass);
@@ -206,9 +233,11 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.createNativeQuery(nativeQuery)). Without this option,
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder resultClass(String resultClass) {
             setProperty("resultClass", resultClass);
@@ -218,8 +247,10 @@ public interface JpaEndpointBuilderFactory {
          * Whether to use Spring's SharedEntityManager for the
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
@@ -230,8 +261,10 @@ public interface JpaEndpointBuilderFactory {
          * Whether to use Spring's SharedEntityManager for the
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointConsumerBuilder sharedEntityManager(
                 String sharedEntityManager) {
@@ -246,8 +279,10 @@ public interface JpaEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -262,8 +297,10 @@ public interface JpaEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -273,8 +310,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * If true, the entity is deleted after it is consumed; if false, the
          * entity is not deleted.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeDelete(boolean consumeDelete) {
             setProperty("consumeDelete", consumeDelete);
@@ -283,8 +322,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * If true, the entity is deleted after it is consumed; if false, the
          * entity is not deleted.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeDelete(String consumeDelete) {
             setProperty("consumeDelete", consumeDelete);
@@ -293,8 +334,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Specifies whether or not to set an exclusive lock on each entity bean
          * while processing the results from polling.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeLockEntity(
                 boolean consumeLockEntity) {
@@ -304,8 +347,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Specifies whether or not to set an exclusive lock on each entity bean
          * while processing the results from polling.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeLockEntity(
                 String consumeLockEntity) {
@@ -315,9 +360,11 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom DeleteHandler to delete the row after the consumer is
          * done processing the exchange.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder deleteHandler(Object deleteHandler) {
             setProperty("deleteHandler", deleteHandler);
@@ -326,9 +373,11 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom DeleteHandler to delete the row after the consumer is
          * done processing the exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder deleteHandler(String deleteHandler) {
             setProperty("deleteHandler", deleteHandler);
@@ -336,8 +385,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To configure the lock mode on the consumer.
-         * The option is a <code>javax.persistence.LockModeType</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>javax.persistence.LockModeType</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder lockModeType(
                 LockModeType lockModeType) {
@@ -346,9 +397,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To configure the lock mode on the consumer.
+         * 
          * The option will be converted to a
          * <code>javax.persistence.LockModeType</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder lockModeType(String lockModeType) {
             setProperty("lockModeType", lockModeType);
@@ -359,8 +412,10 @@ public interface JpaEndpointBuilderFactory {
          * per poll. By default, no maximum is set. Can be used to avoid polling
          * many thousands of messages when starting up the server. Set a value
          * of 0 or negative to disable.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -372,8 +427,10 @@ public interface JpaEndpointBuilderFactory {
          * per poll. By default, no maximum is set. Can be used to avoid polling
          * many thousands of messages when starting up the server. Set a value
          * of 0 or negative to disable.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -383,9 +440,11 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom Pre-DeleteHandler to delete the row after the
          * consumer has read the entity.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder preDeleteHandler(
                 Object preDeleteHandler) {
@@ -395,9 +454,11 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom Pre-DeleteHandler to delete the row after the
          * consumer has read the entity.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jpa.DeleteHandler&lt;java.lang.Object&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder preDeleteHandler(
                 String preDeleteHandler) {
@@ -407,8 +468,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -418,8 +481,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -429,8 +494,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To configure whether to use NOWAIT on lock and silently skip the
          * entity.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder skipLockedEntity(
                 boolean skipLockedEntity) {
@@ -440,8 +507,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To configure whether to use NOWAIT on lock and silently skip the
          * entity.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder skipLockedEntity(
                 String skipLockedEntity) {
@@ -454,8 +523,10 @@ public interface JpaEndpointBuilderFactory {
          * processed. The default behavior (false) is to commit all the
          * previously successfully processed messages, and only rollback the
          * last failed message.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder transacted(boolean transacted) {
             setProperty("transacted", transacted);
@@ -467,8 +538,10 @@ public interface JpaEndpointBuilderFactory {
          * processed. The default behavior (false) is to commit all the
          * previously successfully processed messages, and only rollback the
          * last failed message.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JpaEndpointConsumerBuilder transacted(String transacted) {
             setProperty("transacted", transacted);
@@ -477,8 +550,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -488,8 +563,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -499,8 +576,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -510,8 +589,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -525,8 +606,10 @@ public interface JpaEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -540,8 +623,10 @@ public interface JpaEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -552,8 +637,10 @@ public interface JpaEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -563,8 +650,10 @@ public interface JpaEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -573,8 +662,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -583,8 +674,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -594,8 +687,10 @@ public interface JpaEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -605,8 +700,10 @@ public interface JpaEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -615,8 +712,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -626,9 +725,11 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -639,9 +740,11 @@ public interface JpaEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -652,9 +755,11 @@ public interface JpaEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -664,10 +769,12 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -677,10 +784,12 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -689,9 +798,11 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -701,10 +812,12 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -713,8 +826,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder startScheduler(boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -722,8 +837,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -731,8 +848,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -740,9 +859,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -751,8 +872,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -761,8 +884,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default JpaEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -784,9 +909,11 @@ public interface JpaEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -798,9 +925,11 @@ public interface JpaEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -809,8 +938,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -819,9 +950,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -833,9 +966,11 @@ public interface JpaEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -847,9 +982,11 @@ public interface JpaEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJpaEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -859,8 +996,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -870,8 +1009,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -880,9 +1021,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Additional properties for the entity manager to use.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder entityManagerProperties(
                 Map<String, Object> entityManagerProperties) {
@@ -891,10 +1034,12 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Additional properties for the entity manager to use.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder entityManagerProperties(
                 String entityManagerProperties) {
@@ -904,8 +1049,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -915,8 +1062,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -936,9 +1085,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA annotated class to use as entity.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder entityType(Class<Object> entityType) {
             setProperty("entityType", entityType);
@@ -946,9 +1097,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA annotated class to use as entity.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder entityType(String entityType) {
             setProperty("entityType", entityType);
@@ -960,8 +1113,10 @@ public interface JpaEndpointBuilderFactory {
          * and join transaction doesn't work with your JPA provider. This option
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder joinTransaction(
                 boolean joinTransaction) {
@@ -974,8 +1129,10 @@ public interface JpaEndpointBuilderFactory {
          * and join transaction doesn't work with your JPA provider. This option
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder joinTransaction(
                 String joinTransaction) {
@@ -984,8 +1141,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Set the maximum number of results to retrieve on the Query.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder maximumResults(int maximumResults) {
             setProperty("maximumResults", maximumResults);
@@ -993,8 +1152,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Set the maximum number of results to retrieve on the Query.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder maximumResults(String maximumResults) {
             setProperty("maximumResults", maximumResults);
@@ -1002,8 +1163,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To use a named query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder namedQuery(String namedQuery) {
             setProperty("namedQuery", namedQuery);
@@ -1012,8 +1175,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom native query. You may want to use the option
          * resultClass also when using native queries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder nativeQuery(String nativeQuery) {
             setProperty("nativeQuery", nativeQuery);
@@ -1027,9 +1192,11 @@ public interface JpaEndpointBuilderFactory {
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder parameters(
                 Map<String, Object> parameters) {
@@ -1044,10 +1211,12 @@ public interface JpaEndpointBuilderFactory {
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
@@ -1055,8 +1224,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA persistence unit used by default.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default JpaEndpointProducerBuilder persistenceUnit(
                 String persistenceUnit) {
@@ -1065,8 +1237,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To use a custom query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder query(String query) {
             setProperty("query", query);
@@ -1078,9 +1252,11 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.createNativeQuery(nativeQuery)). Without this option,
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder resultClass(Class<Object> resultClass) {
             setProperty("resultClass", resultClass);
@@ -1092,9 +1268,11 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.createNativeQuery(nativeQuery)). Without this option,
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder resultClass(String resultClass) {
             setProperty("resultClass", resultClass);
@@ -1104,8 +1282,10 @@ public interface JpaEndpointBuilderFactory {
          * Whether to use Spring's SharedEntityManager for the
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
@@ -1116,8 +1296,10 @@ public interface JpaEndpointBuilderFactory {
          * Whether to use Spring's SharedEntityManager for the
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointProducerBuilder sharedEntityManager(
                 String sharedEntityManager) {
@@ -1126,8 +1308,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Flushes the EntityManager after the entity bean has been persisted.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder flushOnSend(boolean flushOnSend) {
             setProperty("flushOnSend", flushOnSend);
@@ -1135,8 +1319,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Flushes the EntityManager after the entity bean has been persisted.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder flushOnSend(String flushOnSend) {
             setProperty("flushOnSend", flushOnSend);
@@ -1152,8 +1338,10 @@ public interface JpaEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1170,8 +1358,10 @@ public interface JpaEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1180,8 +1370,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Indicates to use entityManager.remove(entity).
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder remove(boolean remove) {
             setProperty("remove", remove);
@@ -1189,8 +1381,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Indicates to use entityManager.remove(entity).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder remove(String remove) {
             setProperty("remove", remove);
@@ -1200,8 +1394,10 @@ public interface JpaEndpointBuilderFactory {
          * To configure whether to use executeUpdate() when producer executes a
          * query. When you use INSERT, UPDATE or DELETE statement as a named
          * query, you need to specify this option to 'true'.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder useExecuteUpdate(
                 Boolean useExecuteUpdate) {
@@ -1212,9 +1408,11 @@ public interface JpaEndpointBuilderFactory {
          * To configure whether to use executeUpdate() when producer executes a
          * query. When you use INSERT, UPDATE or DELETE statement as a named
          * query, you need to specify this option to 'true'.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder useExecuteUpdate(
                 String useExecuteUpdate) {
@@ -1226,8 +1424,10 @@ public interface JpaEndpointBuilderFactory {
          * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
          * on the component/endpoint. This allows end users to control which
          * entity manager will be in use.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder usePassedInEntityManager(
                 boolean usePassedInEntityManager) {
@@ -1239,8 +1439,10 @@ public interface JpaEndpointBuilderFactory {
          * JpaConstants.ENTITY_MANAGER instead of the configured entity manager
          * on the component/endpoint. This allows end users to control which
          * entity manager will be in use.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder usePassedInEntityManager(
                 String usePassedInEntityManager) {
@@ -1252,8 +1454,10 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.merge(entity). Note: entityManager.persist(entity)
          * doesn't work for detached entities (where the EntityManager has to
          * execute an UPDATE instead of an INSERT query)!.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder usePersist(boolean usePersist) {
             setProperty("usePersist", usePersist);
@@ -1264,8 +1468,10 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.merge(entity). Note: entityManager.persist(entity)
          * doesn't work for detached entities (where the EntityManager has to
          * execute an UPDATE instead of an INSERT query)!.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JpaEndpointProducerBuilder usePersist(String usePersist) {
             setProperty("usePersist", usePersist);
@@ -1285,8 +1491,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1296,8 +1504,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1306,9 +1516,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Additional properties for the entity manager to use.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder entityManagerProperties(
                 Map<String, Object> entityManagerProperties) {
@@ -1317,10 +1529,12 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Additional properties for the entity manager to use.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder entityManagerProperties(
                 String entityManagerProperties) {
@@ -1330,8 +1544,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1341,8 +1557,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1362,9 +1580,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA annotated class to use as entity.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder entityType(Class<Object> entityType) {
             setProperty("entityType", entityType);
@@ -1372,9 +1592,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA annotated class to use as entity.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder entityType(String entityType) {
             setProperty("entityType", entityType);
@@ -1386,8 +1608,10 @@ public interface JpaEndpointBuilderFactory {
          * and join transaction doesn't work with your JPA provider. This option
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder joinTransaction(boolean joinTransaction) {
             setProperty("joinTransaction", joinTransaction);
@@ -1399,8 +1623,10 @@ public interface JpaEndpointBuilderFactory {
          * and join transaction doesn't work with your JPA provider. This option
          * can also be set globally on the JpaComponent, instead of having to
          * set it on all endpoints.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder joinTransaction(String joinTransaction) {
             setProperty("joinTransaction", joinTransaction);
@@ -1408,8 +1634,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Set the maximum number of results to retrieve on the Query.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder maximumResults(int maximumResults) {
             setProperty("maximumResults", maximumResults);
@@ -1417,8 +1645,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Set the maximum number of results to retrieve on the Query.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder maximumResults(String maximumResults) {
             setProperty("maximumResults", maximumResults);
@@ -1426,8 +1656,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To use a named query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder namedQuery(String namedQuery) {
             setProperty("namedQuery", namedQuery);
@@ -1436,8 +1668,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * To use a custom native query. You may want to use the option
          * resultClass also when using native queries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder nativeQuery(String nativeQuery) {
             setProperty("nativeQuery", nativeQuery);
@@ -1451,9 +1685,11 @@ public interface JpaEndpointBuilderFactory {
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder parameters(Map<String, Object> parameters) {
             setProperty("parameters", parameters);
@@ -1467,10 +1703,12 @@ public interface JpaEndpointBuilderFactory {
          * it's used for producer, Simple expression can be used as a parameter
          * value. It allows you to retrieve parameter values from the message
          * body, header and etc.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder parameters(String parameters) {
             setProperty("parameters", parameters);
@@ -1478,8 +1716,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * The JPA persistence unit used by default.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default JpaEndpointBuilder persistenceUnit(String persistenceUnit) {
             setProperty("persistenceUnit", persistenceUnit);
@@ -1487,8 +1728,10 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * To use a custom query.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -1500,9 +1743,11 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.createNativeQuery(nativeQuery)). Without this option,
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder resultClass(Class<Object> resultClass) {
             setProperty("resultClass", resultClass);
@@ -1514,9 +1759,11 @@ public interface JpaEndpointBuilderFactory {
          * entityManager.createNativeQuery(nativeQuery)). Without this option,
          * we will return an object array. Only has an affect when using in
          * conjunction with native query when consuming data.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder resultClass(String resultClass) {
             setProperty("resultClass", resultClass);
@@ -1526,8 +1773,10 @@ public interface JpaEndpointBuilderFactory {
          * Whether to use Spring's SharedEntityManager for the
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder sharedEntityManager(
                 boolean sharedEntityManager) {
@@ -1538,8 +1787,10 @@ public interface JpaEndpointBuilderFactory {
          * Whether to use Spring's SharedEntityManager for the
          * consumer/producer. Note in most cases joinTransaction should be set
          * to false as this is not an EXTENDED EntityManager.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JpaEndpointBuilder sharedEntityManager(
                 String sharedEntityManager) {
@@ -1560,8 +1811,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1571,8 +1824,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1581,9 +1836,11 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Additional properties for the entity manager to use.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointBuilder entityManagerProperties(
                 Map<String, Object> entityManagerProperties) {
@@ -1592,10 +1849,12 @@ public interface JpaEndpointBuilderFactory {
         }
         /**
          * Additional properties for the entity manager to use.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointBuilder entityManagerProperties(
                 String entityManagerProperties) {
@@ -1605,8 +1864,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1615,8 +1876,10 @@ public interface JpaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJpaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

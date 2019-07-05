@@ -50,8 +50,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Bucket name or ARN.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder bucketNameOrArn(String bucketNameOrArn) {
             setProperty("bucketNameOrArn", bucketNameOrArn);
@@ -59,8 +61,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
-         * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
+         * type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder amazonS3Client(Object amazonS3Client) {
             setProperty("amazonS3Client", amazonS3Client);
@@ -68,9 +73,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder amazonS3Client(String amazonS3Client) {
             setProperty("amazonS3Client", amazonS3Client);
@@ -78,8 +85,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the bucket.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder autoCreateBucket(
                 boolean autoCreateBucket) {
@@ -88,8 +97,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the bucket.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder autoCreateBucket(
                 String autoCreateBucket) {
@@ -98,8 +109,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether or not the S3 client should use path style access.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder pathStyleAccess(
                 boolean pathStyleAccess) {
@@ -108,8 +121,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether or not the S3 client should use path style access.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder pathStyleAccess(String pathStyleAccess) {
             setProperty("pathStyleAccess", pathStyleAccess);
@@ -118,8 +133,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder policy(String policy) {
             setProperty("policy", policy);
@@ -127,8 +144,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the SQS client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -136,8 +155,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Specify a proxy port to be used inside the client definition.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -145,9 +166,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Specify a proxy port to be used inside the client definition.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -155,8 +178,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * The region in which S3 client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder region(String region) {
             setProperty("region", region);
@@ -165,8 +190,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Set whether the S3 client should expect to load credentials on an EC2
          * instance or to expect static credentials to be passed in.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder useIAMCredentials(
                 boolean useIAMCredentials) {
@@ -176,8 +203,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Set whether the S3 client should expect to load credentials on an EC2
          * instance or to expect static credentials to be passed in.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointConsumerBuilder useIAMCredentials(
                 String useIAMCredentials) {
@@ -192,8 +221,10 @@ public interface S3EndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -208,8 +239,10 @@ public interface S3EndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -224,8 +257,10 @@ public interface S3EndpointBuilderFactory {
          * you need to use the Idempotent Consumer EIP in the route to filter
          * out duplicates. You can filter using the S3Constants#BUCKET_NAME and
          * S3Constants#KEY headers, or only the S3Constants#KEY header.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder deleteAfterRead(
                 boolean deleteAfterRead) {
@@ -240,8 +275,10 @@ public interface S3EndpointBuilderFactory {
          * you need to use the Idempotent Consumer EIP in the route to filter
          * out duplicates. You can filter using the S3Constants#BUCKET_NAME and
          * S3Constants#KEY headers, or only the S3Constants#KEY header.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder deleteAfterRead(String deleteAfterRead) {
             setProperty("deleteAfterRead", deleteAfterRead);
@@ -251,8 +288,10 @@ public interface S3EndpointBuilderFactory {
          * The delimiter which is used in the
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder delimiter(String delimiter) {
             setProperty("delimiter", delimiter);
@@ -260,8 +299,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * To get the object from the bucket with the given file name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -275,8 +316,10 @@ public interface S3EndpointBuilderFactory {
          * true and autocloseBody to false, it will be up to the caller to close
          * the S3Object stream. Setting autocloseBody to true, will close the
          * S3Object stream automatically.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder includeBody(boolean includeBody) {
             setProperty("includeBody", includeBody);
@@ -290,8 +333,10 @@ public interface S3EndpointBuilderFactory {
          * true and autocloseBody to false, it will be up to the caller to close
          * the S3Object stream. Setting autocloseBody to true, will close the
          * S3Object stream automatically.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder includeBody(String includeBody) {
             setProperty("includeBody", includeBody);
@@ -299,8 +344,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Set the maxConnections parameter in the S3 client configuration.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder maxConnections(int maxConnections) {
             setProperty("maxConnections", maxConnections);
@@ -308,8 +355,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Set the maxConnections parameter in the S3 client configuration.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder maxConnections(String maxConnections) {
             setProperty("maxConnections", maxConnections);
@@ -319,8 +368,10 @@ public interface S3EndpointBuilderFactory {
          * Gets the maximum number of messages as a limit to poll at each
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -331,8 +382,10 @@ public interface S3EndpointBuilderFactory {
          * Gets the maximum number of messages as a limit to poll at each
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -343,8 +396,10 @@ public interface S3EndpointBuilderFactory {
          * The prefix which is used in the
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder prefix(String prefix) {
             setProperty("prefix", prefix);
@@ -353,8 +408,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -364,8 +421,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default S3EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -375,8 +434,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -386,8 +447,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -397,8 +460,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -408,8 +473,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -423,8 +490,10 @@ public interface S3EndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -438,8 +507,10 @@ public interface S3EndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -450,8 +521,10 @@ public interface S3EndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -461,8 +534,10 @@ public interface S3EndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -471,8 +546,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -481,8 +558,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -492,8 +571,10 @@ public interface S3EndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -503,8 +584,10 @@ public interface S3EndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -513,8 +596,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -524,9 +609,11 @@ public interface S3EndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder runLoggingLevel(String runLoggingLevel) {
             setProperty("runLoggingLevel", runLoggingLevel);
@@ -536,9 +623,11 @@ public interface S3EndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -549,9 +638,11 @@ public interface S3EndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -561,10 +652,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -574,10 +667,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -586,9 +681,11 @@ public interface S3EndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -598,10 +695,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -610,8 +709,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder startScheduler(boolean startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -619,8 +720,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -628,8 +731,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -637,9 +742,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -648,8 +755,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -658,8 +767,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default S3EndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -667,8 +778,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default S3EndpointConsumerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -676,8 +789,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default S3EndpointConsumerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -698,10 +813,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder encryptionMaterials(
                 Object encryptionMaterials) {
@@ -711,10 +828,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder encryptionMaterials(
                 String encryptionMaterials) {
@@ -723,8 +842,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if encryption must be used or not.
-         * The option is a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder useEncryption(
                 boolean useEncryption) {
@@ -733,8 +854,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if encryption must be used or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder useEncryption(
                 String useEncryption) {
@@ -748,8 +871,10 @@ public interface S3EndpointBuilderFactory {
          * includeBody to true and autocloseBody to false, it will be up to the
          * caller to close the S3Object stream. Setting autocloseBody to true,
          * will close the S3Object stream automatically.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder autocloseBody(
                 boolean autocloseBody) {
@@ -763,8 +888,10 @@ public interface S3EndpointBuilderFactory {
          * includeBody to true and autocloseBody to false, it will be up to the
          * caller to close the S3Object stream. Setting autocloseBody to true,
          * will close the S3Object stream automatically.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder autocloseBody(
                 String autocloseBody) {
@@ -776,9 +903,11 @@ public interface S3EndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -790,9 +919,11 @@ public interface S3EndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -801,8 +932,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -811,9 +944,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -825,9 +960,11 @@ public interface S3EndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -839,9 +976,11 @@ public interface S3EndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -851,8 +990,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -862,8 +1003,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -873,8 +1016,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -884,8 +1029,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointConsumerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -893,8 +1040,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Accelerate Mode enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder accelerateModeEnabled(
                 boolean accelerateModeEnabled) {
@@ -903,8 +1052,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Accelerate Mode enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder accelerateModeEnabled(
                 String accelerateModeEnabled) {
@@ -913,8 +1064,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if disabled Chunked Encoding is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder chunkedEncodingDisabled(
                 boolean chunkedEncodingDisabled) {
@@ -923,8 +1076,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if disabled Chunked Encoding is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder chunkedEncodingDisabled(
                 String chunkedEncodingDisabled) {
@@ -933,8 +1088,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Dualstack enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder dualstackEnabled(
                 boolean dualstackEnabled) {
@@ -943,8 +1100,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Dualstack enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder dualstackEnabled(
                 String dualstackEnabled) {
@@ -953,8 +1112,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Force Global Bucket Access enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder forceGlobalBucketAccessEnabled(
                 boolean forceGlobalBucketAccessEnabled) {
@@ -963,8 +1124,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Force Global Bucket Access enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder forceGlobalBucketAccessEnabled(
                 String forceGlobalBucketAccessEnabled) {
@@ -973,8 +1136,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Payload Signing enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
@@ -983,8 +1148,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Payload Signing enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {
@@ -1004,8 +1171,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Bucket name or ARN.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder bucketNameOrArn(String bucketNameOrArn) {
             setProperty("bucketNameOrArn", bucketNameOrArn);
@@ -1013,8 +1182,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
-         * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
+         * type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder amazonS3Client(Object amazonS3Client) {
             setProperty("amazonS3Client", amazonS3Client);
@@ -1022,9 +1194,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder amazonS3Client(String amazonS3Client) {
             setProperty("amazonS3Client", amazonS3Client);
@@ -1032,8 +1206,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the bucket.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder autoCreateBucket(
                 boolean autoCreateBucket) {
@@ -1042,8 +1218,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the bucket.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder autoCreateBucket(
                 String autoCreateBucket) {
@@ -1052,8 +1230,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether or not the S3 client should use path style access.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder pathStyleAccess(
                 boolean pathStyleAccess) {
@@ -1062,8 +1242,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether or not the S3 client should use path style access.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder pathStyleAccess(String pathStyleAccess) {
             setProperty("pathStyleAccess", pathStyleAccess);
@@ -1072,8 +1254,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder policy(String policy) {
             setProperty("policy", policy);
@@ -1081,8 +1265,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the SQS client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -1090,8 +1276,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Specify a proxy port to be used inside the client definition.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1099,9 +1287,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Specify a proxy port to be used inside the client definition.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1109,8 +1299,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * The region in which S3 client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder region(String region) {
             setProperty("region", region);
@@ -1119,8 +1311,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Set whether the S3 client should expect to load credentials on an EC2
          * instance or to expect static credentials to be passed in.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder useIAMCredentials(
                 boolean useIAMCredentials) {
@@ -1130,8 +1324,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Set whether the S3 client should expect to load credentials on an EC2
          * instance or to expect static credentials to be passed in.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointProducerBuilder useIAMCredentials(
                 String useIAMCredentials) {
@@ -1140,8 +1336,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Delete file object after the S3 file has been uploaded.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder deleteAfterWrite(
                 boolean deleteAfterWrite) {
@@ -1150,8 +1348,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Delete file object after the S3 file has been uploaded.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder deleteAfterWrite(
                 String deleteAfterWrite) {
@@ -1161,8 +1361,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Setting the key name for an element in the bucket through endpoint
          * parameter.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder keyName(String keyName) {
             setProperty("keyName", keyName);
@@ -1178,8 +1380,10 @@ public interface S3EndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1196,8 +1400,10 @@ public interface S3EndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1207,8 +1413,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * If it is true, camel will upload the file with multi part format, the
          * part size is decided by the option of partSize.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder multiPartUpload(
                 boolean multiPartUpload) {
@@ -1218,8 +1426,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * If it is true, camel will upload the file with multi part format, the
          * part size is decided by the option of partSize.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder multiPartUpload(String multiPartUpload) {
             setProperty("multiPartUpload", multiPartUpload);
@@ -1227,9 +1437,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * The operation to do in case the user don't want to do only an upload.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.aws.s3.S3Operations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder operation(S3Operations operation) {
             setProperty("operation", operation);
@@ -1237,9 +1449,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * The operation to do in case the user don't want to do only an upload.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.s3.S3Operations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -1248,8 +1462,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Setup the partSize which is used in multi part upload, the default
          * size is 25M.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder partSize(long partSize) {
             setProperty("partSize", partSize);
@@ -1258,8 +1474,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Setup the partSize which is used in multi part upload, the default
          * size is 25M.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder partSize(String partSize) {
             setProperty("partSize", partSize);
@@ -1268,8 +1486,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Sets the server-side encryption algorithm when encrypting the object
          * using AWS-managed keys. For example use AES256.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder serverSideEncryption(
                 String serverSideEncryption) {
@@ -1279,8 +1499,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The storage class to set in the
          * com.amazonaws.services.s3.model.PutObjectRequest request.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default S3EndpointProducerBuilder storageClass(String storageClass) {
             setProperty("storageClass", storageClass);
@@ -1288,8 +1510,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default S3EndpointProducerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -1297,8 +1521,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default S3EndpointProducerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -1319,10 +1545,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointProducerBuilder encryptionMaterials(
                 Object encryptionMaterials) {
@@ -1332,10 +1560,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointProducerBuilder encryptionMaterials(
                 String encryptionMaterials) {
@@ -1344,8 +1574,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if encryption must be used or not.
-         * The option is a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useEncryption(
                 boolean useEncryption) {
@@ -1354,8 +1586,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if encryption must be used or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useEncryption(
                 String useEncryption) {
@@ -1364,8 +1598,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define the id of KMS key to use in case KMS is enabled.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder awsKMSKeyId(String awsKMSKeyId) {
             setProperty("awsKMSKeyId", awsKMSKeyId);
@@ -1373,8 +1609,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if KMS must be used or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useAwsKMS(boolean useAwsKMS) {
             setProperty("useAwsKMS", useAwsKMS);
@@ -1382,8 +1620,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if KMS must be used or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useAwsKMS(String useAwsKMS) {
             setProperty("useAwsKMS", useAwsKMS);
@@ -1392,8 +1632,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1403,8 +1645,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1414,8 +1658,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1425,8 +1671,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointProducerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -1434,8 +1682,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Accelerate Mode enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder accelerateModeEnabled(
                 boolean accelerateModeEnabled) {
@@ -1444,8 +1694,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Accelerate Mode enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder accelerateModeEnabled(
                 String accelerateModeEnabled) {
@@ -1454,8 +1706,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if disabled Chunked Encoding is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder chunkedEncodingDisabled(
                 boolean chunkedEncodingDisabled) {
@@ -1464,8 +1718,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if disabled Chunked Encoding is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder chunkedEncodingDisabled(
                 String chunkedEncodingDisabled) {
@@ -1474,8 +1730,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Dualstack enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder dualstackEnabled(
                 boolean dualstackEnabled) {
@@ -1484,8 +1742,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Dualstack enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder dualstackEnabled(
                 String dualstackEnabled) {
@@ -1494,8 +1754,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Force Global Bucket Access enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder forceGlobalBucketAccessEnabled(
                 boolean forceGlobalBucketAccessEnabled) {
@@ -1504,8 +1766,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Force Global Bucket Access enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder forceGlobalBucketAccessEnabled(
                 String forceGlobalBucketAccessEnabled) {
@@ -1514,8 +1778,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Payload Signing enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
@@ -1524,8 +1790,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Payload Signing enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {
@@ -1545,8 +1813,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Bucket name or ARN.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder bucketNameOrArn(String bucketNameOrArn) {
             setProperty("bucketNameOrArn", bucketNameOrArn);
@@ -1554,8 +1824,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
-         * The option is a <code>com.amazonaws.services.s3.AmazonS3</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
+         * type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder amazonS3Client(Object amazonS3Client) {
             setProperty("amazonS3Client", amazonS3Client);
@@ -1563,9 +1836,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.AmazonS3</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointBuilder amazonS3Client(String amazonS3Client) {
             setProperty("amazonS3Client", amazonS3Client);
@@ -1573,8 +1848,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the bucket.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder autoCreateBucket(boolean autoCreateBucket) {
             setProperty("autoCreateBucket", autoCreateBucket);
@@ -1582,8 +1859,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Setting the autocreation of the bucket.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointBuilder autoCreateBucket(String autoCreateBucket) {
             setProperty("autoCreateBucket", autoCreateBucket);
@@ -1591,8 +1870,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether or not the S3 client should use path style access.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder pathStyleAccess(boolean pathStyleAccess) {
             setProperty("pathStyleAccess", pathStyleAccess);
@@ -1600,8 +1881,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Whether or not the S3 client should use path style access.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointBuilder pathStyleAccess(String pathStyleAccess) {
             setProperty("pathStyleAccess", pathStyleAccess);
@@ -1610,8 +1893,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder policy(String policy) {
             setProperty("policy", policy);
@@ -1619,8 +1904,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the SQS client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -1628,8 +1915,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Specify a proxy port to be used inside the client definition.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1637,9 +1926,11 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Specify a proxy port to be used inside the client definition.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1647,8 +1938,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * The region in which S3 client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder region(String region) {
             setProperty("region", region);
@@ -1657,8 +1950,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Set whether the S3 client should expect to load credentials on an EC2
          * instance or to expect static credentials to be passed in.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default S3EndpointBuilder useIAMCredentials(boolean useIAMCredentials) {
             setProperty("useIAMCredentials", useIAMCredentials);
@@ -1667,8 +1962,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Set whether the S3 client should expect to load credentials on an EC2
          * instance or to expect static credentials to be passed in.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default S3EndpointBuilder useIAMCredentials(String useIAMCredentials) {
             setProperty("useIAMCredentials", useIAMCredentials);
@@ -1676,8 +1973,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default S3EndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -1685,8 +1984,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default S3EndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -1706,10 +2007,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder encryptionMaterials(
                 Object encryptionMaterials) {
@@ -1719,10 +2022,12 @@ public interface S3EndpointBuilderFactory {
         /**
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
          * type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder encryptionMaterials(
                 String encryptionMaterials) {
@@ -1731,8 +2036,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if encryption must be used or not.
-         * The option is a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder useEncryption(boolean useEncryption) {
             setProperty("useEncryption", useEncryption);
@@ -1740,8 +2047,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if encryption must be used or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder useEncryption(String useEncryption) {
             setProperty("useEncryption", useEncryption);
@@ -1750,8 +2059,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1761,8 +2072,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1772,8 +2085,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1782,8 +2097,10 @@ public interface S3EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedS3EndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -1791,8 +2108,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Accelerate Mode enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder accelerateModeEnabled(
                 boolean accelerateModeEnabled) {
@@ -1801,8 +2120,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Accelerate Mode enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder accelerateModeEnabled(
                 String accelerateModeEnabled) {
@@ -1811,8 +2132,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if disabled Chunked Encoding is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder chunkedEncodingDisabled(
                 boolean chunkedEncodingDisabled) {
@@ -1821,8 +2144,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if disabled Chunked Encoding is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder chunkedEncodingDisabled(
                 String chunkedEncodingDisabled) {
@@ -1831,8 +2156,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Dualstack enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder dualstackEnabled(
                 boolean dualstackEnabled) {
@@ -1841,8 +2168,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Dualstack enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder dualstackEnabled(
                 String dualstackEnabled) {
@@ -1851,8 +2180,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Force Global Bucket Access enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder forceGlobalBucketAccessEnabled(
                 boolean forceGlobalBucketAccessEnabled) {
@@ -1861,8 +2192,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Force Global Bucket Access enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder forceGlobalBucketAccessEnabled(
                 String forceGlobalBucketAccessEnabled) {
@@ -1871,8 +2204,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Payload Signing enabled is true or false.
-         * The option is a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
@@ -1881,8 +2216,10 @@ public interface S3EndpointBuilderFactory {
         }
         /**
          * Define if Payload Signing enabled is true or false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group  advanced
+         * 
+         * Group:  advanced
          */
         default AdvancedS3EndpointBuilder payloadSigningEnabled(
                 String payloadSigningEnabled) {

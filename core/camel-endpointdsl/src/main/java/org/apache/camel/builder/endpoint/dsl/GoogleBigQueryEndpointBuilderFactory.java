@@ -41,8 +41,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         }
         /**
          * Google Cloud Project Id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleBigQueryEndpointBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -50,8 +52,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         }
         /**
          * BigQuery Dataset Id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleBigQueryEndpointBuilder datasetId(String datasetId) {
             setProperty("datasetId", datasetId);
@@ -59,8 +63,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         }
         /**
          * BigQuery table id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleBigQueryEndpointBuilder tableId(String tableId) {
             setProperty("tableId", tableId);
@@ -69,9 +75,11 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to Bigquery Service. If non
          * provided the default will be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleBigQueryEndpointBuilder connectionFactory(
                 Object connectionFactory) {
@@ -81,9 +89,11 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to Bigquery Service. If non
          * provided the default will be used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleBigQueryEndpointBuilder connectionFactory(
                 String connectionFactory) {
@@ -92,8 +102,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         }
         /**
          * Field name to use as insert id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GoogleBigQueryEndpointBuilder useAsInsertId(String useAsInsertId) {
             setProperty("useAsInsertId", useAsInsertId);
@@ -113,8 +125,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQueryEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -124,8 +138,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQueryEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -135,8 +151,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQueryEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -146,8 +164,10 @@ public interface GoogleBigQueryEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleBigQueryEndpointBuilder synchronous(
                 String synchronous) {

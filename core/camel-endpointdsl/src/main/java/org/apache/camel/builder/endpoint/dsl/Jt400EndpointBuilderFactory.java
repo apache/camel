@@ -50,8 +50,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the ID of the AS/400 user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder userID(String userID) {
             setProperty("userID", userID);
@@ -59,8 +61,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the password of the AS/400 user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -68,8 +72,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the name of the AS/400 system.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder systemName(String systemName) {
             setProperty("systemName", systemName);
@@ -78,8 +84,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Returns the fully qualified integrated file system path name of the
          * target object of this endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder objectPath(String objectPath) {
             setProperty("objectPath", objectPath);
@@ -87,9 +95,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to work with data queues or remote program call.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder type(Jt400Type type) {
             setProperty("type", type);
@@ -97,9 +107,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to work with data queues or remote program call.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder type(String type) {
             setProperty("type", type);
@@ -107,8 +119,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the CCSID to use for the connection with the AS/400 system.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder ccsid(int ccsid) {
             setProperty("ccsid", ccsid);
@@ -116,8 +130,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the CCSID to use for the connection with the AS/400 system.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder ccsid(String ccsid) {
             setProperty("ccsid", ccsid);
@@ -125,9 +141,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the data format for sending messages.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder format(Format format) {
             setProperty("format", format);
@@ -135,9 +153,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the data format for sending messages.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder format(String format) {
             setProperty("format", format);
@@ -146,8 +166,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether AS/400 prompting is enabled in the environment running
          * Camel.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder guiAvailable(boolean guiAvailable) {
             setProperty("guiAvailable", guiAvailable);
@@ -156,8 +178,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether AS/400 prompting is enabled in the environment running
          * Camel.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder guiAvailable(String guiAvailable) {
             setProperty("guiAvailable", guiAvailable);
@@ -165,8 +189,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to use keyed or non-keyed data queues.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder keyed(boolean keyed) {
             setProperty("keyed", keyed);
@@ -174,8 +200,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to use keyed or non-keyed data queues.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder keyed(String keyed) {
             setProperty("keyed", keyed);
@@ -183,8 +211,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Specifies which fields (program parameters) are output parameters.
-         * The option is a <code>java.lang.Integer[]</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder outputFieldsIdxArray(
                 Integer[] outputFieldsIdxArray) {
@@ -193,9 +223,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Specifies which fields (program parameters) are output parameters.
+         * 
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder outputFieldsIdxArray(
                 String outputFieldsIdxArray) {
@@ -205,8 +237,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies the fields (program parameters) length as in the AS/400
          * program definition.
-         * The option is a <code>java.lang.Integer[]</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder outputFieldsLengthArray(
                 Integer[] outputFieldsLengthArray) {
@@ -216,9 +250,11 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies the fields (program parameters) length as in the AS/400
          * program definition.
+         * 
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder outputFieldsLengthArray(
                 String outputFieldsLengthArray) {
@@ -227,8 +263,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search key for keyed data queues.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder searchKey(String searchKey) {
             setProperty("searchKey", searchKey);
@@ -236,9 +274,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search type such as EQ for equal etc.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
             setProperty("searchType", searchType);
@@ -246,9 +286,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search type such as EQ for equal etc.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointConsumerBuilder searchType(String searchType) {
             setProperty("searchType", searchType);
@@ -262,8 +304,10 @@ public interface Jt400EndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default Jt400EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -278,8 +322,10 @@ public interface Jt400EndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default Jt400EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -289,8 +335,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Timeout in millis the consumer will wait while trying to read a new
          * message of the data queue.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default Jt400EndpointConsumerBuilder readTimeout(int readTimeout) {
             setProperty("readTimeout", readTimeout);
@@ -299,8 +347,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Timeout in millis the consumer will wait while trying to read a new
          * message of the data queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default Jt400EndpointConsumerBuilder readTimeout(String readTimeout) {
             setProperty("readTimeout", readTimeout);
@@ -309,8 +359,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default Jt400EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -320,8 +372,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default Jt400EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -331,8 +385,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -342,8 +398,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -353,8 +411,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -364,8 +424,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -379,8 +441,10 @@ public interface Jt400EndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -394,8 +458,10 @@ public interface Jt400EndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -406,8 +472,10 @@ public interface Jt400EndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -417,8 +485,10 @@ public interface Jt400EndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -427,8 +497,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -437,8 +509,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -448,8 +522,10 @@ public interface Jt400EndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -459,8 +535,10 @@ public interface Jt400EndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -469,8 +547,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -480,9 +560,11 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -493,9 +575,11 @@ public interface Jt400EndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -506,9 +590,11 @@ public interface Jt400EndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -518,10 +604,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -531,10 +619,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -543,9 +633,11 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -555,10 +647,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -567,8 +661,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -577,8 +673,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -587,8 +685,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -596,9 +696,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -607,8 +709,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -617,8 +721,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -626,8 +732,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Procedure name from a service program to call.
-         * The option is a <code>java.lang.String</code> type.
-         * @group procedureName
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: procedureName
          */
         default Jt400EndpointConsumerBuilder procedureName(String procedureName) {
             setProperty("procedureName", procedureName);
@@ -635,8 +743,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether connections to AS/400 are secured with SSL.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default Jt400EndpointConsumerBuilder secured(boolean secured) {
             setProperty("secured", secured);
@@ -644,8 +754,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether connections to AS/400 are secured with SSL.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default Jt400EndpointConsumerBuilder secured(String secured) {
             setProperty("secured", secured);
@@ -667,9 +779,11 @@ public interface Jt400EndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -681,9 +795,11 @@ public interface Jt400EndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -692,8 +808,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -702,9 +820,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -716,9 +836,11 @@ public interface Jt400EndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -730,9 +852,11 @@ public interface Jt400EndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -742,8 +866,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -753,8 +879,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -764,8 +892,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -775,8 +905,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -796,8 +928,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the ID of the AS/400 user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder userID(String userID) {
             setProperty("userID", userID);
@@ -805,8 +939,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the password of the AS/400 user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -814,8 +950,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the name of the AS/400 system.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder systemName(String systemName) {
             setProperty("systemName", systemName);
@@ -824,8 +962,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Returns the fully qualified integrated file system path name of the
          * target object of this endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder objectPath(String objectPath) {
             setProperty("objectPath", objectPath);
@@ -833,9 +973,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to work with data queues or remote program call.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder type(Jt400Type type) {
             setProperty("type", type);
@@ -843,9 +985,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to work with data queues or remote program call.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder type(String type) {
             setProperty("type", type);
@@ -853,8 +997,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the CCSID to use for the connection with the AS/400 system.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder ccsid(int ccsid) {
             setProperty("ccsid", ccsid);
@@ -862,8 +1008,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the CCSID to use for the connection with the AS/400 system.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder ccsid(String ccsid) {
             setProperty("ccsid", ccsid);
@@ -871,9 +1019,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the data format for sending messages.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder format(Format format) {
             setProperty("format", format);
@@ -881,9 +1031,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the data format for sending messages.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder format(String format) {
             setProperty("format", format);
@@ -892,8 +1044,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether AS/400 prompting is enabled in the environment running
          * Camel.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder guiAvailable(boolean guiAvailable) {
             setProperty("guiAvailable", guiAvailable);
@@ -902,8 +1056,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether AS/400 prompting is enabled in the environment running
          * Camel.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder guiAvailable(String guiAvailable) {
             setProperty("guiAvailable", guiAvailable);
@@ -911,8 +1067,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to use keyed or non-keyed data queues.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder keyed(boolean keyed) {
             setProperty("keyed", keyed);
@@ -920,8 +1078,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to use keyed or non-keyed data queues.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder keyed(String keyed) {
             setProperty("keyed", keyed);
@@ -929,8 +1089,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Specifies which fields (program parameters) are output parameters.
-         * The option is a <code>java.lang.Integer[]</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
                 Integer[] outputFieldsIdxArray) {
@@ -939,9 +1101,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Specifies which fields (program parameters) are output parameters.
+         * 
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
                 String outputFieldsIdxArray) {
@@ -951,8 +1115,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies the fields (program parameters) length as in the AS/400
          * program definition.
-         * The option is a <code>java.lang.Integer[]</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
                 Integer[] outputFieldsLengthArray) {
@@ -962,9 +1128,11 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies the fields (program parameters) length as in the AS/400
          * program definition.
+         * 
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
                 String outputFieldsLengthArray) {
@@ -973,8 +1141,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search key for keyed data queues.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder searchKey(String searchKey) {
             setProperty("searchKey", searchKey);
@@ -982,9 +1152,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search type such as EQ for equal etc.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder searchType(SearchType searchType) {
             setProperty("searchType", searchType);
@@ -992,9 +1164,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search type such as EQ for equal etc.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointProducerBuilder searchType(String searchType) {
             setProperty("searchType", searchType);
@@ -1010,8 +1184,10 @@ public interface Jt400EndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default Jt400EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1028,8 +1204,10 @@ public interface Jt400EndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default Jt400EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1038,8 +1216,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Procedure name from a service program to call.
-         * The option is a <code>java.lang.String</code> type.
-         * @group procedureName
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: procedureName
          */
         default Jt400EndpointProducerBuilder procedureName(String procedureName) {
             setProperty("procedureName", procedureName);
@@ -1047,8 +1227,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether connections to AS/400 are secured with SSL.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default Jt400EndpointProducerBuilder secured(boolean secured) {
             setProperty("secured", secured);
@@ -1056,8 +1238,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether connections to AS/400 are secured with SSL.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default Jt400EndpointProducerBuilder secured(String secured) {
             setProperty("secured", secured);
@@ -1077,8 +1261,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1088,8 +1274,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1099,8 +1287,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1110,8 +1300,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1131,8 +1323,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the ID of the AS/400 user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder userID(String userID) {
             setProperty("userID", userID);
@@ -1140,8 +1334,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the password of the AS/400 user.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder password(String password) {
             setProperty("password", password);
@@ -1149,8 +1345,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Returns the name of the AS/400 system.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder systemName(String systemName) {
             setProperty("systemName", systemName);
@@ -1159,8 +1357,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Returns the fully qualified integrated file system path name of the
          * target object of this endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder objectPath(String objectPath) {
             setProperty("objectPath", objectPath);
@@ -1168,9 +1368,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to work with data queues or remote program call.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder type(Jt400Type type) {
             setProperty("type", type);
@@ -1178,9 +1380,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to work with data queues or remote program call.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Type</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder type(String type) {
             setProperty("type", type);
@@ -1188,8 +1392,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the CCSID to use for the connection with the AS/400 system.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder ccsid(int ccsid) {
             setProperty("ccsid", ccsid);
@@ -1197,8 +1403,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the CCSID to use for the connection with the AS/400 system.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder ccsid(String ccsid) {
             setProperty("ccsid", ccsid);
@@ -1206,9 +1414,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the data format for sending messages.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder format(Format format) {
             setProperty("format", format);
@@ -1216,9 +1426,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Sets the data format for sending messages.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder format(String format) {
             setProperty("format", format);
@@ -1227,8 +1439,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether AS/400 prompting is enabled in the environment running
          * Camel.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder guiAvailable(boolean guiAvailable) {
             setProperty("guiAvailable", guiAvailable);
@@ -1237,8 +1451,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether AS/400 prompting is enabled in the environment running
          * Camel.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder guiAvailable(String guiAvailable) {
             setProperty("guiAvailable", guiAvailable);
@@ -1246,8 +1462,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to use keyed or non-keyed data queues.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder keyed(boolean keyed) {
             setProperty("keyed", keyed);
@@ -1255,8 +1473,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether to use keyed or non-keyed data queues.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder keyed(String keyed) {
             setProperty("keyed", keyed);
@@ -1264,8 +1484,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Specifies which fields (program parameters) are output parameters.
-         * The option is a <code>java.lang.Integer[]</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder outputFieldsIdxArray(
                 Integer[] outputFieldsIdxArray) {
@@ -1274,9 +1496,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Specifies which fields (program parameters) are output parameters.
+         * 
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder outputFieldsIdxArray(
                 String outputFieldsIdxArray) {
@@ -1286,8 +1510,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies the fields (program parameters) length as in the AS/400
          * program definition.
-         * The option is a <code>java.lang.Integer[]</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder outputFieldsLengthArray(
                 Integer[] outputFieldsLengthArray) {
@@ -1297,9 +1523,11 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies the fields (program parameters) length as in the AS/400
          * program definition.
+         * 
          * The option will be converted to a <code>java.lang.Integer[]</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder outputFieldsLengthArray(
                 String outputFieldsLengthArray) {
@@ -1308,8 +1536,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search key for keyed data queues.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder searchKey(String searchKey) {
             setProperty("searchKey", searchKey);
@@ -1317,9 +1547,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search type such as EQ for equal etc.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder searchType(SearchType searchType) {
             setProperty("searchType", searchType);
@@ -1327,9 +1559,11 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Search type such as EQ for equal etc.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default Jt400EndpointBuilder searchType(String searchType) {
             setProperty("searchType", searchType);
@@ -1337,8 +1571,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Procedure name from a service program to call.
-         * The option is a <code>java.lang.String</code> type.
-         * @group procedureName
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: procedureName
          */
         default Jt400EndpointBuilder procedureName(String procedureName) {
             setProperty("procedureName", procedureName);
@@ -1346,8 +1582,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether connections to AS/400 are secured with SSL.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default Jt400EndpointBuilder secured(boolean secured) {
             setProperty("secured", secured);
@@ -1355,8 +1593,10 @@ public interface Jt400EndpointBuilderFactory {
         }
         /**
          * Whether connections to AS/400 are secured with SSL.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default Jt400EndpointBuilder secured(String secured) {
             setProperty("secured", secured);
@@ -1376,8 +1616,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1387,8 +1629,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1398,8 +1642,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1408,8 +1654,10 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJt400EndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

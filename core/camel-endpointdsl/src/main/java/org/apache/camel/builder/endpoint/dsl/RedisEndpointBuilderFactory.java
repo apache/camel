@@ -43,8 +43,10 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * The host where Redis server is running.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -52,8 +54,10 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Redis server port number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
@@ -61,9 +65,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Redis server port number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -72,8 +78,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder channels(String channels) {
             setProperty("channels", channels);
@@ -83,9 +91,11 @@ public interface RedisEndpointBuilderFactory {
          * Default command, which can be overridden by message header. Notice
          * the consumer only supports the following commands: PSUBSCRIBE and
          * SUBSCRIBE.
-         * The option is a <code>org.apache.camel.component.redis.Command</code>
-         * type.
-         * @group common
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.redis.Command</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder command(Command command) {
             setProperty("command", command);
@@ -95,9 +105,11 @@ public interface RedisEndpointBuilderFactory {
          * Default command, which can be overridden by message header. Notice
          * the consumer only supports the following commands: PSUBSCRIBE and
          * SUBSCRIBE.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.redis.Command</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder command(String command) {
             setProperty("command", command);
@@ -105,9 +117,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisConnectionFactory instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -116,9 +130,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisConnectionFactory instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
@@ -127,9 +143,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisTemplate instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder redisTemplate(Object redisTemplate) {
             setProperty("redisTemplate", redisTemplate);
@@ -137,9 +155,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisTemplate instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder redisTemplate(String redisTemplate) {
             setProperty("redisTemplate", redisTemplate);
@@ -147,9 +167,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisSerializer instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder serializer(Object serializer) {
             setProperty("serializer", serializer);
@@ -157,9 +179,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisSerializer instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointConsumerBuilder serializer(String serializer) {
             setProperty("serializer", serializer);
@@ -173,8 +197,10 @@ public interface RedisEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RedisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -189,8 +215,10 @@ public interface RedisEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RedisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -213,9 +241,11 @@ public interface RedisEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -227,9 +257,11 @@ public interface RedisEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -238,8 +270,10 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -248,9 +282,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -260,9 +296,11 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Reference to a pre-configured RedisMessageListenerContainer instance
          * to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
                 Object listenerContainer) {
@@ -272,9 +310,11 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Reference to a pre-configured RedisMessageListenerContainer instance
          * to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.listener.RedisMessageListenerContainer</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRedisEndpointConsumerBuilder listenerContainer(
                 String listenerContainer) {
@@ -284,8 +324,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -295,8 +337,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -306,8 +350,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -317,8 +363,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -338,8 +386,10 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * The host where Redis server is running.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -347,8 +397,10 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Redis server port number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
@@ -356,9 +408,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Redis server port number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -367,8 +421,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder channels(String channels) {
             setProperty("channels", channels);
@@ -378,9 +434,11 @@ public interface RedisEndpointBuilderFactory {
          * Default command, which can be overridden by message header. Notice
          * the consumer only supports the following commands: PSUBSCRIBE and
          * SUBSCRIBE.
-         * The option is a <code>org.apache.camel.component.redis.Command</code>
-         * type.
-         * @group common
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.redis.Command</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder command(Command command) {
             setProperty("command", command);
@@ -390,9 +448,11 @@ public interface RedisEndpointBuilderFactory {
          * Default command, which can be overridden by message header. Notice
          * the consumer only supports the following commands: PSUBSCRIBE and
          * SUBSCRIBE.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.redis.Command</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder command(String command) {
             setProperty("command", command);
@@ -400,9 +460,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisConnectionFactory instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -411,9 +473,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisConnectionFactory instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
@@ -422,9 +486,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisTemplate instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder redisTemplate(Object redisTemplate) {
             setProperty("redisTemplate", redisTemplate);
@@ -432,9 +498,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisTemplate instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder redisTemplate(String redisTemplate) {
             setProperty("redisTemplate", redisTemplate);
@@ -442,9 +510,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisSerializer instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder serializer(Object serializer) {
             setProperty("serializer", serializer);
@@ -452,9 +522,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisSerializer instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointProducerBuilder serializer(String serializer) {
             setProperty("serializer", serializer);
@@ -470,8 +542,10 @@ public interface RedisEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default RedisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -488,8 +562,10 @@ public interface RedisEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RedisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -510,8 +586,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -521,8 +599,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -532,8 +612,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -543,8 +625,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -564,8 +648,10 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * The host where Redis server is running.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -573,8 +659,10 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Redis server port number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder port(Integer port) {
             setProperty("port", port);
@@ -582,9 +670,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Redis server port number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -593,8 +683,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder channels(String channels) {
             setProperty("channels", channels);
@@ -604,9 +696,11 @@ public interface RedisEndpointBuilderFactory {
          * Default command, which can be overridden by message header. Notice
          * the consumer only supports the following commands: PSUBSCRIBE and
          * SUBSCRIBE.
-         * The option is a <code>org.apache.camel.component.redis.Command</code>
-         * type.
-         * @group common
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.redis.Command</code> type.
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder command(Command command) {
             setProperty("command", command);
@@ -616,9 +710,11 @@ public interface RedisEndpointBuilderFactory {
          * Default command, which can be overridden by message header. Notice
          * the consumer only supports the following commands: PSUBSCRIBE and
          * SUBSCRIBE.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.redis.Command</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder command(String command) {
             setProperty("command", command);
@@ -626,9 +722,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisConnectionFactory instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder connectionFactory(Object connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
@@ -636,9 +734,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisConnectionFactory instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.connection.RedisConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder connectionFactory(String connectionFactory) {
             setProperty("connectionFactory", connectionFactory);
@@ -646,9 +746,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisTemplate instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder redisTemplate(Object redisTemplate) {
             setProperty("redisTemplate", redisTemplate);
@@ -656,9 +758,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisTemplate instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.core.RedisTemplate</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder redisTemplate(String redisTemplate) {
             setProperty("redisTemplate", redisTemplate);
@@ -666,9 +770,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisSerializer instance to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder serializer(Object serializer) {
             setProperty("serializer", serializer);
@@ -676,9 +782,11 @@ public interface RedisEndpointBuilderFactory {
         }
         /**
          * Reference to a pre-configured RedisSerializer instance to use.
+         * 
          * The option will be converted to a
          * <code>org.springframework.data.redis.serializer.RedisSerializer</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RedisEndpointBuilder serializer(String serializer) {
             setProperty("serializer", serializer);
@@ -698,8 +806,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -709,8 +819,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -720,8 +832,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -730,8 +844,10 @@ public interface RedisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRedisEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

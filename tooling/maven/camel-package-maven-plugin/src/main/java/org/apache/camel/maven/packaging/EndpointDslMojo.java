@@ -355,8 +355,15 @@ public class EndpointDslMojo extends AbstractMojo {
                     if (!desc.endsWith(".")) {
                         desc += ".";
                     }
-                    desc += "\nThe option is a <code>" + ogtype.toString().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</code> type.";
-                    desc += "\n@group " + option.getGroup();
+                    desc += "\n";
+                    desc += "\nThe option is a: <code>" + ogtype.toString().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</code> type.";
+                    desc += "\n";
+                    // the Endpoint DSL currently requires to provide the entire context-path and not as individual options
+                    // so lets only mark query parameters that are required as required
+                    if ("parameter".equals(option.getKind()) && "true".equals(option.getRequired())) {
+                        desc += "\nRequired: true";
+                    }
+                    desc += "\nGroup: " + option.getGroup();
                     fluent.getJavaDoc().setFullText(desc);
                 }
 
@@ -372,8 +379,15 @@ public class EndpointDslMojo extends AbstractMojo {
                         if (!desc.endsWith(".")) {
                             desc += ".";
                         }
+                        desc += "\n";
                         desc += "\nThe option will be converted to a <code>" + ogtype.toString().replaceAll("<", "&lt;").replaceAll(">", "&gt;") + "</code> type.";
-                        desc += "\n@group " + option.getGroup();
+                        desc += "\n";
+                        // the Endpoint DSL currently requires to provide the entire context-path and not as individual options
+                        // so lets only mark query parameters that are required as required
+                        if ("parameter".equals(option.getKind()) && "true".equals(option.getRequired())) {
+                            desc += "\nRequired: true";
+                        }
+                        desc += "\nGroup: " + option.getGroup();
                         fluent.getJavaDoc().setFullText(desc);
                     }
                 }

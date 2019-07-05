@@ -44,8 +44,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * URL to the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder cmsUrl(String cmsUrl) {
             setProperty("cmsUrl", cmsUrl);
@@ -53,8 +55,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Number of nodes to retrieve per page.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder pageSize(int pageSize) {
             setProperty("pageSize", pageSize);
@@ -62,8 +66,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Number of nodes to retrieve per page.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
@@ -72,8 +78,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder readContent(boolean readContent) {
             setProperty("readContent", readContent);
@@ -82,8 +90,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder readContent(String readContent) {
             setProperty("readContent", readContent);
@@ -91,8 +101,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Max number of nodes to read.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder readCount(int readCount) {
             setProperty("readCount", readCount);
@@ -100,8 +112,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Max number of nodes to read.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder readCount(String readCount) {
             setProperty("readCount", readCount);
@@ -110,8 +124,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * The Id of the repository to use. If not specified the first available
          * repository is used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointConsumerBuilder repositoryId(String repositoryId) {
             setProperty("repositoryId", repositoryId);
@@ -125,8 +141,10 @@ public interface CMISEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -141,8 +159,10 @@ public interface CMISEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -153,8 +173,10 @@ public interface CMISEndpointBuilderFactory {
          * The cmis query to execute against the repository. If not specified,
          * the consumer will retrieve every node from the content repository by
          * iterating the content tree recursively.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default CMISEndpointConsumerBuilder query(String query) {
             setProperty("query", query);
@@ -162,8 +184,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Password for the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CMISEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -171,8 +195,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Username for the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CMISEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -194,9 +220,11 @@ public interface CMISEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -208,9 +236,11 @@ public interface CMISEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -219,8 +249,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -229,9 +261,11 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -241,8 +275,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -252,8 +288,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -263,10 +301,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * To use a custom CMISSessionFacadeFactory to create the
          * CMISSessionFacade instances.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
@@ -276,10 +316,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * To use a custom CMISSessionFacadeFactory to create the
          * CMISSessionFacade instances.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
@@ -289,8 +331,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -300,8 +344,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -321,8 +367,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * URL to the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder cmsUrl(String cmsUrl) {
             setProperty("cmsUrl", cmsUrl);
@@ -330,8 +378,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Number of nodes to retrieve per page.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder pageSize(int pageSize) {
             setProperty("pageSize", pageSize);
@@ -339,8 +389,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Number of nodes to retrieve per page.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
@@ -349,8 +401,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder readContent(boolean readContent) {
             setProperty("readContent", readContent);
@@ -359,8 +413,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder readContent(String readContent) {
             setProperty("readContent", readContent);
@@ -368,8 +424,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Max number of nodes to read.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder readCount(int readCount) {
             setProperty("readCount", readCount);
@@ -377,8 +435,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Max number of nodes to read.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder readCount(String readCount) {
             setProperty("readCount", readCount);
@@ -387,8 +447,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * The Id of the repository to use. If not specified the first available
          * repository is used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointProducerBuilder repositoryId(String repositoryId) {
             setProperty("repositoryId", repositoryId);
@@ -404,8 +466,10 @@ public interface CMISEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -422,8 +486,10 @@ public interface CMISEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -433,8 +499,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If true, will execute the cmis query from the message body and return
          * result, otherwise will create a node in the cmis repository.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CMISEndpointProducerBuilder queryMode(boolean queryMode) {
             setProperty("queryMode", queryMode);
@@ -443,8 +511,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If true, will execute the cmis query from the message body and return
          * result, otherwise will create a node in the cmis repository.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CMISEndpointProducerBuilder queryMode(String queryMode) {
             setProperty("queryMode", queryMode);
@@ -452,8 +522,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Password for the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CMISEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -461,8 +533,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Username for the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CMISEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -482,8 +556,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -493,8 +569,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -504,10 +582,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * To use a custom CMISSessionFacadeFactory to create the
          * CMISSessionFacade instances.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
@@ -517,10 +597,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * To use a custom CMISSessionFacadeFactory to create the
          * CMISSessionFacade instances.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
@@ -530,8 +612,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -541,8 +625,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -562,8 +648,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * URL to the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder cmsUrl(String cmsUrl) {
             setProperty("cmsUrl", cmsUrl);
@@ -571,8 +659,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Number of nodes to retrieve per page.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder pageSize(int pageSize) {
             setProperty("pageSize", pageSize);
@@ -580,8 +670,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Number of nodes to retrieve per page.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
@@ -590,8 +682,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder readContent(boolean readContent) {
             setProperty("readContent", readContent);
@@ -600,8 +694,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder readContent(String readContent) {
             setProperty("readContent", readContent);
@@ -609,8 +705,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Max number of nodes to read.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder readCount(int readCount) {
             setProperty("readCount", readCount);
@@ -618,8 +716,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Max number of nodes to read.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder readCount(String readCount) {
             setProperty("readCount", readCount);
@@ -628,8 +728,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * The Id of the repository to use. If not specified the first available
          * repository is used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CMISEndpointBuilder repositoryId(String repositoryId) {
             setProperty("repositoryId", repositoryId);
@@ -637,8 +739,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Password for the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CMISEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -646,8 +750,10 @@ public interface CMISEndpointBuilderFactory {
         }
         /**
          * Username for the cmis repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CMISEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -667,8 +773,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -678,8 +786,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -689,10 +799,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * To use a custom CMISSessionFacadeFactory to create the
          * CMISSessionFacade instances.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
@@ -702,10 +814,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * To use a custom CMISSessionFacadeFactory to create the
          * CMISSessionFacade instances.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
@@ -715,8 +829,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -725,8 +841,10 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMISEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

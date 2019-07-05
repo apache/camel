@@ -43,9 +43,11 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * What command to execute such as blobstore or compute.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JcloudsEndpointConsumerBuilder command(JcloudsCommand command) {
             setProperty("command", command);
@@ -53,9 +55,11 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * What command to execute such as blobstore or compute.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JcloudsEndpointConsumerBuilder command(String command) {
             setProperty("command", command);
@@ -64,8 +68,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The name of the cloud provider that provides the target service (e.g.
          * aws-s3 or aws_ec2).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JcloudsEndpointConsumerBuilder providerId(String providerId) {
             setProperty("providerId", providerId);
@@ -79,8 +85,10 @@ public interface JcloudsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -95,8 +103,10 @@ public interface JcloudsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -105,8 +115,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * The name of the blob container.
-         * The option is a <code>java.lang.String</code> type.
-         * @group blobstore
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: blobstore
          */
         default JcloudsEndpointConsumerBuilder container(String container) {
             setProperty("container", container);
@@ -114,8 +126,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * An optional directory name to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group blobstore
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: blobstore
          */
         default JcloudsEndpointConsumerBuilder directory(String directory) {
             setProperty("directory", directory);
@@ -137,9 +151,11 @@ public interface JcloudsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -151,9 +167,11 @@ public interface JcloudsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -162,8 +180,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -172,9 +192,11 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -184,8 +206,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -195,8 +219,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -206,8 +232,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -217,8 +245,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -238,9 +268,11 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * What command to execute such as blobstore or compute.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JcloudsEndpointProducerBuilder command(JcloudsCommand command) {
             setProperty("command", command);
@@ -248,9 +280,11 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * What command to execute such as blobstore or compute.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JcloudsEndpointProducerBuilder command(String command) {
             setProperty("command", command);
@@ -259,8 +293,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The name of the cloud provider that provides the target service (e.g.
          * aws-s3 or aws_ec2).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JcloudsEndpointProducerBuilder providerId(String providerId) {
             setProperty("providerId", providerId);
@@ -276,8 +312,10 @@ public interface JcloudsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JcloudsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -294,8 +332,10 @@ public interface JcloudsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JcloudsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -304,8 +344,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * The name of the blob.
-         * The option is a <code>java.lang.String</code> type.
-         * @group blobstore
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: blobstore
          */
         default JcloudsEndpointProducerBuilder blobName(String blobName) {
             setProperty("blobName", blobName);
@@ -313,8 +355,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * The name of the blob container.
-         * The option is a <code>java.lang.String</code> type.
-         * @group blobstore
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: blobstore
          */
         default JcloudsEndpointProducerBuilder container(String container) {
             setProperty("container", container);
@@ -323,8 +367,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The group that will be assigned to the newly created node. Values
          * depend on the actual cloud provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder group(String group) {
             setProperty("group", group);
@@ -333,8 +379,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The hardware that will be used for creating a node. Values depend on
          * the actual cloud provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder hardwareId(String hardwareId) {
             setProperty("hardwareId", hardwareId);
@@ -343,8 +391,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The imageId that will be used for creating a node. Values depend on
          * the actual cloud provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder imageId(String imageId) {
             setProperty("imageId", imageId);
@@ -353,8 +403,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The location that will be used for creating a node. Values depend on
          * the actual cloud provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder locationId(String locationId) {
             setProperty("locationId", locationId);
@@ -362,8 +414,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * The id of the node that will run the script or destroyed.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder nodeId(String nodeId) {
             setProperty("nodeId", nodeId);
@@ -371,8 +425,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * To filter by node status to only select running nodes etc.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder nodeState(String nodeState) {
             setProperty("nodeState", nodeState);
@@ -381,8 +437,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Specifies the type of operation that will be performed to the
          * blobstore.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -390,8 +448,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * The user on the target node that will run the script.
-         * The option is a <code>java.lang.String</code> type.
-         * @group compute
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: compute
          */
         default JcloudsEndpointProducerBuilder user(String user) {
             setProperty("user", user);
@@ -411,8 +471,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -422,8 +484,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -433,8 +497,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -444,8 +510,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -465,9 +533,11 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * What command to execute such as blobstore or compute.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JcloudsEndpointBuilder command(JcloudsCommand command) {
             setProperty("command", command);
@@ -475,9 +545,11 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * What command to execute such as blobstore or compute.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default JcloudsEndpointBuilder command(String command) {
             setProperty("command", command);
@@ -486,8 +558,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The name of the cloud provider that provides the target service (e.g.
          * aws-s3 or aws_ec2).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JcloudsEndpointBuilder providerId(String providerId) {
             setProperty("providerId", providerId);
@@ -495,8 +569,10 @@ public interface JcloudsEndpointBuilderFactory {
         }
         /**
          * The name of the blob container.
-         * The option is a <code>java.lang.String</code> type.
-         * @group blobstore
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: blobstore
          */
         default JcloudsEndpointBuilder container(String container) {
             setProperty("container", container);
@@ -516,8 +592,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -527,8 +605,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -538,8 +618,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -548,8 +630,10 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

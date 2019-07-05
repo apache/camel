@@ -41,8 +41,10 @@ public interface MsvEndpointBuilderFactory {
          * URL to a local resource on the classpath,or a reference to lookup a
          * bean in the Registry, or a full URL to a remote resource or resource
          * on the file system which contains the XSD to validate against.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MsvEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -50,8 +52,10 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no body exists.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default MsvEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
@@ -59,8 +63,10 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no body exists.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MsvEndpointBuilder failOnNullBody(String failOnNullBody) {
             setProperty("failOnNullBody", failOnNullBody);
@@ -68,8 +74,10 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no header exists when validating against a header.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default MsvEndpointBuilder failOnNullHeader(boolean failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
@@ -77,8 +85,10 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * Whether to fail if no header exists when validating against a header.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MsvEndpointBuilder failOnNullHeader(String failOnNullHeader) {
             setProperty("failOnNullHeader", failOnNullHeader);
@@ -86,8 +96,10 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * To validate against a header instead of the message body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MsvEndpointBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
@@ -107,8 +119,10 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -118,8 +132,10 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -130,9 +146,11 @@ public interface MsvEndpointBuilderFactory {
          * To use a custom
          * org.apache.camel.processor.validation.ValidatorErrorHandler. The
          * default error handler captures the errors and throws an exception.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder errorHandler(Object errorHandler) {
             setProperty("errorHandler", errorHandler);
@@ -142,9 +160,11 @@ public interface MsvEndpointBuilderFactory {
          * To use a custom
          * org.apache.camel.processor.validation.ValidatorErrorHandler. The
          * default error handler captures the errors and throws an exception.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder errorHandler(String errorHandler) {
             setProperty("errorHandler", errorHandler);
@@ -153,8 +173,10 @@ public interface MsvEndpointBuilderFactory {
         /**
          * To use a custom LSResourceResolver. See also
          * setResourceResolverFactory(ValidatorResourceResolverFactory).
-         * The option is a <code>org.w3c.dom.ls.LSResourceResolver</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>org.w3c.dom.ls.LSResourceResolver</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
                 Object resourceResolver) {
@@ -164,9 +186,11 @@ public interface MsvEndpointBuilderFactory {
         /**
          * To use a custom LSResourceResolver. See also
          * setResourceResolverFactory(ValidatorResourceResolverFactory).
+         * 
          * The option will be converted to a
          * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
                 String resourceResolver) {
@@ -178,9 +202,11 @@ public interface MsvEndpointBuilderFactory {
          * resource URI. Must not be used in combination with method
          * setResourceResolver(LSResourceResolver). If not set then
          * DefaultValidatorResourceResolverFactory is used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 Object resourceResolverFactory) {
@@ -192,9 +218,11 @@ public interface MsvEndpointBuilderFactory {
          * resource URI. Must not be used in combination with method
          * setResourceResolver(LSResourceResolver). If not set then
          * DefaultValidatorResourceResolverFactory is used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 String resourceResolverFactory) {
@@ -203,8 +231,11 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * To use a custom javax.xml.validation.SchemaFactory.
-         * The option is a <code>javax.xml.validation.SchemaFactory</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaFactory(Object schemaFactory) {
             setProperty("schemaFactory", schemaFactory);
@@ -212,9 +243,11 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * To use a custom javax.xml.validation.SchemaFactory.
+         * 
          * The option will be converted to a
          * <code>javax.xml.validation.SchemaFactory</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaFactory(String schemaFactory) {
             setProperty("schemaFactory", schemaFactory);
@@ -222,8 +255,10 @@ public interface MsvEndpointBuilderFactory {
         }
         /**
          * Configures the W3C XML Schema Namespace URI.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaLanguage(String schemaLanguage) {
             setProperty("schemaLanguage", schemaLanguage);
@@ -232,8 +267,10 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -242,8 +279,10 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -253,8 +292,10 @@ public interface MsvEndpointBuilderFactory {
          * Whether the Schema instance should be shared or not. This option is
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(
                 boolean useSharedSchema) {
@@ -265,8 +306,10 @@ public interface MsvEndpointBuilderFactory {
          * Whether the Schema instance should be shared or not. This option is
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(
                 String useSharedSchema) {

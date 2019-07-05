@@ -42,8 +42,10 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * Where label is an arbitrary text value describing the endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder label(String label) {
             setProperty("label", label);
@@ -51,9 +53,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom ConstraintValidatorFactory.
-         * The option is a
+         * 
+         * The option is a:
          * <code>javax.validation.ConstraintValidatorFactory</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder constraintValidatorFactory(
                 Object constraintValidatorFactory) {
@@ -62,9 +66,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom ConstraintValidatorFactory.
+         * 
          * The option will be converted to a
          * <code>javax.validation.ConstraintValidatorFactory</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder constraintValidatorFactory(
                 String constraintValidatorFactory) {
@@ -73,8 +79,10 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom validation group.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder group(String group) {
             setProperty("group", group);
@@ -82,9 +90,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom MessageInterpolator.
-         * The option is a <code>javax.validation.MessageInterpolator</code>
+         * 
+         * The option is a: <code>javax.validation.MessageInterpolator</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder messageInterpolator(
                 Object messageInterpolator) {
@@ -93,9 +103,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom MessageInterpolator.
+         * 
          * The option will be converted to a
          * <code>javax.validation.MessageInterpolator</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder messageInterpolator(
                 String messageInterpolator) {
@@ -104,9 +116,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom TraversableResolver.
-         * The option is a <code>javax.validation.TraversableResolver</code>
+         * 
+         * The option is a: <code>javax.validation.TraversableResolver</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder traversableResolver(
                 Object traversableResolver) {
@@ -115,9 +129,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a custom TraversableResolver.
+         * 
          * The option will be converted to a
          * <code>javax.validation.TraversableResolver</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder traversableResolver(
                 String traversableResolver) {
@@ -126,9 +142,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a a custom ValidationProviderResolver.
-         * The option is a
+         * 
+         * The option is a:
          * <code>javax.validation.ValidationProviderResolver</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder validationProviderResolver(
                 Object validationProviderResolver) {
@@ -137,9 +155,11 @@ public interface BeanValidatorEndpointBuilderFactory {
         }
         /**
          * To use a a custom ValidationProviderResolver.
+         * 
          * The option will be converted to a
          * <code>javax.validation.ValidationProviderResolver</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BeanValidatorEndpointBuilder validationProviderResolver(
                 String validationProviderResolver) {
@@ -160,8 +180,10 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -171,8 +193,10 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -182,8 +206,10 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -193,8 +219,10 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(
                 String synchronous) {

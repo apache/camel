@@ -41,8 +41,10 @@ public interface WebhookEndpointBuilderFactory {
         }
         /**
          * The delegate uri. Must belong to a component that supports webhooks.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default WebhookEndpointBuilder endpointUri(String endpointUri) {
             setProperty("endpointUri", endpointUri);
@@ -51,8 +53,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * Automatically register the webhook at startup and unregister it on
          * shutdown.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default WebhookEndpointBuilder webhookAutoRegister(
                 boolean webhookAutoRegister) {
@@ -62,8 +66,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * Automatically register the webhook at startup and unregister it on
          * shutdown.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WebhookEndpointBuilder webhookAutoRegister(
                 String webhookAutoRegister) {
@@ -74,8 +80,10 @@ public interface WebhookEndpointBuilderFactory {
          * The first (base) path element where the webhook will be exposed. It's
          * a good practice to set it to a random string, so that it cannot be
          * guessed by unauthorized parties.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WebhookEndpointBuilder webhookBasePath(String webhookBasePath) {
             setProperty("webhookBasePath", webhookBasePath);
@@ -84,8 +92,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * The Camel Rest component to use for the REST transport, such as
          * netty4-http.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WebhookEndpointBuilder webhookComponentName(
                 String webhookComponentName) {
@@ -94,8 +104,10 @@ public interface WebhookEndpointBuilderFactory {
         }
         /**
          * The URL of the current service as seen by the webhook provider.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WebhookEndpointBuilder webhookExternalUrl(
                 String webhookExternalUrl) {
@@ -105,8 +117,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * The path where the webhook endpoint will be exposed (relative to
          * basePath, if any).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WebhookEndpointBuilder webhookPath(String webhookPath) {
             setProperty("webhookPath", webhookPath);
@@ -126,8 +140,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -137,8 +153,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -148,8 +166,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -158,8 +178,10 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

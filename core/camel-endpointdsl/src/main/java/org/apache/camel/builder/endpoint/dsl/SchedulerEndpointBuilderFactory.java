@@ -40,8 +40,10 @@ public interface SchedulerEndpointBuilderFactory {
         }
         /**
          * The name of the scheduler.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SchedulerEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -50,8 +52,10 @@ public interface SchedulerEndpointBuilderFactory {
         /**
          * Number of threads used by the scheduling thread pool. Is by default
          * using a single thread.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SchedulerEndpointBuilder concurrentTasks(int concurrentTasks) {
             setProperty("concurrentTasks", concurrentTasks);
@@ -60,8 +64,10 @@ public interface SchedulerEndpointBuilderFactory {
         /**
          * Number of threads used by the scheduling thread pool. Is by default
          * using a single thread.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SchedulerEndpointBuilder concurrentTasks(String concurrentTasks) {
             setProperty("concurrentTasks", concurrentTasks);
@@ -81,8 +87,10 @@ public interface SchedulerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -92,8 +100,10 @@ public interface SchedulerEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -103,8 +113,10 @@ public interface SchedulerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -113,8 +125,10 @@ public interface SchedulerEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -46,8 +46,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To lookup an existing configured CxfEndpoint. Must used bean: as
          * prefix.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CxfEndpointConsumerBuilder beanId(String beanId) {
             setProperty("beanId", beanId);
@@ -55,8 +57,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The service publish address.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder address(String address) {
             setProperty("address", address);
@@ -64,9 +68,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The data type messages supported by the CXF endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointConsumerBuilder dataFormat(DataFormat dataFormat) {
             setProperty("dataFormat", dataFormat);
@@ -74,9 +80,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The data type messages supported by the CXF endpoint.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointConsumerBuilder dataFormat(String dataFormat) {
             setProperty("dataFormat", dataFormat);
@@ -87,8 +95,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP body. If the value is false, CXF will chose the document-literal
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default CxfEndpointConsumerBuilder wrappedStyle(Boolean wrappedStyle) {
             setProperty("wrappedStyle", wrappedStyle);
@@ -99,9 +109,11 @@ public interface CxfEndpointBuilderFactory {
          * SOAP body. If the value is false, CXF will chose the document-literal
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointConsumerBuilder wrappedStyle(String wrappedStyle) {
             setProperty("wrappedStyle", wrappedStyle);
@@ -115,8 +127,10 @@ public interface CxfEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CxfEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -131,8 +145,10 @@ public interface CxfEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CxfEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -142,8 +158,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
-         * The option is a <code>boolean</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointConsumerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
@@ -153,8 +171,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointConsumerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
@@ -164,8 +184,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
-         * The option is a <code>int</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointConsumerBuilder loggingSizeLimit(int loggingSizeLimit) {
             setProperty("loggingSizeLimit", loggingSizeLimit);
@@ -174,8 +196,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointConsumerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
@@ -185,8 +209,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
-         * The option is a <code>boolean</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointConsumerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
@@ -196,8 +222,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointConsumerBuilder skipFaultLogging(
                 String skipFaultLogging) {
@@ -207,8 +235,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option is used to set the basic authentication information of
          * password for the CXF client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CxfEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -217,8 +247,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option is used to set the basic authentication information of
          * username for the CXF client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CxfEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -226,8 +258,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The bindingId for the service model to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder bindingId(String bindingId) {
             setProperty("bindingId", bindingId);
@@ -237,8 +271,10 @@ public interface CxfEndpointBuilderFactory {
          * The endpoint name this service is implementing, it maps to the
          * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
          * prefix valid at this scope.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -247,8 +283,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option can override the endpointUrl that published from the WSDL
          * which can be accessed with service address url plus wsd.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
@@ -258,9 +296,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group service
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder serviceClass(
                 Class<Object> serviceClass) {
@@ -270,9 +310,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group service
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder serviceClass(String serviceClass) {
             setProperty("serviceClass", serviceClass);
@@ -281,8 +323,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The service name this service is implementing, it maps to the
          * wsdl:servicename.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder serviceName(String serviceName) {
             setProperty("serviceName", serviceName);
@@ -291,8 +335,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The location of the WSDL. Can be on the classpath, file system, or be
          * hosted remotely.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointConsumerBuilder wsdlURL(String wsdlURL) {
             setProperty("wsdlURL", wsdlURL);
@@ -314,9 +360,11 @@ public interface CxfEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -328,9 +376,11 @@ public interface CxfEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -339,8 +389,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -349,9 +401,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCxfEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -363,8 +417,10 @@ public interface CxfEndpointBuilderFactory {
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder allowStreaming(
                 Boolean allowStreaming) {
@@ -376,9 +432,11 @@ public interface CxfEndpointBuilderFactory {
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder allowStreaming(
                 String allowStreaming) {
@@ -388,8 +446,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -399,8 +459,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -409,8 +471,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom configured CXF Bus.
-         * The option is a <code>org.apache.cxf.Bus</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>org.apache.cxf.Bus</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder bus(Object bus) {
             setProperty("bus", bus);
@@ -418,9 +482,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom configured CXF Bus.
+         * 
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder bus(String bus) {
             setProperty("bus", bus);
@@ -430,8 +496,10 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the CXF continuation timeout which could
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder continuationTimeout(
                 long continuationTimeout) {
@@ -442,8 +510,10 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the CXF continuation timeout which could
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder continuationTimeout(
                 String continuationTimeout) {
@@ -453,9 +523,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfBinding(Object cxfBinding) {
             setProperty("cxfBinding", cxfBinding);
@@ -464,9 +536,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfBinding(String cxfBinding) {
             setProperty("cxfBinding", cxfBinding);
@@ -478,10 +552,12 @@ public interface CxfEndpointBuilderFactory {
          * to configure the CXF endpoint in programmatic way. User can configure
          * the CXF server and client by implementing configure{ServerClient}
          * method of CxfEndpointConfigurer.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfEndpointConfigurer(
                 Object cxfEndpointConfigurer) {
@@ -494,10 +570,12 @@ public interface CxfEndpointBuilderFactory {
          * to configure the CXF endpoint in programmatic way. User can configure
          * the CXF server and client by implementing configure{ServerClient}
          * method of CxfEndpointConfigurer.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfEndpointConfigurer(
                 String cxfEndpointConfigurer) {
@@ -506,8 +584,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder defaultBus(boolean defaultBus) {
             setProperty("defaultBus", defaultBus);
@@ -515,8 +595,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder defaultBus(String defaultBus) {
             setProperty("defaultBus", defaultBus);
@@ -525,9 +607,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -537,9 +621,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -550,8 +636,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to merge protocol headers. If enabled then propagating
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder mergeProtocolHeaders(
                 boolean mergeProtocolHeaders) {
@@ -562,8 +650,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to merge protocol headers. If enabled then propagating
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder mergeProtocolHeaders(
                 String mergeProtocolHeaders) {
@@ -573,8 +663,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder mtomEnabled(
                 boolean mtomEnabled) {
@@ -584,8 +676,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder mtomEnabled(
                 String mtomEnabled) {
@@ -596,9 +690,11 @@ public interface CxfEndpointBuilderFactory {
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder properties(
                 Map<String, Object> properties) {
@@ -609,10 +705,12 @@ public interface CxfEndpointBuilderFactory {
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder properties(String properties) {
             setProperty("properties", properties);
@@ -620,8 +718,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets whether SOAP message validation should be disabled.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder skipPayloadMessagePartCheck(
                 boolean skipPayloadMessagePartCheck) {
@@ -630,8 +730,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets whether SOAP message validation should be disabled.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder skipPayloadMessagePartCheck(
                 String skipPayloadMessagePartCheck) {
@@ -641,8 +743,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -652,8 +756,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -674,8 +780,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To lookup an existing configured CxfEndpoint. Must used bean: as
          * prefix.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CxfEndpointProducerBuilder beanId(String beanId) {
             setProperty("beanId", beanId);
@@ -683,8 +791,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The service publish address.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder address(String address) {
             setProperty("address", address);
@@ -692,9 +802,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The data type messages supported by the CXF endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointProducerBuilder dataFormat(DataFormat dataFormat) {
             setProperty("dataFormat", dataFormat);
@@ -702,9 +814,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The data type messages supported by the CXF endpoint.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointProducerBuilder dataFormat(String dataFormat) {
             setProperty("dataFormat", dataFormat);
@@ -715,8 +829,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP body. If the value is false, CXF will chose the document-literal
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default CxfEndpointProducerBuilder wrappedStyle(Boolean wrappedStyle) {
             setProperty("wrappedStyle", wrappedStyle);
@@ -727,9 +843,11 @@ public interface CxfEndpointBuilderFactory {
          * SOAP body. If the value is false, CXF will chose the document-literal
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointProducerBuilder wrappedStyle(String wrappedStyle) {
             setProperty("wrappedStyle", wrappedStyle);
@@ -737,9 +855,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder cookieHandler(Object cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
@@ -747,9 +867,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder cookieHandler(String cookieHandler) {
             setProperty("cookieHandler", cookieHandler);
@@ -758,8 +880,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option will set the default operationName that will be used by
          * the CxfProducer which invokes the remote service.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder defaultOperationName(
                 String defaultOperationName) {
@@ -769,8 +893,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option will set the default operationNamespace that will be used
          * by the CxfProducer which invokes the remote service.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder defaultOperationNamespace(
                 String defaultOperationNamespace) {
@@ -780,8 +906,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The hostname verifier to be used. Use the # notation to reference a
          * HostnameVerifier from the registry.
-         * The option is a <code>javax.net.ssl.HostnameVerifier</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder hostnameVerifier(
                 Object hostnameVerifier) {
@@ -791,9 +919,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The hostname verifier to be used. Use the # notation to reference a
          * HostnameVerifier from the registry.
+         * 
          * The option will be converted to a
          * <code>javax.net.ssl.HostnameVerifier</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder hostnameVerifier(
                 String hostnameVerifier) {
@@ -810,8 +940,10 @@ public interface CxfEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -828,8 +960,10 @@ public interface CxfEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -839,9 +973,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The Camel SSL setting reference. Use the # notation to reference the
          * SSL Context.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -851,9 +987,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The Camel SSL setting reference. Use the # notation to reference the
          * SSL Context.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -862,8 +1000,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Which kind of operation that CXF endpoint producer will invoke.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder wrapped(boolean wrapped) {
             setProperty("wrapped", wrapped);
@@ -871,8 +1011,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Which kind of operation that CXF endpoint producer will invoke.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CxfEndpointProducerBuilder wrapped(String wrapped) {
             setProperty("wrapped", wrapped);
@@ -881,8 +1023,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
-         * The option is a <code>boolean</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointProducerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
@@ -892,8 +1036,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointProducerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
@@ -903,8 +1049,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
-         * The option is a <code>int</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointProducerBuilder loggingSizeLimit(int loggingSizeLimit) {
             setProperty("loggingSizeLimit", loggingSizeLimit);
@@ -913,8 +1061,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointProducerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
@@ -924,8 +1074,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
-         * The option is a <code>boolean</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointProducerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
@@ -935,8 +1087,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointProducerBuilder skipFaultLogging(
                 String skipFaultLogging) {
@@ -946,8 +1100,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option is used to set the basic authentication information of
          * password for the CXF client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CxfEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -956,8 +1112,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option is used to set the basic authentication information of
          * username for the CXF client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CxfEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -965,8 +1123,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The bindingId for the service model to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder bindingId(String bindingId) {
             setProperty("bindingId", bindingId);
@@ -976,8 +1136,10 @@ public interface CxfEndpointBuilderFactory {
          * The endpoint name this service is implementing, it maps to the
          * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
          * prefix valid at this scope.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -986,8 +1148,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option can override the endpointUrl that published from the WSDL
          * which can be accessed with service address url plus wsd.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
@@ -997,9 +1161,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group service
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder serviceClass(
                 Class<Object> serviceClass) {
@@ -1009,9 +1175,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group service
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder serviceClass(String serviceClass) {
             setProperty("serviceClass", serviceClass);
@@ -1020,8 +1188,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The service name this service is implementing, it maps to the
          * wsdl:servicename.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder serviceName(String serviceName) {
             setProperty("serviceName", serviceName);
@@ -1030,8 +1200,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The location of the WSDL. Can be on the classpath, file system, or be
          * hosted remotely.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointProducerBuilder wsdlURL(String wsdlURL) {
             setProperty("wsdlURL", wsdlURL);
@@ -1053,8 +1225,10 @@ public interface CxfEndpointBuilderFactory {
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder allowStreaming(
                 Boolean allowStreaming) {
@@ -1066,9 +1240,11 @@ public interface CxfEndpointBuilderFactory {
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder allowStreaming(
                 String allowStreaming) {
@@ -1078,8 +1254,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1089,8 +1267,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1099,8 +1279,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom configured CXF Bus.
-         * The option is a <code>org.apache.cxf.Bus</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>org.apache.cxf.Bus</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder bus(Object bus) {
             setProperty("bus", bus);
@@ -1108,9 +1290,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom configured CXF Bus.
+         * 
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder bus(String bus) {
             setProperty("bus", bus);
@@ -1120,8 +1304,10 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the CXF continuation timeout which could
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder continuationTimeout(
                 long continuationTimeout) {
@@ -1132,8 +1318,10 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the CXF continuation timeout which could
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder continuationTimeout(
                 String continuationTimeout) {
@@ -1143,9 +1331,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfBinding(Object cxfBinding) {
             setProperty("cxfBinding", cxfBinding);
@@ -1154,9 +1344,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfBinding(String cxfBinding) {
             setProperty("cxfBinding", cxfBinding);
@@ -1168,10 +1360,12 @@ public interface CxfEndpointBuilderFactory {
          * to configure the CXF endpoint in programmatic way. User can configure
          * the CXF server and client by implementing configure{ServerClient}
          * method of CxfEndpointConfigurer.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfEndpointConfigurer(
                 Object cxfEndpointConfigurer) {
@@ -1184,10 +1378,12 @@ public interface CxfEndpointBuilderFactory {
          * to configure the CXF endpoint in programmatic way. User can configure
          * the CXF server and client by implementing configure{ServerClient}
          * method of CxfEndpointConfigurer.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfEndpointConfigurer(
                 String cxfEndpointConfigurer) {
@@ -1196,8 +1392,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder defaultBus(boolean defaultBus) {
             setProperty("defaultBus", defaultBus);
@@ -1205,8 +1403,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder defaultBus(String defaultBus) {
             setProperty("defaultBus", defaultBus);
@@ -1215,9 +1415,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1227,9 +1429,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1240,8 +1444,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to merge protocol headers. If enabled then propagating
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder mergeProtocolHeaders(
                 boolean mergeProtocolHeaders) {
@@ -1252,8 +1458,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to merge protocol headers. If enabled then propagating
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder mergeProtocolHeaders(
                 String mergeProtocolHeaders) {
@@ -1263,8 +1471,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder mtomEnabled(
                 boolean mtomEnabled) {
@@ -1274,8 +1484,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder mtomEnabled(
                 String mtomEnabled) {
@@ -1286,9 +1498,11 @@ public interface CxfEndpointBuilderFactory {
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder properties(
                 Map<String, Object> properties) {
@@ -1299,10 +1513,12 @@ public interface CxfEndpointBuilderFactory {
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder properties(String properties) {
             setProperty("properties", properties);
@@ -1310,8 +1526,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets whether SOAP message validation should be disabled.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder skipPayloadMessagePartCheck(
                 boolean skipPayloadMessagePartCheck) {
@@ -1320,8 +1538,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets whether SOAP message validation should be disabled.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder skipPayloadMessagePartCheck(
                 String skipPayloadMessagePartCheck) {
@@ -1331,8 +1551,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1342,8 +1564,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1364,8 +1588,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To lookup an existing configured CxfEndpoint. Must used bean: as
          * prefix.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CxfEndpointBuilder beanId(String beanId) {
             setProperty("beanId", beanId);
@@ -1373,8 +1599,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The service publish address.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder address(String address) {
             setProperty("address", address);
@@ -1382,9 +1610,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The data type messages supported by the CXF endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointBuilder dataFormat(DataFormat dataFormat) {
             setProperty("dataFormat", dataFormat);
@@ -1392,9 +1622,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The data type messages supported by the CXF endpoint.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointBuilder dataFormat(String dataFormat) {
             setProperty("dataFormat", dataFormat);
@@ -1405,8 +1637,10 @@ public interface CxfEndpointBuilderFactory {
          * SOAP body. If the value is false, CXF will chose the document-literal
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default CxfEndpointBuilder wrappedStyle(Boolean wrappedStyle) {
             setProperty("wrappedStyle", wrappedStyle);
@@ -1417,9 +1651,11 @@ public interface CxfEndpointBuilderFactory {
          * SOAP body. If the value is false, CXF will chose the document-literal
          * unwrapped style, If the value is true, CXF will chose the
          * document-literal wrapped style.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CxfEndpointBuilder wrappedStyle(String wrappedStyle) {
             setProperty("wrappedStyle", wrappedStyle);
@@ -1428,8 +1664,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
-         * The option is a <code>boolean</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
@@ -1439,8 +1677,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option enables CXF Logging Feature which writes inbound and
          * outbound SOAP messages to log.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
@@ -1450,8 +1690,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
-         * The option is a <code>int</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
             setProperty("loggingSizeLimit", loggingSizeLimit);
@@ -1460,8 +1702,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To limit the total size of number of bytes the logger will output
          * when logging feature has been enabled and -1 for no limit.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointBuilder loggingSizeLimit(String loggingSizeLimit) {
             setProperty("loggingSizeLimit", loggingSizeLimit);
@@ -1470,8 +1714,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
-         * The option is a <code>boolean</code> type.
-         * @group logging
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: logging
          */
         default CxfEndpointBuilder skipFaultLogging(boolean skipFaultLogging) {
             setProperty("skipFaultLogging", skipFaultLogging);
@@ -1480,8 +1726,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option controls whether the PhaseInterceptorChain skips logging
          * the Fault that it catches.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group logging
+         * 
+         * Group: logging
          */
         default CxfEndpointBuilder skipFaultLogging(String skipFaultLogging) {
             setProperty("skipFaultLogging", skipFaultLogging);
@@ -1490,8 +1738,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option is used to set the basic authentication information of
          * password for the CXF client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CxfEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -1500,8 +1750,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option is used to set the basic authentication information of
          * username for the CXF client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default CxfEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1509,8 +1761,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * The bindingId for the service model to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder bindingId(String bindingId) {
             setProperty("bindingId", bindingId);
@@ -1520,8 +1774,10 @@ public interface CxfEndpointBuilderFactory {
          * The endpoint name this service is implementing, it maps to the
          * wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace
          * prefix valid at this scope.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -1530,8 +1786,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * This option can override the endpointUrl that published from the WSDL
          * which can be accessed with service address url plus wsd.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
@@ -1541,9 +1799,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group service
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder serviceClass(Class<Object> serviceClass) {
             setProperty("serviceClass", serviceClass);
@@ -1552,9 +1812,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The class name of the SEI (Service Endpoint Interface) class which
          * could have JSR181 annotation or not.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group service
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder serviceClass(String serviceClass) {
             setProperty("serviceClass", serviceClass);
@@ -1563,8 +1825,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The service name this service is implementing, it maps to the
          * wsdl:servicename.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder serviceName(String serviceName) {
             setProperty("serviceName", serviceName);
@@ -1573,8 +1837,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * The location of the WSDL. Can be on the classpath, file system, or be
          * hosted remotely.
-         * The option is a <code>java.lang.String</code> type.
-         * @group service
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: service
          */
         default CxfEndpointBuilder wsdlURL(String wsdlURL) {
             setProperty("wsdlURL", wsdlURL);
@@ -1596,8 +1862,10 @@ public interface CxfEndpointBuilderFactory {
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder allowStreaming(Boolean allowStreaming) {
             setProperty("allowStreaming", allowStreaming);
@@ -1608,9 +1876,11 @@ public interface CxfEndpointBuilderFactory {
          * PAYLOAD mode, will DOM parse the incoming messages into DOM Elements
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder allowStreaming(String allowStreaming) {
             setProperty("allowStreaming", allowStreaming);
@@ -1619,8 +1889,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1630,8 +1902,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1640,8 +1914,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom configured CXF Bus.
-         * The option is a <code>org.apache.cxf.Bus</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>org.apache.cxf.Bus</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder bus(Object bus) {
             setProperty("bus", bus);
@@ -1649,9 +1925,11 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * To use a custom configured CXF Bus.
+         * 
          * The option will be converted to a <code>org.apache.cxf.Bus</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder bus(String bus) {
             setProperty("bus", bus);
@@ -1661,8 +1939,10 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the CXF continuation timeout which could
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder continuationTimeout(
                 long continuationTimeout) {
@@ -1673,8 +1953,10 @@ public interface CxfEndpointBuilderFactory {
          * This option is used to set the CXF continuation timeout which could
          * be used in CxfConsumer by default when the CXF server is using Jetty
          * or Servlet transport.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder continuationTimeout(
                 String continuationTimeout) {
@@ -1684,9 +1966,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfBinding(Object cxfBinding) {
             setProperty("cxfBinding", cxfBinding);
@@ -1695,9 +1979,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom CxfBinding to control the binding between Camel
          * Message and CXF Message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfBinding(String cxfBinding) {
             setProperty("cxfBinding", cxfBinding);
@@ -1709,10 +1995,12 @@ public interface CxfEndpointBuilderFactory {
          * to configure the CXF endpoint in programmatic way. User can configure
          * the CXF server and client by implementing configure{ServerClient}
          * method of CxfEndpointConfigurer.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfEndpointConfigurer(
                 Object cxfEndpointConfigurer) {
@@ -1725,10 +2013,12 @@ public interface CxfEndpointBuilderFactory {
          * to configure the CXF endpoint in programmatic way. User can configure
          * the CXF server and client by implementing configure{ServerClient}
          * method of CxfEndpointConfigurer.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfEndpointConfigurer(
                 String cxfEndpointConfigurer) {
@@ -1737,8 +2027,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder defaultBus(boolean defaultBus) {
             setProperty("defaultBus", defaultBus);
@@ -1746,8 +2038,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Will set the default bus when CXF endpoint create a bus by itself.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder defaultBus(String defaultBus) {
             setProperty("defaultBus", defaultBus);
@@ -1756,9 +2050,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1768,9 +2064,11 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1781,8 +2079,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to merge protocol headers. If enabled then propagating
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mergeProtocolHeaders(
                 boolean mergeProtocolHeaders) {
@@ -1793,8 +2093,10 @@ public interface CxfEndpointBuilderFactory {
          * Whether to merge protocol headers. If enabled then propagating
          * headers between Camel and CXF becomes more consistent and similar.
          * For more details see CAMEL-6393.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mergeProtocolHeaders(
                 String mergeProtocolHeaders) {
@@ -1804,8 +2106,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mtomEnabled(boolean mtomEnabled) {
             setProperty("mtomEnabled", mtomEnabled);
@@ -1814,8 +2118,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * To enable MTOM (attachments). This requires to use POJO or PAYLOAD
          * data format mode.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mtomEnabled(String mtomEnabled) {
             setProperty("mtomEnabled", mtomEnabled);
@@ -1825,9 +2131,11 @@ public interface CxfEndpointBuilderFactory {
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder properties(
                 Map<String, Object> properties) {
@@ -1838,10 +2146,12 @@ public interface CxfEndpointBuilderFactory {
          * To set additional CXF options using the key/value pairs from the Map.
          * For example to turn on stacktraces in SOAP faults,
          * properties.faultStackTraceEnabled=true.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder properties(String properties) {
             setProperty("properties", properties);
@@ -1849,8 +2159,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets whether SOAP message validation should be disabled.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder skipPayloadMessagePartCheck(
                 boolean skipPayloadMessagePartCheck) {
@@ -1859,8 +2171,10 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * Sets whether SOAP message validation should be disabled.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder skipPayloadMessagePartCheck(
                 String skipPayloadMessagePartCheck) {
@@ -1870,8 +2184,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1880,8 +2196,10 @@ public interface CxfEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCxfEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

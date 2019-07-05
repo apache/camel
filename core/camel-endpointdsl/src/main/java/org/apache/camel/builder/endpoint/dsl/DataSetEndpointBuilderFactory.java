@@ -42,9 +42,11 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Name of DataSet to lookup in the registry.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DataSetEndpointConsumerBuilder name(Object name) {
             setProperty("name", name);
@@ -52,9 +54,11 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Name of DataSet to lookup in the registry.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DataSetEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -68,8 +72,10 @@ public interface DataSetEndpointBuilderFactory {
          * header value must be present and will be verified = lenient = the
          * header value will be verified if it is present, and will be set if it
          * is not present.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DataSetEndpointConsumerBuilder dataSetIndex(String dataSetIndex) {
             setProperty("dataSetIndex", dataSetIndex);
@@ -77,8 +83,10 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Time period in millis to wait before starting sending messages.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -86,8 +94,10 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Time period in millis to wait before starting sending messages.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -95,8 +105,10 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Wait until the DataSet contains at least this number of messages.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder minRate(int minRate) {
             setProperty("minRate", minRate);
@@ -104,8 +116,10 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Wait until the DataSet contains at least this number of messages.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder minRate(String minRate) {
             setProperty("minRate", minRate);
@@ -114,8 +128,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets how many messages should be preloaded (sent) before the route
          * completes its initialization.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder preloadSize(long preloadSize) {
             setProperty("preloadSize", preloadSize);
@@ -124,8 +140,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets how many messages should be preloaded (sent) before the route
          * completes its initialization.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder preloadSize(String preloadSize) {
             setProperty("preloadSize", preloadSize);
@@ -134,8 +152,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Allows a delay to be specified which causes a delay when a message is
          * sent by the consumer (to simulate slow processing).
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder produceDelay(long produceDelay) {
             setProperty("produceDelay", produceDelay);
@@ -144,8 +164,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Allows a delay to be specified which causes a delay when a message is
          * sent by the consumer (to simulate slow processing).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default DataSetEndpointConsumerBuilder produceDelay(String produceDelay) {
             setProperty("produceDelay", produceDelay);
@@ -165,8 +187,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -176,8 +200,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -187,8 +213,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -198,8 +226,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -219,9 +249,11 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Name of DataSet to lookup in the registry.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DataSetEndpointProducerBuilder name(Object name) {
             setProperty("name", name);
@@ -229,9 +261,11 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Name of DataSet to lookup in the registry.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DataSetEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -245,8 +279,10 @@ public interface DataSetEndpointBuilderFactory {
          * header value must be present and will be verified = lenient = the
          * header value will be verified if it is present, and will be set if it
          * is not present.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DataSetEndpointProducerBuilder dataSetIndex(String dataSetIndex) {
             setProperty("dataSetIndex", dataSetIndex);
@@ -255,8 +291,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Allows a delay to be specified which causes a delay when a message is
          * consumed by the producer (to simulate slow processing).
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder consumeDelay(long consumeDelay) {
             setProperty("consumeDelay", consumeDelay);
@@ -265,8 +303,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Allows a delay to be specified which causes a delay when a message is
          * consumed by the producer (to simulate slow processing).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder consumeDelay(String consumeDelay) {
             setProperty("consumeDelay", consumeDelay);
@@ -281,8 +321,10 @@ public interface DataSetEndpointBuilderFactory {
          * messages arrives, then you would need to wait a little period to
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder assertPeriod(long assertPeriod) {
             setProperty("assertPeriod", assertPeriod);
@@ -297,8 +339,10 @@ public interface DataSetEndpointBuilderFactory {
          * messages arrives, then you would need to wait a little period to
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder assertPeriod(String assertPeriod) {
             setProperty("assertPeriod", assertPeriod);
@@ -317,8 +361,10 @@ public interface DataSetEndpointBuilderFactory {
          * times. If you want to assert that exactly n'th message arrives to
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder expectedCount(int expectedCount) {
             setProperty("expectedCount", expectedCount);
@@ -337,8 +383,10 @@ public interface DataSetEndpointBuilderFactory {
          * times. If you want to assert that exactly n'th message arrives to
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder expectedCount(
                 String expectedCount) {
@@ -355,8 +403,10 @@ public interface DataSetEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -373,8 +423,10 @@ public interface DataSetEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -384,8 +436,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * A number that is used to turn on throughput logging based on groups
          * of the size.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder reportGroup(int reportGroup) {
             setProperty("reportGroup", reportGroup);
@@ -394,8 +448,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * A number that is used to turn on throughput logging based on groups
          * of the size.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder reportGroup(String reportGroup) {
             setProperty("reportGroup", reportGroup);
@@ -404,8 +460,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 long resultMinimumWaitTime) {
@@ -415,8 +473,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 String resultMinimumWaitTime) {
@@ -426,8 +486,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder resultWaitTime(
                 long resultWaitTime) {
@@ -437,8 +499,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder resultWaitTime(
                 String resultWaitTime) {
@@ -460,8 +524,10 @@ public interface DataSetEndpointBuilderFactory {
          * expectation on the first number of bodies received. You can configure
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder retainFirst(int retainFirst) {
             setProperty("retainFirst", retainFirst);
@@ -482,8 +548,10 @@ public interface DataSetEndpointBuilderFactory {
          * expectation on the first number of bodies received. You can configure
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder retainFirst(String retainFirst) {
             setProperty("retainFirst", retainFirst);
@@ -504,8 +572,10 @@ public interface DataSetEndpointBuilderFactory {
          * on the first number of bodies received. You can configure both
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder retainLast(int retainLast) {
             setProperty("retainLast", retainLast);
@@ -526,8 +596,10 @@ public interface DataSetEndpointBuilderFactory {
          * on the first number of bodies received. You can configure both
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder retainLast(String retainLast) {
             setProperty("retainLast", retainLast);
@@ -536,8 +608,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 long sleepForEmptyTest) {
@@ -547,8 +621,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 String sleepForEmptyTest) {
@@ -569,8 +645,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 boolean copyOnExchange) {
@@ -580,8 +658,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 String copyOnExchange) {
@@ -591,8 +671,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -602,8 +684,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -613,8 +697,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -624,8 +710,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -645,9 +733,11 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Name of DataSet to lookup in the registry.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DataSetEndpointBuilder name(Object name) {
             setProperty("name", name);
@@ -655,9 +745,11 @@ public interface DataSetEndpointBuilderFactory {
         }
         /**
          * Name of DataSet to lookup in the registry.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dataset.DataSet</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default DataSetEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -671,8 +763,10 @@ public interface DataSetEndpointBuilderFactory {
          * header value must be present and will be verified = lenient = the
          * header value will be verified if it is present, and will be set if it
          * is not present.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default DataSetEndpointBuilder dataSetIndex(String dataSetIndex) {
             setProperty("dataSetIndex", dataSetIndex);
@@ -692,8 +786,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -703,8 +799,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -714,8 +812,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -724,8 +824,10 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

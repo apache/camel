@@ -49,8 +49,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS host to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder hostName(String hostName) {
             setProperty("hostName", hostName);
@@ -58,8 +60,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS port to use.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -67,8 +71,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS port to use.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -76,8 +82,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The directory path to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder path(String path) {
             setProperty("path", path);
@@ -90,8 +98,10 @@ public interface HdfsEndpointBuilderFactory {
          * connection, as it has hardcoded 45 x 20 sec redelivery. By setting
          * this option to false allows your application to startup, and not
          * block for up till 15 minutes.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder connectOnStartup(
                 boolean connectOnStartup) {
@@ -105,8 +115,10 @@ public interface HdfsEndpointBuilderFactory {
          * connection, as it has hardcoded 45 x 20 sec redelivery. By setting
          * this option to false allows your application to startup, and not
          * block for up till 15 minutes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder connectOnStartup(
                 String connectOnStartup) {
@@ -115,10 +127,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Set to LOCAL to not use HDFS but local java.io.File instead.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder fileSystemType(
                 HdfsFileSystemType fileSystemType) {
@@ -127,10 +141,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Set to LOCAL to not use HDFS but local java.io.File instead.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder fileSystemType(String fileSystemType) {
             setProperty("fileSystemType", fileSystemType);
@@ -139,9 +155,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file type to use. For more details see Hadoop HDFS documentation
          * about the various files types.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder fileType(HdfsFileType fileType) {
             setProperty("fileType", fileType);
@@ -150,9 +168,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file type to use. For more details see Hadoop HDFS documentation
          * about the various files types.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder fileType(String fileType) {
             setProperty("fileType", fileType);
@@ -160,9 +180,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder keyType(WritableType keyType) {
             setProperty("keyType", keyType);
@@ -170,9 +192,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -181,8 +205,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file owner must match this owner for the consumer to pickup the
          * file. Otherwise the file is skipped.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder owner(String owner) {
             setProperty("owner", owner);
@@ -190,9 +216,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder valueType(WritableType valueType) {
             setProperty("valueType", valueType);
@@ -200,9 +228,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointConsumerBuilder valueType(String valueType) {
             setProperty("valueType", valueType);
@@ -216,8 +246,10 @@ public interface HdfsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default HdfsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -232,8 +264,10 @@ public interface HdfsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HdfsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -242,8 +276,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The pattern used for scanning the directory.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default HdfsEndpointConsumerBuilder pattern(String pattern) {
             setProperty("pattern", pattern);
@@ -252,8 +288,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default HdfsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -263,8 +301,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HdfsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -274,8 +314,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -285,8 +327,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -296,8 +340,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -307,8 +353,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -322,8 +370,10 @@ public interface HdfsEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -337,8 +387,10 @@ public interface HdfsEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -349,8 +401,10 @@ public interface HdfsEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -360,8 +414,10 @@ public interface HdfsEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -370,8 +426,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -380,8 +438,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -391,8 +451,10 @@ public interface HdfsEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -402,8 +464,10 @@ public interface HdfsEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -412,8 +476,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -423,9 +489,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -436,9 +504,11 @@ public interface HdfsEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -449,9 +519,11 @@ public interface HdfsEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -461,10 +533,12 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -474,10 +548,12 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -486,9 +562,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -498,10 +576,12 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -510,8 +590,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -520,8 +602,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -529,8 +613,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -538,9 +624,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -549,8 +637,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -559,8 +649,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default HdfsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -582,9 +674,11 @@ public interface HdfsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -596,9 +690,11 @@ public interface HdfsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -607,8 +703,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -617,9 +715,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -631,9 +731,11 @@ public interface HdfsEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -645,9 +747,11 @@ public interface HdfsEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHdfsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -657,8 +761,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -668,8 +774,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -678,8 +786,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The size of the HDFS blocks.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder blockSize(long blockSize) {
             setProperty("blockSize", blockSize);
@@ -687,8 +797,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The size of the HDFS blocks.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder blockSize(String blockSize) {
             setProperty("blockSize", blockSize);
@@ -696,8 +808,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The buffer size used by HDFS.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -705,8 +819,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The buffer size used by HDFS.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -715,8 +831,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * How often (time in millis) in to run the idle checker background
          * task. This option is only in use if the splitter strategy is IDLE.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder checkIdleInterval(
                 int checkIdleInterval) {
@@ -726,8 +844,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * How often (time in millis) in to run the idle checker background
          * task. This option is only in use if the splitter strategy is IDLE.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder checkIdleInterval(
                 String checkIdleInterval) {
@@ -737,8 +857,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When reading a normal file, this is split into chunks producing a
          * message per chunk.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder chunkSize(int chunkSize) {
             setProperty("chunkSize", chunkSize);
@@ -747,8 +869,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When reading a normal file, this is split into chunks producing a
          * message per chunk.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder chunkSize(String chunkSize) {
             setProperty("chunkSize", chunkSize);
@@ -756,10 +880,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression codec to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionCodec(
                 HdfsCompressionCodec compressionCodec) {
@@ -768,10 +894,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression codec to use.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionCodec(
                 String compressionCodec) {
@@ -780,9 +908,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression type to use (is default not in use).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
                 CompressionType compressionType) {
@@ -791,9 +921,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression type to use (is default not in use).
+         * 
          * The option will be converted to a
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
                 String compressionType) {
@@ -803,8 +935,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When a file is opened for reading/writing the file is renamed with
          * this suffix to avoid to read it during the writing phase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder openedSuffix(
                 String openedSuffix) {
@@ -814,8 +948,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Once the file has been read is renamed with this suffix to avoid to
          * read it again.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder readSuffix(String readSuffix) {
             setProperty("readSuffix", readSuffix);
@@ -823,8 +959,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The HDFS replication factor.
-         * The option is a <code>short</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder replication(
                 short replication) {
@@ -833,8 +971,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The HDFS replication factor.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder replication(
                 String replication) {
@@ -856,8 +996,10 @@ public interface HdfsEndpointBuilderFactory {
          * when the number of written messages is more than value IDLE a new
          * file is created, and the old is closed when no writing happened in
          * the last value milliseconds.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder splitStrategy(
                 String splitStrategy) {
@@ -867,8 +1009,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -878,8 +1022,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -899,8 +1045,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS host to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder hostName(String hostName) {
             setProperty("hostName", hostName);
@@ -908,8 +1056,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS port to use.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -917,8 +1067,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS port to use.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -926,8 +1078,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The directory path to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder path(String path) {
             setProperty("path", path);
@@ -940,8 +1094,10 @@ public interface HdfsEndpointBuilderFactory {
          * connection, as it has hardcoded 45 x 20 sec redelivery. By setting
          * this option to false allows your application to startup, and not
          * block for up till 15 minutes.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder connectOnStartup(
                 boolean connectOnStartup) {
@@ -955,8 +1111,10 @@ public interface HdfsEndpointBuilderFactory {
          * connection, as it has hardcoded 45 x 20 sec redelivery. By setting
          * this option to false allows your application to startup, and not
          * block for up till 15 minutes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder connectOnStartup(
                 String connectOnStartup) {
@@ -965,10 +1123,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Set to LOCAL to not use HDFS but local java.io.File instead.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder fileSystemType(
                 HdfsFileSystemType fileSystemType) {
@@ -977,10 +1137,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Set to LOCAL to not use HDFS but local java.io.File instead.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder fileSystemType(String fileSystemType) {
             setProperty("fileSystemType", fileSystemType);
@@ -989,9 +1151,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file type to use. For more details see Hadoop HDFS documentation
          * about the various files types.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder fileType(HdfsFileType fileType) {
             setProperty("fileType", fileType);
@@ -1000,9 +1164,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file type to use. For more details see Hadoop HDFS documentation
          * about the various files types.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder fileType(String fileType) {
             setProperty("fileType", fileType);
@@ -1010,9 +1176,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder keyType(WritableType keyType) {
             setProperty("keyType", keyType);
@@ -1020,9 +1188,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -1031,8 +1201,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file owner must match this owner for the consumer to pickup the
          * file. Otherwise the file is skipped.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder owner(String owner) {
             setProperty("owner", owner);
@@ -1040,9 +1212,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder valueType(WritableType valueType) {
             setProperty("valueType", valueType);
@@ -1050,9 +1224,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointProducerBuilder valueType(String valueType) {
             setProperty("valueType", valueType);
@@ -1061,8 +1237,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Append to existing file. Notice that not all HDFS file systems
          * support the append option.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HdfsEndpointProducerBuilder append(boolean append) {
             setProperty("append", append);
@@ -1071,8 +1249,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Append to existing file. Notice that not all HDFS file systems
          * support the append option.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HdfsEndpointProducerBuilder append(String append) {
             setProperty("append", append);
@@ -1088,8 +1268,10 @@ public interface HdfsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HdfsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1106,8 +1288,10 @@ public interface HdfsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HdfsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1116,8 +1300,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Whether to overwrite existing files with the same name.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HdfsEndpointProducerBuilder overwrite(boolean overwrite) {
             setProperty("overwrite", overwrite);
@@ -1125,8 +1311,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Whether to overwrite existing files with the same name.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HdfsEndpointProducerBuilder overwrite(String overwrite) {
             setProperty("overwrite", overwrite);
@@ -1146,8 +1334,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1157,8 +1347,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1167,8 +1359,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The size of the HDFS blocks.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder blockSize(long blockSize) {
             setProperty("blockSize", blockSize);
@@ -1176,8 +1370,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The size of the HDFS blocks.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder blockSize(String blockSize) {
             setProperty("blockSize", blockSize);
@@ -1185,8 +1381,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The buffer size used by HDFS.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -1194,8 +1392,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The buffer size used by HDFS.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -1204,8 +1404,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * How often (time in millis) in to run the idle checker background
          * task. This option is only in use if the splitter strategy is IDLE.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder checkIdleInterval(
                 int checkIdleInterval) {
@@ -1215,8 +1417,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * How often (time in millis) in to run the idle checker background
          * task. This option is only in use if the splitter strategy is IDLE.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder checkIdleInterval(
                 String checkIdleInterval) {
@@ -1226,8 +1430,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When reading a normal file, this is split into chunks producing a
          * message per chunk.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder chunkSize(int chunkSize) {
             setProperty("chunkSize", chunkSize);
@@ -1236,8 +1442,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When reading a normal file, this is split into chunks producing a
          * message per chunk.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder chunkSize(String chunkSize) {
             setProperty("chunkSize", chunkSize);
@@ -1245,10 +1453,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression codec to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionCodec(
                 HdfsCompressionCodec compressionCodec) {
@@ -1257,10 +1467,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression codec to use.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionCodec(
                 String compressionCodec) {
@@ -1269,9 +1481,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression type to use (is default not in use).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
                 CompressionType compressionType) {
@@ -1280,9 +1494,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression type to use (is default not in use).
+         * 
          * The option will be converted to a
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
                 String compressionType) {
@@ -1292,8 +1508,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When a file is opened for reading/writing the file is renamed with
          * this suffix to avoid to read it during the writing phase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder openedSuffix(
                 String openedSuffix) {
@@ -1303,8 +1521,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Once the file has been read is renamed with this suffix to avoid to
          * read it again.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder readSuffix(String readSuffix) {
             setProperty("readSuffix", readSuffix);
@@ -1312,8 +1532,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The HDFS replication factor.
-         * The option is a <code>short</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder replication(
                 short replication) {
@@ -1322,8 +1544,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The HDFS replication factor.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder replication(
                 String replication) {
@@ -1345,8 +1569,10 @@ public interface HdfsEndpointBuilderFactory {
          * when the number of written messages is more than value IDLE a new
          * file is created, and the old is closed when no writing happened in
          * the last value milliseconds.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder splitStrategy(
                 String splitStrategy) {
@@ -1356,8 +1582,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1367,8 +1595,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1388,8 +1618,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS host to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder hostName(String hostName) {
             setProperty("hostName", hostName);
@@ -1397,8 +1629,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS port to use.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -1406,8 +1640,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * HDFS port to use.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -1415,8 +1651,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The directory path to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder path(String path) {
             setProperty("path", path);
@@ -1429,8 +1667,10 @@ public interface HdfsEndpointBuilderFactory {
          * connection, as it has hardcoded 45 x 20 sec redelivery. By setting
          * this option to false allows your application to startup, and not
          * block for up till 15 minutes.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder connectOnStartup(boolean connectOnStartup) {
             setProperty("connectOnStartup", connectOnStartup);
@@ -1443,8 +1683,10 @@ public interface HdfsEndpointBuilderFactory {
          * connection, as it has hardcoded 45 x 20 sec redelivery. By setting
          * this option to false allows your application to startup, and not
          * block for up till 15 minutes.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder connectOnStartup(String connectOnStartup) {
             setProperty("connectOnStartup", connectOnStartup);
@@ -1452,10 +1694,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Set to LOCAL to not use HDFS but local java.io.File instead.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder fileSystemType(
                 HdfsFileSystemType fileSystemType) {
@@ -1464,10 +1708,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * Set to LOCAL to not use HDFS but local java.io.File instead.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsFileSystemType</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder fileSystemType(String fileSystemType) {
             setProperty("fileSystemType", fileSystemType);
@@ -1476,9 +1722,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file type to use. For more details see Hadoop HDFS documentation
          * about the various files types.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder fileType(HdfsFileType fileType) {
             setProperty("fileType", fileType);
@@ -1487,9 +1735,11 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file type to use. For more details see Hadoop HDFS documentation
          * about the various files types.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsFileType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder fileType(String fileType) {
             setProperty("fileType", fileType);
@@ -1497,9 +1747,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder keyType(WritableType keyType) {
             setProperty("keyType", keyType);
@@ -1507,9 +1759,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -1518,8 +1772,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * The file owner must match this owner for the consumer to pickup the
          * file. Otherwise the file is skipped.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder owner(String owner) {
             setProperty("owner", owner);
@@ -1527,9 +1783,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder valueType(WritableType valueType) {
             setProperty("valueType", valueType);
@@ -1537,9 +1795,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The type for the key in case of sequence or map files.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.WritableType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HdfsEndpointBuilder valueType(String valueType) {
             setProperty("valueType", valueType);
@@ -1559,8 +1819,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1570,8 +1832,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1580,8 +1844,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The size of the HDFS blocks.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder blockSize(long blockSize) {
             setProperty("blockSize", blockSize);
@@ -1589,8 +1855,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The size of the HDFS blocks.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder blockSize(String blockSize) {
             setProperty("blockSize", blockSize);
@@ -1598,8 +1866,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The buffer size used by HDFS.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -1607,8 +1877,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The buffer size used by HDFS.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -1617,8 +1889,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * How often (time in millis) in to run the idle checker background
          * task. This option is only in use if the splitter strategy is IDLE.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder checkIdleInterval(
                 int checkIdleInterval) {
@@ -1628,8 +1902,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * How often (time in millis) in to run the idle checker background
          * task. This option is only in use if the splitter strategy is IDLE.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder checkIdleInterval(
                 String checkIdleInterval) {
@@ -1639,8 +1915,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When reading a normal file, this is split into chunks producing a
          * message per chunk.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder chunkSize(int chunkSize) {
             setProperty("chunkSize", chunkSize);
@@ -1649,8 +1927,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When reading a normal file, this is split into chunks producing a
          * message per chunk.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder chunkSize(String chunkSize) {
             setProperty("chunkSize", chunkSize);
@@ -1658,10 +1938,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression codec to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionCodec(
                 HdfsCompressionCodec compressionCodec) {
@@ -1670,10 +1952,12 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression codec to use.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hdfs2.HdfsCompressionCodec</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionCodec(
                 String compressionCodec) {
@@ -1682,9 +1966,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression type to use (is default not in use).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionType(
                 CompressionType compressionType) {
@@ -1693,9 +1979,11 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The compression type to use (is default not in use).
+         * 
          * The option will be converted to a
          * <code>org.apache.hadoop.io.SequenceFile$CompressionType</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder compressionType(
                 String compressionType) {
@@ -1705,8 +1993,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * When a file is opened for reading/writing the file is renamed with
          * this suffix to avoid to read it during the writing phase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder openedSuffix(String openedSuffix) {
             setProperty("openedSuffix", openedSuffix);
@@ -1715,8 +2005,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Once the file has been read is renamed with this suffix to avoid to
          * read it again.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder readSuffix(String readSuffix) {
             setProperty("readSuffix", readSuffix);
@@ -1724,8 +2016,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The HDFS replication factor.
-         * The option is a <code>short</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>short</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder replication(short replication) {
             setProperty("replication", replication);
@@ -1733,8 +2027,10 @@ public interface HdfsEndpointBuilderFactory {
         }
         /**
          * The HDFS replication factor.
+         * 
          * The option will be converted to a <code>short</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder replication(String replication) {
             setProperty("replication", replication);
@@ -1755,8 +2051,10 @@ public interface HdfsEndpointBuilderFactory {
          * when the number of written messages is more than value IDLE a new
          * file is created, and the old is closed when no writing happened in
          * the last value milliseconds.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder splitStrategy(String splitStrategy) {
             setProperty("splitStrategy", splitStrategy);
@@ -1765,8 +2063,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1775,8 +2075,10 @@ public interface HdfsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHdfsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

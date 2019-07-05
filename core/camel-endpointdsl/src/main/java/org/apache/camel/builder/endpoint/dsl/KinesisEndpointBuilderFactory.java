@@ -50,8 +50,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Name of the stream.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointConsumerBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
@@ -59,9 +61,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointConsumerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
@@ -70,9 +74,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointConsumerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
@@ -81,8 +87,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -90,8 +98,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -99,9 +109,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -109,8 +121,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * The region in which Kinesis client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointConsumerBuilder region(String region) {
             setProperty("region", region);
@@ -124,8 +138,10 @@ public interface KinesisEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -140,8 +156,10 @@ public interface KinesisEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -150,10 +168,12 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Defines where in the Kinesis stream to start getting records.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder iteratorType(
                 ShardIteratorType iteratorType) {
@@ -162,10 +182,12 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Defines where in the Kinesis stream to start getting records.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder iteratorType(String iteratorType) {
             setProperty("iteratorType", iteratorType);
@@ -173,8 +195,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Maximum number of records that will be fetched in each poll.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
@@ -183,8 +207,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Maximum number of records that will be fetched in each poll.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder maxResultsPerRequest(
                 String maxResultsPerRequest) {
@@ -194,8 +220,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -205,8 +233,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -216,8 +246,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * The sequence number to start polling from. Required if iteratorType
          * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder sequenceNumber(
                 String sequenceNumber) {
@@ -231,9 +263,11 @@ public interface KinesisEndpointBuilderFactory {
          * silent there will be no logging and the consumer will start from the
          * beginning,in case of fail a ReachedClosedStateException will be
          * raised.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder shardClosed(
                 KinesisShardClosedStrategyEnum shardClosed) {
@@ -247,9 +281,11 @@ public interface KinesisEndpointBuilderFactory {
          * silent there will be no logging and the consumer will start from the
          * beginning,in case of fail a ReachedClosedStateException will be
          * raised.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder shardClosed(String shardClosed) {
             setProperty("shardClosed", shardClosed);
@@ -257,8 +293,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Defines which shardId in the Kinesis stream to get records from.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default KinesisEndpointConsumerBuilder shardId(String shardId) {
             setProperty("shardId", shardId);
@@ -267,8 +305,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -278,8 +318,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -289,8 +331,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -300,8 +344,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -315,8 +361,10 @@ public interface KinesisEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -330,8 +378,10 @@ public interface KinesisEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -342,8 +392,10 @@ public interface KinesisEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -353,8 +405,10 @@ public interface KinesisEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -363,8 +417,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -373,8 +429,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -384,8 +442,10 @@ public interface KinesisEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -395,8 +455,10 @@ public interface KinesisEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -405,8 +467,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -416,9 +480,11 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -429,9 +495,11 @@ public interface KinesisEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -442,9 +510,11 @@ public interface KinesisEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -454,10 +524,12 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -467,10 +539,12 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -479,9 +553,11 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -491,10 +567,12 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -503,8 +581,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -513,8 +593,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -523,8 +605,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -532,9 +616,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -543,8 +629,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -554,8 +642,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -564,8 +654,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisEndpointConsumerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -573,8 +665,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisEndpointConsumerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -596,9 +690,11 @@ public interface KinesisEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -610,9 +706,11 @@ public interface KinesisEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -621,8 +719,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -631,9 +731,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -645,9 +747,11 @@ public interface KinesisEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -659,9 +763,11 @@ public interface KinesisEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -671,8 +777,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -682,8 +790,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -693,8 +803,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -704,8 +816,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -725,8 +839,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Name of the stream.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointProducerBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
@@ -734,9 +850,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointProducerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
@@ -745,9 +863,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointProducerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
@@ -756,8 +876,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -765,8 +887,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -774,9 +898,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -784,8 +910,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * The region in which Kinesis client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointProducerBuilder region(String region) {
             setProperty("region", region);
@@ -801,8 +929,10 @@ public interface KinesisEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default KinesisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -819,8 +949,10 @@ public interface KinesisEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KinesisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -829,8 +961,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisEndpointProducerBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -838,8 +972,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisEndpointProducerBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -859,8 +995,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -870,8 +1008,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -881,8 +1021,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -892,8 +1034,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -913,8 +1057,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Name of the stream.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointBuilder streamName(String streamName) {
             setProperty("streamName", streamName);
@@ -922,9 +1068,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
@@ -933,9 +1081,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
@@ -944,8 +1094,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -953,8 +1105,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -962,9 +1116,11 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the DDBStreams client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default KinesisEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -972,8 +1128,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * The region in which Kinesis client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default KinesisEndpointBuilder region(String region) {
             setProperty("region", region);
@@ -981,8 +1139,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -990,8 +1150,10 @@ public interface KinesisEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KinesisEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -1011,8 +1173,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1022,8 +1186,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1033,8 +1199,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1043,8 +1211,10 @@ public interface KinesisEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -43,9 +43,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * What git operation to execute.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GitHubEndpointConsumerBuilder type(GitHubType type) {
             setProperty("type", type);
@@ -53,9 +55,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * What git operation to execute.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GitHubEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
@@ -63,8 +67,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * Name of branch.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GitHubEndpointConsumerBuilder branchName(String branchName) {
             setProperty("branchName", branchName);
@@ -72,8 +78,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub OAuth token, required unless username & password are provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointConsumerBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -81,8 +89,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub password, required unless oauthToken is provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -90,8 +100,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub repository name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default GitHubEndpointConsumerBuilder repoName(String repoName) {
             setProperty("repoName", repoName);
@@ -99,8 +112,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub repository owner (organization).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default GitHubEndpointConsumerBuilder repoOwner(String repoOwner) {
             setProperty("repoOwner", repoOwner);
@@ -108,8 +124,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub username, required unless oauthToken is provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -123,8 +141,10 @@ public interface GitHubEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GitHubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -139,8 +159,10 @@ public interface GitHubEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GitHubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -163,9 +185,11 @@ public interface GitHubEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -177,9 +201,11 @@ public interface GitHubEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -188,8 +214,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -198,9 +226,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitHubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -210,8 +240,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -221,8 +253,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -232,8 +266,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -243,8 +279,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -264,9 +302,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * What git operation to execute.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GitHubEndpointProducerBuilder type(GitHubType type) {
             setProperty("type", type);
@@ -274,9 +314,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * What git operation to execute.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GitHubEndpointProducerBuilder type(String type) {
             setProperty("type", type);
@@ -284,8 +326,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub OAuth token, required unless username & password are provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointProducerBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -293,8 +337,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub password, required unless oauthToken is provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -302,8 +348,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub repository name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default GitHubEndpointProducerBuilder repoName(String repoName) {
             setProperty("repoName", repoName);
@@ -311,8 +360,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub repository owner (organization).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default GitHubEndpointProducerBuilder repoOwner(String repoOwner) {
             setProperty("repoOwner", repoOwner);
@@ -320,8 +372,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub username, required unless oauthToken is provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -329,8 +383,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * To use the given encoding when getting a git commit file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GitHubEndpointProducerBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -346,8 +402,10 @@ public interface GitHubEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GitHubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -364,8 +422,10 @@ public interface GitHubEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GitHubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -374,8 +434,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * To set git commit status state.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GitHubEndpointProducerBuilder state(String state) {
             setProperty("state", state);
@@ -383,8 +445,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * To set git commit status target url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GitHubEndpointProducerBuilder targetUrl(String targetUrl) {
             setProperty("targetUrl", targetUrl);
@@ -404,8 +468,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -415,8 +481,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -426,8 +494,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -437,8 +507,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -458,9 +530,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * What git operation to execute.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GitHubEndpointBuilder type(GitHubType type) {
             setProperty("type", type);
@@ -468,9 +542,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * What git operation to execute.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GitHubEndpointBuilder type(String type) {
             setProperty("type", type);
@@ -478,8 +554,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub OAuth token, required unless username & password are provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -487,8 +565,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub password, required unless oauthToken is provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -496,8 +576,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub repository name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default GitHubEndpointBuilder repoName(String repoName) {
             setProperty("repoName", repoName);
@@ -505,8 +588,11 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub repository owner (organization).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default GitHubEndpointBuilder repoOwner(String repoOwner) {
             setProperty("repoOwner", repoOwner);
@@ -514,8 +600,10 @@ public interface GitHubEndpointBuilderFactory {
         }
         /**
          * GitHub username, required unless oauthToken is provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitHubEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -535,8 +623,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -546,8 +636,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -557,8 +649,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -567,8 +661,10 @@ public interface GitHubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -39,8 +39,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Hostname of the printer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder hostname(String hostname) {
             setProperty("hostname", hostname);
@@ -48,8 +50,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Port number of the printer.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -57,8 +61,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Port number of the printer.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -66,8 +72,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Name of the printer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder printername(String printername) {
             setProperty("printername", printername);
@@ -75,8 +83,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Number of copies to print.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder copies(int copies) {
             setProperty("copies", copies);
@@ -84,8 +94,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Number of copies to print.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder copies(String copies) {
             setProperty("copies", copies);
@@ -93,8 +105,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Sets DocFlavor to use.
-         * The option is a <code>javax.print.DocFlavor</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>javax.print.DocFlavor</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder docFlavor(Object docFlavor) {
             setProperty("docFlavor", docFlavor);
@@ -102,9 +116,11 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Sets DocFlavor to use.
+         * 
          * The option will be converted to a <code>javax.print.DocFlavor</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder docFlavor(String docFlavor) {
             setProperty("docFlavor", docFlavor);
@@ -112,8 +128,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Sets DocFlavor to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder flavor(String flavor) {
             setProperty("flavor", flavor);
@@ -124,8 +142,10 @@ public interface PrinterEndpointBuilderFactory {
          * javax.print.attribute.standard.MediaSizeName API. The default setting
          * is to use North American Letter sized stationary. The value's case is
          * ignored, e.g. values of iso_a4 and ISO_A4 may be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder mediaSize(String mediaSize) {
             setProperty("mediaSize", mediaSize);
@@ -134,8 +154,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets MediaTray supported by the javax.print.DocFlavor API, for
          * example upper,middle etc.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder mediaTray(String mediaTray) {
             setProperty("mediaTray", mediaTray);
@@ -143,8 +165,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Sets mimeTypes supported by the javax.print.DocFlavor API.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder mimeType(String mimeType) {
             setProperty("mimeType", mimeType);
@@ -152,8 +176,10 @@ public interface PrinterEndpointBuilderFactory {
         }
         /**
          * Sets the page orientation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder orientation(String orientation) {
             setProperty("orientation", orientation);
@@ -162,8 +188,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets the prefix name of the printer, it is useful when the printer
          * name does not start with //hostname/printer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder printerPrefix(String printerPrefix) {
             setProperty("printerPrefix", printerPrefix);
@@ -172,8 +200,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * etting this option to false prevents sending of the print data to the
          * printer.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder sendToPrinter(boolean sendToPrinter) {
             setProperty("sendToPrinter", sendToPrinter);
@@ -182,8 +212,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * etting this option to false prevents sending of the print data to the
          * printer.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder sendToPrinter(String sendToPrinter) {
             setProperty("sendToPrinter", sendToPrinter);
@@ -192,8 +224,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets one sided or two sided printing based on the
          * javax.print.attribute.standard.Sides API.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PrinterEndpointBuilder sides(String sides) {
             setProperty("sides", sides);
@@ -213,8 +247,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -224,8 +260,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -235,8 +273,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -245,8 +285,10 @@ public interface PrinterEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

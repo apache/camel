@@ -45,8 +45,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Container Queue compact Uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default QueueServiceEndpointConsumerBuilder containerAndQueueUri(
                 String containerAndQueueUri) {
@@ -55,9 +57,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * The queue service client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 Object azureQueueClient) {
@@ -66,9 +70,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * The queue service client.
+         * 
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 String azureQueueClient) {
@@ -77,9 +83,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Set the storage credentials, required in most cases.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointConsumerBuilder credentials(
                 Object credentials) {
@@ -88,9 +96,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Set the storage credentials, required in most cases.
+         * 
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointConsumerBuilder credentials(
                 String credentials) {
@@ -105,8 +115,10 @@ public interface QueueServiceEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -121,8 +133,10 @@ public interface QueueServiceEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -146,9 +160,11 @@ public interface QueueServiceEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -160,9 +176,11 @@ public interface QueueServiceEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -171,8 +189,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -181,9 +201,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -193,8 +215,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -204,8 +228,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -215,8 +241,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -226,8 +254,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -248,8 +278,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Container Queue compact Uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default QueueServiceEndpointProducerBuilder containerAndQueueUri(
                 String containerAndQueueUri) {
@@ -258,9 +290,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * The queue service client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
                 Object azureQueueClient) {
@@ -269,9 +303,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * The queue service client.
+         * 
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
                 String azureQueueClient) {
@@ -280,9 +316,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Set the storage credentials, required in most cases.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointProducerBuilder credentials(
                 Object credentials) {
@@ -291,9 +329,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Set the storage credentials, required in most cases.
+         * 
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointProducerBuilder credentials(
                 String credentials) {
@@ -310,8 +350,10 @@ public interface QueueServiceEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -328,8 +370,10 @@ public interface QueueServiceEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -338,8 +382,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Message Time To Live in seconds.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 int messageTimeToLive) {
@@ -348,8 +394,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Message Time To Live in seconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 String messageTimeToLive) {
@@ -358,8 +406,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Message Visibility Delay in seconds.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 int messageVisibilityDelay) {
@@ -368,8 +418,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Message Visibility Delay in seconds.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 String messageVisibilityDelay) {
@@ -378,9 +430,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Queue service operation hint to the producer.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder operation(
                 QueueServiceOperations operation) {
@@ -389,9 +443,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Queue service operation hint to the producer.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -399,8 +455,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Set a prefix which can be used for listing the queues.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default QueueServiceEndpointProducerBuilder queuePrefix(
                 String queuePrefix) {
@@ -422,8 +480,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -433,8 +493,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -444,8 +506,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -455,8 +519,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -476,8 +542,10 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Container Queue compact Uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default QueueServiceEndpointBuilder containerAndQueueUri(
                 String containerAndQueueUri) {
@@ -486,9 +554,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * The queue service client.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointBuilder azureQueueClient(
                 Object azureQueueClient) {
@@ -497,9 +567,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * The queue service client.
+         * 
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointBuilder azureQueueClient(
                 String azureQueueClient) {
@@ -508,9 +580,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Set the storage credentials, required in most cases.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointBuilder credentials(Object credentials) {
             setProperty("credentials", credentials);
@@ -518,9 +592,11 @@ public interface QueueServiceEndpointBuilderFactory {
         }
         /**
          * Set the storage credentials, required in most cases.
+         * 
          * The option will be converted to a
          * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default QueueServiceEndpointBuilder credentials(String credentials) {
             setProperty("credentials", credentials);
@@ -541,8 +617,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -552,8 +630,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -563,8 +643,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -574,8 +656,10 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQueueServiceEndpointBuilder synchronous(
                 String synchronous) {

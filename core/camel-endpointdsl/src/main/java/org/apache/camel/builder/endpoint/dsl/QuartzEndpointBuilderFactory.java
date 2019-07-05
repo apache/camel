@@ -41,8 +41,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * The quartz group name to use. The combination of group name and timer
          * name should be unique.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder groupName(String groupName) {
             setProperty("groupName", groupName);
@@ -51,8 +53,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * The quartz timer name to use. The combination of group name and timer
          * name should be unique.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder triggerName(String triggerName) {
             setProperty("triggerName", triggerName);
@@ -60,8 +64,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Specifies a cron expression to define when to trigger.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder cron(String cron) {
             setProperty("cron", cron);
@@ -73,8 +79,10 @@ public interface QuartzEndpointBuilderFactory {
          * false, it will also mean user may reuse pre-configured trigger with
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder deleteJob(boolean deleteJob) {
             setProperty("deleteJob", deleteJob);
@@ -86,8 +94,10 @@ public interface QuartzEndpointBuilderFactory {
          * false, it will also mean user may reuse pre-configured trigger with
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder deleteJob(String deleteJob) {
             setProperty("deleteJob", deleteJob);
@@ -96,8 +106,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether or not the job should remain stored after it is orphaned (no
          * triggers point to it).
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder durableJob(boolean durableJob) {
             setProperty("durableJob", durableJob);
@@ -106,8 +118,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether or not the job should remain stored after it is orphaned (no
          * triggers point to it).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder durableJob(String durableJob) {
             setProperty("durableJob", durableJob);
@@ -119,8 +133,10 @@ public interface QuartzEndpointBuilderFactory {
          * false, it will also mean user may reuse pre-configured trigger with
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder pauseJob(boolean pauseJob) {
             setProperty("pauseJob", pauseJob);
@@ -132,8 +148,10 @@ public interface QuartzEndpointBuilderFactory {
          * false, it will also mean user may reuse pre-configured trigger with
          * camel Uri. Just ensure the names match. Notice you cannot have both
          * deleteJob and pauseJob set to true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder pauseJob(String pauseJob) {
             setProperty("pauseJob", pauseJob);
@@ -142,8 +160,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Instructs the scheduler whether or not the job should be re-executed
          * if a 'recovery' or 'fail-over' situation is encountered.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder recoverableJob(boolean recoverableJob) {
             setProperty("recoverableJob", recoverableJob);
@@ -152,8 +172,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Instructs the scheduler whether or not the job should be re-executed
          * if a 'recovery' or 'fail-over' situation is encountered.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder recoverableJob(String recoverableJob) {
             setProperty("recoverableJob", recoverableJob);
@@ -162,8 +184,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Uses a Quartz PersistJobDataAfterExecution and
          * DisallowConcurrentExecution instead of the default job.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder stateful(boolean stateful) {
             setProperty("stateful", stateful);
@@ -172,8 +196,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Uses a Quartz PersistJobDataAfterExecution and
          * DisallowConcurrentExecution instead of the default job.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default QuartzEndpointBuilder stateful(String stateful) {
             setProperty("stateful", stateful);
@@ -181,8 +207,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Whether or not the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder autoStartScheduler(
                 boolean autoStartScheduler) {
@@ -191,8 +219,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Whether or not the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder autoStartScheduler(
                 String autoStartScheduler) {
@@ -202,8 +232,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * If it is true will fire the trigger when the route is start when
          * using SimpleTrigger.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder fireNow(boolean fireNow) {
             setProperty("fireNow", fireNow);
@@ -212,8 +244,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * If it is true will fire the trigger when the route is start when
          * using SimpleTrigger.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder fireNow(String fireNow) {
             setProperty("fireNow", fireNow);
@@ -221,8 +255,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Seconds to wait before starting the quartz scheduler.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder startDelayedSeconds(
                 int startDelayedSeconds) {
@@ -231,8 +267,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Seconds to wait before starting the quartz scheduler.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder startDelayedSeconds(
                 String startDelayedSeconds) {
@@ -243,8 +281,10 @@ public interface QuartzEndpointBuilderFactory {
          * In case of scheduler has already started, we want the trigger start
          * slightly after current time to ensure endpoint is fully started
          * before the job kicks in.
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder triggerStartDelay(long triggerStartDelay) {
             setProperty("triggerStartDelay", triggerStartDelay);
@@ -254,8 +294,10 @@ public interface QuartzEndpointBuilderFactory {
          * In case of scheduler has already started, we want the trigger start
          * slightly after current time to ensure endpoint is fully started
          * before the job kicks in.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default QuartzEndpointBuilder triggerStartDelay(String triggerStartDelay) {
             setProperty("triggerStartDelay", triggerStartDelay);
@@ -275,8 +317,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -286,8 +330,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -296,8 +342,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Specifies a custom calendar to avoid specific range of date.
-         * The option is a <code>org.quartz.Calendar</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>org.quartz.Calendar</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder customCalendar(
                 Object customCalendar) {
@@ -306,9 +354,11 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Specifies a custom calendar to avoid specific range of date.
+         * 
          * The option will be converted to a <code>org.quartz.Calendar</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder customCalendar(
                 String customCalendar) {
@@ -317,9 +367,11 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * To configure additional options on the job.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder jobParameters(
                 Map<String, Object> jobParameters) {
@@ -328,10 +380,12 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * To configure additional options on the job.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder jobParameters(String jobParameters) {
             setProperty("jobParameters", jobParameters);
@@ -339,8 +393,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Whether the job name should be prefixed with endpoint id.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
                 boolean prefixJobNameWithEndpointId) {
@@ -349,8 +405,10 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * Whether the job name should be prefixed with endpoint id.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
                 String prefixJobNameWithEndpointId) {
@@ -360,8 +418,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -370,8 +430,10 @@ public interface QuartzEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -379,9 +441,11 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * To configure additional options on the trigger.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder triggerParameters(
                 Map<String, Object> triggerParameters) {
@@ -390,10 +454,12 @@ public interface QuartzEndpointBuilderFactory {
         }
         /**
          * To configure additional options on the trigger.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder triggerParameters(
                 String triggerParameters) {
@@ -405,8 +471,10 @@ public interface QuartzEndpointBuilderFactory {
          * reference the CamelContext, if it is false, JobDataMap uses use the
          * CamelContext management name which could be changed during the deploy
          * time.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
                 boolean usingFixedCamelContextName) {
@@ -418,8 +486,10 @@ public interface QuartzEndpointBuilderFactory {
          * reference the CamelContext, if it is false, JobDataMap uses use the
          * CamelContext management name which could be changed during the deploy
          * time.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(
                 String usingFixedCamelContextName) {

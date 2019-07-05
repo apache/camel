@@ -40,8 +40,10 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * OpenStack host url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default NovaEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -49,8 +51,10 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * OpenStack API version.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default NovaEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
@@ -58,9 +62,11 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * OpenStack configuration.
-         * The option is a <code>org.openstack4j.core.transport.Config</code>
+         * 
+         * The option is a: <code>org.openstack4j.core.transport.Config</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NovaEndpointBuilder config(Object config) {
             setProperty("config", config);
@@ -68,9 +74,11 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * OpenStack configuration.
+         * 
          * The option will be converted to a
          * <code>org.openstack4j.core.transport.Config</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NovaEndpointBuilder config(String config) {
             setProperty("config", config);
@@ -78,8 +86,10 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * Authentication domain.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default NovaEndpointBuilder domain(String domain) {
             setProperty("domain", domain);
@@ -87,8 +97,10 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * The operation to do.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default NovaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -96,8 +108,11 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * OpenStack password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default NovaEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -105,8 +120,11 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * The project ID.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default NovaEndpointBuilder project(String project) {
             setProperty("project", project);
@@ -114,8 +132,11 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * OpenStack Nova subsystem.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default NovaEndpointBuilder subsystem(String subsystem) {
             setProperty("subsystem", subsystem);
@@ -123,8 +144,11 @@ public interface NovaEndpointBuilderFactory {
         }
         /**
          * OpenStack username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default NovaEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -144,8 +168,10 @@ public interface NovaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedNovaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -155,8 +181,10 @@ public interface NovaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedNovaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -166,8 +194,10 @@ public interface NovaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedNovaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -176,8 +206,10 @@ public interface NovaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedNovaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

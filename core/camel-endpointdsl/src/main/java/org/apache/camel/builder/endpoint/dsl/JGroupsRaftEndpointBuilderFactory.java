@@ -44,8 +44,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         }
         /**
          * The name of the JGroupsraft cluster the component should connect to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JGroupsRaftEndpointConsumerBuilder clusterName(
                 String clusterName) {
@@ -60,8 +62,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,8 +80,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -88,8 +94,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * If set to true, the consumer endpoint will receive roleChange event
          * as well (not just connecting and/or using the state machine). By
          * default it is set to false.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
                 boolean enableRoleChangeEvents) {
@@ -100,8 +108,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * If set to true, the consumer endpoint will receive roleChange event
          * as well (not just connecting and/or using the state machine). By
          * default it is set to false.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
                 String enableRoleChangeEvents) {
@@ -124,9 +134,11 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -138,9 +150,11 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -149,8 +163,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -159,9 +175,11 @@ public interface JGroupsRaftEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -171,8 +189,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -182,8 +202,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -193,8 +215,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -204,8 +228,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -225,8 +251,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         }
         /**
          * The name of the JGroupsraft cluster the component should connect to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JGroupsRaftEndpointProducerBuilder clusterName(
                 String clusterName) {
@@ -243,8 +271,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -261,8 +291,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -283,8 +315,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -294,8 +328,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -305,8 +341,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -316,8 +354,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -337,8 +377,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         }
         /**
          * The name of the JGroupsraft cluster the component should connect to.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default JGroupsRaftEndpointBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
@@ -358,8 +400,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -369,8 +413,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -380,8 +426,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -391,8 +439,10 @@ public interface JGroupsRaftEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointBuilder synchronous(
                 String synchronous) {

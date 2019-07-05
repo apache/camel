@@ -42,8 +42,10 @@ public interface DataFormatEndpointBuilderFactory {
         }
         /**
          * Name of data format.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DataFormatEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -51,8 +53,10 @@ public interface DataFormatEndpointBuilderFactory {
         }
         /**
          * Operation to use either marshal or unmarshal.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default DataFormatEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -72,8 +76,10 @@ public interface DataFormatEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -83,8 +89,10 @@ public interface DataFormatEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -94,8 +102,10 @@ public interface DataFormatEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDataFormatEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -105,8 +115,10 @@ public interface DataFormatEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDataFormatEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

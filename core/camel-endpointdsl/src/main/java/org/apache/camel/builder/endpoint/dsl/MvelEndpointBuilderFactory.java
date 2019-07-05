@@ -44,8 +44,10 @@ public interface MvelEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MvelEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -53,8 +55,10 @@ public interface MvelEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default MvelEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -62,8 +66,10 @@ public interface MvelEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default MvelEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -71,8 +77,10 @@ public interface MvelEndpointBuilderFactory {
         }
         /**
          * Character encoding of the resource content.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MvelEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -92,8 +100,10 @@ public interface MvelEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMvelEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -103,8 +113,10 @@ public interface MvelEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMvelEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -114,8 +126,10 @@ public interface MvelEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMvelEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -124,8 +138,10 @@ public interface MvelEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMvelEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

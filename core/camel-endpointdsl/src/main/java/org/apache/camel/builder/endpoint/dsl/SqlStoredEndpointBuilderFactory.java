@@ -40,8 +40,10 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Sets the StoredProcedure template to perform.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder template(String template) {
             setProperty("template", template);
@@ -49,8 +51,10 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Enables or disables batch mode.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder batch(boolean batch) {
             setProperty("batch", batch);
@@ -58,8 +62,10 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Enables or disables batch mode.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder batch(String batch) {
             setProperty("batch", batch);
@@ -67,8 +73,10 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
-         * The option is a <code>javax.sql.DataSource</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>javax.sql.DataSource</code> type.
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder dataSource(Object dataSource) {
             setProperty("dataSource", dataSource);
@@ -76,9 +84,11 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Sets the DataSource to use to communicate with the database.
+         * 
          * The option will be converted to a <code>javax.sql.DataSource</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder dataSource(String dataSource) {
             setProperty("dataSource", dataSource);
@@ -86,8 +96,10 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Whether this call is for a function.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder function(boolean function) {
             setProperty("function", function);
@@ -95,8 +107,10 @@ public interface SqlStoredEndpointBuilderFactory {
         }
         /**
          * Whether this call is for a function.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder function(String function) {
             setProperty("function", function);
@@ -105,8 +119,10 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * If set, will ignore the results of the template and use the existing
          * IN message as the OUT message for the continuation of processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder noop(boolean noop) {
             setProperty("noop", noop);
@@ -115,8 +131,10 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * If set, will ignore the results of the template and use the existing
          * IN message as the OUT message for the continuation of processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder noop(String noop) {
             setProperty("noop", noop);
@@ -129,8 +147,10 @@ public interface SqlStoredEndpointBuilderFactory {
          * discarded. If outputHeader is set, the value is used as the name of
          * the header to store the template result and the original message body
          * is preserved.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder outputHeader(String outputHeader) {
             setProperty("outputHeader", outputHeader);
@@ -140,8 +160,10 @@ public interface SqlStoredEndpointBuilderFactory {
          * Whether to use the message body as the template and then headers for
          * parameters. If this option is enabled then the template in the uri is
          * not used.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 boolean useMessageBodyForTemplate) {
@@ -152,8 +174,10 @@ public interface SqlStoredEndpointBuilderFactory {
          * Whether to use the message body as the template and then headers for
          * parameters. If this option is enabled then the template in the uri is
          * not used.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 String useMessageBodyForTemplate) {
@@ -174,8 +198,10 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -185,8 +211,10 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -196,8 +224,10 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -206,8 +236,10 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

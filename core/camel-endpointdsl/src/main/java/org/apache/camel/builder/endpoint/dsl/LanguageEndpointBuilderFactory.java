@@ -40,8 +40,10 @@ public interface LanguageEndpointBuilderFactory {
         }
         /**
          * Sets the name of the language to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder languageName(String languageName) {
             setProperty("languageName", languageName);
@@ -50,8 +52,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Path to the resource, or a reference to lookup a bean in the Registry
          * to use as the resource.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -60,8 +64,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Whether the script is binary content or text content. By default the
          * script is read as text content (eg java.lang.String).
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder binary(boolean binary) {
             setProperty("binary", binary);
@@ -70,8 +76,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Whether the script is binary content or text content. By default the
          * script is read as text content (eg java.lang.String).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder binary(String binary) {
             setProperty("binary", binary);
@@ -81,8 +89,10 @@ public interface LanguageEndpointBuilderFactory {
          * Whether to cache the compiled script and reuse Notice reusing the
          * script can cause side effects from processing one Camel
          * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
             setProperty("cacheScript", cacheScript);
@@ -92,8 +102,10 @@ public interface LanguageEndpointBuilderFactory {
          * Whether to cache the compiled script and reuse Notice reusing the
          * script can cause side effects from processing one Camel
          * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(String cacheScript) {
             setProperty("cacheScript", cacheScript);
@@ -101,8 +113,10 @@ public interface LanguageEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -110,8 +124,10 @@ public interface LanguageEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -119,8 +135,10 @@ public interface LanguageEndpointBuilderFactory {
         }
         /**
          * Sets the script to execute.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder script(String script) {
             setProperty("script", script);
@@ -129,8 +147,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Whether or not the result of the script should be used as message
          * body. This options is default true.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder transform(boolean transform) {
             setProperty("transform", transform);
@@ -139,8 +159,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Whether or not the result of the script should be used as message
          * body. This options is default true.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LanguageEndpointBuilder transform(String transform) {
             setProperty("transform", transform);
@@ -160,8 +182,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -171,8 +195,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -182,8 +208,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -192,8 +220,10 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

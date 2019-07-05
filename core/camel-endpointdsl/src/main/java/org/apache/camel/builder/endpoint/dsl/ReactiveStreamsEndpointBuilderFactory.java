@@ -43,8 +43,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Name of the stream channel used by the endpoint to exchange messages.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ReactiveStreamsEndpointConsumerBuilder stream(String stream) {
             setProperty("stream", stream);
@@ -58,8 +60,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -74,8 +78,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -84,8 +90,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Number of threads used to process exchanges in the Camel route.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -94,8 +102,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Number of threads used to process exchanges in the Camel route.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -112,8 +122,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * been processed. If set to 1, the subscriber can request a new item
          * each time an exchange is processed (chatty). Any intermediate value
          * can be used.
-         * The option is a <code>double</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>double</code> type.
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
                 double exchangesRefillLowWatermark) {
@@ -130,8 +142,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * been processed. If set to 1, the subscriber can request a new item
          * each time an exchange is processed (chatty). Any intermediate value
          * can be used.
+         * 
          * The option will be converted to a <code>double</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
                 String exchangesRefillLowWatermark) {
@@ -140,8 +154,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Determines if onComplete events should be pushed to the Camel route.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
                 boolean forwardOnComplete) {
@@ -150,8 +166,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Determines if onComplete events should be pushed to the Camel route.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
                 String forwardOnComplete) {
@@ -161,8 +179,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
                 boolean forwardOnError) {
@@ -172,8 +192,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
                 String forwardOnError) {
@@ -184,8 +206,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Maximum number of exchanges concurrently being processed by Camel.
          * This parameter controls backpressure on the stream. Setting a
          * non-positive value will disable backpressure.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
                 Integer maxInflightExchanges) {
@@ -196,9 +220,11 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Maximum number of exchanges concurrently being processed by Camel.
          * This parameter controls backpressure on the stream. Setting a
          * non-positive value will disable backpressure.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
                 String maxInflightExchanges) {
@@ -222,9 +248,11 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -236,9 +264,11 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -247,8 +277,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -257,9 +289,11 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -269,8 +303,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -280,8 +316,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -291,8 +329,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -302,8 +342,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -323,8 +365,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Name of the stream channel used by the endpoint to exchange messages.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ReactiveStreamsEndpointProducerBuilder stream(String stream) {
             setProperty("stream", stream);
@@ -333,9 +377,11 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * The backpressure strategy to use when pushing events to a slow
          * subscriber.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
                 ReactiveStreamsBackpressureStrategy backpressureStrategy) {
@@ -345,9 +391,11 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * The backpressure strategy to use when pushing events to a slow
          * subscriber.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ReactiveStreamsEndpointProducerBuilder backpressureStrategy(
                 String backpressureStrategy) {
@@ -364,8 +412,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -382,8 +432,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -405,8 +457,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -416,8 +470,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -427,8 +483,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -438,8 +496,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -459,8 +519,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         }
         /**
          * Name of the stream channel used by the endpoint to exchange messages.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ReactiveStreamsEndpointBuilder stream(String stream) {
             setProperty("stream", stream);
@@ -480,8 +542,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -491,8 +555,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -502,8 +568,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -513,8 +581,10 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointBuilder synchronous(
                 String synchronous) {

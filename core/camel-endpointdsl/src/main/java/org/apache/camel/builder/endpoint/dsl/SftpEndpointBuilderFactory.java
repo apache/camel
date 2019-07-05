@@ -56,8 +56,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Hostname of the FTP server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -65,8 +67,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -74,8 +78,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -83,8 +89,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * The starting directory.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
@@ -100,8 +108,10 @@ public interface SftpEndpointBuilderFactory {
          * read the message content into memory to be able to convert the data
          * into the configured charset, so do not use this if you have big
          * messages.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder charset(String charset) {
             setProperty("charset", charset);
@@ -112,8 +122,10 @@ public interface SftpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
@@ -124,8 +136,10 @@ public interface SftpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
@@ -143,8 +157,10 @@ public interface SftpEndpointBuilderFactory {
          * always expected in the same folder as the original file. Only
          * ${file.name} and ${file.name.noext} is supported as dynamic
          * placeholders.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
@@ -167,8 +183,10 @@ public interface SftpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
@@ -191,9 +209,11 @@ public interface SftpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -202,8 +222,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
@@ -213,9 +235,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
@@ -226,9 +250,11 @@ public interface SftpEndpointBuilderFactory {
          * Sets the path separator to be used. UNIX = Uses unix style path
          * separator Windows = Uses windows style path separator Auto = (is
          * default) Use existing path separator in file name.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder separator(PathSeparator separator) {
             setProperty("separator", separator);
@@ -238,9 +264,11 @@ public interface SftpEndpointBuilderFactory {
          * Sets the path separator to be used. UNIX = Uses unix style path
          * separator Windows = Uses windows style path separator Auto = (is
          * default) Use existing path separator in file name.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointConsumerBuilder separator(String separator) {
             setProperty("separator", separator);
@@ -254,8 +282,10 @@ public interface SftpEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -270,8 +300,10 @@ public interface SftpEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -280,8 +312,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * If true, the file will be deleted after it is processed successfully.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder delete(boolean delete) {
             setProperty("delete", delete);
@@ -289,8 +323,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * If true, the file will be deleted after it is processed successfully.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder delete(String delete) {
             setProperty("delete", delete);
@@ -301,8 +337,10 @@ public interface SftpEndpointBuilderFactory {
          * example, to move files into a .error subdirectory use: .error. Note:
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(Expression moveFailed) {
             setProperty("moveFailed", moveFailed);
@@ -313,9 +351,11 @@ public interface SftpEndpointBuilderFactory {
          * example, to move files into a .error subdirectory use: .error. Note:
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(String moveFailed) {
             setProperty("moveFailed", moveFailed);
@@ -326,8 +366,10 @@ public interface SftpEndpointBuilderFactory {
          * good for readonly data, or for ETL type requirements. If noop=true,
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder noop(boolean noop) {
             setProperty("noop", noop);
@@ -338,8 +380,10 @@ public interface SftpEndpointBuilderFactory {
          * good for readonly data, or for ETL type requirements. If noop=true,
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder noop(String noop) {
             setProperty("noop", noop);
@@ -349,8 +393,10 @@ public interface SftpEndpointBuilderFactory {
          * Expression (such as File Language) used to dynamically set the
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(Expression preMove) {
             setProperty("preMove", preMove);
@@ -360,9 +406,11 @@ public interface SftpEndpointBuilderFactory {
          * Expression (such as File Language) used to dynamically set the
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(String preMove) {
             setProperty("preMove", preMove);
@@ -375,8 +423,10 @@ public interface SftpEndpointBuilderFactory {
          * files in a sorted order. The pre-sort is executed before the consumer
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder preSort(boolean preSort) {
             setProperty("preSort", preSort);
@@ -389,8 +439,10 @@ public interface SftpEndpointBuilderFactory {
          * files in a sorted order. The pre-sort is executed before the consumer
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder preSort(String preSort) {
             setProperty("preSort", preSort);
@@ -399,8 +451,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If a directory, will look for files in all the sub-directories as
          * well.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder recursive(boolean recursive) {
             setProperty("recursive", recursive);
@@ -409,8 +463,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If a directory, will look for files in all the sub-directories as
          * well.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder recursive(String recursive) {
             setProperty("recursive", recursive);
@@ -419,8 +475,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -430,8 +488,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -443,8 +503,10 @@ public interface SftpEndpointBuilderFactory {
          * directory. If set to true, the remote files are streamed to the route
          * as they are read. When set to false, the remote files are loaded into
          * memory before being sent into the route.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder streamDownload(
                 boolean streamDownload) {
@@ -456,8 +518,10 @@ public interface SftpEndpointBuilderFactory {
          * directory. If set to true, the remote files are streamed to the route
          * as they are read. When set to false, the remote files are loaded into
          * memory before being sent into the route.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SftpEndpointConsumerBuilder streamDownload(String streamDownload) {
             setProperty("streamDownload", streamDownload);
@@ -467,8 +531,10 @@ public interface SftpEndpointBuilderFactory {
          * Ant style filter exclusion. If both antInclude and antExclude are
          * used, antExclude takes precedence over antInclude. Multiple
          * exclusions may be specified in comma-delimited format.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder antExclude(String antExclude) {
             setProperty("antExclude", antExclude);
@@ -476,8 +542,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets case sensitive flag on ant filter.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
@@ -486,8 +554,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets case sensitive flag on ant filter.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
@@ -497,8 +567,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Ant style filter inclusion. Multiple inclusions may be specified in
          * comma-delimited format.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder antInclude(String antInclude) {
             setProperty("antInclude", antInclude);
@@ -511,8 +583,10 @@ public interface SftpEndpointBuilderFactory {
          * Setting this option to false allows for sorting all files first, and
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
@@ -526,8 +600,10 @@ public interface SftpEndpointBuilderFactory {
          * Setting this option to false allows for sorting all files first, and
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
@@ -540,8 +616,10 @@ public interface SftpEndpointBuilderFactory {
          * plus sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder exclude(String exclude) {
             setProperty("exclude", exclude);
@@ -551,9 +629,11 @@ public interface SftpEndpointBuilderFactory {
          * Pluggable filter as a
          * org.apache.camel.component.file.GenericFileFilter class. Will skip
          * files if filter returns false in its accept() method.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(Object filter) {
             setProperty("filter", filter);
@@ -563,9 +643,11 @@ public interface SftpEndpointBuilderFactory {
          * Pluggable filter as a
          * org.apache.camel.component.file.GenericFileFilter class. Will skip
          * files if filter returns false in its accept() method.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(String filter) {
             setProperty("filter", filter);
@@ -575,8 +657,10 @@ public interface SftpEndpointBuilderFactory {
          * Filters the directory based on Simple language. For example to filter
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
-         * The option is a <code>org.apache.camel.Predicate</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
@@ -587,9 +671,11 @@ public interface SftpEndpointBuilderFactory {
          * Filters the directory based on Simple language. For example to filter
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
@@ -599,8 +685,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
-         * The option is a <code>org.apache.camel.Predicate</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(Predicate filterFile) {
             setProperty("filterFile", filterFile);
@@ -609,9 +697,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Predicate</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(String filterFile) {
             setProperty("filterFile", filterFile);
@@ -622,8 +712,10 @@ public interface SftpEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotent(Boolean idempotent) {
             setProperty("idempotent", idempotent);
@@ -634,9 +726,11 @@ public interface SftpEndpointBuilderFactory {
          * already processed files. Will by default use a memory based LRUCache
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotent(String idempotent) {
             setProperty("idempotent", idempotent);
@@ -647,8 +741,10 @@ public interface SftpEndpointBuilderFactory {
          * file is used. You can use the File Language, for example to use the
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
@@ -660,9 +756,11 @@ public interface SftpEndpointBuilderFactory {
          * file is used. You can use the File Language, for example to use the
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentKey(String idempotentKey) {
             setProperty("idempotentKey", idempotentKey);
@@ -672,9 +770,11 @@ public interface SftpEndpointBuilderFactory {
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryMessageIdRepository if none is specified
          * and idempotent is true.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
@@ -685,9 +785,11 @@ public interface SftpEndpointBuilderFactory {
          * A pluggable repository org.apache.camel.spi.IdempotentRepository
          * which by default use MemoryMessageIdRepository if none is specified
          * and idempotent is true.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
@@ -700,8 +802,10 @@ public interface SftpEndpointBuilderFactory {
          * plus sign and others you would need to configure this using the RAW()
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder include(String include) {
             setProperty("include", include);
@@ -710,8 +814,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The maximum depth to traverse when recursively processing a
          * directory.
-         * The option is a <code>int</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder maxDepth(int maxDepth) {
             setProperty("maxDepth", maxDepth);
@@ -720,8 +826,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The maximum depth to traverse when recursively processing a
          * directory.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder maxDepth(String maxDepth) {
             setProperty("maxDepth", maxDepth);
@@ -737,8 +845,10 @@ public interface SftpEndpointBuilderFactory {
          * only the first 500 files will be picked up, and then sorted. You can
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
-         * The option is a <code>int</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -755,8 +865,10 @@ public interface SftpEndpointBuilderFactory {
          * only the first 500 files will be picked up, and then sorted. You can
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -767,8 +879,10 @@ public interface SftpEndpointBuilderFactory {
          * The minimum depth to start processing when recursively processing a
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
-         * The option is a <code>int</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(int minDepth) {
             setProperty("minDepth", minDepth);
@@ -778,8 +892,10 @@ public interface SftpEndpointBuilderFactory {
          * The minimum depth to start processing when recursively processing a
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(String minDepth) {
             setProperty("minDepth", minDepth);
@@ -789,8 +905,10 @@ public interface SftpEndpointBuilderFactory {
          * Expression (such as Simple Language) used to dynamically set the
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder move(Expression move) {
             setProperty("move", move);
@@ -800,9 +918,11 @@ public interface SftpEndpointBuilderFactory {
          * Expression (such as Simple Language) used to dynamically set the
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default SftpEndpointConsumerBuilder move(String move) {
             setProperty("move", move);
@@ -812,9 +932,11 @@ public interface SftpEndpointBuilderFactory {
          * Pluggable read-lock as a
          * org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy
          * implementation.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
@@ -825,9 +947,11 @@ public interface SftpEndpointBuilderFactory {
          * Pluggable read-lock as a
          * org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy
          * implementation.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
@@ -873,8 +997,10 @@ public interface SftpEndpointBuilderFactory {
          * idempotent read lock can support clustering if the idempotent
          * repository supports clustering, such as Hazelcast Component or
          * Infinispan.
-         * The option is a <code>java.lang.String</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLock(String readLock) {
             setProperty("readLock", readLock);
@@ -892,8 +1018,10 @@ public interface SftpEndpointBuilderFactory {
          * higher than the readLockCheckInterval. This is needed to ensure that
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
-         * The option is a <code>long</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
@@ -912,8 +1040,10 @@ public interface SftpEndpointBuilderFactory {
          * higher than the readLockCheckInterval. This is needed to ensure that
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
@@ -928,8 +1058,10 @@ public interface SftpEndpointBuilderFactory {
          * Camel to not attempt to pickup that file, this could also be due
          * another node is concurrently reading files from the same shared
          * directory.
-         * The option is a <code>boolean</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
@@ -944,8 +1076,10 @@ public interface SftpEndpointBuilderFactory {
          * Camel to not attempt to pickup that file, this could also be due
          * another node is concurrently reading files from the same shared
          * directory.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
@@ -956,8 +1090,10 @@ public interface SftpEndpointBuilderFactory {
          * Whether the delayed release task should be synchronous or
          * asynchronous. See more details at the readLockIdempotentReleaseDelay
          * option.
-         * The option is a <code>boolean</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 boolean readLockIdempotentReleaseAsync) {
@@ -968,8 +1104,10 @@ public interface SftpEndpointBuilderFactory {
          * Whether the delayed release task should be synchronous or
          * asynchronous. See more details at the readLockIdempotentReleaseDelay
          * option.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 String readLockIdempotentReleaseAsync) {
@@ -985,8 +1123,10 @@ public interface SftpEndpointBuilderFactory {
          * shared thread pool by configuring the
          * readLockIdempotentReleaseExecutorService option. See more details at
          * the readLockIdempotentReleaseDelay option.
-         * The option is a <code>int</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 int readLockIdempotentReleaseAsyncPoolSize) {
@@ -1002,8 +1142,10 @@ public interface SftpEndpointBuilderFactory {
          * shared thread pool by configuring the
          * readLockIdempotentReleaseExecutorService option. See more details at
          * the readLockIdempotentReleaseDelay option.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 String readLockIdempotentReleaseAsyncPoolSize) {
@@ -1019,8 +1161,10 @@ public interface SftpEndpointBuilderFactory {
          * By expanding the time-window of the release tasks helps prevents
          * these situations. Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
-         * The option is a <code>int</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 int readLockIdempotentReleaseDelay) {
@@ -1036,8 +1180,10 @@ public interface SftpEndpointBuilderFactory {
          * By expanding the time-window of the release tasks helps prevents
          * these situations. Note delaying is only needed if you have configured
          * readLockRemoveOnCommit to true.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 String readLockIdempotentReleaseDelay) {
@@ -1047,9 +1193,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom and shared thread pool for asynchronous release
          * tasks. See more details at the readLockIdempotentReleaseDelay option.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
@@ -1059,9 +1207,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom and shared thread pool for asynchronous release
          * tasks. See more details at the readLockIdempotentReleaseDelay option.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 String readLockIdempotentReleaseExecutorService) {
@@ -1074,8 +1224,10 @@ public interface SftpEndpointBuilderFactory {
          * not have any logging. This option is only applicable for readLock of
          * types: changed, fileLock, idempotent, idempotent-changed,
          * idempotent-rename, rename.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
@@ -1088,9 +1240,11 @@ public interface SftpEndpointBuilderFactory {
          * not have any logging. This option is only applicable for readLock of
          * types: changed, fileLock, idempotent, idempotent-changed,
          * idempotent-rename, rename.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
@@ -1104,8 +1258,10 @@ public interface SftpEndpointBuilderFactory {
          * be turned off by setting this option to false. For example if you do
          * not want to write marker files to the file systems by the Camel
          * application.
-         * The option is a <code>boolean</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
@@ -1119,8 +1275,10 @@ public interface SftpEndpointBuilderFactory {
          * be turned off by setting this option to false. For example if you do
          * not want to write marker files to the file systems by the Camel
          * application.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
@@ -1134,8 +1292,10 @@ public interface SftpEndpointBuilderFactory {
          * file is at last 5 minutes old. This can speedup the changed read lock
          * as it will only attempt to acquire files which are at least that
          * given age.
-         * The option is a <code>long</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
             setProperty("readLockMinAge", readLockMinAge);
@@ -1148,8 +1308,10 @@ public interface SftpEndpointBuilderFactory {
          * file is at last 5 minutes old. This can speedup the changed read lock
          * as it will only attempt to acquire files which are at least that
          * given age.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
             setProperty("readLockMinAge", readLockMinAge);
@@ -1160,8 +1322,10 @@ public interface SftpEndpointBuilderFactory {
          * configure a minimum file length. By default Camel expects the file to
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
-         * The option is a <code>long</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
@@ -1173,8 +1337,10 @@ public interface SftpEndpointBuilderFactory {
          * configure a minimum file length. By default Camel expects the file to
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
@@ -1191,8 +1357,10 @@ public interface SftpEndpointBuilderFactory {
          * strategies that you can configure to evict the file name entry after
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
-         * The option is a <code>boolean</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
@@ -1209,8 +1377,10 @@ public interface SftpEndpointBuilderFactory {
          * strategies that you can configure to evict the file name entry after
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
@@ -1223,8 +1393,10 @@ public interface SftpEndpointBuilderFactory {
          * repository when processing the file failed and a rollback happens. If
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
-         * The option is a <code>boolean</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
@@ -1237,8 +1409,10 @@ public interface SftpEndpointBuilderFactory {
          * repository when processing the file failed and a rollback happens. If
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
@@ -1258,8 +1432,10 @@ public interface SftpEndpointBuilderFactory {
          * higher than the readLockCheckInterval. This is needed to ensure that
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
-         * The option is a <code>long</code> type.
-         * @group lock
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
             setProperty("readLockTimeout", readLockTimeout);
@@ -1278,8 +1454,10 @@ public interface SftpEndpointBuilderFactory {
          * higher than the readLockCheckInterval. This is needed to ensure that
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group lock
+         * 
+         * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
@@ -1289,8 +1467,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -1300,8 +1480,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -1311,8 +1493,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -1322,8 +1506,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -1337,8 +1523,10 @@ public interface SftpEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -1352,8 +1540,10 @@ public interface SftpEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -1364,8 +1554,10 @@ public interface SftpEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -1375,8 +1567,10 @@ public interface SftpEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -1385,8 +1579,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -1395,8 +1591,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -1406,8 +1604,10 @@ public interface SftpEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -1417,8 +1617,10 @@ public interface SftpEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -1427,8 +1629,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -1438,9 +1642,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -1451,9 +1657,11 @@ public interface SftpEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -1464,9 +1672,11 @@ public interface SftpEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -1476,10 +1686,12 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -1489,10 +1701,12 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -1501,9 +1715,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -1513,10 +1729,12 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -1525,8 +1743,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -1535,8 +1755,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder startScheduler(String startScheduler) {
             setProperty("startScheduler", startScheduler);
@@ -1544,8 +1766,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -1553,9 +1777,11 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -1564,8 +1790,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -1574,8 +1802,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default SftpEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             setProperty("useFixedDelay", useFixedDelay);
@@ -1583,8 +1813,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * To shuffle the list of files (sort in random order).
-         * The option is a <code>boolean</code> type.
-         * @group sort
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: sort
          */
         default SftpEndpointConsumerBuilder shuffle(boolean shuffle) {
             setProperty("shuffle", shuffle);
@@ -1592,8 +1824,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * To shuffle the list of files (sort in random order).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group sort
+         * 
+         * Group: sort
          */
         default SftpEndpointConsumerBuilder shuffle(String shuffle) {
             setProperty("shuffle", shuffle);
@@ -1603,10 +1837,12 @@ public interface SftpEndpointBuilderFactory {
          * Built-in sort by using the File Language. Supports nested sorts, so
          * you can have a sort by file name and as a 2nd group sort by modified
          * date.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
-         * @group sort
+         * 
+         * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
             setProperty("sortBy", sortBy);
@@ -1616,10 +1852,12 @@ public interface SftpEndpointBuilderFactory {
          * Built-in sort by using the File Language. Supports nested sorts, so
          * you can have a sort by file name and as a 2nd group sort by modified
          * date.
+         * 
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
          * type.
-         * @group sort
+         * 
+         * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(String sortBy) {
             setProperty("sortBy", sortBy);
@@ -1627,9 +1865,11 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Pluggable sorter as a java.util.Comparator class.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
-         * @group sort
+         * 
+         * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
             setProperty("sorter", sorter);
@@ -1637,9 +1877,11 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Pluggable sorter as a java.util.Comparator class.
+         * 
          * The option will be converted to a
          * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;&gt;</code> type.
-         * @group sort
+         * 
+         * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(String sorter) {
             setProperty("sorter", sorter);
@@ -1650,8 +1892,10 @@ public interface SftpEndpointBuilderFactory {
          * preference. Possible cipher names are defined by JCraft JSCH. Some
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);
@@ -1660,8 +1904,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
-         * The option is a <code>java.security.KeyPair</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.security.KeyPair</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
             setProperty("keyPair", keyPair);
@@ -1670,9 +1916,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
+         * 
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder keyPair(String keyPair) {
             setProperty("keyPair", keyPair);
@@ -1681,8 +1929,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
-         * The option is a <code>byte[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
             setProperty("knownHosts", knownHosts);
@@ -1691,8 +1941,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
+         * 
          * The option will be converted to a <code>byte[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder knownHosts(String knownHosts) {
             setProperty("knownHosts", knownHosts);
@@ -1701,8 +1953,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts file, so that the SFTP endpoint can do host key
          * verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
@@ -1711,8 +1965,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts file (loaded from classpath by default), so that
          * the SFTP endpoint can do host key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder knownHostsUri(String knownHostsUri) {
             setProperty("knownHostsUri", knownHostsUri);
@@ -1720,8 +1976,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Password to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -1731,8 +1989,10 @@ public interface SftpEndpointBuilderFactory {
          * Set the preferred authentications which SFTP endpoint will used. Some
          * example include:password,publickey. If not specified the default list
          * from JSCH will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder preferredAuthentications(
                 String preferredAuthentications) {
@@ -1742,8 +2002,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
-         * The option is a <code>byte[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
             setProperty("privateKey", privateKey);
@@ -1752,8 +2014,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
+         * 
          * The option will be converted to a <code>byte[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
@@ -1762,8 +2026,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file so that the SFTP endpoint can do private key
          * verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
@@ -1772,8 +2038,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file passphrase so that the SFTP endpoint can do
          * private key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
@@ -1783,8 +2051,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file (loaded from classpath by default) so that
          * the SFTP endpoint can do private key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyUri(String privateKeyUri) {
             setProperty("privateKeyUri", privateKeyUri);
@@ -1792,8 +2062,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets whether to use strict host key checking.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
@@ -1802,8 +2074,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Username to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -1812,8 +2086,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
@@ -1823,8 +2099,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointConsumerBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
@@ -1851,8 +2129,10 @@ public interface SftpEndpointBuilderFactory {
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
-         * The option is a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
@@ -1868,8 +2148,10 @@ public interface SftpEndpointBuilderFactory {
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
                 String fastExistsCheck) {
@@ -1882,8 +2164,10 @@ public interface SftpEndpointBuilderFactory {
          * will still trigger a Camel Exchange that has details about the file
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder download(boolean download) {
             setProperty("download", download);
@@ -1895,8 +2179,10 @@ public interface SftpEndpointBuilderFactory {
          * will still trigger a Camel Exchange that has details about the file
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder download(String download) {
             setProperty("download", download);
@@ -1907,9 +2193,11 @@ public interface SftpEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1921,9 +2209,11 @@ public interface SftpEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1932,8 +2222,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1942,9 +2234,11 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1957,8 +2251,10 @@ public interface SftpEndpointBuilderFactory {
          * By default when a directory or file does not exists or insufficient
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 boolean ignoreFileNotFoundOrPermissionError) {
@@ -1971,8 +2267,10 @@ public interface SftpEndpointBuilderFactory {
          * By default when a directory or file does not exists or insufficient
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 String ignoreFileNotFoundOrPermissionError) {
@@ -1984,9 +2282,11 @@ public interface SftpEndpointBuilderFactory {
          * org.apache.camel.spi.IdempotentRepository. The in-progress repository
          * is used to account the current in progress files being consumed. By
          * default a memory based repository is used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
@@ -1998,9 +2298,11 @@ public interface SftpEndpointBuilderFactory {
          * org.apache.camel.spi.IdempotentRepository. The in-progress repository
          * is used to account the current in progress files being consumed. By
          * default a memory based repository is used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.IdempotentRepository</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
@@ -2012,8 +2314,10 @@ public interface SftpEndpointBuilderFactory {
          * remote file content directly in local files, to avoid loading the
          * content into memory. This is beneficial, if you consume a very big
          * remote file and thus can conserve memory.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
@@ -2025,9 +2329,11 @@ public interface SftpEndpointBuilderFactory {
          * thrown exceptions that happens during the file on completion process
          * where the consumer does either a commit or rollback. The default
          * implementation will log any exception at WARN level and ignore.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
@@ -2039,9 +2345,11 @@ public interface SftpEndpointBuilderFactory {
          * thrown exceptions that happens during the file on completion process
          * where the consumer does either a commit or rollback. The default
          * implementation will log any exception at WARN level and ignore.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
@@ -2053,9 +2361,11 @@ public interface SftpEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -2067,9 +2377,11 @@ public interface SftpEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -2083,9 +2395,11 @@ public interface SftpEndpointBuilderFactory {
          * used when special conditions must be met before a file can be
          * consumed, such as a special ready file exists. If this option is set
          * then the readLock option does not apply.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
@@ -2099,9 +2413,11 @@ public interface SftpEndpointBuilderFactory {
          * used when special conditions must be met before a file can be
          * consumed, such as a special ready file exists. If this option is set
          * then the readLock option does not apply.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.camel.component.file.remote.SftpRemoteFile&gt;</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
@@ -2116,8 +2432,10 @@ public interface SftpEndpointBuilderFactory {
          * specific file to download does not include meta-data information such
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder useList(boolean useList) {
             setProperty("useList", useList);
@@ -2131,8 +2449,10 @@ public interface SftpEndpointBuilderFactory {
          * specific file to download does not include meta-data information such
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder useList(String useList) {
             setProperty("useList", useList);
@@ -2143,8 +2463,10 @@ public interface SftpEndpointBuilderFactory {
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
          * to.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
@@ -2156,8 +2478,10 @@ public interface SftpEndpointBuilderFactory {
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
          * to.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
@@ -2166,8 +2490,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -2177,8 +2503,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -2188,8 +2516,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the address of the local interface against which the
          * connection should bind.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bindAddress(
                 String bindAddress) {
@@ -2198,8 +2528,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Write buffer sized in bytes.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -2207,8 +2539,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Write buffer sized in bytes.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -2218,8 +2552,10 @@ public interface SftpEndpointBuilderFactory {
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
                 Integer bulkRequests) {
@@ -2230,9 +2566,11 @@ public interface SftpEndpointBuilderFactory {
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
                 String bulkRequests) {
@@ -2243,8 +2581,10 @@ public interface SftpEndpointBuilderFactory {
          * To use compression. Specify a level from 1 to 10. Important: You must
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder compression(int compression) {
             setProperty("compression", compression);
@@ -2254,8 +2594,10 @@ public interface SftpEndpointBuilderFactory {
          * To use compression. Specify a level from 1 to 10. Important: You must
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder compression(
                 String compression) {
@@ -2265,8 +2607,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
@@ -2276,8 +2620,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
@@ -2287,8 +2633,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
@@ -2298,8 +2646,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
@@ -2309,8 +2659,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
-         * The option is a <code>com.jcraft.jsch.Proxy</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
@@ -2319,9 +2671,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
+         * 
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
@@ -2330,8 +2684,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
                 long reconnectDelay) {
@@ -2341,8 +2697,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
                 String reconnectDelay) {
@@ -2351,8 +2709,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveCountMax of the sftp session.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
@@ -2361,8 +2721,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveCountMax of the sftp session.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
@@ -2371,8 +2733,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveInterval of the sftp session.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
                 int serverAliveInterval) {
@@ -2381,8 +2745,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveInterval of the sftp session.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
                 String serverAliveInterval) {
@@ -2395,8 +2761,10 @@ public interface SftpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -2408,8 +2776,10 @@ public interface SftpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -2421,8 +2791,10 @@ public interface SftpEndpointBuilderFactory {
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
          * security reasons.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder stepwise(boolean stepwise) {
             setProperty("stepwise", stepwise);
@@ -2434,8 +2806,10 @@ public interface SftpEndpointBuilderFactory {
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
          * security reasons.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder stepwise(String stepwise) {
             setProperty("stepwise", stepwise);
@@ -2444,8 +2818,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -2455,8 +2831,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -2469,8 +2847,10 @@ public interface SftpEndpointBuilderFactory {
          * this to enable exception being thrown and handle the thrown exception
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
@@ -2483,8 +2863,10 @@ public interface SftpEndpointBuilderFactory {
          * this to enable exception being thrown and handle the thrown exception
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
@@ -2493,8 +2875,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -2502,8 +2886,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -2522,8 +2908,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Hostname of the FTP server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -2531,8 +2919,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -2540,8 +2930,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -2549,8 +2941,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * The starting directory.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
@@ -2566,8 +2960,10 @@ public interface SftpEndpointBuilderFactory {
          * read the message content into memory to be able to convert the data
          * into the configured charset, so do not use this if you have big
          * messages.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder charset(String charset) {
             setProperty("charset", charset);
@@ -2578,8 +2974,10 @@ public interface SftpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
@@ -2590,8 +2988,10 @@ public interface SftpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
@@ -2609,8 +3009,10 @@ public interface SftpEndpointBuilderFactory {
          * always expected in the same folder as the original file. Only
          * ${file.name} and ${file.name.noext} is supported as dynamic
          * placeholders.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
@@ -2633,8 +3035,10 @@ public interface SftpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
@@ -2657,9 +3061,11 @@ public interface SftpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -2668,8 +3074,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
@@ -2679,9 +3087,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
@@ -2692,9 +3102,11 @@ public interface SftpEndpointBuilderFactory {
          * Sets the path separator to be used. UNIX = Uses unix style path
          * separator Windows = Uses windows style path separator Auto = (is
          * default) Use existing path separator in file name.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder separator(PathSeparator separator) {
             setProperty("separator", separator);
@@ -2704,9 +3116,11 @@ public interface SftpEndpointBuilderFactory {
          * Sets the path separator to be used. UNIX = Uses unix style path
          * separator Windows = Uses windows style path separator Auto = (is
          * default) Use existing path separator in file name.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointProducerBuilder separator(String separator) {
             setProperty("separator", separator);
@@ -2728,9 +3142,11 @@ public interface SftpEndpointBuilderFactory {
          * renaming the file from the temporary name to the actual name, without
          * doing any exists check. This check may be faster on some file systems
          * and especially FTP servers.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
             setProperty("fileExist", fileExist);
@@ -2752,9 +3168,11 @@ public interface SftpEndpointBuilderFactory {
          * renaming the file from the temporary name to the actual name, without
          * doing any exists check. This check may be faster on some file systems
          * and especially FTP servers.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder fileExist(String fileExist) {
             setProperty("fileExist", fileExist);
@@ -2767,8 +3185,10 @@ public interface SftpEndpointBuilderFactory {
          * another directory they will be written in a single directory. Setting
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder flatten(boolean flatten) {
             setProperty("flatten", flatten);
@@ -2781,8 +3201,10 @@ public interface SftpEndpointBuilderFactory {
          * another directory they will be written in a single directory. Setting
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder flatten(String flatten) {
             setProperty("flatten", flatten);
@@ -2795,8 +3217,10 @@ public interface SftpEndpointBuilderFactory {
          * of the box). You can turn this off to allow writing files to
          * directories outside the starting directory, such as parent or root
          * folders.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
@@ -2810,8 +3234,10 @@ public interface SftpEndpointBuilderFactory {
          * of the box). You can turn this off to allow writing files to
          * directories outside the starting directory, such as parent or root
          * folders.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
@@ -2828,8 +3254,10 @@ public interface SftpEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -2846,8 +3274,10 @@ public interface SftpEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -2863,8 +3293,10 @@ public interface SftpEndpointBuilderFactory {
          * file:parent. Notice the file:parent is not supported by the FTP
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(Expression moveExisting) {
             setProperty("moveExisting", moveExisting);
@@ -2879,9 +3311,11 @@ public interface SftpEndpointBuilderFactory {
          * file:parent. Notice the file:parent is not supported by the FTP
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(String moveExisting) {
             setProperty("moveExisting", moveExisting);
@@ -2895,8 +3329,10 @@ public interface SftpEndpointBuilderFactory {
          * base uri. For example if option fileName includes a directory prefix:
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(Expression tempFileName) {
             setProperty("tempFileName", tempFileName);
@@ -2910,9 +3346,11 @@ public interface SftpEndpointBuilderFactory {
          * base uri. For example if option fileName includes a directory prefix:
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(String tempFileName) {
             setProperty("tempFileName", tempFileName);
@@ -2924,8 +3362,10 @@ public interface SftpEndpointBuilderFactory {
          * used to identify files being written and also avoid consumers (not
          * using exclusive read locks) reading in progress files. Is often used
          * by FTP when uploading big files.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default SftpEndpointProducerBuilder tempPrefix(String tempPrefix) {
             setProperty("tempPrefix", tempPrefix);
@@ -2936,8 +3376,10 @@ public interface SftpEndpointBuilderFactory {
          * preference. Possible cipher names are defined by JCraft JSCH. Some
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);
@@ -2946,8 +3388,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
-         * The option is a <code>java.security.KeyPair</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.security.KeyPair</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
             setProperty("keyPair", keyPair);
@@ -2956,9 +3400,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
+         * 
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder keyPair(String keyPair) {
             setProperty("keyPair", keyPair);
@@ -2967,8 +3413,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
-         * The option is a <code>byte[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
             setProperty("knownHosts", knownHosts);
@@ -2977,8 +3425,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
+         * 
          * The option will be converted to a <code>byte[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder knownHosts(String knownHosts) {
             setProperty("knownHosts", knownHosts);
@@ -2987,8 +3437,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts file, so that the SFTP endpoint can do host key
          * verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
@@ -2997,8 +3449,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts file (loaded from classpath by default), so that
          * the SFTP endpoint can do host key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder knownHostsUri(String knownHostsUri) {
             setProperty("knownHostsUri", knownHostsUri);
@@ -3006,8 +3460,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Password to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -3017,8 +3473,10 @@ public interface SftpEndpointBuilderFactory {
          * Set the preferred authentications which SFTP endpoint will used. Some
          * example include:password,publickey. If not specified the default list
          * from JSCH will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder preferredAuthentications(
                 String preferredAuthentications) {
@@ -3028,8 +3486,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
-         * The option is a <code>byte[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
             setProperty("privateKey", privateKey);
@@ -3038,8 +3498,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
+         * 
          * The option will be converted to a <code>byte[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
@@ -3048,8 +3510,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file so that the SFTP endpoint can do private key
          * verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
@@ -3058,8 +3522,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file passphrase so that the SFTP endpoint can do
          * private key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
@@ -3069,8 +3535,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file (loaded from classpath by default) so that
          * the SFTP endpoint can do private key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyUri(String privateKeyUri) {
             setProperty("privateKeyUri", privateKeyUri);
@@ -3078,8 +3546,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets whether to use strict host key checking.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
@@ -3088,8 +3558,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Username to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -3098,8 +3570,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
@@ -3109,8 +3583,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointProducerBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
@@ -3137,8 +3613,10 @@ public interface SftpEndpointBuilderFactory {
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
-         * The option is a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
@@ -3154,8 +3632,10 @@ public interface SftpEndpointBuilderFactory {
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
                 String fastExistsCheck) {
@@ -3170,8 +3650,10 @@ public interface SftpEndpointBuilderFactory {
          * be thrown. If the fileExist option is set to 'Override', then the
          * file will be truncated, and if set to append the file will remain
          * unchanged.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
@@ -3186,8 +3668,10 @@ public interface SftpEndpointBuilderFactory {
          * be thrown. If the fileExist option is set to 'Override', then the
          * file will be truncated, and if set to append the file will remain
          * unchanged.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
@@ -3196,8 +3680,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set chmod on the stored file. For example chmod=640.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder chmod(String chmod) {
             setProperty("chmod", chmod);
@@ -3207,8 +3693,10 @@ public interface SftpEndpointBuilderFactory {
          * Whether or not to disconnect from remote FTP server right after a
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
                 boolean disconnectOnBatchComplete) {
@@ -3219,8 +3707,10 @@ public interface SftpEndpointBuilderFactory {
          * Whether or not to disconnect from remote FTP server right after a
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
                 String disconnectOnBatchComplete) {
@@ -3241,8 +3731,10 @@ public interface SftpEndpointBuilderFactory {
          * copyAndDeleteOnRenameFails false, then an exception will be thrown if
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
@@ -3263,8 +3755,10 @@ public interface SftpEndpointBuilderFactory {
          * copyAndDeleteOnRenameFails false, then an exception will be thrown if
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
@@ -3279,8 +3773,10 @@ public interface SftpEndpointBuilderFactory {
          * it will set this timestamp on the written file. Note: This option
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
@@ -3295,8 +3791,10 @@ public interface SftpEndpointBuilderFactory {
          * it will set this timestamp on the written file. Note: This option
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
@@ -3307,9 +3805,11 @@ public interface SftpEndpointBuilderFactory {
          * Strategy (Custom Strategy) used to move file with special naming
          * token to use when fileExist=Move is configured. By default, there is
          * an implementation used if no custom strategy is provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
@@ -3320,9 +3820,11 @@ public interface SftpEndpointBuilderFactory {
          * Strategy (Custom Strategy) used to move file with special naming
          * token to use when fileExist=Move is configured. By default, there is
          * an implementation used if no custom strategy is provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
@@ -3335,8 +3837,10 @@ public interface SftpEndpointBuilderFactory {
          * of the connection is still valid, which allows to silently re-connect
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder sendNoop(boolean sendNoop) {
             setProperty("sendNoop", sendNoop);
@@ -3348,8 +3852,10 @@ public interface SftpEndpointBuilderFactory {
          * of the connection is still valid, which allows to silently re-connect
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
             setProperty("sendNoop", sendNoop);
@@ -3360,8 +3866,10 @@ public interface SftpEndpointBuilderFactory {
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
          * to.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
@@ -3373,8 +3881,10 @@ public interface SftpEndpointBuilderFactory {
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
          * to.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
@@ -3383,8 +3893,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -3394,8 +3906,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -3405,8 +3919,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the address of the local interface against which the
          * connection should bind.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bindAddress(
                 String bindAddress) {
@@ -3415,8 +3931,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Write buffer sized in bytes.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -3424,8 +3942,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Write buffer sized in bytes.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -3435,8 +3955,10 @@ public interface SftpEndpointBuilderFactory {
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bulkRequests(
                 Integer bulkRequests) {
@@ -3447,9 +3969,11 @@ public interface SftpEndpointBuilderFactory {
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder bulkRequests(
                 String bulkRequests) {
@@ -3460,8 +3984,10 @@ public interface SftpEndpointBuilderFactory {
          * To use compression. Specify a level from 1 to 10. Important: You must
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder compression(int compression) {
             setProperty("compression", compression);
@@ -3471,8 +3997,10 @@ public interface SftpEndpointBuilderFactory {
          * To use compression. Specify a level from 1 to 10. Important: You must
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder compression(
                 String compression) {
@@ -3482,8 +4010,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
@@ -3493,8 +4023,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -3504,8 +4036,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
@@ -3515,8 +4049,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
@@ -3526,8 +4062,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
-         * The option is a <code>com.jcraft.jsch.Proxy</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
@@ -3536,9 +4074,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
+         * 
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
@@ -3547,8 +4087,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder reconnectDelay(
                 long reconnectDelay) {
@@ -3558,8 +4100,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder reconnectDelay(
                 String reconnectDelay) {
@@ -3568,8 +4112,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveCountMax of the sftp session.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
@@ -3578,8 +4124,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveCountMax of the sftp session.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
@@ -3588,8 +4136,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveInterval of the sftp session.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
                 int serverAliveInterval) {
@@ -3598,8 +4148,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveInterval of the sftp session.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
                 String serverAliveInterval) {
@@ -3612,8 +4164,10 @@ public interface SftpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -3625,8 +4179,10 @@ public interface SftpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -3638,8 +4194,10 @@ public interface SftpEndpointBuilderFactory {
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
          * security reasons.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder stepwise(boolean stepwise) {
             setProperty("stepwise", stepwise);
@@ -3651,8 +4209,10 @@ public interface SftpEndpointBuilderFactory {
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
          * security reasons.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder stepwise(String stepwise) {
             setProperty("stepwise", stepwise);
@@ -3661,8 +4221,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -3672,8 +4234,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -3686,8 +4250,10 @@ public interface SftpEndpointBuilderFactory {
          * this to enable exception being thrown and handle the thrown exception
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
@@ -3700,8 +4266,10 @@ public interface SftpEndpointBuilderFactory {
          * this to enable exception being thrown and handle the thrown exception
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
@@ -3710,8 +4278,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -3719,8 +4289,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -3739,8 +4311,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Hostname of the FTP server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -3748,8 +4322,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -3757,8 +4333,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Port of the FTP server.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -3766,8 +4344,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * The starting directory.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder directoryName(String directoryName) {
             setProperty("directoryName", directoryName);
@@ -3783,8 +4363,10 @@ public interface SftpEndpointBuilderFactory {
          * read the message content into memory to be able to convert the data
          * into the configured charset, so do not use this if you have big
          * messages.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder charset(String charset) {
             setProperty("charset", charset);
@@ -3795,8 +4377,10 @@ public interface SftpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder disconnect(boolean disconnect) {
             setProperty("disconnect", disconnect);
@@ -3807,8 +4391,10 @@ public interface SftpEndpointBuilderFactory {
          * Disconnect will only disconnect the current connection to the FTP
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder disconnect(String disconnect) {
             setProperty("disconnect", disconnect);
@@ -3826,8 +4412,10 @@ public interface SftpEndpointBuilderFactory {
          * always expected in the same folder as the original file. Only
          * ${file.name} and ${file.name.noext} is supported as dynamic
          * placeholders.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder doneFileName(String doneFileName) {
             setProperty("doneFileName", doneFileName);
@@ -3850,8 +4438,10 @@ public interface SftpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
-         * The option is a <code>org.apache.camel.Expression</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder fileName(Expression fileName) {
             setProperty("fileName", fileName);
@@ -3874,9 +4464,11 @@ public interface SftpEndpointBuilderFactory {
          * CamelFileName header; the CamelOverruleFileName is a header that is
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.Expression</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder fileName(String fileName) {
             setProperty("fileName", fileName);
@@ -3885,8 +4477,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
@@ -3896,9 +4490,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * The logging level to use for JSCH activity logging. As JSCH is
          * verbose at by default at INFO level the threshold is WARN by default.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder jschLoggingLevel(String jschLoggingLevel) {
             setProperty("jschLoggingLevel", jschLoggingLevel);
@@ -3908,9 +4504,11 @@ public interface SftpEndpointBuilderFactory {
          * Sets the path separator to be used. UNIX = Uses unix style path
          * separator Windows = Uses windows style path separator Auto = (is
          * default) Use existing path separator in file name.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder separator(PathSeparator separator) {
             setProperty("separator", separator);
@@ -3920,9 +4518,11 @@ public interface SftpEndpointBuilderFactory {
          * Sets the path separator to be used. UNIX = Uses unix style path
          * separator Windows = Uses windows style path separator Auto = (is
          * default) Use existing path separator in file name.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SftpEndpointBuilder separator(String separator) {
             setProperty("separator", separator);
@@ -3933,8 +4533,10 @@ public interface SftpEndpointBuilderFactory {
          * preference. Possible cipher names are defined by JCraft JSCH. Some
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder ciphers(String ciphers) {
             setProperty("ciphers", ciphers);
@@ -3943,8 +4545,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
-         * The option is a <code>java.security.KeyPair</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.security.KeyPair</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder keyPair(KeyPair keyPair) {
             setProperty("keyPair", keyPair);
@@ -3953,9 +4557,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets a key pair of the public and private key so to that the SFTP
          * endpoint can do public/private key verification.
+         * 
          * The option will be converted to a <code>java.security.KeyPair</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder keyPair(String keyPair) {
             setProperty("keyPair", keyPair);
@@ -3964,8 +4570,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
-         * The option is a <code>byte[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder knownHosts(Byte[] knownHosts) {
             setProperty("knownHosts", knownHosts);
@@ -3974,8 +4582,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts from the byte array, so that the SFTP endpoint
          * can do host key verification.
+         * 
          * The option will be converted to a <code>byte[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder knownHosts(String knownHosts) {
             setProperty("knownHosts", knownHosts);
@@ -3984,8 +4594,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts file, so that the SFTP endpoint can do host key
          * verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder knownHostsFile(String knownHostsFile) {
             setProperty("knownHostsFile", knownHostsFile);
@@ -3994,8 +4606,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the known_hosts file (loaded from classpath by default), so that
          * the SFTP endpoint can do host key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder knownHostsUri(String knownHostsUri) {
             setProperty("knownHostsUri", knownHostsUri);
@@ -4003,8 +4617,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Password to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -4014,8 +4630,10 @@ public interface SftpEndpointBuilderFactory {
          * Set the preferred authentications which SFTP endpoint will used. Some
          * example include:password,publickey. If not specified the default list
          * from JSCH will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder preferredAuthentications(
                 String preferredAuthentications) {
@@ -4025,8 +4643,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
-         * The option is a <code>byte[]</code> type.
-         * @group security
+         * 
+         * The option is a: <code>byte[]</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder privateKey(Byte[] privateKey) {
             setProperty("privateKey", privateKey);
@@ -4035,8 +4655,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key as byte so that the SFTP endpoint can do private
          * key verification.
+         * 
          * The option will be converted to a <code>byte[]</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder privateKey(String privateKey) {
             setProperty("privateKey", privateKey);
@@ -4045,8 +4667,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file so that the SFTP endpoint can do private key
          * verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
@@ -4055,8 +4679,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file passphrase so that the SFTP endpoint can do
          * private key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
@@ -4066,8 +4692,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set the private key file (loaded from classpath by default) so that
          * the SFTP endpoint can do private key verification.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder privateKeyUri(String privateKeyUri) {
             setProperty("privateKeyUri", privateKeyUri);
@@ -4075,8 +4703,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets whether to use strict host key checking.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
@@ -4085,8 +4715,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Username to use for login.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -4095,8 +4727,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
-         * The option is a <code>boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
@@ -4106,8 +4740,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * If knownHostFile has not been explicit configured then use the host
          * file from System.getProperty(user.home)/.ssh/known_hosts.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default SftpEndpointBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
@@ -4134,8 +4770,10 @@ public interface SftpEndpointBuilderFactory {
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
-         * The option is a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common (advanced)
          */
         default AdvancedSftpEndpointBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
@@ -4151,8 +4789,10 @@ public interface SftpEndpointBuilderFactory {
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common (advanced)
+         * 
+         * Group: common (advanced)
          */
         default AdvancedSftpEndpointBuilder fastExistsCheck(
                 String fastExistsCheck) {
@@ -4164,8 +4804,10 @@ public interface SftpEndpointBuilderFactory {
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
          * to.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder autoCreate(boolean autoCreate) {
             setProperty("autoCreate", autoCreate);
@@ -4176,8 +4818,10 @@ public interface SftpEndpointBuilderFactory {
          * the file consumer, that means creating the starting directory. For
          * the file producer, it means the directory the files should be written
          * to.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder autoCreate(String autoCreate) {
             setProperty("autoCreate", autoCreate);
@@ -4186,8 +4830,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -4197,8 +4843,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -4208,8 +4856,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the address of the local interface against which the
          * connection should bind.
-         * The option is a <code>java.lang.String</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bindAddress(String bindAddress) {
             setProperty("bindAddress", bindAddress);
@@ -4217,8 +4867,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Write buffer sized in bytes.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -4226,8 +4878,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Write buffer sized in bytes.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -4237,8 +4891,10 @@ public interface SftpEndpointBuilderFactory {
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(Integer bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
@@ -4248,9 +4904,11 @@ public interface SftpEndpointBuilderFactory {
          * Specifies how many requests may be outstanding at any one time.
          * Increasing this value may slightly improve file transfer speed but
          * will increase memory usage.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(String bulkRequests) {
             setProperty("bulkRequests", bulkRequests);
@@ -4260,8 +4918,10 @@ public interface SftpEndpointBuilderFactory {
          * To use compression. Specify a level from 1 to 10. Important: You must
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(int compression) {
             setProperty("compression", compression);
@@ -4271,8 +4931,10 @@ public interface SftpEndpointBuilderFactory {
          * To use compression. Specify a level from 1 to 10. Important: You must
          * manually add the needed JSCH zlib JAR to the classpath for
          * compression support.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(String compression) {
             setProperty("compression", compression);
@@ -4281,8 +4943,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
@@ -4291,8 +4955,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder connectTimeout(String connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
@@ -4301,8 +4967,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
@@ -4312,8 +4980,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
@@ -4323,8 +4993,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
-         * The option is a <code>com.jcraft.jsch.Proxy</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>com.jcraft.jsch.Proxy</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(Object proxy) {
             setProperty("proxy", proxy);
@@ -4333,9 +5005,11 @@ public interface SftpEndpointBuilderFactory {
         /**
          * To use a custom configured com.jcraft.jsch.Proxy. This proxy is used
          * to consume/send messages from the target SFTP host.
+         * 
          * The option will be converted to a <code>com.jcraft.jsch.Proxy</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(String proxy) {
             setProperty("proxy", proxy);
@@ -4344,8 +5018,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
-         * The option is a <code>long</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder reconnectDelay(long reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
@@ -4354,8 +5030,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder reconnectDelay(String reconnectDelay) {
             setProperty("reconnectDelay", reconnectDelay);
@@ -4363,8 +5041,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveCountMax of the sftp session.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
@@ -4373,8 +5053,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveCountMax of the sftp session.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
@@ -4383,8 +5065,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveInterval of the sftp session.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(
                 int serverAliveInterval) {
@@ -4393,8 +5077,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Allows you to set the serverAliveInterval of the sftp session.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(
                 String serverAliveInterval) {
@@ -4407,8 +5093,10 @@ public interface SftpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder soTimeout(int soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -4420,8 +5108,10 @@ public interface SftpEndpointBuilderFactory {
          * millis. Recommended option is to set this to 300000 so as not have a
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder soTimeout(String soTimeout) {
             setProperty("soTimeout", soTimeout);
@@ -4433,8 +5123,10 @@ public interface SftpEndpointBuilderFactory {
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
          * security reasons.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder stepwise(boolean stepwise) {
             setProperty("stepwise", stepwise);
@@ -4446,8 +5138,10 @@ public interface SftpEndpointBuilderFactory {
          * file to a directory. You can disable this if you for example are in a
          * situation where you cannot change directory on the FTP server due
          * security reasons.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder stepwise(String stepwise) {
             setProperty("stepwise", stepwise);
@@ -4456,8 +5150,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -4466,8 +5162,10 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -4479,8 +5177,10 @@ public interface SftpEndpointBuilderFactory {
          * this to enable exception being thrown and handle the thrown exception
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
@@ -4493,8 +5193,10 @@ public interface SftpEndpointBuilderFactory {
          * this to enable exception being thrown and handle the thrown exception
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
@@ -4503,8 +5205,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
-         * The option is a <code>int</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -4512,8 +5216,10 @@ public interface SftpEndpointBuilderFactory {
         }
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSftpEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);

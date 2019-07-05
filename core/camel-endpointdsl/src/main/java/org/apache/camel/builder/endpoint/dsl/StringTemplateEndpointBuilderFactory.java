@@ -46,8 +46,10 @@ public interface StringTemplateEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default StringTemplateEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -55,8 +57,10 @@ public interface StringTemplateEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default StringTemplateEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -64,8 +68,10 @@ public interface StringTemplateEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default StringTemplateEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -73,8 +79,10 @@ public interface StringTemplateEndpointBuilderFactory {
         }
         /**
          * The variable start delimiter.
-         * The option is a <code>char</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>char</code> type.
+         * 
+         * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStart(char delimiterStart) {
             setProperty("delimiterStart", delimiterStart);
@@ -82,8 +90,10 @@ public interface StringTemplateEndpointBuilderFactory {
         }
         /**
          * The variable start delimiter.
+         * 
          * The option will be converted to a <code>char</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStart(
                 String delimiterStart) {
@@ -92,8 +102,10 @@ public interface StringTemplateEndpointBuilderFactory {
         }
         /**
          * The variable end delimiter.
-         * The option is a <code>char</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>char</code> type.
+         * 
+         * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStop(char delimiterStop) {
             setProperty("delimiterStop", delimiterStop);
@@ -101,8 +113,10 @@ public interface StringTemplateEndpointBuilderFactory {
         }
         /**
          * The variable end delimiter.
+         * 
          * The option will be converted to a <code>char</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStop(String delimiterStop) {
             setProperty("delimiterStop", delimiterStop);
@@ -122,8 +136,10 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -133,8 +149,10 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -144,8 +162,10 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedStringTemplateEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -155,8 +175,10 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedStringTemplateEndpointBuilder synchronous(
                 String synchronous) {

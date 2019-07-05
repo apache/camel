@@ -45,8 +45,10 @@ public interface JoltEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -54,8 +56,10 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -63,8 +67,10 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -72,10 +78,12 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Specifies if the input is hydrated JSON or a JSON String.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
             setProperty("inputType", inputType);
@@ -83,10 +91,12 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Specifies if the input is hydrated JSON or a JSON String.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder inputType(String inputType) {
             setProperty("inputType", inputType);
@@ -94,10 +104,12 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Specifies if the output should be hydrated JSON or a JSON String.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
             setProperty("outputType", outputType);
@@ -105,10 +117,12 @@ public interface JoltEndpointBuilderFactory {
         }
         /**
          * Specifies if the output should be hydrated JSON or a JSON String.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
@@ -117,9 +131,11 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Specifies the Transform DSL of the endpoint resource. If none is
          * specified Chainr will be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
             setProperty("transformDsl", transformDsl);
@@ -128,9 +144,11 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Specifies the Transform DSL of the endpoint resource. If none is
          * specified Chainr will be used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default JoltEndpointBuilder transformDsl(String transformDsl) {
             setProperty("transformDsl", transformDsl);
@@ -150,8 +168,10 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -161,8 +181,10 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -172,8 +194,10 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -182,8 +206,10 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

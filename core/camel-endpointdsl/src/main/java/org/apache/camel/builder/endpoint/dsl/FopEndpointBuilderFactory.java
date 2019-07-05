@@ -41,9 +41,11 @@ public interface FopEndpointBuilderFactory {
         /**
          * The primary output format is PDF but other output formats are also
          * supported.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.fop.FopOutputType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FopEndpointBuilder outputType(FopOutputType outputType) {
             setProperty("outputType", outputType);
@@ -52,9 +54,11 @@ public interface FopEndpointBuilderFactory {
         /**
          * The primary output format is PDF but other output formats are also
          * supported.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.fop.FopOutputType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FopEndpointBuilder outputType(String outputType) {
             setProperty("outputType", outputType);
@@ -63,8 +67,10 @@ public interface FopEndpointBuilderFactory {
         /**
          * Allows to use a custom configured or implementation of
          * org.apache.fop.apps.FopFactory.
-         * The option is a <code>org.apache.fop.apps.FopFactory</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.fop.apps.FopFactory</code> type.
+         * 
+         * Group: producer
          */
         default FopEndpointBuilder fopFactory(Object fopFactory) {
             setProperty("fopFactory", fopFactory);
@@ -73,9 +79,11 @@ public interface FopEndpointBuilderFactory {
         /**
          * Allows to use a custom configured or implementation of
          * org.apache.fop.apps.FopFactory.
+         * 
          * The option will be converted to a
          * <code>org.apache.fop.apps.FopFactory</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FopEndpointBuilder fopFactory(String fopFactory) {
             setProperty("fopFactory", fopFactory);
@@ -84,8 +92,10 @@ public interface FopEndpointBuilderFactory {
         /**
          * The location of a configuration file which can be loaded from
          * classpath or file system.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default FopEndpointBuilder userConfigURL(String userConfigURL) {
             setProperty("userConfigURL", userConfigURL);
@@ -105,8 +115,10 @@ public interface FopEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFopEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -116,8 +128,10 @@ public interface FopEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFopEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -127,8 +141,10 @@ public interface FopEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFopEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -137,8 +153,10 @@ public interface FopEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFopEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

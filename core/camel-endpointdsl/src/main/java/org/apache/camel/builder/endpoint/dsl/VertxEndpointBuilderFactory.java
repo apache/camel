@@ -44,8 +44,10 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Sets the event bus address used to communicate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default VertxEndpointConsumerBuilder address(String address) {
             setProperty("address", address);
@@ -54,8 +56,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default VertxEndpointConsumerBuilder pubSub(Boolean pubSub) {
             setProperty("pubSub", pubSub);
@@ -64,9 +68,11 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default VertxEndpointConsumerBuilder pubSub(String pubSub) {
             setProperty("pubSub", pubSub);
@@ -80,8 +86,10 @@ public interface VertxEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default VertxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -96,8 +104,10 @@ public interface VertxEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default VertxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -120,9 +130,11 @@ public interface VertxEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -134,9 +146,11 @@ public interface VertxEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -145,8 +159,10 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -155,9 +171,11 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVertxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -167,8 +185,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -178,8 +198,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -189,8 +211,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -200,8 +224,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -221,8 +247,10 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Sets the event bus address used to communicate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default VertxEndpointProducerBuilder address(String address) {
             setProperty("address", address);
@@ -231,8 +259,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default VertxEndpointProducerBuilder pubSub(Boolean pubSub) {
             setProperty("pubSub", pubSub);
@@ -241,9 +271,11 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default VertxEndpointProducerBuilder pubSub(String pubSub) {
             setProperty("pubSub", pubSub);
@@ -259,8 +291,10 @@ public interface VertxEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default VertxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -277,8 +311,10 @@ public interface VertxEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VertxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -299,8 +335,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -310,8 +348,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -321,8 +361,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -332,8 +374,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -353,8 +397,10 @@ public interface VertxEndpointBuilderFactory {
         }
         /**
          * Sets the event bus address used to communicate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default VertxEndpointBuilder address(String address) {
             setProperty("address", address);
@@ -363,8 +409,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
          */
         default VertxEndpointBuilder pubSub(Boolean pubSub) {
             setProperty("pubSub", pubSub);
@@ -373,9 +421,11 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether to use publish/subscribe instead of point to point when
          * sending to a vertx endpoint.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default VertxEndpointBuilder pubSub(String pubSub) {
             setProperty("pubSub", pubSub);
@@ -395,8 +445,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -406,8 +458,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -417,8 +471,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -427,8 +483,10 @@ public interface VertxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVertxEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

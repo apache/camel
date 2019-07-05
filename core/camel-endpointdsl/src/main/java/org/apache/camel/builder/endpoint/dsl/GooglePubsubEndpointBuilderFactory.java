@@ -43,8 +43,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Project Id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -52,8 +54,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Destination Name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder destinationName(
                 String destinationName) {
@@ -63,9 +67,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder ackMode(AckMode ackMode) {
             setProperty("ackMode", ackMode);
@@ -74,9 +80,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder ackMode(String ackMode) {
             setProperty("ackMode", ackMode);
@@ -84,8 +92,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * The number of parallel streams consuming from the subscription.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
@@ -94,9 +104,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * The number of parallel streams consuming from the subscription.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -106,9 +118,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to PubSub Service. If non
          * provided the default will be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -118,9 +132,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to PubSub Service. If non
          * provided the default will be used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
@@ -129,8 +145,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Logger ID to use when a match to the parent route required.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder loggerId(String loggerId) {
             setProperty("loggerId", loggerId);
@@ -139,8 +157,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The max number of messages to receive from the server in a single API
          * call.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
@@ -150,9 +170,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The max number of messages to receive from the server in a single API
          * call.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -167,8 +189,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -183,8 +207,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -207,9 +233,11 @@ public interface GooglePubsubEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -221,9 +249,11 @@ public interface GooglePubsubEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -232,8 +262,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -242,9 +274,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -254,8 +288,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -265,8 +301,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -276,8 +314,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -287,8 +327,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -308,8 +350,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Project Id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -317,8 +361,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Destination Name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder destinationName(
                 String destinationName) {
@@ -328,9 +374,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder ackMode(AckMode ackMode) {
             setProperty("ackMode", ackMode);
@@ -339,9 +387,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder ackMode(String ackMode) {
             setProperty("ackMode", ackMode);
@@ -349,8 +399,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * The number of parallel streams consuming from the subscription.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
@@ -359,9 +411,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * The number of parallel streams consuming from the subscription.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -371,9 +425,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to PubSub Service. If non
          * provided the default will be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -383,9 +439,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to PubSub Service. If non
          * provided the default will be used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
@@ -394,8 +452,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Logger ID to use when a match to the parent route required.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder loggerId(String loggerId) {
             setProperty("loggerId", loggerId);
@@ -404,8 +464,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The max number of messages to receive from the server in a single API
          * call.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
@@ -415,9 +477,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The max number of messages to receive from the server in a single API
          * call.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -434,8 +498,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GooglePubsubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -452,8 +518,10 @@ public interface GooglePubsubEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GooglePubsubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -474,8 +542,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -485,8 +555,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -496,8 +568,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -507,8 +581,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -528,8 +604,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Project Id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder projectId(String projectId) {
             setProperty("projectId", projectId);
@@ -537,8 +615,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Destination Name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder destinationName(
                 String destinationName) {
@@ -548,9 +628,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder ackMode(AckMode ackMode) {
             setProperty("ackMode", ackMode);
@@ -559,9 +641,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder ackMode(String ackMode) {
             setProperty("ackMode", ackMode);
@@ -569,8 +653,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * The number of parallel streams consuming from the subscription.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder concurrentConsumers(
                 Integer concurrentConsumers) {
@@ -579,9 +665,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * The number of parallel streams consuming from the subscription.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -591,9 +679,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to PubSub Service. If non
          * provided the default will be used.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder connectionFactory(
                 Object connectionFactory) {
@@ -603,9 +693,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * ConnectionFactory to obtain connection to PubSub Service. If non
          * provided the default will be used.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder connectionFactory(
                 String connectionFactory) {
@@ -614,8 +706,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         }
         /**
          * Logger ID to use when a match to the parent route required.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder loggerId(String loggerId) {
             setProperty("loggerId", loggerId);
@@ -624,8 +718,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The max number of messages to receive from the server in a single API
          * call.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder maxMessagesPerPoll(
                 Integer maxMessagesPerPoll) {
@@ -635,9 +731,11 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * The max number of messages to receive from the server in a single API
          * call.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GooglePubsubEndpointBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -658,8 +756,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -669,8 +769,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -680,8 +782,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -691,8 +795,10 @@ public interface GooglePubsubEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGooglePubsubEndpointBuilder synchronous(
                 String synchronous) {

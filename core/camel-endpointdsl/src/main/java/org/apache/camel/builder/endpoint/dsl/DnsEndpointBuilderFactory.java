@@ -39,9 +39,11 @@ public interface DnsEndpointBuilderFactory {
         }
         /**
          * The type of the lookup.
-         * The option is a <code>org.apache.camel.component.dns.DnsType</code>
+         * 
+         * The option is a: <code>org.apache.camel.component.dns.DnsType</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DnsEndpointBuilder dnsType(DnsType dnsType) {
             setProperty("dnsType", dnsType);
@@ -49,9 +51,11 @@ public interface DnsEndpointBuilderFactory {
         }
         /**
          * The type of the lookup.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.dns.DnsType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default DnsEndpointBuilder dnsType(String dnsType) {
             setProperty("dnsType", dnsType);
@@ -71,8 +75,10 @@ public interface DnsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -82,8 +88,10 @@ public interface DnsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -93,8 +101,10 @@ public interface DnsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedDnsEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -103,8 +113,10 @@ public interface DnsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedDnsEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

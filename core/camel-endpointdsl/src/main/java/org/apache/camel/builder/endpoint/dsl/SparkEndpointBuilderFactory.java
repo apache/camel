@@ -40,8 +40,10 @@ public interface SparkEndpointBuilderFactory {
         }
         /**
          * get, post, put, patch, delete, head, trace, connect, or options.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder verb(String verb) {
             setProperty("verb", verb);
@@ -49,8 +51,10 @@ public interface SparkEndpointBuilderFactory {
         }
         /**
          * The content path which support Spark syntax.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder path(String path) {
             setProperty("path", path);
@@ -59,8 +63,10 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Accept type such as: 'text/xml', or 'application/json'. By default we
          * accept all kinds of types.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder accept(String accept) {
             setProperty("accept", accept);
@@ -78,8 +84,10 @@ public interface SparkEndpointBuilderFactory {
          * cannot read the Netty stream multiple times out of the box, and you
          * would need manually to reset the reader index on the Spark raw
          * stream.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -98,8 +106,10 @@ public interface SparkEndpointBuilderFactory {
          * cannot read the Netty stream multiple times out of the box, and you
          * would need manually to reset the reader index on the Spark raw
          * stream.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -113,8 +123,10 @@ public interface SparkEndpointBuilderFactory {
          * disable this. The headers can still be accessed from the
          * org.apache.camel.component.sparkrest.SparkMessage message with the
          * method getRequest() that returns the Spark HTTP request instance.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder mapHeaders(boolean mapHeaders) {
             setProperty("mapHeaders", mapHeaders);
@@ -127,8 +139,10 @@ public interface SparkEndpointBuilderFactory {
          * disable this. The headers can still be accessed from the
          * org.apache.camel.component.sparkrest.SparkMessage message with the
          * method getRequest() that returns the Spark HTTP request instance.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder mapHeaders(String mapHeaders) {
             setProperty("mapHeaders", mapHeaders);
@@ -141,8 +155,10 @@ public interface SparkEndpointBuilderFactory {
          * default turned off. If you enable this then be aware that Java will
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
@@ -155,8 +171,10 @@ public interface SparkEndpointBuilderFactory {
          * default turned off. If you enable this then be aware that Java will
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
@@ -166,8 +184,10 @@ public interface SparkEndpointBuilderFactory {
          * If this option is enabled, then during binding from Spark to Camel
          * Message then the header values will be URL decoded (eg %20 will be a
          * space character.).
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder urlDecodeHeaders(boolean urlDecodeHeaders) {
             setProperty("urlDecodeHeaders", urlDecodeHeaders);
@@ -177,8 +197,10 @@ public interface SparkEndpointBuilderFactory {
          * If this option is enabled, then during binding from Spark to Camel
          * Message then the header values will be URL decoded (eg %20 will be a
          * space character.).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SparkEndpointBuilder urlDecodeHeaders(String urlDecodeHeaders) {
             setProperty("urlDecodeHeaders", urlDecodeHeaders);
@@ -198,8 +220,10 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -209,8 +233,10 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -220,8 +246,10 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
@@ -231,8 +259,10 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
@@ -241,9 +271,11 @@ public interface SparkEndpointBuilderFactory {
         }
         /**
          * To use a custom SparkBinding to map to/from Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.sparkrest.SparkBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder sparkBinding(Object sparkBinding) {
             setProperty("sparkBinding", sparkBinding);
@@ -251,9 +283,11 @@ public interface SparkEndpointBuilderFactory {
         }
         /**
          * To use a custom SparkBinding to map to/from Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.sparkrest.SparkBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder sparkBinding(String sparkBinding) {
             setProperty("sparkBinding", sparkBinding);
@@ -262,8 +296,10 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -272,8 +308,10 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSparkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

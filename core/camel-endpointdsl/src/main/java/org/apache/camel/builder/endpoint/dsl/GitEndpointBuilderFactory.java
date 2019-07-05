@@ -43,8 +43,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Local repository path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointConsumerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -52,8 +54,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The branch name to work on.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointConsumerBuilder branchName(String branchName) {
             setProperty("branchName", branchName);
@@ -61,8 +65,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Remote repository password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -70,8 +76,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The remote repository name to use in particular operation like pull.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointConsumerBuilder remoteName(String remoteName) {
             setProperty("remoteName", remoteName);
@@ -79,8 +87,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The remote repository path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointConsumerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -88,8 +98,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The tag name to work on.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointConsumerBuilder tagName(String tagName) {
             setProperty("tagName", tagName);
@@ -97,8 +109,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Remote repository username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -112,8 +126,10 @@ public interface GitEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GitEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -128,8 +144,10 @@ public interface GitEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GitEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -138,9 +156,11 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The consumer type.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.git.consumer.GitType</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GitEndpointConsumerBuilder type(GitType type) {
             setProperty("type", type);
@@ -148,9 +168,11 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The consumer type.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.git.consumer.GitType</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GitEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
@@ -172,9 +194,11 @@ public interface GitEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -186,9 +210,11 @@ public interface GitEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -197,8 +223,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -207,9 +235,11 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -219,8 +249,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -230,8 +262,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -241,8 +275,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -252,8 +288,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -273,8 +311,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Local repository path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointProducerBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -282,8 +322,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The branch name to work on.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointProducerBuilder branchName(String branchName) {
             setProperty("branchName", branchName);
@@ -291,8 +333,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Remote repository password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -300,8 +344,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The remote repository name to use in particular operation like pull.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointProducerBuilder remoteName(String remoteName) {
             setProperty("remoteName", remoteName);
@@ -309,8 +355,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The remote repository path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointProducerBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -318,8 +366,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The tag name to work on.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointProducerBuilder tagName(String tagName) {
             setProperty("tagName", tagName);
@@ -327,8 +377,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Remote repository username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -336,8 +388,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The flag to manage empty git commits.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GitEndpointProducerBuilder allowEmpty(boolean allowEmpty) {
             setProperty("allowEmpty", allowEmpty);
@@ -345,8 +399,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The flag to manage empty git commits.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GitEndpointProducerBuilder allowEmpty(String allowEmpty) {
             setProperty("allowEmpty", allowEmpty);
@@ -362,8 +418,10 @@ public interface GitEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GitEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -380,8 +438,10 @@ public interface GitEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GitEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -390,8 +450,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The operation to do on the repository.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default GitEndpointProducerBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -411,8 +473,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -422,8 +486,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -433,8 +499,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -444,8 +512,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -465,8 +535,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Local repository path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointBuilder localPath(String localPath) {
             setProperty("localPath", localPath);
@@ -474,8 +546,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The branch name to work on.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointBuilder branchName(String branchName) {
             setProperty("branchName", branchName);
@@ -483,8 +557,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Remote repository password.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -492,8 +568,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The remote repository name to use in particular operation like pull.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointBuilder remoteName(String remoteName) {
             setProperty("remoteName", remoteName);
@@ -501,8 +579,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The remote repository path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointBuilder remotePath(String remotePath) {
             setProperty("remotePath", remotePath);
@@ -510,8 +590,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * The tag name to work on.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointBuilder tagName(String tagName) {
             setProperty("tagName", tagName);
@@ -519,8 +601,10 @@ public interface GitEndpointBuilderFactory {
         }
         /**
          * Remote repository username.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GitEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -540,8 +624,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -551,8 +637,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -562,8 +650,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -572,8 +662,10 @@ public interface GitEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGitEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

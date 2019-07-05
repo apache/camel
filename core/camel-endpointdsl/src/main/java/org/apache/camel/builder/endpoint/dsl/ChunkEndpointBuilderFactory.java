@@ -44,8 +44,10 @@ public interface ChunkEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -53,8 +55,10 @@ public interface ChunkEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -62,8 +66,10 @@ public interface ChunkEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -71,8 +77,10 @@ public interface ChunkEndpointBuilderFactory {
         }
         /**
          * Define the encoding of the body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -80,8 +88,10 @@ public interface ChunkEndpointBuilderFactory {
         }
         /**
          * Define the file extension of the template.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder extension(String extension) {
             setProperty("extension", extension);
@@ -89,8 +99,10 @@ public interface ChunkEndpointBuilderFactory {
         }
         /**
          * Define the themes folder to scan.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder themeFolder(String themeFolder) {
             setProperty("themeFolder", themeFolder);
@@ -98,8 +110,10 @@ public interface ChunkEndpointBuilderFactory {
         }
         /**
          * Define the theme layer to elaborate.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder themeLayer(String themeLayer) {
             setProperty("themeLayer", themeLayer);
@@ -107,8 +121,10 @@ public interface ChunkEndpointBuilderFactory {
         }
         /**
          * Define the themes subfolder to scan.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ChunkEndpointBuilder themeSubfolder(String themeSubfolder) {
             setProperty("themeSubfolder", themeSubfolder);
@@ -128,8 +144,10 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -139,8 +157,10 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -150,8 +170,10 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -160,8 +182,10 @@ public interface ChunkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

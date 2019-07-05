@@ -39,8 +39,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * The logger name to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder loggerName(String loggerName) {
             setProperty("loggerName", loggerName);
@@ -49,8 +51,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupActiveOnly(Boolean groupActiveOnly) {
             setProperty("groupActiveOnly", groupActiveOnly);
@@ -59,9 +63,11 @@ public interface LogEndpointBuilderFactory {
         /**
          * If true, will hide stats when no new messages have been received for
          * a time interval, if false, show stats regardless of message traffic.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupActiveOnly(String groupActiveOnly) {
             setProperty("groupActiveOnly", groupActiveOnly);
@@ -69,8 +75,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Set the initial delay for stats (in millis).
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupDelay(Long groupDelay) {
             setProperty("groupDelay", groupDelay);
@@ -78,8 +86,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Set the initial delay for stats (in millis).
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupDelay(String groupDelay) {
             setProperty("groupDelay", groupDelay);
@@ -88,8 +98,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If specified will group message stats by this time interval (in
          * millis).
-         * The option is a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupInterval(Long groupInterval) {
             setProperty("groupInterval", groupInterval);
@@ -98,8 +110,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If specified will group message stats by this time interval (in
          * millis).
+         * 
          * The option will be converted to a <code>java.lang.Long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupInterval(String groupInterval) {
             setProperty("groupInterval", groupInterval);
@@ -107,8 +121,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * An integer that specifies a group size for throughput logging.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupSize(Integer groupSize) {
             setProperty("groupSize", groupSize);
@@ -116,9 +132,11 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * An integer that specifies a group size for throughput logging.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder groupSize(String groupSize) {
             setProperty("groupSize", groupSize);
@@ -126,8 +144,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Logging level to use. The default value is INFO.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder level(String level) {
             setProperty("level", level);
@@ -136,8 +156,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If true, mask sensitive information like password or passphrase in
          * the log.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder logMask(Boolean logMask) {
             setProperty("logMask", logMask);
@@ -146,9 +168,11 @@ public interface LogEndpointBuilderFactory {
         /**
          * If true, mask sensitive information like password or passphrase in
          * the log.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder logMask(String logMask) {
             setProperty("logMask", logMask);
@@ -156,8 +180,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * An optional Marker name to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LogEndpointBuilder marker(String marker) {
             setProperty("marker", marker);
@@ -165,8 +191,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Limits the number of characters logged per line.
-         * The option is a <code>int</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder maxChars(int maxChars) {
             setProperty("maxChars", maxChars);
@@ -174,8 +202,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Limits the number of characters logged per line.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder maxChars(String maxChars) {
             setProperty("maxChars", maxChars);
@@ -183,8 +213,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * If enabled then each information is outputted on a newline.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder multiline(boolean multiline) {
             setProperty("multiline", multiline);
@@ -192,8 +224,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * If enabled then each information is outputted on a newline.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder multiline(String multiline) {
             setProperty("multiline", multiline);
@@ -202,8 +236,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Quick option for turning all options on. (multiline, maxChars has to
          * be manually set if to be used).
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showAll(boolean showAll) {
             setProperty("showAll", showAll);
@@ -212,8 +248,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Quick option for turning all options on. (multiline, maxChars has to
          * be manually set if to be used).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showAll(String showAll) {
             setProperty("showAll", showAll);
@@ -221,8 +259,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the message body.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showBody(boolean showBody) {
             setProperty("showBody", showBody);
@@ -230,8 +270,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the message body.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showBody(String showBody) {
             setProperty("showBody", showBody);
@@ -239,8 +281,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the body Java type.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showBodyType(boolean showBodyType) {
             setProperty("showBodyType", showBodyType);
@@ -248,8 +292,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the body Java type.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showBodyType(String showBodyType) {
             setProperty("showBodyType", showBodyType);
@@ -260,8 +306,10 @@ public interface LogEndpointBuilderFactory {
          * stack trace).A caught exception is stored as a property on the
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
          * and for instance a doCatch can catch exceptions.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showCaughtException(
                 boolean showCaughtException) {
@@ -273,8 +321,10 @@ public interface LogEndpointBuilderFactory {
          * stack trace).A caught exception is stored as a property on the
          * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
          * and for instance a doCatch can catch exceptions.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showCaughtException(
                 String showCaughtException) {
@@ -284,8 +334,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If the exchange has an exception, show the exception message (no
          * stacktrace).
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showException(boolean showException) {
             setProperty("showException", showException);
@@ -294,8 +346,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If the exchange has an exception, show the exception message (no
          * stacktrace).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showException(String showException) {
             setProperty("showException", showException);
@@ -303,8 +357,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the unique exchange ID.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showExchangeId(boolean showExchangeId) {
             setProperty("showExchangeId", showExchangeId);
@@ -312,8 +368,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the unique exchange ID.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showExchangeId(String showExchangeId) {
             setProperty("showExchangeId", showExchangeId);
@@ -321,8 +379,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Shows the Message Exchange Pattern (or MEP for short).
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showExchangePattern(
                 boolean showExchangePattern) {
@@ -331,8 +391,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Shows the Message Exchange Pattern (or MEP for short).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showExchangePattern(
                 String showExchangePattern) {
@@ -341,8 +403,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * If enabled Camel will output files.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showFiles(boolean showFiles) {
             setProperty("showFiles", showFiles);
@@ -350,8 +414,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * If enabled Camel will output files.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showFiles(String showFiles) {
             setProperty("showFiles", showFiles);
@@ -360,8 +426,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled Camel will on Future objects wait for it to complete to
          * obtain the payload to be logged.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showFuture(boolean showFuture) {
             setProperty("showFuture", showFuture);
@@ -370,8 +438,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * If enabled Camel will on Future objects wait for it to complete to
          * obtain the payload to be logged.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showFuture(String showFuture) {
             setProperty("showFuture", showFuture);
@@ -379,8 +449,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the message headers.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showHeaders(boolean showHeaders) {
             setProperty("showHeaders", showHeaders);
@@ -388,8 +460,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the message headers.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showHeaders(String showHeaders) {
             setProperty("showHeaders", showHeaders);
@@ -397,8 +471,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * If the exchange has an out message, show the out message.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showOut(boolean showOut) {
             setProperty("showOut", showOut);
@@ -406,8 +482,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * If the exchange has an out message, show the out message.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showOut(String showOut) {
             setProperty("showOut", showOut);
@@ -415,8 +493,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the exchange properties.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showProperties(boolean showProperties) {
             setProperty("showProperties", showProperties);
@@ -424,8 +504,10 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Show the exchange properties.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showProperties(String showProperties) {
             setProperty("showProperties", showProperties);
@@ -434,8 +516,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the stack trace, if an exchange has an exception. Only effective
          * if one of showAll, showException or showCaughtException are enabled.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showStackTrace(boolean showStackTrace) {
             setProperty("showStackTrace", showStackTrace);
@@ -444,8 +528,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Show the stack trace, if an exchange has an exception. Only effective
          * if one of showAll, showException or showCaughtException are enabled.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showStackTrace(String showStackTrace) {
             setProperty("showStackTrace", showStackTrace);
@@ -457,8 +543,10 @@ public interface LogEndpointBuilderFactory {
          * not be able later to access the message body as the stream have
          * already been read by this logger. To remedy this you will have to use
          * Stream Caching.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showStreams(boolean showStreams) {
             setProperty("showStreams", showStreams);
@@ -470,8 +558,10 @@ public interface LogEndpointBuilderFactory {
          * not be able later to access the message body as the stream have
          * already been read by this logger. To remedy this you will have to use
          * Stream Caching.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder showStreams(String showStreams) {
             setProperty("showStreams", showStreams);
@@ -482,8 +572,10 @@ public interface LogEndpointBuilderFactory {
          * allows to log the message body in one line, setting this option to
          * false will preserve any line separators from the body, which then
          * will log the body as is.
-         * The option is a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 boolean skipBodyLineSeparator) {
@@ -495,8 +587,10 @@ public interface LogEndpointBuilderFactory {
          * allows to log the message body in one line, setting this option to
          * false will preserve any line separators from the body, which then
          * will log the body as is.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 String skipBodyLineSeparator) {
@@ -505,9 +599,11 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Sets the outputs style to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder style(OutputStyle style) {
             setProperty("style", style);
@@ -515,9 +611,11 @@ public interface LogEndpointBuilderFactory {
         }
         /**
          * Sets the outputs style to use.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> type.
-         * @group formatting
+         * 
+         * Group: formatting
          */
         default LogEndpointBuilder style(String style) {
             setProperty("style", style);
@@ -537,8 +635,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLogEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -548,8 +648,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLogEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -559,8 +661,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLogEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -569,8 +673,10 @@ public interface LogEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLogEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

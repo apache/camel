@@ -43,9 +43,11 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder apiName(
                 GoogleMailApiName apiName) {
@@ -54,9 +56,11 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -64,8 +68,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -74,8 +80,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -83,8 +91,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -93,8 +103,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Client ID of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -102,8 +114,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Client secret of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
@@ -112,8 +126,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -123,8 +139,10 @@ public interface GoogleMailEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
@@ -139,8 +157,10 @@ public interface GoogleMailEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -155,8 +175,10 @@ public interface GoogleMailEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -179,9 +201,11 @@ public interface GoogleMailEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -193,9 +217,11 @@ public interface GoogleMailEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -204,8 +230,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -214,9 +242,11 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -226,8 +256,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -237,8 +269,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -248,8 +282,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -259,8 +295,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -280,9 +318,11 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder apiName(
                 GoogleMailApiName apiName) {
@@ -291,9 +331,11 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -301,8 +343,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -311,8 +355,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -320,8 +366,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -330,8 +378,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Client ID of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -339,8 +389,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Client secret of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder clientSecret(
                 String clientSecret) {
@@ -349,8 +401,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -360,8 +414,10 @@ public interface GoogleMailEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointProducerBuilder refreshToken(
                 String refreshToken) {
@@ -378,8 +434,10 @@ public interface GoogleMailEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -396,8 +454,10 @@ public interface GoogleMailEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -418,8 +478,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -429,8 +491,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -440,8 +504,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -451,8 +517,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -472,9 +540,11 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder apiName(GoogleMailApiName apiName) {
             setProperty("apiName", apiName);
@@ -482,9 +552,11 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -492,8 +564,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -502,8 +576,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -511,8 +587,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder applicationName(String applicationName) {
             setProperty("applicationName", applicationName);
@@ -520,8 +598,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Client ID of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -529,8 +609,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Client secret of the mail application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -538,8 +620,10 @@ public interface GoogleMailEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -549,8 +633,10 @@ public interface GoogleMailEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleMailEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
@@ -570,8 +656,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -581,8 +669,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -592,8 +682,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -603,8 +695,10 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleMailEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

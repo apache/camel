@@ -50,8 +50,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The name value is not used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -59,8 +61,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * APPID ID used to authenticate the user connected to the API Server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder appid(String appid) {
             setProperty("appid", appid);
@@ -69,8 +74,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
@@ -78,9 +85,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Language of the response.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder language(WeatherLanguage language) {
             setProperty("language", language);
@@ -88,9 +97,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Language of the response.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder language(String language) {
             setProperty("language", language);
@@ -98,9 +109,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The output format of the weather data.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder mode(WeatherMode mode) {
             setProperty("mode", mode);
@@ -108,9 +121,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The output format of the weather data.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder mode(String mode) {
             setProperty("mode", mode);
@@ -121,8 +136,10 @@ public interface WeatherEndpointBuilderFactory {
          * 7, 14 days. Only the numeric value for the forecast period is
          * actually parsed, so spelling, capitalisation of the time period is up
          * to you (its ignored).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder period(String period) {
             setProperty("period", period);
@@ -130,9 +147,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The units for temperature measurement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder units(WeatherUnits units) {
             setProperty("units", units);
@@ -140,9 +159,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The units for temperature measurement.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder units(String units) {
             setProperty("units", units);
@@ -151,9 +172,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The API to be use (current, forecast/3 hour, forecast daily,
          * station).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder weatherApi(WeatherApi weatherApi) {
             setProperty("weatherApi", weatherApi);
@@ -162,9 +185,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The API to be use (current, forecast/3 hour, forecast daily,
          * station).
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointConsumerBuilder weatherApi(String weatherApi) {
             setProperty("weatherApi", weatherApi);
@@ -178,8 +203,10 @@ public interface WeatherEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default WeatherEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -194,8 +221,10 @@ public interface WeatherEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default WeatherEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -205,8 +234,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default WeatherEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -216,8 +247,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default WeatherEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -227,8 +260,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -238,8 +273,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -249,8 +286,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -260,8 +299,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -275,8 +316,10 @@ public interface WeatherEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -290,8 +333,10 @@ public interface WeatherEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -302,8 +347,10 @@ public interface WeatherEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -313,8 +360,10 @@ public interface WeatherEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -323,8 +372,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -333,8 +384,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -344,8 +397,10 @@ public interface WeatherEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -355,8 +410,10 @@ public interface WeatherEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder initialDelay(String initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -365,8 +422,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -376,9 +435,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -389,9 +450,11 @@ public interface WeatherEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -402,9 +465,11 @@ public interface WeatherEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -414,10 +479,12 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -427,10 +494,12 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -439,9 +508,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -451,10 +522,12 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -463,8 +536,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -473,8 +548,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -483,8 +560,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -492,9 +571,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -503,8 +584,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -514,8 +597,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -524,8 +609,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Number of results to be found.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder cnt(Integer cnt) {
             setProperty("cnt", cnt);
@@ -533,9 +620,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Number of results to be found.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder cnt(String cnt) {
             setProperty("cnt", cnt);
@@ -544,9 +633,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder ids(List<String> ids) {
             setProperty("ids", ids);
@@ -555,9 +646,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder ids(String ids) {
             setProperty("ids", ids);
@@ -566,8 +659,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Latitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the bottom latitude.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder lat(String lat) {
             setProperty("lat", lat);
@@ -582,8 +677,10 @@ public interface WeatherEndpointBuilderFactory {
          * location then the component will try to get the current latitude and
          * longitude and use that to get the weather details. You can use lat
          * and lon options instead of location.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder location(String location) {
             setProperty("location", location);
@@ -592,8 +689,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Longitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the left longtitude.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder lon(String lon) {
             setProperty("lon", lon);
@@ -602,8 +701,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the right longtitude. Needs to be used in
          * combination with topLat and zoom.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder rightLon(String rightLon) {
             setProperty("rightLon", rightLon);
@@ -612,8 +713,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the top latitude. Needs to be used in
          * combination with rightLon and zoom.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder topLat(String topLat) {
             setProperty("topLat", topLat);
@@ -621,8 +724,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Zip-code, e.g. 94040,us.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder zip(String zip) {
             setProperty("zip", zip);
@@ -631,8 +736,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder zoom(Integer zoom) {
             setProperty("zoom", zoom);
@@ -641,9 +748,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointConsumerBuilder zoom(String zoom) {
             setProperty("zoom", zoom);
@@ -651,8 +760,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Domain for proxy NTLM authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyAuthDomain(
                 String proxyAuthDomain) {
@@ -661,8 +772,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Optional host for proxy NTLM authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyAuthHost(
                 String proxyAuthHost) {
@@ -671,8 +784,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Authentication method for proxy, either as Basic, Digest or NTLM.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyAuthMethod(
                 String proxyAuthMethod) {
@@ -681,8 +796,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Password for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
@@ -691,8 +808,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Username for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
@@ -701,8 +820,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy host name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -710,8 +831,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -719,9 +842,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default WeatherEndpointConsumerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -729,8 +854,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The geolocation service now needs an accessKey to be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default WeatherEndpointConsumerBuilder geolocationAccessKey(
                 String geolocationAccessKey) {
@@ -740,8 +868,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The geolocation service now needs to specify the IP associated to the
          * accessKey you're using.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default WeatherEndpointConsumerBuilder geolocationRequestHostIP(
                 String geolocationRequestHostIP) {
@@ -764,9 +895,11 @@ public interface WeatherEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeatherEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -778,9 +911,11 @@ public interface WeatherEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeatherEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -789,8 +924,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeatherEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -799,9 +936,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeatherEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -813,9 +952,11 @@ public interface WeatherEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeatherEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -827,9 +968,11 @@ public interface WeatherEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedWeatherEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -839,8 +982,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -850,8 +995,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -860,10 +1007,12 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpConnectionManager to manage connections.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder httpConnectionManager(
                 Object httpConnectionManager) {
@@ -872,10 +1021,12 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpConnectionManager to manage connections.
+         * 
          * The option will be converted to a
          * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder httpConnectionManager(
                 String httpConnectionManager) {
@@ -885,8 +1036,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -896,8 +1049,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -917,8 +1072,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The name value is not used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -926,8 +1083,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * APPID ID used to authenticate the user connected to the API Server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default WeatherEndpointProducerBuilder appid(String appid) {
             setProperty("appid", appid);
@@ -936,8 +1096,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
@@ -945,9 +1107,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Language of the response.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder language(WeatherLanguage language) {
             setProperty("language", language);
@@ -955,9 +1119,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Language of the response.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder language(String language) {
             setProperty("language", language);
@@ -965,9 +1131,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The output format of the weather data.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder mode(WeatherMode mode) {
             setProperty("mode", mode);
@@ -975,9 +1143,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The output format of the weather data.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder mode(String mode) {
             setProperty("mode", mode);
@@ -988,8 +1158,10 @@ public interface WeatherEndpointBuilderFactory {
          * 7, 14 days. Only the numeric value for the forecast period is
          * actually parsed, so spelling, capitalisation of the time period is up
          * to you (its ignored).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder period(String period) {
             setProperty("period", period);
@@ -997,9 +1169,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The units for temperature measurement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder units(WeatherUnits units) {
             setProperty("units", units);
@@ -1007,9 +1181,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The units for temperature measurement.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder units(String units) {
             setProperty("units", units);
@@ -1018,9 +1194,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The API to be use (current, forecast/3 hour, forecast daily,
          * station).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder weatherApi(WeatherApi weatherApi) {
             setProperty("weatherApi", weatherApi);
@@ -1029,9 +1207,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The API to be use (current, forecast/3 hour, forecast daily,
          * station).
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointProducerBuilder weatherApi(String weatherApi) {
             setProperty("weatherApi", weatherApi);
@@ -1047,8 +1227,10 @@ public interface WeatherEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default WeatherEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1065,8 +1247,10 @@ public interface WeatherEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default WeatherEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1075,8 +1259,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Number of results to be found.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder cnt(Integer cnt) {
             setProperty("cnt", cnt);
@@ -1084,9 +1270,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Number of results to be found.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder cnt(String cnt) {
             setProperty("cnt", cnt);
@@ -1095,9 +1283,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder ids(List<String> ids) {
             setProperty("ids", ids);
@@ -1106,9 +1296,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder ids(String ids) {
             setProperty("ids", ids);
@@ -1117,8 +1309,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Latitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the bottom latitude.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder lat(String lat) {
             setProperty("lat", lat);
@@ -1133,8 +1327,10 @@ public interface WeatherEndpointBuilderFactory {
          * location then the component will try to get the current latitude and
          * longitude and use that to get the weather details. You can use lat
          * and lon options instead of location.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder location(String location) {
             setProperty("location", location);
@@ -1143,8 +1339,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Longitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the left longtitude.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder lon(String lon) {
             setProperty("lon", lon);
@@ -1153,8 +1351,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the right longtitude. Needs to be used in
          * combination with topLat and zoom.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder rightLon(String rightLon) {
             setProperty("rightLon", rightLon);
@@ -1163,8 +1363,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the top latitude. Needs to be used in
          * combination with rightLon and zoom.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder topLat(String topLat) {
             setProperty("topLat", topLat);
@@ -1172,8 +1374,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Zip-code, e.g. 94040,us.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder zip(String zip) {
             setProperty("zip", zip);
@@ -1182,8 +1386,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder zoom(Integer zoom) {
             setProperty("zoom", zoom);
@@ -1192,9 +1398,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointProducerBuilder zoom(String zoom) {
             setProperty("zoom", zoom);
@@ -1202,8 +1410,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Domain for proxy NTLM authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyAuthDomain(
                 String proxyAuthDomain) {
@@ -1212,8 +1422,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Optional host for proxy NTLM authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyAuthHost(
                 String proxyAuthHost) {
@@ -1222,8 +1434,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Authentication method for proxy, either as Basic, Digest or NTLM.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyAuthMethod(
                 String proxyAuthMethod) {
@@ -1232,8 +1446,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Password for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
@@ -1242,8 +1458,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Username for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
@@ -1252,8 +1470,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy host name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -1261,8 +1481,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1270,9 +1492,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default WeatherEndpointProducerBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1280,8 +1504,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The geolocation service now needs an accessKey to be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default WeatherEndpointProducerBuilder geolocationAccessKey(
                 String geolocationAccessKey) {
@@ -1291,8 +1518,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The geolocation service now needs to specify the IP associated to the
          * accessKey you're using.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default WeatherEndpointProducerBuilder geolocationRequestHostIP(
                 String geolocationRequestHostIP) {
@@ -1313,8 +1543,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1324,8 +1556,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1334,10 +1568,12 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpConnectionManager to manage connections.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder httpConnectionManager(
                 Object httpConnectionManager) {
@@ -1346,10 +1582,12 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpConnectionManager to manage connections.
+         * 
          * The option will be converted to a
          * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder httpConnectionManager(
                 String httpConnectionManager) {
@@ -1359,8 +1597,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1370,8 +1610,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1391,8 +1633,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The name value is not used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -1400,8 +1644,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * APPID ID used to authenticate the user connected to the API Server.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: common
          */
         default WeatherEndpointBuilder appid(String appid) {
             setProperty("appid", appid);
@@ -1410,8 +1657,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * To store the weather result in this header instead of the message
          * body. This is useable if you want to keep current message body as-is.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder headerName(String headerName) {
             setProperty("headerName", headerName);
@@ -1419,9 +1668,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Language of the response.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder language(WeatherLanguage language) {
             setProperty("language", language);
@@ -1429,9 +1680,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Language of the response.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder language(String language) {
             setProperty("language", language);
@@ -1439,9 +1692,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The output format of the weather data.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder mode(WeatherMode mode) {
             setProperty("mode", mode);
@@ -1449,9 +1704,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The output format of the weather data.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder mode(String mode) {
             setProperty("mode", mode);
@@ -1462,8 +1719,10 @@ public interface WeatherEndpointBuilderFactory {
          * 7, 14 days. Only the numeric value for the forecast period is
          * actually parsed, so spelling, capitalisation of the time period is up
          * to you (its ignored).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder period(String period) {
             setProperty("period", period);
@@ -1471,9 +1730,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The units for temperature measurement.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder units(WeatherUnits units) {
             setProperty("units", units);
@@ -1481,9 +1742,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The units for temperature measurement.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherUnits</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder units(String units) {
             setProperty("units", units);
@@ -1492,9 +1755,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The API to be use (current, forecast/3 hour, forecast daily,
          * station).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder weatherApi(WeatherApi weatherApi) {
             setProperty("weatherApi", weatherApi);
@@ -1503,9 +1768,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The API to be use (current, forecast/3 hour, forecast daily,
          * station).
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.WeatherApi</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default WeatherEndpointBuilder weatherApi(String weatherApi) {
             setProperty("weatherApi", weatherApi);
@@ -1513,8 +1780,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Number of results to be found.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder cnt(Integer cnt) {
             setProperty("cnt", cnt);
@@ -1522,9 +1791,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Number of results to be found.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder cnt(String cnt) {
             setProperty("cnt", cnt);
@@ -1533,9 +1804,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder ids(List<String> ids) {
             setProperty("ids", ids);
@@ -1544,9 +1817,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * List of id's of city/stations. You can separate multiple ids by
          * comma.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder ids(String ids) {
             setProperty("ids", ids);
@@ -1555,8 +1830,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Latitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the bottom latitude.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder lat(String lat) {
             setProperty("lat", lat);
@@ -1571,8 +1848,10 @@ public interface WeatherEndpointBuilderFactory {
          * location then the component will try to get the current latitude and
          * longitude and use that to get the weather details. You can use lat
          * and lon options instead of location.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder location(String location) {
             setProperty("location", location);
@@ -1581,8 +1860,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Longitude of location. You can use lat and lon options instead of
          * location. For boxed queries this is the left longtitude.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder lon(String lon) {
             setProperty("lon", lon);
@@ -1591,8 +1872,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the right longtitude. Needs to be used in
          * combination with topLat and zoom.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder rightLon(String rightLon) {
             setProperty("rightLon", rightLon);
@@ -1601,8 +1884,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the top latitude. Needs to be used in
          * combination with rightLon and zoom.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder topLat(String topLat) {
             setProperty("topLat", topLat);
@@ -1610,8 +1895,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Zip-code, e.g. 94040,us.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder zip(String zip) {
             setProperty("zip", zip);
@@ -1620,8 +1907,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder zoom(Integer zoom) {
             setProperty("zoom", zoom);
@@ -1630,9 +1919,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * For boxed queries this is the zoom. Needs to be used in combination
          * with rightLon and topLat.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default WeatherEndpointBuilder zoom(String zoom) {
             setProperty("zoom", zoom);
@@ -1640,8 +1931,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Domain for proxy NTLM authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
             setProperty("proxyAuthDomain", proxyAuthDomain);
@@ -1649,8 +1942,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Optional host for proxy NTLM authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthHost(String proxyAuthHost) {
             setProperty("proxyAuthHost", proxyAuthHost);
@@ -1658,8 +1953,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Authentication method for proxy, either as Basic, Digest or NTLM.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
             setProperty("proxyAuthMethod", proxyAuthMethod);
@@ -1667,8 +1964,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Password for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
@@ -1677,8 +1976,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * Username for proxy authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
@@ -1687,8 +1988,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy host name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -1696,8 +1999,10 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1705,9 +2010,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The proxy port number.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default WeatherEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -1715,8 +2022,11 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * The geolocation service now needs an accessKey to be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default WeatherEndpointBuilder geolocationAccessKey(
                 String geolocationAccessKey) {
@@ -1726,8 +2036,11 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * The geolocation service now needs to specify the IP associated to the
          * accessKey you're using.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: security
          */
         default WeatherEndpointBuilder geolocationRequestHostIP(
                 String geolocationRequestHostIP) {
@@ -1748,8 +2061,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1759,8 +2074,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1769,10 +2086,12 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpConnectionManager to manage connections.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder httpConnectionManager(
                 Object httpConnectionManager) {
@@ -1781,10 +2100,12 @@ public interface WeatherEndpointBuilderFactory {
         }
         /**
          * To use a custom HttpConnectionManager to manage connections.
+         * 
          * The option will be converted to a
          * <code>org.apache.commons.httpclient.HttpConnectionManager</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder httpConnectionManager(
                 String httpConnectionManager) {
@@ -1794,8 +2115,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1804,8 +2127,10 @@ public interface WeatherEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

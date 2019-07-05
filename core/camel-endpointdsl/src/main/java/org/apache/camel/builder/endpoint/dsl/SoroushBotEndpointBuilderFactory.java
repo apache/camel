@@ -43,9 +43,11 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * The action to do.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointConsumerBuilder action(SoroushAction action) {
             setProperty("action", action);
@@ -53,9 +55,11 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * The action to do.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointConsumerBuilder action(String action) {
             setProperty("action", action);
@@ -63,8 +67,10 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SoroushBotEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -73,8 +79,10 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -85,8 +93,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
                 int maxConnectionRetry) {
@@ -97,8 +107,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
@@ -113,8 +125,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -129,8 +143,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -143,8 +159,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * always execute in the same thread and therefore messages from the
          * same user are processed sequentially. Default value notice: using
          * SoroushBotSingleThreadConsumer.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -157,8 +175,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * always execute in the same thread and therefore messages from the
          * same user are processed sequentially. Default value notice: using
          * SoroushBotSingleThreadConsumer.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -173,8 +193,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * can then processed the error using
          * onException(CongestionException.class) route. Default value notice:
          * infinite capacity.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
                 int queueCapacityPerThread) {
@@ -189,8 +211,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * can then processed the error using
          * onException(CongestionException.class) route. Default value notice:
          * infinite capacity.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
                 String queueCapacityPerThread) {
@@ -200,8 +224,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The authorization token for using the bot. if uri path does not
          * contain authorization token, this token will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SoroushBotEndpointConsumerBuilder authorizationToken(
                 String authorizationToken) {
@@ -215,8 +241,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * failure. 2. Linear: It increase retryWaitingTime by
          * retryLinearIncrement after each connection failure. 3. Fixed: Always
          * use retryWaitingTime as the time between retries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder backOffStrategy(
                 String backOffStrategy) {
@@ -226,8 +254,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Maximum amount of time (in millisecond) a thread wait before retrying
          * failed request.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
                 long maxRetryWaitingTime) {
@@ -237,8 +267,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Maximum amount of time (in millisecond) a thread wait before retrying
          * failed request.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
@@ -249,8 +281,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * The timeout in millisecond to reconnect the existing getMessage
          * connection to ensure that the connection is always live and does not
          * dead without notifying the bot. this value should not be changed.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
@@ -261,8 +295,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * The timeout in millisecond to reconnect the existing getMessage
          * connection to ensure that the connection is always live and does not
          * dead without notifying the bot. this value should not be changed.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
@@ -272,8 +308,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Coefficient to compute back off time when using Exponential Back Off
          * strategy.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
                 long retryExponentialCoefficient) {
@@ -283,8 +321,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Coefficient to compute back off time when using Exponential Back Off
          * strategy.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
@@ -294,8 +334,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The amount of time (in millisecond) which adds to waiting time when
          * using Linear back off strategy.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
                 long retryLinearIncrement) {
@@ -305,8 +347,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The amount of time (in millisecond) which adds to waiting time when
          * using Linear back off strategy.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
@@ -318,8 +362,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * backOffStrategy is not Fixed this is the based value for computing
          * back off waiting time. the first retry is always happen immediately
          * after failure and retryWaitingTime do not apply to the first retry.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryWaitingTime(
                 long retryWaitingTime) {
@@ -331,8 +377,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * backOffStrategy is not Fixed this is the based value for computing
          * back off waiting time. the first retry is always happen immediately
          * after failure and retryWaitingTime do not apply to the first retry.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryWaitingTime(
                 String retryWaitingTime) {
@@ -355,9 +403,11 @@ public interface SoroushBotEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -369,9 +419,11 @@ public interface SoroushBotEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -380,8 +432,10 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -390,9 +444,11 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedSoroushBotEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -402,8 +458,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -413,8 +471,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -424,8 +484,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -435,8 +497,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -456,9 +520,11 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * The action to do.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointProducerBuilder action(SoroushAction action) {
             setProperty("action", action);
@@ -466,9 +532,11 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * The action to do.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointProducerBuilder action(String action) {
             setProperty("action", action);
@@ -476,8 +544,10 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SoroushBotEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -486,8 +556,10 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -498,8 +570,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SoroushBotEndpointProducerBuilder maxConnectionRetry(
                 int maxConnectionRetry) {
@@ -510,8 +584,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointProducerBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
@@ -522,8 +598,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Automatically download SoroushMessage.fileUrl and
          * SoroushMessage.thumbnailUrl if exists for the message and store them
          * in SoroushMessage.file and SoroushMessage.thumbnail field.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder autoDownload(
                 boolean autoDownload) {
@@ -534,8 +612,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Automatically download SoroushMessage.fileUrl and
          * SoroushMessage.thumbnailUrl if exists for the message and store them
          * in SoroushMessage.file and SoroushMessage.thumbnail field.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder autoDownload(
                 String autoDownload) {
@@ -547,8 +627,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * sendMessage endpoint and the SoroushMessage.file
          * (SoroushMessage.thumbnail) has been set and
          * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder autoUploadFile(
                 boolean autoUploadFile) {
@@ -560,8 +642,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * sendMessage endpoint and the SoroushMessage.file
          * (SoroushMessage.thumbnail) has been set and
          * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is null.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder autoUploadFile(
                 String autoUploadFile) {
@@ -572,8 +656,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * If true, when downloading an attached file, thumbnail will be
          * downloaded if provided in the message. Otherwise, only the file will
          * be downloaded.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder downloadThumbnail(
                 boolean downloadThumbnail) {
@@ -584,8 +670,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * If true, when downloading an attached file, thumbnail will be
          * downloaded if provided in the message. Otherwise, only the file will
          * be downloaded.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder downloadThumbnail(
                 String downloadThumbnail) {
@@ -596,8 +684,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
          * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
          * was not null in that message.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder forceDownload(
                 boolean forceDownload) {
@@ -608,8 +698,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Force to download SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl)
          * if exists, even if the SoroushMessage.file(SoroushMessage.thumbnail)
          * was not null in that message.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder forceDownload(
                 String forceDownload) {
@@ -621,8 +713,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * exists, even if the
          * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
          * the message.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder forceUpload(
                 boolean forceUpload) {
@@ -634,8 +728,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * exists, even if the
          * SoroushMessage.fileUrl(SoroushMessage.thumbnailUrl) is not null in
          * the message.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder forceUpload(String forceUpload) {
             setProperty("forceUpload", forceUpload);
@@ -651,8 +747,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -669,8 +767,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SoroushBotEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -680,8 +780,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The authorization token for using the bot. if uri path does not
          * contain authorization token, this token will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SoroushBotEndpointProducerBuilder authorizationToken(
                 String authorizationToken) {
@@ -695,8 +797,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * failure. 2. Linear: It increase retryWaitingTime by
          * retryLinearIncrement after each connection failure. 3. Fixed: Always
          * use retryWaitingTime as the time between retries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder backOffStrategy(
                 String backOffStrategy) {
@@ -706,8 +810,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Maximum amount of time (in millisecond) a thread wait before retrying
          * failed request.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
                 long maxRetryWaitingTime) {
@@ -717,8 +823,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Maximum amount of time (in millisecond) a thread wait before retrying
          * failed request.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
@@ -729,8 +837,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * The timeout in millisecond to reconnect the existing getMessage
          * connection to ensure that the connection is always live and does not
          * dead without notifying the bot. this value should not be changed.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
@@ -741,8 +851,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * The timeout in millisecond to reconnect the existing getMessage
          * connection to ensure that the connection is always live and does not
          * dead without notifying the bot. this value should not be changed.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
@@ -752,8 +864,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Coefficient to compute back off time when using Exponential Back Off
          * strategy.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
                 long retryExponentialCoefficient) {
@@ -763,8 +877,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Coefficient to compute back off time when using Exponential Back Off
          * strategy.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
@@ -774,8 +890,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The amount of time (in millisecond) which adds to waiting time when
          * using Linear back off strategy.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryLinearIncrement(
                 long retryLinearIncrement) {
@@ -785,8 +903,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The amount of time (in millisecond) which adds to waiting time when
          * using Linear back off strategy.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
@@ -798,8 +918,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * backOffStrategy is not Fixed this is the based value for computing
          * back off waiting time. the first retry is always happen immediately
          * after failure and retryWaitingTime do not apply to the first retry.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryWaitingTime(
                 long retryWaitingTime) {
@@ -811,8 +933,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * backOffStrategy is not Fixed this is the based value for computing
          * back off waiting time. the first retry is always happen immediately
          * after failure and retryWaitingTime do not apply to the first retry.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryWaitingTime(
                 String retryWaitingTime) {
@@ -833,8 +957,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -844,8 +970,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -855,8 +983,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -866,8 +996,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -887,9 +1019,11 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * The action to do.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointBuilder action(SoroushAction action) {
             setProperty("action", action);
@@ -897,9 +1031,11 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * The action to do.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.soroushbot.models.SoroushAction</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointBuilder action(String action) {
             setProperty("action", action);
@@ -907,8 +1043,10 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SoroushBotEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -917,8 +1055,10 @@ public interface SoroushBotEndpointBuilderFactory {
         }
         /**
          * Connection timeout in ms when connecting to soroush API.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -929,8 +1069,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default SoroushBotEndpointBuilder maxConnectionRetry(
                 int maxConnectionRetry) {
@@ -941,8 +1083,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * Maximum connection retry when fail to connect to soroush API, if the
          * quota is reached, MaximumConnectionRetryReachedException is thrown
          * for that message.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default SoroushBotEndpointBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
@@ -952,8 +1096,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The authorization token for using the bot. if uri path does not
          * contain authorization token, this token will be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default SoroushBotEndpointBuilder authorizationToken(
                 String authorizationToken) {
@@ -967,8 +1113,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * failure. 2. Linear: It increase retryWaitingTime by
          * retryLinearIncrement after each connection failure. 3. Fixed: Always
          * use retryWaitingTime as the time between retries.
-         * The option is a <code>java.lang.String</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder backOffStrategy(String backOffStrategy) {
             setProperty("backOffStrategy", backOffStrategy);
@@ -977,8 +1125,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Maximum amount of time (in millisecond) a thread wait before retrying
          * failed request.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder maxRetryWaitingTime(
                 long maxRetryWaitingTime) {
@@ -988,8 +1138,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Maximum amount of time (in millisecond) a thread wait before retrying
          * failed request.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder maxRetryWaitingTime(
                 String maxRetryWaitingTime) {
@@ -1000,8 +1152,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * The timeout in millisecond to reconnect the existing getMessage
          * connection to ensure that the connection is always live and does not
          * dead without notifying the bot. this value should not be changed.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
                 long reconnectIdleConnectionTimeout) {
@@ -1012,8 +1166,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * The timeout in millisecond to reconnect the existing getMessage
          * connection to ensure that the connection is always live and does not
          * dead without notifying the bot. this value should not be changed.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
                 String reconnectIdleConnectionTimeout) {
@@ -1023,8 +1179,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Coefficient to compute back off time when using Exponential Back Off
          * strategy.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryExponentialCoefficient(
                 long retryExponentialCoefficient) {
@@ -1034,8 +1192,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Coefficient to compute back off time when using Exponential Back Off
          * strategy.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryExponentialCoefficient(
                 String retryExponentialCoefficient) {
@@ -1045,8 +1205,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The amount of time (in millisecond) which adds to waiting time when
          * using Linear back off strategy.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryLinearIncrement(
                 long retryLinearIncrement) {
@@ -1056,8 +1218,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * The amount of time (in millisecond) which adds to waiting time when
          * using Linear back off strategy.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryLinearIncrement(
                 String retryLinearIncrement) {
@@ -1069,8 +1233,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * backOffStrategy is not Fixed this is the based value for computing
          * back off waiting time. the first retry is always happen immediately
          * after failure and retryWaitingTime do not apply to the first retry.
-         * The option is a <code>long</code> type.
-         * @group scheduling
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryWaitingTime(long retryWaitingTime) {
             setProperty("retryWaitingTime", retryWaitingTime);
@@ -1081,8 +1247,10 @@ public interface SoroushBotEndpointBuilderFactory {
          * backOffStrategy is not Fixed this is the based value for computing
          * back off waiting time. the first retry is always happen immediately
          * after failure and retryWaitingTime do not apply to the first retry.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduling
+         * 
+         * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryWaitingTime(
                 String retryWaitingTime) {
@@ -1103,8 +1271,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1114,8 +1284,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1125,8 +1297,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1136,8 +1310,10 @@ public interface SoroushBotEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSoroushBotEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -48,8 +48,10 @@ public interface LdapEndpointBuilderFactory {
          * the javax.naming.directory.DirContext must not be shared, and in
          * those situations it can be better to use java.util.Hashtable or Map
          * instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LdapEndpointBuilder dirContextName(String dirContextName) {
             setProperty("dirContextName", dirContextName);
@@ -57,8 +59,10 @@ public interface LdapEndpointBuilderFactory {
         }
         /**
          * The base DN for searches.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LdapEndpointBuilder base(String base) {
             setProperty("base", base);
@@ -70,8 +74,10 @@ public interface LdapEndpointBuilderFactory {
          * than 1000 entries in one query). To be able to use this a LdapContext
          * (subclass of DirContext) has to be passed in as ldapServerBean
          * (otherwise an exception is thrown).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
          */
         default LdapEndpointBuilder pageSize(Integer pageSize) {
             setProperty("pageSize", pageSize);
@@ -83,9 +89,11 @@ public interface LdapEndpointBuilderFactory {
          * than 1000 entries in one query). To be able to use this a LdapContext
          * (subclass of DirContext) has to be passed in as ldapServerBean
          * (otherwise an exception is thrown).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default LdapEndpointBuilder pageSize(String pageSize) {
             setProperty("pageSize", pageSize);
@@ -94,8 +102,10 @@ public interface LdapEndpointBuilderFactory {
         /**
          * Comma-separated list of attributes that should be set in each entry
          * of the result.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LdapEndpointBuilder returnedAttributes(String returnedAttributes) {
             setProperty("returnedAttributes", returnedAttributes);
@@ -104,8 +114,10 @@ public interface LdapEndpointBuilderFactory {
         /**
          * Specifies how deeply to search the tree of entries, starting at the
          * base DN.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LdapEndpointBuilder scope(String scope) {
             setProperty("scope", scope);
@@ -125,8 +137,10 @@ public interface LdapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -136,8 +150,10 @@ public interface LdapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -147,8 +163,10 @@ public interface LdapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -157,8 +175,10 @@ public interface LdapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

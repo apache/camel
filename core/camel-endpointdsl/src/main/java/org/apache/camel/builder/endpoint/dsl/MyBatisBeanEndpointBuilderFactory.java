@@ -43,8 +43,10 @@ public interface MyBatisBeanEndpointBuilderFactory {
         /**
          * Name of the bean with the MyBatis annotations. This can either by a
          * type alias or a FQN class name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MyBatisBeanEndpointBuilder beanName(String beanName) {
             setProperty("beanName", beanName);
@@ -52,8 +54,10 @@ public interface MyBatisBeanEndpointBuilderFactory {
         }
         /**
          * Name of the method on the bean that has the SQL query to be executed.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default MyBatisBeanEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -73,8 +77,10 @@ public interface MyBatisBeanEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -84,8 +90,10 @@ public interface MyBatisBeanEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -95,8 +103,10 @@ public interface MyBatisBeanEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -106,8 +116,10 @@ public interface MyBatisBeanEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 String synchronous) {

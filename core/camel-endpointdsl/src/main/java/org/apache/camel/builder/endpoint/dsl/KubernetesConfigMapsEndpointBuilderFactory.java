@@ -42,8 +42,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder masterUrl(String masterUrl) {
             setProperty("masterUrl", masterUrl);
@@ -51,8 +53,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder apiVersion(String apiVersion) {
             setProperty("apiVersion", apiVersion);
@@ -60,8 +64,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder dnsDomain(String dnsDomain) {
             setProperty("dnsDomain", dnsDomain);
@@ -69,9 +75,11 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -80,9 +88,11 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -91,8 +101,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder portName(String portName) {
             setProperty("portName", portName);
@@ -100,8 +112,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder portProtocol(
                 String portProtocol) {
@@ -110,8 +124,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder caCertData(String caCertData) {
             setProperty("caCertData", caCertData);
@@ -119,8 +135,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder caCertFile(String caCertFile) {
             setProperty("caCertFile", caCertFile);
@@ -128,8 +146,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -138,8 +158,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -148,8 +170,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -158,8 +182,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyData(
                 String clientKeyData) {
@@ -168,8 +194,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -178,8 +206,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -188,8 +218,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder oauthToken(String oauthToken) {
             setProperty("oauthToken", oauthToken);
@@ -197,8 +229,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -206,8 +240,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
@@ -216,9 +252,11 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder trustCerts(String trustCerts) {
             setProperty("trustCerts", trustCerts);
@@ -226,8 +264,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -247,8 +287,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -258,8 +300,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -269,8 +313,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -280,9 +326,11 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -292,8 +340,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -303,8 +353,10 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
                 String synchronous) {

@@ -44,8 +44,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * HTTP method to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder method(String method) {
             setProperty("method", method);
@@ -53,8 +55,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * The base path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder path(String path) {
             setProperty("path", path);
@@ -62,8 +66,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * The uri template.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder uriTemplate(String uriTemplate) {
             setProperty("uriTemplate", uriTemplate);
@@ -72,8 +78,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder consumes(String consumes) {
             setProperty("consumes", consumes);
@@ -81,8 +89,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * To declare the incoming POJO binding type as a FQN class name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder inType(String inType) {
             setProperty("inType", inType);
@@ -90,8 +100,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder outType(String outType) {
             setProperty("outType", outType);
@@ -100,8 +112,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder produces(String produces) {
             setProperty("produces", produces);
@@ -109,8 +123,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Name of the route this REST services creates.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointConsumerBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
@@ -124,8 +140,10 @@ public interface RestEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RestEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -140,8 +158,10 @@ public interface RestEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RestEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -155,8 +175,10 @@ public interface RestEndpointBuilderFactory {
          * integrates with the Rest DSL, or if a
          * org.apache.camel.spi.RestConsumerFactory is registered in the
          * registry. If either one is found, then that is being used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RestEndpointConsumerBuilder consumerComponentName(
                 String consumerComponentName) {
@@ -165,8 +187,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Human description to document this REST service.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default RestEndpointConsumerBuilder description(String description) {
             setProperty("description", description);
@@ -188,9 +212,11 @@ public interface RestEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -202,9 +228,11 @@ public interface RestEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -213,8 +241,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -223,9 +253,11 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -235,8 +267,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -246,8 +280,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -257,8 +293,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -268,8 +306,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -289,8 +329,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * HTTP method to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder method(String method) {
             setProperty("method", method);
@@ -298,8 +340,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * The base path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder path(String path) {
             setProperty("path", path);
@@ -307,8 +351,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * The uri template.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder uriTemplate(String uriTemplate) {
             setProperty("uriTemplate", uriTemplate);
@@ -317,8 +363,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder consumes(String consumes) {
             setProperty("consumes", consumes);
@@ -326,8 +374,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * To declare the incoming POJO binding type as a FQN class name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder inType(String inType) {
             setProperty("inType", inType);
@@ -335,8 +385,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder outType(String outType) {
             setProperty("outType", outType);
@@ -345,8 +397,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder produces(String produces) {
             setProperty("produces", produces);
@@ -354,8 +408,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Name of the route this REST services creates.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointProducerBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
@@ -364,8 +420,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * The swagger api doc resource to use. The resource is loaded from
          * classpath by default and must be in JSon format.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder apiDoc(String apiDoc) {
             setProperty("apiDoc", apiDoc);
@@ -376,10 +434,12 @@ public interface RestEndpointBuilderFactory {
          * other than 'off' the producer will try to convert the body of the
          * incoming message from inType to the json or xml, and the response
          * from json or xml to outType.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder bindingMode(
                 RestBindingMode bindingMode) {
@@ -391,10 +451,12 @@ public interface RestEndpointBuilderFactory {
          * other than 'off' the producer will try to convert the body of the
          * incoming message from inType to the json or xml, and the response
          * from json or xml to outType.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder bindingMode(String bindingMode) {
             setProperty("bindingMode", bindingMode);
@@ -403,8 +465,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Host and port of HTTP service to use (override host in swagger
          * schema).
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -420,8 +484,10 @@ public interface RestEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -438,8 +504,10 @@ public interface RestEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -453,8 +521,10 @@ public interface RestEndpointBuilderFactory {
          * with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory
          * is registered in the registry. If either one is found, then that is
          * being used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder producerComponentName(
                 String producerComponentName) {
@@ -463,8 +533,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Query parameters for the HTTP service to call.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default RestEndpointProducerBuilder queryParameters(
                 String queryParameters) {
@@ -485,8 +557,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -496,8 +570,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -507,8 +583,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -518,8 +596,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -539,8 +619,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * HTTP method to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder method(String method) {
             setProperty("method", method);
@@ -548,8 +630,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * The base path.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder path(String path) {
             setProperty("path", path);
@@ -557,8 +641,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * The uri template.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder uriTemplate(String uriTemplate) {
             setProperty("uriTemplate", uriTemplate);
@@ -567,8 +653,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder consumes(String consumes) {
             setProperty("consumes", consumes);
@@ -576,8 +664,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * To declare the incoming POJO binding type as a FQN class name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder inType(String inType) {
             setProperty("inType", inType);
@@ -585,8 +675,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder outType(String outType) {
             setProperty("outType", outType);
@@ -595,8 +687,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder produces(String produces) {
             setProperty("produces", produces);
@@ -604,8 +698,10 @@ public interface RestEndpointBuilderFactory {
         }
         /**
          * Name of the route this REST services creates.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestEndpointBuilder routeId(String routeId) {
             setProperty("routeId", routeId);
@@ -625,8 +721,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -636,8 +734,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -647,8 +747,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -657,8 +759,10 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

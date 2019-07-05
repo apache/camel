@@ -40,9 +40,11 @@ public interface SagaEndpointBuilderFactory {
         }
         /**
          * Action to execute (complete or compensate).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SagaEndpointBuilder action(SagaEndpointAction action) {
             setProperty("action", action);
@@ -50,9 +52,11 @@ public interface SagaEndpointBuilderFactory {
         }
         /**
          * Action to execute (complete or compensate).
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default SagaEndpointBuilder action(String action) {
             setProperty("action", action);
@@ -72,8 +76,10 @@ public interface SagaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSagaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -83,8 +89,10 @@ public interface SagaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSagaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -94,8 +102,10 @@ public interface SagaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedSagaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -104,8 +114,10 @@ public interface SagaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedSagaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

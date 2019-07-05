@@ -45,9 +45,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder apiName(
                 GoogleDriveApiName apiName) {
@@ -56,9 +58,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -66,8 +70,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -76,8 +82,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -87,8 +95,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -98,9 +108,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * To use the GoogleCalendarClientFactory as factory for creating the
          * client. Will by default use BatchGoogleDriveClientFactory.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
                 Object clientFactory) {
@@ -110,9 +122,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * To use the GoogleCalendarClientFactory as factory for creating the
          * client. Will by default use BatchGoogleDriveClientFactory.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientFactory(
                 String clientFactory) {
@@ -121,8 +135,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Client ID of the drive application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -130,8 +146,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Client secret of the drive application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
@@ -140,8 +158,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -151,8 +171,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
@@ -163,9 +185,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
@@ -175,9 +199,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointConsumerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -191,8 +217,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -207,8 +235,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -231,9 +261,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -245,9 +277,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -256,8 +290,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -266,9 +302,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -278,8 +316,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -289,8 +329,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -300,8 +342,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -311,8 +355,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -332,9 +378,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder apiName(
                 GoogleDriveApiName apiName) {
@@ -343,9 +391,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -353,8 +403,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -363,8 +415,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -374,8 +428,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -385,9 +441,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * To use the GoogleCalendarClientFactory as factory for creating the
          * client. Will by default use BatchGoogleDriveClientFactory.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
                 Object clientFactory) {
@@ -397,9 +455,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * To use the GoogleCalendarClientFactory as factory for creating the
          * client. Will by default use BatchGoogleDriveClientFactory.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientFactory(
                 String clientFactory) {
@@ -408,8 +468,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Client ID of the drive application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -417,8 +479,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Client secret of the drive application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder clientSecret(
                 String clientSecret) {
@@ -427,8 +491,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -438,8 +504,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder refreshToken(
                 String refreshToken) {
@@ -450,9 +518,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
@@ -462,9 +532,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointProducerBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -480,8 +552,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -498,8 +572,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -520,8 +596,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -531,8 +609,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -542,8 +622,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -553,8 +635,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -574,9 +658,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder apiName(GoogleDriveApiName apiName) {
             setProperty("apiName", apiName);
@@ -584,9 +670,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.internal.GoogleDriveApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -594,8 +682,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -604,8 +694,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -614,8 +706,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder applicationName(
                 String applicationName) {
@@ -625,9 +719,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * To use the GoogleCalendarClientFactory as factory for creating the
          * client. Will by default use BatchGoogleDriveClientFactory.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder clientFactory(Object clientFactory) {
             setProperty("clientFactory", clientFactory);
@@ -636,9 +732,11 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * To use the GoogleCalendarClientFactory as factory for creating the
          * client. Will by default use BatchGoogleDriveClientFactory.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder clientFactory(String clientFactory) {
             setProperty("clientFactory", clientFactory);
@@ -646,8 +744,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Client ID of the drive application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -655,8 +755,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Client secret of the drive application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -664,8 +766,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -675,8 +779,10 @@ public interface GoogleDriveEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder refreshToken(String refreshToken) {
             setProperty("refreshToken", refreshToken);
@@ -686,9 +792,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
@@ -698,9 +806,11 @@ public interface GoogleDriveEndpointBuilderFactory {
          * Specifies the level of permissions you want a drive application to
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default GoogleDriveEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -720,8 +830,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -731,8 +843,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -742,8 +856,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -753,8 +869,10 @@ public interface GoogleDriveEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleDriveEndpointBuilder synchronous(
                 String synchronous) {

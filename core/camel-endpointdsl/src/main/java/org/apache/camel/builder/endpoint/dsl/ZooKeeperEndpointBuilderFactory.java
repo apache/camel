@@ -44,8 +44,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The zookeeper server hosts (multiple servers can be separated by
          * comma).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder serverUrls(String serverUrls) {
             setProperty("serverUrls", serverUrls);
@@ -53,8 +55,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The node in the ZooKeeper server (aka znode).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder path(String path) {
             setProperty("path", path);
@@ -62,8 +66,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Not in use.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default ZooKeeperEndpointConsumerBuilder awaitExistence(
@@ -73,8 +79,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Not in use.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         @Deprecated
         default ZooKeeperEndpointConsumerBuilder awaitExistence(
@@ -84,8 +92,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Whether the children of the node should be listed.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder listChildren(
                 boolean listChildren) {
@@ -94,8 +104,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Whether the children of the node should be listed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder listChildren(
                 String listChildren) {
@@ -104,8 +116,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to wait on connection before timing out.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -113,8 +127,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to wait on connection before timing out.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -122,8 +138,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to backoff for after an error before retrying.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder backoff(long backoff) {
             setProperty("backoff", backoff);
@@ -131,8 +149,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to backoff for after an error before retrying.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder backoff(String backoff) {
             setProperty("backoff", backoff);
@@ -146,8 +166,10 @@ public interface ZooKeeperEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -162,8 +184,10 @@ public interface ZooKeeperEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -172,8 +196,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder repeat(boolean repeat) {
             setProperty("repeat", repeat);
@@ -181,8 +207,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder repeat(String repeat) {
             setProperty("repeat", repeat);
@@ -191,8 +219,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Upon the delete of a znode, should an empty message be send to the
          * consumer.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder sendEmptyMessageOnDelete(
                 boolean sendEmptyMessageOnDelete) {
@@ -202,8 +232,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Upon the delete of a znode, should an empty message be send to the
          * consumer.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder sendEmptyMessageOnDelete(
                 String sendEmptyMessageOnDelete) {
@@ -226,9 +258,11 @@ public interface ZooKeeperEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -240,9 +274,11 @@ public interface ZooKeeperEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -251,8 +287,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -261,9 +299,11 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -273,8 +313,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -284,8 +326,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -295,8 +339,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -306,8 +352,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -328,8 +376,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The zookeeper server hosts (multiple servers can be separated by
          * comma).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointProducerBuilder serverUrls(String serverUrls) {
             setProperty("serverUrls", serverUrls);
@@ -337,8 +387,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The node in the ZooKeeper server (aka znode).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointProducerBuilder path(String path) {
             setProperty("path", path);
@@ -346,8 +398,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Not in use.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default ZooKeeperEndpointProducerBuilder awaitExistence(
@@ -357,8 +411,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Not in use.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         @Deprecated
         default ZooKeeperEndpointProducerBuilder awaitExistence(
@@ -368,8 +424,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Whether the children of the node should be listed.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointProducerBuilder listChildren(
                 boolean listChildren) {
@@ -378,8 +436,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Whether the children of the node should be listed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointProducerBuilder listChildren(
                 String listChildren) {
@@ -388,8 +448,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to wait on connection before timing out.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointProducerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -397,8 +459,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to wait on connection before timing out.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -406,8 +470,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Should the endpoint create the node if it does not currently exist.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder create(boolean create) {
             setProperty("create", create);
@@ -415,8 +481,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Should the endpoint create the node if it does not currently exist.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder create(String create) {
             setProperty("create", create);
@@ -424,8 +492,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The create mode that should be used for the newly created node.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder createMode(String createMode) {
             setProperty("createMode", createMode);
@@ -441,8 +511,10 @@ public interface ZooKeeperEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -459,8 +531,10 @@ public interface ZooKeeperEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -481,8 +555,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -492,8 +568,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -503,8 +581,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -514,8 +594,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -536,8 +618,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * The zookeeper server hosts (multiple servers can be separated by
          * comma).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointBuilder serverUrls(String serverUrls) {
             setProperty("serverUrls", serverUrls);
@@ -545,8 +629,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The node in the ZooKeeper server (aka znode).
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointBuilder path(String path) {
             setProperty("path", path);
@@ -554,8 +640,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Not in use.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         @Deprecated
         default ZooKeeperEndpointBuilder awaitExistence(boolean awaitExistence) {
@@ -564,8 +652,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Not in use.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         @Deprecated
         default ZooKeeperEndpointBuilder awaitExistence(String awaitExistence) {
@@ -574,8 +664,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Whether the children of the node should be listed.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointBuilder listChildren(boolean listChildren) {
             setProperty("listChildren", listChildren);
@@ -583,8 +675,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * Whether the children of the node should be listed.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointBuilder listChildren(String listChildren) {
             setProperty("listChildren", listChildren);
@@ -592,8 +686,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to wait on connection before timing out.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -601,8 +697,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         }
         /**
          * The time interval to wait on connection before timing out.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default ZooKeeperEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -622,8 +720,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -633,8 +733,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -644,8 +746,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -654,8 +758,10 @@ public interface ZooKeeperEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -43,8 +43,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Whether the topic is persistent or non-persistent.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointConsumerBuilder persistence(String persistence) {
             setProperty("persistence", persistence);
@@ -52,8 +54,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The tenant.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointConsumerBuilder tenant(String tenant) {
             setProperty("tenant", tenant);
@@ -61,8 +65,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The namespace.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointConsumerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
@@ -70,8 +76,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The topic.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointConsumerBuilder topic(String topic) {
             setProperty("topic", topic);
@@ -85,8 +93,10 @@ public interface PulsarEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -101,8 +111,10 @@ public interface PulsarEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -111,8 +123,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Name of the consumer when subscription is EXCLUSIVE.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder consumerName(String consumerName) {
             setProperty("consumerName", consumerName);
@@ -121,8 +135,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Prefix to add to consumer names when a SHARED or FAILOVER
          * subscription is used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder consumerNamePrefix(
                 String consumerNamePrefix) {
@@ -131,8 +147,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Size of the consumer queue - defaults to 10.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 int consumerQueueSize) {
@@ -141,8 +159,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Size of the consumer queue - defaults to 10.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 String consumerQueueSize) {
@@ -151,8 +171,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Number of consumers - defaults to 1.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 int numberOfConsumers) {
@@ -161,8 +183,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Number of consumers - defaults to 1.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 String numberOfConsumers) {
@@ -171,8 +195,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Name of the subscription to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
@@ -182,9 +208,11 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
          * EXCLUSIVE.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 SubscriptionType subscriptionType) {
@@ -194,9 +222,11 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Type of the subscription EXCLUSIVESHAREDFAILOVER, defaults to
          * EXCLUSIVE.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 String subscriptionType) {
@@ -219,9 +249,11 @@ public interface PulsarEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -233,9 +265,11 @@ public interface PulsarEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -244,8 +278,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -254,9 +290,11 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -266,8 +304,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -277,8 +317,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -288,8 +330,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -299,8 +343,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -320,8 +366,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Whether the topic is persistent or non-persistent.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointProducerBuilder persistence(String persistence) {
             setProperty("persistence", persistence);
@@ -329,8 +377,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The tenant.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointProducerBuilder tenant(String tenant) {
             setProperty("tenant", tenant);
@@ -338,8 +388,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The namespace.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointProducerBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
@@ -347,8 +399,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The topic.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointProducerBuilder topic(String topic) {
             setProperty("topic", topic);
@@ -364,8 +418,10 @@ public interface PulsarEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -382,8 +438,10 @@ public interface PulsarEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -392,8 +450,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Name of the producer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default PulsarEndpointProducerBuilder producerName(String producerName) {
             setProperty("producerName", producerName);
@@ -413,8 +473,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -424,8 +486,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -435,8 +499,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -446,8 +512,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -467,8 +535,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * Whether the topic is persistent or non-persistent.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointBuilder persistence(String persistence) {
             setProperty("persistence", persistence);
@@ -476,8 +546,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The tenant.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointBuilder tenant(String tenant) {
             setProperty("tenant", tenant);
@@ -485,8 +557,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The namespace.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointBuilder namespace(String namespace) {
             setProperty("namespace", namespace);
@@ -494,8 +568,10 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The topic.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default PulsarEndpointBuilder topic(String topic) {
             setProperty("topic", topic);
@@ -515,8 +591,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -526,8 +604,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -537,8 +617,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -547,8 +629,10 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

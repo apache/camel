@@ -46,8 +46,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The distributed resource name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder resourceName(
                 String resourceName) {
@@ -56,8 +58,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
-         * The option is a <code>io.atomix.AtomixClient</code> type.
-         * @group common
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
@@ -65,9 +69,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
+         * 
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
@@ -75,8 +81,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix configuration uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
@@ -85,9 +93,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The default action.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder defaultAction(
                 Action defaultAction) {
@@ -96,9 +106,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The default action.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder defaultAction(
                 String defaultAction) {
@@ -107,9 +119,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
@@ -117,9 +131,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
@@ -127,8 +143,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The header that wil carry the result.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
@@ -137,9 +155,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder transport(
                 Class<Object> transport) {
@@ -148,9 +168,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointConsumerBuilder transport(String transport) {
             setProperty("transport", transport);
@@ -164,8 +186,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -180,8 +204,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default AtomixQueueEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -204,9 +230,11 @@ public interface AtomixQueueEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -218,9 +246,11 @@ public interface AtomixQueueEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -229,8 +259,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -239,9 +271,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -251,8 +285,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -262,8 +298,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -272,8 +310,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
@@ -282,9 +322,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
@@ -293,8 +335,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
@@ -303,9 +347,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
@@ -316,8 +362,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
                 boolean ephemeral) {
@@ -328,8 +376,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder ephemeral(
                 String ephemeral) {
@@ -338,8 +388,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
-         * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
                 ReadConsistency readConsistency) {
@@ -348,9 +401,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
+         * 
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder readConsistency(
                 String readConsistency) {
@@ -359,9 +414,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
@@ -370,10 +427,12 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceConfigs(
                 String resourceConfigs) {
@@ -382,9 +441,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
@@ -393,10 +454,12 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder resourceOptions(
                 String resourceOptions) {
@@ -406,8 +469,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -417,8 +482,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -438,8 +505,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The distributed resource name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder resourceName(
                 String resourceName) {
@@ -448,8 +517,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
-         * The option is a <code>io.atomix.AtomixClient</code> type.
-         * @group common
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
@@ -457,9 +528,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
+         * 
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
@@ -467,8 +540,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix configuration uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder configurationUri(
                 String configurationUri) {
@@ -477,9 +552,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The default action.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder defaultAction(
                 Action defaultAction) {
@@ -488,9 +565,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The default action.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder defaultAction(
                 String defaultAction) {
@@ -499,9 +578,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
@@ -509,9 +590,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
@@ -519,8 +602,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The header that wil carry the result.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder resultHeader(
                 String resultHeader) {
@@ -529,9 +614,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder transport(
                 Class<Object> transport) {
@@ -540,9 +627,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointProducerBuilder transport(String transport) {
             setProperty("transport", transport);
@@ -558,8 +647,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default AtomixQueueEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -576,8 +667,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AtomixQueueEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -598,8 +691,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -609,8 +704,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -619,8 +716,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
@@ -629,9 +728,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
@@ -640,8 +741,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
@@ -650,9 +753,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
@@ -663,8 +768,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
                 boolean ephemeral) {
@@ -675,8 +782,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder ephemeral(
                 String ephemeral) {
@@ -685,8 +794,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
-         * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
                 ReadConsistency readConsistency) {
@@ -695,9 +807,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
+         * 
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder readConsistency(
                 String readConsistency) {
@@ -706,9 +820,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
@@ -717,10 +833,12 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceConfigs(
                 String resourceConfigs) {
@@ -729,9 +847,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
@@ -740,10 +860,12 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder resourceOptions(
                 String resourceOptions) {
@@ -753,8 +875,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -764,8 +888,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -785,8 +911,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The distributed resource name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder resourceName(String resourceName) {
             setProperty("resourceName", resourceName);
@@ -794,8 +922,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
-         * The option is a <code>io.atomix.AtomixClient</code> type.
-         * @group common
+         * 
+         * The option is a: <code>io.atomix.AtomixClient</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder atomix(Object atomix) {
             setProperty("atomix", atomix);
@@ -803,9 +933,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix instance to use.
+         * 
          * The option will be converted to a <code>io.atomix.AtomixClient</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder atomix(String atomix) {
             setProperty("atomix", atomix);
@@ -813,8 +945,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The Atomix configuration uri.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder configurationUri(
                 String configurationUri) {
@@ -823,9 +957,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The default action.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder defaultAction(Action defaultAction) {
             setProperty("defaultAction", defaultAction);
@@ -833,9 +969,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The default action.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue$Action</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder defaultAction(String defaultAction) {
             setProperty("defaultAction", defaultAction);
@@ -843,9 +981,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder nodes(List<Object> nodes) {
             setProperty("nodes", nodes);
@@ -853,9 +993,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The address of the nodes composing the cluster.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder nodes(String nodes) {
             setProperty("nodes", nodes);
@@ -863,8 +1005,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The header that wil carry the result.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder resultHeader(String resultHeader) {
             setProperty("resultHeader", resultHeader);
@@ -872,9 +1016,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder transport(Class<Object> transport) {
             setProperty("transport", transport);
@@ -882,9 +1028,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Sets the Atomix transport.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default AtomixQueueEndpointBuilder transport(String transport) {
             setProperty("transport", transport);
@@ -904,8 +1052,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -915,8 +1065,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -925,8 +1077,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
@@ -935,9 +1089,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The cluster wide default resource configuration.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
@@ -946,8 +1102,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
-         * The option is a <code>java.util.Properties</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.Properties</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
@@ -956,9 +1114,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The local default resource options.
+         * 
          * The option will be converted to a <code>java.util.Properties</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
@@ -969,8 +1129,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder ephemeral(boolean ephemeral) {
             setProperty("ephemeral", ephemeral);
@@ -980,8 +1142,10 @@ public interface AtomixQueueEndpointBuilderFactory {
          * Sets if the local member should join groups as PersistentMember or
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder ephemeral(String ephemeral) {
             setProperty("ephemeral", ephemeral);
@@ -989,8 +1153,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
-         * The option is a <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
@@ -999,9 +1166,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * The read consistency level.
+         * 
          * The option will be converted to a
          * <code>io.atomix.resource.ReadConsistency</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder readConsistency(
                 String readConsistency) {
@@ -1010,9 +1179,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
@@ -1021,10 +1192,12 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Cluster wide resources configuration.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
@@ -1033,9 +1206,11 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
@@ -1044,10 +1219,12 @@ public interface AtomixQueueEndpointBuilderFactory {
         }
         /**
          * Local resources configurations.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
          * java.util.Properties&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder resourceOptions(
                 String resourceOptions) {
@@ -1057,8 +1234,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1068,8 +1247,10 @@ public interface AtomixQueueEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAtomixQueueEndpointBuilder synchronous(
                 String synchronous) {

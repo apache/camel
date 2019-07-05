@@ -40,8 +40,10 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * Name of the Lambda function.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default LambdaEndpointBuilder function(String function) {
             setProperty("function", function);
@@ -50,10 +52,13 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * The operation to perform. It can be listFunctions, getFunction,
          * createFunction, deleteFunction or invokeFunction.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
          * type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default LambdaEndpointBuilder operation(LambdaOperations operation) {
             setProperty("operation", operation);
@@ -62,10 +67,13 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * The operation to perform. It can be listFunctions, getFunction,
          * createFunction, deleteFunction or invokeFunction.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
          * type.
-         * @group producer
+         * 
+         * Required: true
+         * Group: producer
          */
         default LambdaEndpointBuilder operation(String operation) {
             setProperty("operation", operation);
@@ -73,8 +81,10 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * To define a proxy host when instantiating the Lambda client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default LambdaEndpointBuilder proxyHost(String proxyHost) {
             setProperty("proxyHost", proxyHost);
@@ -82,8 +92,10 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the Lambda client.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(Integer proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -91,9 +103,11 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * To define a proxy port when instantiating the Lambda client.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(String proxyPort) {
             setProperty("proxyPort", proxyPort);
@@ -101,8 +115,10 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Access Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default LambdaEndpointBuilder accessKey(String accessKey) {
             setProperty("accessKey", accessKey);
@@ -110,8 +126,10 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * Amazon AWS Secret Key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default LambdaEndpointBuilder secretKey(String secretKey) {
             setProperty("secretKey", secretKey);
@@ -130,9 +148,11 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * To use a existing configured AwsLambdaClient as client.
-         * The option is a <code>com.amazonaws.services.lambda.AWSLambda</code>
+         * 
+         * The option is a: <code>com.amazonaws.services.lambda.AWSLambda</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 Object awsLambdaClient) {
@@ -141,9 +161,11 @@ public interface LambdaEndpointBuilderFactory {
         }
         /**
          * To use a existing configured AwsLambdaClient as client.
+         * 
          * The option will be converted to a
          * <code>com.amazonaws.services.lambda.AWSLambda</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 String awsLambdaClient) {
@@ -153,8 +175,10 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -164,8 +188,10 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -175,8 +201,10 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -185,8 +213,10 @@ public interface LambdaEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

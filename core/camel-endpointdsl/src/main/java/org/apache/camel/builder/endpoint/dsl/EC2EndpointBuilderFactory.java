@@ -39,8 +39,10 @@ public interface EC2EndpointBuilderFactory {
         }
         /**
          * Logical name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default EC2EndpointBuilder label(String label) {
             setProperty("label", label);
@@ -48,8 +50,10 @@ public interface EC2EndpointBuilderFactory {
         }
         /**
          * The region in which EC2 client needs to work.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default EC2EndpointBuilder region(String region) {
             setProperty("region", region);
@@ -69,8 +73,10 @@ public interface EC2EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEC2EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -80,8 +86,10 @@ public interface EC2EndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEC2EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -91,8 +99,10 @@ public interface EC2EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedEC2EndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -101,8 +111,10 @@ public interface EC2EndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedEC2EndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

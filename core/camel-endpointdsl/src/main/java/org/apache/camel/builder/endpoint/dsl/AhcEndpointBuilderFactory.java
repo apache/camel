@@ -42,8 +42,10 @@ public interface AhcEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
-         * The option is a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.net.URI</code> type.
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder httpUri(URI httpUri) {
             setProperty("httpUri", httpUri);
@@ -51,8 +53,10 @@ public interface AhcEndpointBuilderFactory {
         }
         /**
          * The URI to use such as http://hostname:port/path.
+         * 
          * The option will be converted to a <code>java.net.URI</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder httpUri(String httpUri) {
             setProperty("httpUri", httpUri);
@@ -63,8 +67,10 @@ public interface AhcEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -75,8 +81,10 @@ public interface AhcEndpointBuilderFactory {
          * and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the AhcProducer send all
          * the fault response back.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
             setProperty("bridgeEndpoint", bridgeEndpoint);
@@ -85,8 +93,10 @@ public interface AhcEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder bufferSize(int bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -95,8 +105,10 @@ public interface AhcEndpointBuilderFactory {
         /**
          * The initial in-memory buffer size used when transferring data between
          * Camel and AHC Client.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder bufferSize(String bufferSize) {
             setProperty("bufferSize", bufferSize);
@@ -105,9 +117,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -117,9 +131,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -130,8 +146,10 @@ public interface AhcEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -142,8 +160,10 @@ public interface AhcEndpointBuilderFactory {
          * Option to disable throwing the AhcOperationFailedException in case of
          * failed responses from the remote server. This allows you to get all
          * responses regardless of the HTTP status code.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -160,8 +180,10 @@ public interface AhcEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder transferException(boolean transferException) {
             setProperty("transferException", transferException);
@@ -177,8 +199,10 @@ public interface AhcEndpointBuilderFactory {
          * serialized. This is by default turned off. If you enable this then be
          * aware that Java will deserialize the incoming data from the request
          * to Java and that can be a potential security risk.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default AhcEndpointBuilder transferException(String transferException) {
             setProperty("transferException", transferException);
@@ -191,9 +215,11 @@ public interface AhcEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AhcEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -207,9 +233,11 @@ public interface AhcEndpointBuilderFactory {
          * Configuration Utility. Note that configuring this option will
          * override any SSL/TLS configuration options provided through the
          * clientConfig option at the endpoint or component level.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AhcEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -230,8 +258,10 @@ public interface AhcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -241,8 +271,10 @@ public interface AhcEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -252,9 +284,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(Object binding) {
             setProperty("binding", binding);
@@ -263,9 +297,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To use a custom AhcBinding which allows to control how to bind
          * between AHC and Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.ahc.AhcBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(String binding) {
             setProperty("binding", binding);
@@ -274,9 +310,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(Object clientConfig) {
             setProperty("clientConfig", clientConfig);
@@ -285,9 +323,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClient to use a custom
          * com.ning.http.client.AsyncHttpClientConfig instance.
+         * 
          * The option will be converted to a
          * <code>org.asynchttpclient.AsyncHttpClientConfig</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(String clientConfig) {
             setProperty("clientConfig", clientConfig);
@@ -296,9 +336,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
@@ -308,10 +350,12 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig using the key/values from the
          * Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
                 String clientConfigOptions) {
@@ -321,8 +365,10 @@ public interface AhcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -331,8 +377,10 @@ public interface AhcEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -341,9 +389,11 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
@@ -353,10 +403,12 @@ public interface AhcEndpointBuilderFactory {
         /**
          * To configure the AsyncHttpClientConfig Realm using the key/values
          * from the Map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {

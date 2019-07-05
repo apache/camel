@@ -39,8 +39,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * This is the address of the Nagios host where checks should be send.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -48,8 +50,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * The port number of the host.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -57,8 +61,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * The port number of the host.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -66,8 +72,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * Connection timeout in millis.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder connectionTimeout(int connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
@@ -75,8 +83,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * Connection timeout in millis.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder connectionTimeout(String connectionTimeout) {
             setProperty("connectionTimeout", connectionTimeout);
@@ -86,8 +96,10 @@ public interface NagiosEndpointBuilderFactory {
          * Whether or not to use synchronous when sending a passive check.
          * Setting it to false will allow Camel to continue routing the message
          * and the passive check message will be send asynchronously.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder sendSync(boolean sendSync) {
             setProperty("sendSync", sendSync);
@@ -97,8 +109,10 @@ public interface NagiosEndpointBuilderFactory {
          * Whether or not to use synchronous when sending a passive check.
          * Setting it to false will allow Camel to continue routing the message
          * and the passive check message will be send asynchronously.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder sendSync(String sendSync) {
             setProperty("sendSync", sendSync);
@@ -106,8 +120,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * Sending timeout in millis.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -115,8 +131,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * Sending timeout in millis.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default NagiosEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -124,9 +142,11 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * To specify an encryption method.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default NagiosEndpointBuilder encryption(Encryption encryption) {
             setProperty("encryption", encryption);
@@ -134,9 +154,11 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * To specify an encryption method.
+         * 
          * The option will be converted to a
          * <code>com.googlecode.jsendnsca.encryption.Encryption</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default NagiosEndpointBuilder encryption(String encryption) {
             setProperty("encryption", encryption);
@@ -144,10 +166,12 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * To specify an encryption method.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         @Deprecated
         default NagiosEndpointBuilder encryptionMethod(
@@ -157,10 +181,12 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * To specify an encryption method.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         @Deprecated
         default NagiosEndpointBuilder encryptionMethod(String encryptionMethod) {
@@ -169,8 +195,10 @@ public interface NagiosEndpointBuilderFactory {
         }
         /**
          * Password to be authenticated when sending checks to Nagios.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default NagiosEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -190,8 +218,10 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -201,8 +231,10 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -212,8 +244,10 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -222,8 +256,10 @@ public interface NagiosEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -39,9 +39,11 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Type of the endpoint (dataset, datastream).
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.flink.EndpointType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder endpointType(EndpointType endpointType) {
             setProperty("endpointType", endpointType);
@@ -49,9 +51,11 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Type of the endpoint (dataset, datastream).
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.flink.EndpointType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder endpointType(String endpointType) {
             setProperty("endpointType", endpointType);
@@ -59,8 +63,10 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Indicates if results should be collected or counted.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder collect(boolean collect) {
             setProperty("collect", collect);
@@ -68,8 +74,10 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Indicates if results should be collected or counted.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder collect(String collect) {
             setProperty("collect", collect);
@@ -77,8 +85,10 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * DataSet to compute against.
-         * The option is a <code>org.apache.flink.api.java.DataSet</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>org.apache.flink.api.java.DataSet</code> type.
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataSet(Object dataSet) {
             setProperty("dataSet", dataSet);
@@ -86,9 +96,11 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * DataSet to compute against.
+         * 
          * The option will be converted to a
          * <code>org.apache.flink.api.java.DataSet</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataSet(String dataSet) {
             setProperty("dataSet", dataSet);
@@ -96,9 +108,11 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Function performing action against a DataSet.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(Object dataSetCallback) {
             setProperty("dataSetCallback", dataSetCallback);
@@ -106,9 +120,11 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Function performing action against a DataSet.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(String dataSetCallback) {
             setProperty("dataSetCallback", dataSetCallback);
@@ -116,10 +132,12 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * DataStream to compute against.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataStream(Object dataStream) {
             setProperty("dataStream", dataStream);
@@ -127,10 +145,12 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * DataStream to compute against.
+         * 
          * The option will be converted to a
          * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataStream(String dataStream) {
             setProperty("dataStream", dataStream);
@@ -138,10 +158,12 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Function performing action against a DataStream.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.flink.DataStreamCallback</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 Object dataStreamCallback) {
@@ -150,10 +172,12 @@ public interface FlinkEndpointBuilderFactory {
         }
         /**
          * Function performing action against a DataStream.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.flink.DataStreamCallback</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 String dataStreamCallback) {
@@ -174,8 +198,10 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -185,8 +211,10 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -196,8 +224,10 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -206,8 +236,10 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

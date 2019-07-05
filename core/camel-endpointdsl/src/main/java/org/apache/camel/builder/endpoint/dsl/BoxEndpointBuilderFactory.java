@@ -45,9 +45,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BoxEndpointConsumerBuilder apiName(BoxApiName apiName) {
             setProperty("apiName", apiName);
@@ -55,9 +57,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BoxEndpointConsumerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -65,8 +69,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointConsumerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -74,8 +80,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box application client ID.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointConsumerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -83,8 +91,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The enterprise ID to use for an App Enterprise.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointConsumerBuilder enterpriseId(String enterpriseId) {
             setProperty("enterpriseId", enterpriseId);
@@ -92,8 +102,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointConsumerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -101,8 +113,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The user ID to use for an App User.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointConsumerBuilder userId(String userId) {
             setProperty("userId", userId);
@@ -116,8 +130,10 @@ public interface BoxEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -132,8 +148,10 @@ public interface BoxEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -142,8 +160,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box application client secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -153,8 +173,10 @@ public interface BoxEndpointBuilderFactory {
          * The type of authentication for connection. Types of Authentication:
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
-         * The option is a <code>java.lang.String</code> type.
-         * @group authentication
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: authentication
          */
         default BoxEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
@@ -163,8 +185,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The private key for generating the JWT signature.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
@@ -172,8 +196,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The password for the private key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder privateKeyPassword(
                 String privateKeyPassword) {
@@ -182,8 +208,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The ID for public key for validating the JWT signature.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder publicKeyId(String publicKeyId) {
             setProperty("publicKeyId", publicKeyId);
@@ -191,9 +219,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -202,9 +232,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -213,8 +245,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box user name, MUST be provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder userName(String userName) {
             setProperty("userName", userName);
@@ -223,8 +257,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointConsumerBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
@@ -246,9 +282,11 @@ public interface BoxEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -260,9 +298,11 @@ public interface BoxEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -271,8 +311,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -281,9 +323,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -293,8 +337,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -304,8 +350,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -314,9 +362,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom HTTP params for settings like proxy host.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(
                 Map<String, Object> httpParams) {
@@ -325,10 +375,12 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom HTTP params for settings like proxy host.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
@@ -337,8 +389,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -348,8 +402,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -358,8 +414,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
-         * The option is a <code>com.box.sdk.IAccessTokenCache</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 Object accessTokenCache) {
@@ -368,9 +426,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
+         * 
          * The option will be converted to a
          * <code>com.box.sdk.IAccessTokenCache</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 String accessTokenCache) {
@@ -380,8 +440,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
-         * The option is a <code>com.box.sdk.EncryptionAlgorithm</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
@@ -391,9 +453,11 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
+         * 
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
@@ -402,8 +466,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The maximum number of access tokens in cache.
-         * The option is a <code>int</code> type.
-         * @group security
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 int maxCacheEntries) {
@@ -412,8 +478,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The maximum number of access tokens in cache.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 String maxCacheEntries) {
@@ -433,9 +501,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BoxEndpointProducerBuilder apiName(BoxApiName apiName) {
             setProperty("apiName", apiName);
@@ -443,9 +513,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BoxEndpointProducerBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -453,8 +525,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointProducerBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -462,8 +536,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box application client ID.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointProducerBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -471,8 +547,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The enterprise ID to use for an App Enterprise.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointProducerBuilder enterpriseId(String enterpriseId) {
             setProperty("enterpriseId", enterpriseId);
@@ -480,8 +558,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointProducerBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -489,8 +569,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The user ID to use for an App User.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointProducerBuilder userId(String userId) {
             setProperty("userId", userId);
@@ -506,8 +588,10 @@ public interface BoxEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -524,8 +608,10 @@ public interface BoxEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -534,8 +620,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box application client secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -545,8 +633,10 @@ public interface BoxEndpointBuilderFactory {
          * The type of authentication for connection. Types of Authentication:
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
-         * The option is a <code>java.lang.String</code> type.
-         * @group authentication
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: authentication
          */
         default BoxEndpointProducerBuilder authenticationType(
                 String authenticationType) {
@@ -555,8 +645,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The private key for generating the JWT signature.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
@@ -564,8 +656,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The password for the private key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder privateKeyPassword(
                 String privateKeyPassword) {
@@ -574,8 +668,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The ID for public key for validating the JWT signature.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder publicKeyId(String publicKeyId) {
             setProperty("publicKeyId", publicKeyId);
@@ -583,9 +679,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -594,9 +692,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -605,8 +705,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box user name, MUST be provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder userName(String userName) {
             setProperty("userName", userName);
@@ -615,8 +717,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointProducerBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
@@ -636,8 +740,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -647,8 +753,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -657,9 +765,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom HTTP params for settings like proxy host.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(
                 Map<String, Object> httpParams) {
@@ -668,10 +778,12 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom HTTP params for settings like proxy host.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
@@ -680,8 +792,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -691,8 +805,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -701,8 +817,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
-         * The option is a <code>com.box.sdk.IAccessTokenCache</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 Object accessTokenCache) {
@@ -711,9 +829,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
+         * 
          * The option will be converted to a
          * <code>com.box.sdk.IAccessTokenCache</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 String accessTokenCache) {
@@ -723,8 +843,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
-         * The option is a <code>com.box.sdk.EncryptionAlgorithm</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
@@ -734,9 +856,11 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
+         * 
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
@@ -745,8 +869,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The maximum number of access tokens in cache.
-         * The option is a <code>int</code> type.
-         * @group security
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 int maxCacheEntries) {
@@ -755,8 +881,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The maximum number of access tokens in cache.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 String maxCacheEntries) {
@@ -776,9 +904,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BoxEndpointBuilder apiName(BoxApiName apiName) {
             setProperty("apiName", apiName);
@@ -786,9 +916,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What kind of operation to perform.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.box.internal.BoxApiName</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default BoxEndpointBuilder apiName(String apiName) {
             setProperty("apiName", apiName);
@@ -796,8 +928,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * What sub operation to use for the selected operation.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointBuilder methodName(String methodName) {
             setProperty("methodName", methodName);
@@ -805,8 +939,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box application client ID.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -814,8 +950,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The enterprise ID to use for an App Enterprise.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointBuilder enterpriseId(String enterpriseId) {
             setProperty("enterpriseId", enterpriseId);
@@ -823,8 +961,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointBuilder inBody(String inBody) {
             setProperty("inBody", inBody);
@@ -832,8 +972,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The user ID to use for an App User.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default BoxEndpointBuilder userId(String userId) {
             setProperty("userId", userId);
@@ -841,8 +983,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box application client secret.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder clientSecret(String clientSecret) {
             setProperty("clientSecret", clientSecret);
@@ -852,8 +996,10 @@ public interface BoxEndpointBuilderFactory {
          * The type of authentication for connection. Types of Authentication:
          * STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION
          * - OAuth 2.0 with JSON Web Tokens.
-         * The option is a <code>java.lang.String</code> type.
-         * @group authentication
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: authentication
          */
         default BoxEndpointBuilder authenticationType(String authenticationType) {
             setProperty("authenticationType", authenticationType);
@@ -861,8 +1007,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The private key for generating the JWT signature.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder privateKeyFile(String privateKeyFile) {
             setProperty("privateKeyFile", privateKeyFile);
@@ -870,8 +1018,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The password for the private key.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder privateKeyPassword(String privateKeyPassword) {
             setProperty("privateKeyPassword", privateKeyPassword);
@@ -879,8 +1029,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The ID for public key for validating the JWT signature.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder publicKeyId(String publicKeyId) {
             setProperty("publicKeyId", publicKeyId);
@@ -888,9 +1040,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -899,9 +1053,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -910,8 +1066,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Box user name, MUST be provided.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder userName(String userName) {
             setProperty("userName", userName);
@@ -920,8 +1078,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Box user password, MUST be provided if authSecureStorage is not set,
          * or returns null on first call.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default BoxEndpointBuilder userPassword(String userPassword) {
             setProperty("userPassword", userPassword);
@@ -941,8 +1101,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -952,8 +1114,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -962,9 +1126,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom HTTP params for settings like proxy host.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointBuilder httpParams(
                 Map<String, Object> httpParams) {
@@ -973,10 +1139,12 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom HTTP params for settings like proxy host.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointBuilder httpParams(String httpParams) {
             setProperty("httpParams", httpParams);
@@ -985,8 +1153,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -995,8 +1165,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedBoxEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -1004,8 +1176,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
-         * The option is a <code>com.box.sdk.IAccessTokenCache</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.box.sdk.IAccessTokenCache</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 Object accessTokenCache) {
@@ -1014,9 +1188,11 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * Custom Access Token Cache for storing and retrieving access tokens.
+         * 
          * The option will be converted to a
          * <code>com.box.sdk.IAccessTokenCache</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 String accessTokenCache) {
@@ -1026,8 +1202,10 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
-         * The option is a <code>com.box.sdk.EncryptionAlgorithm</code> type.
-         * @group security
+         * 
+         * The option is a: <code>com.box.sdk.EncryptionAlgorithm</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
@@ -1037,9 +1215,11 @@ public interface BoxEndpointBuilderFactory {
         /**
          * The type of encryption algorithm for JWT. Supported Algorithms:
          * RSA_SHA_256 RSA_SHA_384 RSA_SHA_512.
+         * 
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
@@ -1048,8 +1228,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The maximum number of access tokens in cache.
-         * The option is a <code>int</code> type.
-         * @group security
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(int maxCacheEntries) {
             setProperty("maxCacheEntries", maxCacheEntries);
@@ -1057,8 +1239,10 @@ public interface BoxEndpointBuilderFactory {
         }
         /**
          * The maximum number of access tokens in cache.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(
                 String maxCacheEntries) {

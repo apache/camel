@@ -43,8 +43,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * the cache name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointConsumerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -53,8 +55,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointConsumerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -64,8 +68,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointConsumerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -80,8 +86,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CaffeineCacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -96,8 +104,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CaffeineCacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -120,9 +130,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -134,9 +146,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -145,8 +159,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -155,9 +171,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -167,8 +185,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -178,8 +198,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -188,9 +210,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder keyType(
                 Class<Object> keyType) {
@@ -199,9 +223,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder keyType(
                 String keyType) {
@@ -211,8 +237,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -222,8 +250,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -232,9 +262,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder valueType(
                 Class<Object> valueType) {
@@ -243,9 +275,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointConsumerBuilder valueType(
                 String valueType) {
@@ -265,8 +299,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * the cache name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointProducerBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -275,8 +311,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointProducerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -286,8 +324,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointProducerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -297,8 +337,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * To configure the default cache action. If an action is set in the
          * message header, then the operation from the header takes precedence.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder action(String action) {
             setProperty("action", action);
@@ -306,9 +348,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * To configure an already instantiated cache to be used.
-         * The option is a <code>com.github.benmanes.caffeine.cache.Cache</code>
-         * type.
-         * @group producer
+         * 
+         * The option is a:
+         * <code>com.github.benmanes.caffeine.cache.Cache</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder cache(Object cache) {
             setProperty("cache", cache);
@@ -316,9 +360,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * To configure an already instantiated cache to be used.
+         * 
          * The option will be converted to a
          * <code>com.github.benmanes.caffeine.cache.Cache</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder cache(String cache) {
             setProperty("cache", cache);
@@ -326,9 +372,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * To configure a CacheLoader in case of a LoadCache use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder cacheLoader(
                 Object cacheLoader) {
@@ -337,9 +385,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * To configure a CacheLoader in case of a LoadCache use.
+         * 
          * The option will be converted to a
          * <code>com.github.benmanes.caffeine.cache.CacheLoader</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder cacheLoader(
                 String cacheLoader) {
@@ -348,9 +398,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set the eviction Type for this cache.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder evictionType(
                 EvictionType evictionType) {
@@ -359,9 +411,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set the eviction Type for this cache.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder evictionType(
                 String evictionType) {
@@ -371,8 +425,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Set the expire After Access Time in case of time based Eviction (in
          * seconds).
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterAccessTime(
                 int expireAfterAccessTime) {
@@ -382,8 +438,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Set the expire After Access Time in case of time based Eviction (in
          * seconds).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterAccessTime(
                 String expireAfterAccessTime) {
@@ -393,8 +451,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Set the expire After Access Write in case of time based Eviction (in
          * seconds).
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterWriteTime(
                 int expireAfterWriteTime) {
@@ -404,8 +464,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Set the expire After Access Write in case of time based Eviction (in
          * seconds).
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder expireAfterWriteTime(
                 String expireAfterWriteTime) {
@@ -414,8 +476,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set the initial Capacity for the cache.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder initialCapacity(
                 int initialCapacity) {
@@ -424,8 +488,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set the initial Capacity for the cache.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder initialCapacity(
                 String initialCapacity) {
@@ -435,8 +501,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
-         * The option is a <code>java.lang.Object</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder key(Object key) {
             setProperty("key", key);
@@ -445,8 +513,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
+         * 
          * The option will be converted to a <code>java.lang.Object</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder key(String key) {
             setProperty("key", key);
@@ -462,8 +532,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -480,8 +552,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -490,8 +564,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set the maximum size for the cache.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder maximumSize(int maximumSize) {
             setProperty("maximumSize", maximumSize);
@@ -499,8 +575,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set the maximum size for the cache.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder maximumSize(
                 String maximumSize) {
@@ -509,9 +587,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set a specific removal Listener for the cache.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder removalListener(
                 Object removalListener) {
@@ -520,9 +600,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set a specific removal Listener for the cache.
+         * 
          * The option will be converted to a
          * <code>com.github.benmanes.caffeine.cache.RemovalListener</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder removalListener(
                 String removalListener) {
@@ -531,10 +613,12 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set a specific Stats Counter for the cache stats.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder statsCounter(
                 Object statsCounter) {
@@ -543,10 +627,12 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * Set a specific Stats Counter for the cache stats.
+         * 
          * The option will be converted to a
          * <code>com.github.benmanes.caffeine.cache.stats.StatsCounter</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder statsCounter(
                 String statsCounter) {
@@ -555,8 +641,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * To enable stats on the cache.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder statsEnabled(
                 boolean statsEnabled) {
@@ -565,8 +653,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * To enable stats on the cache.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CaffeineCacheEndpointProducerBuilder statsEnabled(
                 String statsEnabled) {
@@ -587,8 +677,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -598,8 +690,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -608,9 +702,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder keyType(
                 Class<Object> keyType) {
@@ -619,9 +715,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder keyType(
                 String keyType) {
@@ -631,8 +729,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -642,8 +742,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -652,9 +754,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder valueType(
                 Class<Object> valueType) {
@@ -663,9 +767,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointProducerBuilder valueType(
                 String valueType) {
@@ -685,8 +791,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * the cache name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -695,8 +803,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -706,8 +816,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CaffeineCacheEndpointBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -728,8 +840,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -739,8 +853,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -749,9 +865,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder keyType(
                 Class<Object> keyType) {
@@ -760,9 +878,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache key type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder keyType(String keyType) {
             setProperty("keyType", keyType);
@@ -771,8 +891,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -782,8 +904,10 @@ public interface CaffeineCacheEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder synchronous(
                 String synchronous) {
@@ -792,9 +916,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
-         * The option is a <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * 
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder valueType(
                 Class<Object> valueType) {
@@ -803,9 +929,11 @@ public interface CaffeineCacheEndpointBuilderFactory {
         }
         /**
          * The cache value type, default java.lang.Object.
+         * 
          * The option will be converted to a
          * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder valueType(String valueType) {
             setProperty("valueType", valueType);

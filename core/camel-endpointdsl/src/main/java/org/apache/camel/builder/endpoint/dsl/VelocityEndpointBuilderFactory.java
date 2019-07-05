@@ -44,8 +44,10 @@ public interface VelocityEndpointBuilderFactory {
          * registry. bean will call a method on a bean to be used as the
          * resource. For bean you can specify the method name after dot, eg
          * bean:myBean.myMethod.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default VelocityEndpointBuilder resourceUri(String resourceUri) {
             setProperty("resourceUri", resourceUri);
@@ -53,8 +55,10 @@ public interface VelocityEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default VelocityEndpointBuilder contentCache(boolean contentCache) {
             setProperty("contentCache", contentCache);
@@ -62,8 +66,10 @@ public interface VelocityEndpointBuilderFactory {
         }
         /**
          * Sets whether to use resource content cache or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VelocityEndpointBuilder contentCache(String contentCache) {
             setProperty("contentCache", contentCache);
@@ -71,8 +77,10 @@ public interface VelocityEndpointBuilderFactory {
         }
         /**
          * Character encoding of the resource content.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default VelocityEndpointBuilder encoding(String encoding) {
             setProperty("encoding", encoding);
@@ -81,8 +89,10 @@ public interface VelocityEndpointBuilderFactory {
         /**
          * Enables / disables the velocity resource loader cache which is
          * enabled by default.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default VelocityEndpointBuilder loaderCache(boolean loaderCache) {
             setProperty("loaderCache", loaderCache);
@@ -91,8 +101,10 @@ public interface VelocityEndpointBuilderFactory {
         /**
          * Enables / disables the velocity resource loader cache which is
          * enabled by default.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VelocityEndpointBuilder loaderCache(String loaderCache) {
             setProperty("loaderCache", loaderCache);
@@ -101,8 +113,10 @@ public interface VelocityEndpointBuilderFactory {
         /**
          * The URI of the properties file which is used for VelocityEngine
          * initialization.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default VelocityEndpointBuilder propertiesFile(String propertiesFile) {
             setProperty("propertiesFile", propertiesFile);
@@ -122,8 +136,10 @@ public interface VelocityEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -133,8 +149,10 @@ public interface VelocityEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -144,8 +162,10 @@ public interface VelocityEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -154,8 +174,10 @@ public interface VelocityEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

@@ -39,8 +39,10 @@ public interface CMEndpointBuilderFactory {
         }
         /**
          * SMS Provider HOST with scheme.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default CMEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -48,8 +50,11 @@ public interface CMEndpointBuilderFactory {
         }
         /**
          * This is the sender name. The maximum length is 11 characters.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default CMEndpointBuilder defaultFrom(String defaultFrom) {
             setProperty("defaultFrom", defaultFrom);
@@ -60,8 +65,10 @@ public interface CMEndpointBuilderFactory {
          * truncated. Technically the gateway will first check if a message is
          * larger than 160 characters, if so, the message will be cut into
          * multiple 153 characters parts limited by these parameters.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
                 int defaultMaxNumberOfParts) {
@@ -73,8 +80,10 @@ public interface CMEndpointBuilderFactory {
          * truncated. Technically the gateway will first check if a message is
          * larger than 160 characters, if so, the message will be cut into
          * multiple 153 characters parts limited by these parameters.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
                 String defaultMaxNumberOfParts) {
@@ -83,8 +92,11 @@ public interface CMEndpointBuilderFactory {
         }
         /**
          * The unique token to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Required: true
+         * Group: producer
          */
         default CMEndpointBuilder productToken(String productToken) {
             setProperty("productToken", productToken);
@@ -92,8 +104,10 @@ public interface CMEndpointBuilderFactory {
         }
         /**
          * Whether to test the connection to the SMS Gateway on startup.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CMEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
@@ -102,8 +116,10 @@ public interface CMEndpointBuilderFactory {
         }
         /**
          * Whether to test the connection to the SMS Gateway on startup.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CMEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
@@ -124,8 +140,10 @@ public interface CMEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -135,8 +153,10 @@ public interface CMEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -146,8 +166,10 @@ public interface CMEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCMEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -156,8 +178,10 @@ public interface CMEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCMEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

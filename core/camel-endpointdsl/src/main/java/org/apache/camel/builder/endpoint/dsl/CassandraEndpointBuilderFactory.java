@@ -50,8 +50,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * beanRef is defined using bean:id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder beanRef(String beanRef) {
             setProperty("beanRef", beanRef);
@@ -60,8 +62,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
          * comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder hosts(String hosts) {
             setProperty("hosts", hosts);
@@ -69,8 +73,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Port number of cassansdra server(s).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder port(Integer port) {
             setProperty("port", port);
@@ -78,9 +84,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Port number of cassansdra server(s).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -88,8 +96,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Keyspace to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder keyspace(String keyspace) {
             setProperty("keyspace", keyspace);
@@ -97,8 +107,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Cluster instance (you would normally not use this option).
-         * The option is a <code>com.datastax.driver.core.Cluster</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder cluster(Object cluster) {
             setProperty("cluster", cluster);
@@ -106,9 +118,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Cluster instance (you would normally not use this option).
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.Cluster</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder cluster(String cluster) {
             setProperty("cluster", cluster);
@@ -116,8 +130,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Cluster name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
@@ -125,9 +141,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Consistency level to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
                 ConsistencyLevel consistencyLevel) {
@@ -136,9 +154,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Consistency level to use.
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
                 String consistencyLevel) {
@@ -148,8 +168,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * CQL query to perform. Can be overridden with the message header with
          * key CamelCqlQuery.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder cql(String cql) {
             setProperty("cql", cql);
@@ -157,8 +179,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use a specific LoadBalancingPolicy.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder loadBalancingPolicy(
                 String loadBalancingPolicy) {
@@ -167,8 +191,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Password for session authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder password(String password) {
             setProperty("password", password);
@@ -176,8 +202,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether to use PreparedStatements or regular Statements.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder prepareStatements(
                 boolean prepareStatements) {
@@ -186,8 +214,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether to use PreparedStatements or regular Statements.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder prepareStatements(
                 String prepareStatements) {
@@ -197,9 +227,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
@@ -209,9 +241,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
@@ -220,8 +254,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Session instance (you would normally not use this option).
-         * The option is a <code>com.datastax.driver.core.Session</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.datastax.driver.core.Session</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder session(Object session) {
             setProperty("session", session);
@@ -229,9 +265,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Session instance (you would normally not use this option).
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.Session</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder session(String session) {
             setProperty("session", session);
@@ -239,8 +277,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Username for session authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointConsumerBuilder username(String username) {
             setProperty("username", username);
@@ -254,8 +294,10 @@ public interface CassandraEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CassandraEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -270,8 +312,10 @@ public interface CassandraEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CassandraEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -281,8 +325,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CassandraEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -292,8 +338,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CassandraEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -303,8 +351,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -314,8 +364,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -325,8 +377,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -336,8 +390,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -351,8 +407,10 @@ public interface CassandraEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -366,8 +424,10 @@ public interface CassandraEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -378,8 +438,10 @@ public interface CassandraEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -389,8 +451,10 @@ public interface CassandraEndpointBuilderFactory {
          * Milliseconds before the next poll. You can also specify time values
          * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -399,8 +463,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder greedy(boolean greedy) {
             setProperty("greedy", greedy);
@@ -409,8 +475,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -420,8 +488,10 @@ public interface CassandraEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder initialDelay(long initialDelay) {
             setProperty("initialDelay", initialDelay);
@@ -431,8 +501,10 @@ public interface CassandraEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -442,8 +514,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -453,9 +527,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -466,9 +542,11 @@ public interface CassandraEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -479,9 +557,11 @@ public interface CassandraEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -491,10 +571,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -504,10 +586,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder scheduler(String scheduler) {
             setProperty("scheduler", scheduler);
@@ -516,9 +600,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -528,10 +614,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -540,8 +628,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -550,8 +640,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -560,8 +652,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -569,9 +663,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder timeUnit(String timeUnit) {
             setProperty("timeUnit", timeUnit);
@@ -580,8 +676,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -591,8 +689,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -615,9 +715,11 @@ public interface CassandraEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -629,9 +731,11 @@ public interface CassandraEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -640,8 +744,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -650,9 +756,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -664,9 +772,11 @@ public interface CassandraEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -678,9 +788,11 @@ public interface CassandraEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -690,8 +802,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -701,8 +815,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -712,8 +828,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -723,8 +841,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -744,8 +864,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * beanRef is defined using bean:id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder beanRef(String beanRef) {
             setProperty("beanRef", beanRef);
@@ -754,8 +876,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
          * comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder hosts(String hosts) {
             setProperty("hosts", hosts);
@@ -763,8 +887,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Port number of cassansdra server(s).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder port(Integer port) {
             setProperty("port", port);
@@ -772,9 +898,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Port number of cassansdra server(s).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -782,8 +910,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Keyspace to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder keyspace(String keyspace) {
             setProperty("keyspace", keyspace);
@@ -791,8 +921,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Cluster instance (you would normally not use this option).
-         * The option is a <code>com.datastax.driver.core.Cluster</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder cluster(Object cluster) {
             setProperty("cluster", cluster);
@@ -800,9 +932,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Cluster instance (you would normally not use this option).
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.Cluster</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder cluster(String cluster) {
             setProperty("cluster", cluster);
@@ -810,8 +944,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Cluster name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
@@ -819,9 +955,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Consistency level to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
                 ConsistencyLevel consistencyLevel) {
@@ -830,9 +968,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Consistency level to use.
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
                 String consistencyLevel) {
@@ -842,8 +982,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * CQL query to perform. Can be overridden with the message header with
          * key CamelCqlQuery.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder cql(String cql) {
             setProperty("cql", cql);
@@ -851,8 +993,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use a specific LoadBalancingPolicy.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder loadBalancingPolicy(
                 String loadBalancingPolicy) {
@@ -861,8 +1005,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Password for session authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder password(String password) {
             setProperty("password", password);
@@ -870,8 +1016,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether to use PreparedStatements or regular Statements.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder prepareStatements(
                 boolean prepareStatements) {
@@ -880,8 +1028,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether to use PreparedStatements or regular Statements.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder prepareStatements(
                 String prepareStatements) {
@@ -891,9 +1041,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
@@ -903,9 +1055,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
@@ -914,8 +1068,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Session instance (you would normally not use this option).
-         * The option is a <code>com.datastax.driver.core.Session</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.datastax.driver.core.Session</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder session(Object session) {
             setProperty("session", session);
@@ -923,9 +1079,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Session instance (you would normally not use this option).
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.Session</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder session(String session) {
             setProperty("session", session);
@@ -933,8 +1091,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Username for session authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointProducerBuilder username(String username) {
             setProperty("username", username);
@@ -950,8 +1110,10 @@ public interface CassandraEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CassandraEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -968,8 +1130,10 @@ public interface CassandraEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CassandraEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -990,8 +1154,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1001,8 +1167,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1012,8 +1180,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1023,8 +1193,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1044,8 +1216,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * beanRef is defined using bean:id.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder beanRef(String beanRef) {
             setProperty("beanRef", beanRef);
@@ -1054,8 +1228,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Hostname(s) cassansdra server(s). Multiple hosts can be separated by
          * comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder hosts(String hosts) {
             setProperty("hosts", hosts);
@@ -1063,8 +1239,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Port number of cassansdra server(s).
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder port(Integer port) {
             setProperty("port", port);
@@ -1072,9 +1250,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Port number of cassansdra server(s).
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -1082,8 +1262,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Keyspace to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder keyspace(String keyspace) {
             setProperty("keyspace", keyspace);
@@ -1091,8 +1273,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Cluster instance (you would normally not use this option).
-         * The option is a <code>com.datastax.driver.core.Cluster</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.datastax.driver.core.Cluster</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder cluster(Object cluster) {
             setProperty("cluster", cluster);
@@ -1100,9 +1284,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Cluster instance (you would normally not use this option).
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.Cluster</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder cluster(String cluster) {
             setProperty("cluster", cluster);
@@ -1110,8 +1296,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Cluster name.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder clusterName(String clusterName) {
             setProperty("clusterName", clusterName);
@@ -1119,9 +1307,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Consistency level to use.
-         * The option is a
+         * 
+         * The option is a:
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder consistencyLevel(
                 ConsistencyLevel consistencyLevel) {
@@ -1130,9 +1320,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Consistency level to use.
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.ConsistencyLevel</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder consistencyLevel(
                 String consistencyLevel) {
@@ -1142,8 +1334,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * CQL query to perform. Can be overridden with the message header with
          * key CamelCqlQuery.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder cql(String cql) {
             setProperty("cql", cql);
@@ -1151,8 +1345,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use a specific LoadBalancingPolicy.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder loadBalancingPolicy(
                 String loadBalancingPolicy) {
@@ -1161,8 +1357,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Password for session authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder password(String password) {
             setProperty("password", password);
@@ -1170,8 +1368,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether to use PreparedStatements or regular Statements.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder prepareStatements(
                 boolean prepareStatements) {
@@ -1180,8 +1380,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Whether to use PreparedStatements or regular Statements.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder prepareStatements(
                 String prepareStatements) {
@@ -1191,9 +1393,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
@@ -1203,9 +1407,11 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
@@ -1214,8 +1420,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Session instance (you would normally not use this option).
-         * The option is a <code>com.datastax.driver.core.Session</code> type.
-         * @group common
+         * 
+         * The option is a: <code>com.datastax.driver.core.Session</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder session(Object session) {
             setProperty("session", session);
@@ -1223,9 +1431,11 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * To use the Session instance (you would normally not use this option).
+         * 
          * The option will be converted to a
          * <code>com.datastax.driver.core.Session</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder session(String session) {
             setProperty("session", session);
@@ -1233,8 +1443,10 @@ public interface CassandraEndpointBuilderFactory {
         }
         /**
          * Username for session authentication.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CassandraEndpointBuilder username(String username) {
             setProperty("username", username);
@@ -1254,8 +1466,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1265,8 +1479,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1276,8 +1492,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1286,8 +1504,10 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

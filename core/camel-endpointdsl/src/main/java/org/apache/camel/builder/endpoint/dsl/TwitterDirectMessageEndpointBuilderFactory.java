@@ -51,8 +51,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The user name to send a direct message. This will be ignored for
          * consumer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default TwitterDirectMessageEndpointConsumerBuilder user(String user) {
             setProperty("user", user);
@@ -66,8 +68,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -82,8 +86,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -93,8 +99,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -104,8 +112,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -114,10 +124,12 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Endpoint type to use. Only streaming supports event type.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder type(
                 EndpointType type) {
@@ -126,10 +138,12 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Endpoint type to use. Only streaming supports event type.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder type(String type) {
             setProperty("type", type);
@@ -137,8 +151,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Limiting number of results per page.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder count(Integer count) {
             setProperty("count", count);
@@ -146,9 +162,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Limiting number of results per page.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder count(String count) {
             setProperty("count", count);
@@ -157,8 +175,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Filter out old tweets, that has previously been polled. This state is
          * stored in memory only, and based on last tweet id.
-         * The option is a <code>boolean</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder filterOld(
                 boolean filterOld) {
@@ -168,8 +188,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Filter out old tweets, that has previously been polled. This state is
          * stored in memory only, and based on last tweet id.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder filterOld(
                 String filterOld) {
@@ -178,8 +200,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * The lang string ISO_639-1 which will be used for searching.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder lang(String lang) {
             setProperty("lang", lang);
@@ -187,8 +211,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * The number of pages result which you want camel-twitter to consume.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
                 Integer numberOfPages) {
@@ -197,9 +223,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * The number of pages result which you want camel-twitter to consume.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
                 String numberOfPages) {
@@ -209,8 +237,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The last tweet id which will be used for pulling the tweets. It is
          * useful when the camel route is restarted after a long running.
-         * The option is a <code>long</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder sinceId(long sinceId) {
             setProperty("sinceId", sinceId);
@@ -219,8 +249,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The last tweet id which will be used for pulling the tweets. It is
          * useful when the camel route is restarted after a long running.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group filter
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder sinceId(
                 String sinceId) {
@@ -230,8 +262,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * To filter by user ids for streaming/filter. Multiple values can be
          * separated by comma.
-         * The option is a <code>java.lang.String</code> type.
-         * @group filter
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder userIds(
                 String userIds) {
@@ -241,8 +275,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -252,8 +288,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -263,8 +301,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -274,8 +314,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -289,8 +331,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
-         * The option is a <code>int</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -304,8 +348,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * attempt is happening again. When this option is in use then
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -314,8 +360,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Milliseconds before the next poll.
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder delay(long delay) {
             setProperty("delay", delay);
@@ -323,8 +371,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Milliseconds before the next poll.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder delay(String delay) {
             setProperty("delay", delay);
@@ -333,8 +383,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder greedy(
                 boolean greedy) {
@@ -344,8 +396,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder greedy(String greedy) {
             setProperty("greedy", greedy);
@@ -355,8 +409,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
-         * The option is a <code>long</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
@@ -367,8 +423,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Milliseconds before the first poll starts. You can also specify time
          * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
          * seconds), and 1h (1 hour).
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -378,8 +436,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
-         * The option is a <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -389,9 +449,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -402,9 +464,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
-         * The option is a
+         * 
+         * The option is a:
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -415,9 +479,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Allows for configuring a custom/shared thread pool to use for the
          * consumer. By default each consumer has its own single threaded thread
          * pool.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -427,10 +493,12 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduler(
                 ScheduledPollConsumerScheduler scheduler) {
@@ -440,10 +508,12 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * To use a cron scheduler from either camel-spring or camel-quartz2
          * component.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduler(
                 String scheduler) {
@@ -453,9 +523,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
@@ -465,10 +537,12 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz2, Spring based scheduler.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
          * type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
@@ -477,8 +551,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -487,8 +563,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Whether the scheduler should be auto started.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -497,8 +575,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
-         * The option is a <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
                 TimeUnit timeUnit) {
@@ -507,9 +587,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Time unit for initialDelay and delay options.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
                 String timeUnit) {
@@ -519,8 +601,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
-         * The option is a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -530,8 +614,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group scheduler
+         * 
+         * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -540,8 +626,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Sorts by id, so the oldest are first, and newest last.
-         * The option is a <code>boolean</code> type.
-         * @group sort
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: sort
          */
         default TwitterDirectMessageEndpointConsumerBuilder sortById(
                 boolean sortById) {
@@ -550,8 +638,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Sorts by id, so the oldest are first, and newest last.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group sort
+         * 
+         * Group: sort
          */
         default TwitterDirectMessageEndpointConsumerBuilder sortById(
                 String sortById) {
@@ -561,8 +651,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -572,8 +664,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy password which can be used for the camel-twitter. Can
          * also be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -583,8 +677,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -594,9 +690,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -606,8 +704,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy user which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -617,8 +717,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -628,8 +730,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The access secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder accessTokenSecret(
                 String accessTokenSecret) {
@@ -639,8 +743,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer key. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder consumerKey(
                 String consumerKey) {
@@ -650,8 +756,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
@@ -675,8 +783,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * the configured metrics. The unit can either be mi for miles, or km
          * for kilometers. You need to configure all the following options:
          * longitude, latitude, radius, and distanceMetric.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder distanceMetric(
                 String distanceMetric) {
@@ -688,9 +798,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -702,9 +814,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -713,8 +827,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -723,9 +839,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -735,8 +853,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Used for enabling full text from twitter (eg receive tweets that
          * contains more than 140 characters).
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
                 boolean extendedMode) {
@@ -746,8 +866,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Used for enabling full text from twitter (eg receive tweets that
          * contains more than 140 characters).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
                 String extendedMode) {
@@ -758,8 +880,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Used by the non-stream geography search to search by latitude. You
          * need to configure all the following options: longitude, latitude,
          * radius, and distanceMetric.
-         * The option is a <code>java.lang.Double</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
                 Double latitude) {
@@ -770,8 +894,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Used by the non-stream geography search to search by latitude. You
          * need to configure all the following options: longitude, latitude,
          * radius, and distanceMetric.
+         * 
          * The option will be converted to a <code>java.lang.Double</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
                 String latitude) {
@@ -782,8 +908,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Bounding boxes, created by pairs of lat/lons. Can be used for
          * streaming/filter. A pair is defined as lat,lon. And multiple paris
          * can be separated by semi colon.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder locations(
                 String locations) {
@@ -794,8 +922,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Used by the non-stream geography search to search by longitude. You
          * need to configure all the following options: longitude, latitude,
          * radius, and distanceMetric.
-         * The option is a <code>java.lang.Double</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
                 Double longitude) {
@@ -806,8 +936,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Used by the non-stream geography search to search by longitude. You
          * need to configure all the following options: longitude, latitude,
          * radius, and distanceMetric.
+         * 
          * The option will be converted to a <code>java.lang.Double</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
                 String longitude) {
@@ -819,9 +951,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -833,9 +967,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * you to provide your custom implementation to control error handling
          * usually occurred during the poll operation before an Exchange have
          * been created and being routed in Camel.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -846,8 +982,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Used by the non-stream geography search to search by radius. You need
          * to configure all the following options: longitude, latitude, radius,
          * and distanceMetric.
-         * The option is a <code>java.lang.Double</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
                 Double radius) {
@@ -858,8 +996,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Used by the non-stream geography search to search by radius. You need
          * to configure all the following options: longitude, latitude, radius,
          * and distanceMetric.
+         * 
          * The option will be converted to a <code>java.lang.Double</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
                 String radius) {
@@ -868,8 +1008,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * To use a custom instance of TwitterStream.
-         * The option is a <code>twitter4j.TwitterStream</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>twitter4j.TwitterStream</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
                 Object twitterStream) {
@@ -878,9 +1020,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         }
         /**
          * To use a custom instance of TwitterStream.
+         * 
          * The option will be converted to a
          * <code>twitter4j.TwitterStream</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
                 String twitterStream) {
@@ -890,8 +1034,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -901,8 +1047,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -912,8 +1060,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -923,8 +1073,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -945,8 +1097,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The user name to send a direct message. This will be ignored for
          * consumer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default TwitterDirectMessageEndpointProducerBuilder user(String user) {
             setProperty("user", user);
@@ -962,8 +1116,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -980,8 +1136,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -991,8 +1149,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -1002,8 +1162,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy password which can be used for the camel-twitter. Can
          * also be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -1013,8 +1175,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -1024,9 +1188,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -1036,8 +1202,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy user which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -1047,8 +1215,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -1058,8 +1228,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The access secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder accessTokenSecret(
                 String accessTokenSecret) {
@@ -1069,8 +1241,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer key. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder consumerKey(
                 String consumerKey) {
@@ -1080,8 +1254,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
@@ -1103,8 +1279,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1114,8 +1292,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1125,8 +1305,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1136,8 +1318,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1158,8 +1342,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The user name to send a direct message. This will be ignored for
          * consumer.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default TwitterDirectMessageEndpointBuilder user(String user) {
             setProperty("user", user);
@@ -1168,8 +1354,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -1179,8 +1367,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy password which can be used for the camel-twitter. Can
          * also be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -1190,8 +1380,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -1201,9 +1393,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -1213,8 +1407,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The http proxy user which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterDirectMessageEndpointBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -1224,8 +1420,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointBuilder accessToken(
                 String accessToken) {
@@ -1235,8 +1433,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The access secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
@@ -1246,8 +1446,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer key. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointBuilder consumerKey(
                 String consumerKey) {
@@ -1257,8 +1459,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * The consumer secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterDirectMessageEndpointBuilder consumerSecret(
                 String consumerSecret) {
@@ -1279,8 +1483,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1290,8 +1496,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1301,8 +1509,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1312,8 +1522,10 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
                 String synchronous) {

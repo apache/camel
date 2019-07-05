@@ -42,8 +42,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * Kubernetes Master url.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder masterUrl(
                 String masterUrl) {
@@ -52,8 +54,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Kubernetes API Version to use.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder apiVersion(
                 String apiVersion) {
@@ -62,8 +66,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The dns domain, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder dnsDomain(
                 String dnsDomain) {
@@ -72,9 +78,11 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -83,9 +91,11 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * Default KubernetesClient to use if provided.
+         * 
          * The option will be converted to a
          * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -94,8 +104,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The port name, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder portName(
                 String portName) {
@@ -104,8 +116,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The port protocol, used for ServiceCall EIP.
-         * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder portProtocol(
                 String portProtocol) {
@@ -114,8 +128,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The CA Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder caCertData(
                 String caCertData) {
@@ -124,8 +140,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The CA Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder caCertFile(
                 String caCertFile) {
@@ -134,8 +152,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Client Cert Data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -144,8 +164,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Client Cert File.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -154,8 +176,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Key Algorithm used by the client.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -164,8 +188,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Client Key data.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyData(
                 String clientKeyData) {
@@ -174,8 +200,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Client Key file.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -184,8 +212,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Client Key Passphrase.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -194,8 +224,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * The Auth Token.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder oauthToken(
                 String oauthToken) {
@@ -204,8 +236,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * Password to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder password(
                 String password) {
@@ -214,8 +248,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
@@ -224,9 +260,11 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * Define if the certs we used are trusted anyway or not.
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder trustCerts(
                 String trustCerts) {
@@ -235,8 +273,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         }
         /**
          * Username to connect to Kubernetes.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default KubernetesServiceAccountsEndpointBuilder username(
                 String username) {
@@ -258,8 +298,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -269,8 +311,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -280,8 +324,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -291,9 +337,11 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -303,8 +351,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -314,8 +364,10 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(
                 String synchronous) {

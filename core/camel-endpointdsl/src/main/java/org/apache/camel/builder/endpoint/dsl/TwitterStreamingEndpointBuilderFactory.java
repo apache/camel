@@ -42,10 +42,12 @@ public interface TwitterStreamingEndpointBuilderFactory {
         }
         /**
          * The streaming type to consume.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.twitter.data.StreamingType</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TwitterStreamingEndpointBuilder streamingType(
                 StreamingType streamingType) {
@@ -54,10 +56,12 @@ public interface TwitterStreamingEndpointBuilderFactory {
         }
         /**
          * The streaming type to consume.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.twitter.data.StreamingType</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default TwitterStreamingEndpointBuilder streamingType(
                 String streamingType) {
@@ -67,8 +71,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterStreamingEndpointBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -78,8 +84,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The http proxy password which can be used for the camel-twitter. Can
          * also be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterStreamingEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -89,8 +97,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.Integer</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterStreamingEndpointBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -100,9 +110,11 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
+         * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
-         * @group proxy
+         * 
+         * Group: proxy
          */
         default TwitterStreamingEndpointBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -112,8 +124,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The http proxy user which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group proxy
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
          */
         default TwitterStreamingEndpointBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -123,8 +137,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterStreamingEndpointBuilder accessToken(String accessToken) {
             setProperty("accessToken", accessToken);
@@ -133,8 +149,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The access secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterStreamingEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
@@ -144,8 +162,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The consumer key. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterStreamingEndpointBuilder consumerKey(String consumerKey) {
             setProperty("consumerKey", consumerKey);
@@ -154,8 +174,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * The consumer secret. Can also be configured on the TwitterComponent
          * level instead.
-         * The option is a <code>java.lang.String</code> type.
-         * @group security
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
          */
         default TwitterStreamingEndpointBuilder consumerSecret(
                 String consumerSecret) {
@@ -176,8 +198,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterStreamingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -187,8 +211,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterStreamingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -198,8 +224,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterStreamingEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -209,8 +237,10 @@ public interface TwitterStreamingEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedTwitterStreamingEndpointBuilder synchronous(
                 String synchronous) {

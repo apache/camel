@@ -45,8 +45,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * The name of the cache.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder cacheName(
                 String cacheName) {
@@ -56,10 +58,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -69,10 +73,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
@@ -82,9 +88,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
-         * The option is a <code>com.hazelcast.core.HazelcastInstance</code>
+         * 
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -94,9 +102,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -107,8 +117,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The hazelcast instance reference name which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -117,8 +129,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder reliable(
                 boolean reliable) {
@@ -127,8 +141,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder reliable(
                 String reliable) {
@@ -143,8 +159,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -159,8 +177,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -169,8 +189,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define the polling timeout of the Queue consumer in Poll mode.
-         * The option is a <code>long</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder pollingTimeout(
                 long pollingTimeout) {
@@ -179,8 +201,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define the polling timeout of the Queue consumer in Poll mode.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder pollingTimeout(
                 String pollingTimeout) {
@@ -189,8 +213,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define the Pool size for Queue Consumer Executor.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder poolSize(
                 int poolSize) {
@@ -199,8 +225,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define the Pool size for Queue Consumer Executor.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder poolSize(
                 String poolSize) {
@@ -209,9 +237,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define the Queue Consumer mode: Listen or Poll.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder queueConsumerMode(
                 HazelcastQueueConsumerMode queueConsumerMode) {
@@ -220,9 +250,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define the Queue Consumer mode: Listen or Poll.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder queueConsumerMode(
                 String queueConsumerMode) {
@@ -231,8 +263,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -241,8 +275,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -252,8 +288,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -263,8 +301,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -276,8 +316,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder pollTimeout(
                 int pollTimeout) {
@@ -289,8 +331,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
@@ -301,8 +345,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder transacted(
                 boolean transacted) {
@@ -313,8 +359,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder transacted(
                 String transacted) {
@@ -324,8 +372,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
@@ -335,8 +385,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
@@ -360,9 +412,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -374,9 +428,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -385,8 +441,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -395,9 +453,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -407,8 +467,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -418,8 +480,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -429,8 +493,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -440,8 +506,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -462,8 +530,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * The name of the cache.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder cacheName(
                 String cacheName) {
@@ -473,10 +543,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -486,10 +558,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
@@ -499,9 +573,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
-         * The option is a <code>com.hazelcast.core.HazelcastInstance</code>
+         * 
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -511,9 +587,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -524,8 +602,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The hazelcast instance reference name which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -534,8 +614,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder reliable(
                 boolean reliable) {
@@ -544,8 +626,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointProducerBuilder reliable(
                 String reliable) {
@@ -562,8 +646,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -580,8 +666,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -590,8 +678,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -600,8 +690,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -611,8 +703,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -622,8 +716,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -635,8 +731,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder pollTimeout(
                 int pollTimeout) {
@@ -648,8 +746,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder pollTimeout(
                 String pollTimeout) {
@@ -660,8 +760,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder transacted(
                 boolean transacted) {
@@ -672,8 +774,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder transacted(
                 String transacted) {
@@ -683,8 +787,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
@@ -694,8 +800,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointProducerBuilder transferExchange(
                 String transferExchange) {
@@ -717,8 +825,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -728,8 +838,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -739,8 +851,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -750,8 +864,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -771,8 +887,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * The name of the cache.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder cacheName(String cacheName) {
             setProperty("cacheName", cacheName);
@@ -781,10 +899,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -794,10 +914,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * To specify a default operation to use, if no operation header has
          * been provided.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -807,9 +929,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
-         * The option is a <code>com.hazelcast.core.HazelcastInstance</code>
+         * 
+         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
          * type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -819,9 +943,11 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
+         * 
          * The option will be converted to a
          * <code>com.hazelcast.core.HazelcastInstance</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -832,8 +958,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The hazelcast instance reference name which can be used for hazelcast
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -842,8 +970,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder reliable(boolean reliable) {
             setProperty("reliable", reliable);
@@ -851,8 +981,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * Define if the endpoint will use a reliable Topic struct or not.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default HazelcastReplicatedmapEndpointBuilder reliable(String reliable) {
             setProperty("reliable", reliable);
@@ -860,8 +992,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -870,8 +1004,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         }
         /**
          * To use concurrent consumers polling from the SEDA queue.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -881,8 +1017,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -892,8 +1030,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Milliseconds before consumer continues polling after an error has
          * occurred.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -905,8 +1045,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder pollTimeout(
                 int pollTimeout) {
@@ -918,8 +1060,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * occurs, the consumer can check whether it is allowed to continue
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder pollTimeout(
                 String pollTimeout) {
@@ -930,8 +1074,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder transacted(
                 boolean transacted) {
@@ -942,8 +1088,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * If set to true then the consumer runs in transaction mode, where the
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder transacted(
                 String transacted) {
@@ -953,8 +1101,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
-         * The option is a <code>boolean</code> type.
-         * @group seda
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder transferExchange(
                 boolean transferExchange) {
@@ -964,8 +1114,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group seda
+         * 
+         * Group: seda
          */
         default HazelcastReplicatedmapEndpointBuilder transferExchange(
                 String transferExchange) {
@@ -986,8 +1138,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -997,8 +1151,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1008,8 +1164,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1019,8 +1177,10 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder synchronous(
                 String synchronous) {

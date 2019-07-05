@@ -44,8 +44,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Hostname.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -53,8 +55,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Host port number.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -62,8 +66,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Host port number.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -72,8 +78,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The channelName represents a topic that can be subscribed to by the
          * Camel endpoints.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder channelName(String channelName) {
             setProperty("channelName", channelName);
@@ -82,8 +90,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder allowedOrigins(
                 String allowedOrigins) {
@@ -96,8 +106,10 @@ public interface CometdEndpointBuilderFactory {
          * loads the resource from file system or classpath. Classpath is
          * required for OSGI deployment where the resources are packaged in the
          * jar.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder baseResource(String baseResource) {
             setProperty("baseResource", baseResource);
@@ -105,8 +117,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * If true, the server will support for cross-domain filtering.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
@@ -115,8 +129,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * If true, the server will support for cross-domain filtering.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
@@ -126,8 +142,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The filterPath will be used by the CrossOriginFilter, if the
          * crosssOriginFilterOn is true.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
@@ -136,8 +154,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder interval(int interval) {
             setProperty("interval", interval);
@@ -146,8 +166,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder interval(String interval) {
             setProperty("interval", interval);
@@ -157,8 +179,10 @@ public interface CometdEndpointBuilderFactory {
          * If true, the server will accept JSON wrapped in a comment and will
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder jsonCommented(
                 boolean jsonCommented) {
@@ -169,8 +193,10 @@ public interface CometdEndpointBuilderFactory {
          * If true, the server will accept JSON wrapped in a comment and will
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder jsonCommented(String jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
@@ -178,8 +204,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Logging level. 0=none, 1=info, 2=debug.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder logLevel(int logLevel) {
             setProperty("logLevel", logLevel);
@@ -187,8 +215,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Logging level. 0=none, 1=info, 2=debug.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder logLevel(String logLevel) {
             setProperty("logLevel", logLevel);
@@ -197,8 +227,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder maxInterval(int maxInterval) {
             setProperty("maxInterval", maxInterval);
@@ -207,8 +239,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder maxInterval(String maxInterval) {
             setProperty("maxInterval", maxInterval);
@@ -217,8 +251,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder multiFrameInterval(
                 int multiFrameInterval) {
@@ -228,8 +264,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder multiFrameInterval(
                 String multiFrameInterval) {
@@ -239,8 +277,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -249,8 +289,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointConsumerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -264,8 +306,10 @@ public interface CometdEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CometdEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -280,8 +324,10 @@ public interface CometdEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CometdEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -291,8 +337,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether to include the server session headers in the Camel message
          * when creating a Camel Message for incoming requests.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default CometdEndpointConsumerBuilder sessionHeadersEnabled(
                 boolean sessionHeadersEnabled) {
@@ -302,8 +350,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether to include the server session headers in the Camel message
          * when creating a Camel Message for incoming requests.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default CometdEndpointConsumerBuilder sessionHeadersEnabled(
                 String sessionHeadersEnabled) {
@@ -326,9 +376,11 @@ public interface CometdEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -340,9 +392,11 @@ public interface CometdEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -351,8 +405,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -361,9 +417,11 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedCometdEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -373,8 +431,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -384,8 +444,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -395,8 +457,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -406,8 +470,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -427,8 +493,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Hostname.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -436,8 +504,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Host port number.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -445,8 +515,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Host port number.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -455,8 +527,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The channelName represents a topic that can be subscribed to by the
          * Camel endpoints.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder channelName(String channelName) {
             setProperty("channelName", channelName);
@@ -465,8 +539,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder allowedOrigins(
                 String allowedOrigins) {
@@ -479,8 +555,10 @@ public interface CometdEndpointBuilderFactory {
          * loads the resource from file system or classpath. Classpath is
          * required for OSGI deployment where the resources are packaged in the
          * jar.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder baseResource(String baseResource) {
             setProperty("baseResource", baseResource);
@@ -488,8 +566,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * If true, the server will support for cross-domain filtering.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
@@ -498,8 +578,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * If true, the server will support for cross-domain filtering.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
@@ -509,8 +591,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The filterPath will be used by the CrossOriginFilter, if the
          * crosssOriginFilterOn is true.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
@@ -519,8 +603,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder interval(int interval) {
             setProperty("interval", interval);
@@ -529,8 +615,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder interval(String interval) {
             setProperty("interval", interval);
@@ -540,8 +628,10 @@ public interface CometdEndpointBuilderFactory {
          * If true, the server will accept JSON wrapped in a comment and will
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder jsonCommented(
                 boolean jsonCommented) {
@@ -552,8 +642,10 @@ public interface CometdEndpointBuilderFactory {
          * If true, the server will accept JSON wrapped in a comment and will
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder jsonCommented(String jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
@@ -561,8 +653,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Logging level. 0=none, 1=info, 2=debug.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder logLevel(int logLevel) {
             setProperty("logLevel", logLevel);
@@ -570,8 +664,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Logging level. 0=none, 1=info, 2=debug.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder logLevel(String logLevel) {
             setProperty("logLevel", logLevel);
@@ -580,8 +676,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder maxInterval(int maxInterval) {
             setProperty("maxInterval", maxInterval);
@@ -590,8 +688,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder maxInterval(String maxInterval) {
             setProperty("maxInterval", maxInterval);
@@ -600,8 +700,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder multiFrameInterval(
                 int multiFrameInterval) {
@@ -611,8 +713,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder multiFrameInterval(
                 String multiFrameInterval) {
@@ -622,8 +726,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -632,8 +738,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -643,8 +751,10 @@ public interface CometdEndpointBuilderFactory {
          * Whether to disconnect local sessions after publishing a message to
          * its channel. Disconnecting local session is needed as they are not
          * swept by default by CometD, and therefore you can run out of memory.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CometdEndpointProducerBuilder disconnectLocalSession(
                 boolean disconnectLocalSession) {
@@ -655,8 +765,10 @@ public interface CometdEndpointBuilderFactory {
          * Whether to disconnect local sessions after publishing a message to
          * its channel. Disconnecting local session is needed as they are not
          * swept by default by CometD, and therefore you can run out of memory.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CometdEndpointProducerBuilder disconnectLocalSession(
                 String disconnectLocalSession) {
@@ -673,8 +785,10 @@ public interface CometdEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default CometdEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -691,8 +805,10 @@ public interface CometdEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default CometdEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -713,8 +829,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -724,8 +842,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -735,8 +855,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -746,8 +868,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -767,8 +891,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Hostname.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -776,8 +902,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Host port number.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -785,8 +913,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Host port number.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -795,8 +925,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The channelName represents a topic that can be subscribed to by the
          * Camel endpoints.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder channelName(String channelName) {
             setProperty("channelName", channelName);
@@ -805,8 +937,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The origins domain that support to cross, if the crosssOriginFilterOn
          * is true.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder allowedOrigins(String allowedOrigins) {
             setProperty("allowedOrigins", allowedOrigins);
@@ -818,8 +952,10 @@ public interface CometdEndpointBuilderFactory {
          * loads the resource from file system or classpath. Classpath is
          * required for OSGI deployment where the resources are packaged in the
          * jar.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder baseResource(String baseResource) {
             setProperty("baseResource", baseResource);
@@ -827,8 +963,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * If true, the server will support for cross-domain filtering.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder crossOriginFilterOn(
                 boolean crossOriginFilterOn) {
@@ -837,8 +975,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * If true, the server will support for cross-domain filtering.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder crossOriginFilterOn(
                 String crossOriginFilterOn) {
@@ -848,8 +988,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The filterPath will be used by the CrossOriginFilter, if the
          * crosssOriginFilterOn is true.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder filterPath(String filterPath) {
             setProperty("filterPath", filterPath);
@@ -858,8 +1000,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder interval(int interval) {
             setProperty("interval", interval);
@@ -868,8 +1012,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout in milliseconds. How long a client will
          * wait between reconnects.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder interval(String interval) {
             setProperty("interval", interval);
@@ -879,8 +1025,10 @@ public interface CometdEndpointBuilderFactory {
          * If true, the server will accept JSON wrapped in a comment and will
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
-         * The option is a <code>boolean</code> type.
-         * @group common
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder jsonCommented(boolean jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
@@ -890,8 +1038,10 @@ public interface CometdEndpointBuilderFactory {
          * If true, the server will accept JSON wrapped in a comment and will
          * generate JSON wrapped in a comment. This is a defence against Ajax
          * Hijacking.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder jsonCommented(String jsonCommented) {
             setProperty("jsonCommented", jsonCommented);
@@ -899,8 +1049,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Logging level. 0=none, 1=info, 2=debug.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder logLevel(int logLevel) {
             setProperty("logLevel", logLevel);
@@ -908,8 +1060,10 @@ public interface CometdEndpointBuilderFactory {
         }
         /**
          * Logging level. 0=none, 1=info, 2=debug.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder logLevel(String logLevel) {
             setProperty("logLevel", logLevel);
@@ -918,8 +1072,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder maxInterval(int maxInterval) {
             setProperty("maxInterval", maxInterval);
@@ -928,8 +1084,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The max client side poll timeout in milliseconds. A client will be
          * removed if a connection is not received in this time.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder maxInterval(String maxInterval) {
             setProperty("maxInterval", maxInterval);
@@ -938,8 +1096,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder multiFrameInterval(int multiFrameInterval) {
             setProperty("multiFrameInterval", multiFrameInterval);
@@ -948,8 +1108,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The client side poll timeout, if multiple connections are detected
          * from the same browser.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder multiFrameInterval(
                 String multiFrameInterval) {
@@ -959,8 +1121,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder timeout(int timeout) {
             setProperty("timeout", timeout);
@@ -969,8 +1133,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * The server side poll timeout in milliseconds. This is how long the
          * server will hold a reconnect request before responding.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default CometdEndpointBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -990,8 +1156,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -1001,8 +1169,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -1012,8 +1182,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1022,8 +1194,10 @@ public interface CometdEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedCometdEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

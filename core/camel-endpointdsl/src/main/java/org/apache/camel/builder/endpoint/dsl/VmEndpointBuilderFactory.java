@@ -46,8 +46,10 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Name of queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default VmEndpointConsumerBuilder name(String name) {
             setProperty("name", name);
@@ -57,8 +59,10 @@ public interface VmEndpointBuilderFactory {
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default VmEndpointConsumerBuilder size(int size) {
             setProperty("size", size);
@@ -68,8 +72,10 @@ public interface VmEndpointBuilderFactory {
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default VmEndpointConsumerBuilder size(String size) {
             setProperty("size", size);
@@ -83,8 +89,10 @@ public interface VmEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default VmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -99,8 +107,10 @@ public interface VmEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default VmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -109,8 +119,10 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Number of concurrent threads processing exchanges.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default VmEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -119,8 +131,10 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Number of concurrent threads processing exchanges.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default VmEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -143,9 +157,11 @@ public interface VmEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -157,9 +173,11 @@ public interface VmEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -168,8 +186,10 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -178,9 +198,11 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -192,8 +214,10 @@ public interface VmEndpointBuilderFactory {
          * 500. By default, an exception will be thrown if an endpoint is
          * configured with a greater number. You can disable that check by
          * turning this option off.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
@@ -205,8 +229,10 @@ public interface VmEndpointBuilderFactory {
          * 500. By default, an exception will be thrown if an endpoint is
          * configured with a greater number. You can disable that check by
          * turning this option off.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
@@ -219,8 +245,10 @@ public interface VmEndpointBuilderFactory {
          * message to the SEDA queue and have each consumer receive a copy of
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
@@ -233,8 +261,10 @@ public interface VmEndpointBuilderFactory {
          * message to the SEDA queue and have each consumer receive a copy of
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
@@ -245,8 +275,10 @@ public interface VmEndpointBuilderFactory {
          * The timeout used when polling. When a timeout occurs, the consumer
          * can check whether it is allowed to continue running. Setting a lower
          * value allows the consumer to react more quickly upon shutdown.
-         * The option is a <code>int</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
@@ -256,8 +288,10 @@ public interface VmEndpointBuilderFactory {
          * The timeout used when polling. When a timeout occurs, the consumer
          * can check whether it is allowed to continue running. Setting a lower
          * value allows the consumer to react more quickly upon shutdown.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder pollTimeout(String pollTimeout) {
             setProperty("pollTimeout", pollTimeout);
@@ -267,8 +301,10 @@ public interface VmEndpointBuilderFactory {
          * Whether to purge the task queue when stopping the consumer/route.
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
@@ -279,8 +315,10 @@ public interface VmEndpointBuilderFactory {
          * Whether to purge the task queue when stopping the consumer/route.
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
@@ -290,8 +328,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -301,8 +341,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -313,8 +355,11 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint. This
          * option is only for rare use-cases where you want to use a custom
          * queue instance.
-         * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
@@ -324,9 +369,11 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint. This
          * option is only for rare use-cases where you want to use a custom
          * queue instance.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder queue(String queue) {
             setProperty("queue", queue);
@@ -335,8 +382,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -346,8 +395,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -366,8 +417,10 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Name of queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default VmEndpointProducerBuilder name(String name) {
             setProperty("name", name);
@@ -377,8 +430,10 @@ public interface VmEndpointBuilderFactory {
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default VmEndpointProducerBuilder size(int size) {
             setProperty("size", size);
@@ -388,8 +443,10 @@ public interface VmEndpointBuilderFactory {
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default VmEndpointProducerBuilder size(String size) {
             setProperty("size", size);
@@ -401,8 +458,10 @@ public interface VmEndpointBuilderFactory {
          * exception will be thrown stating that the queue is full. By enabling
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
@@ -414,8 +473,10 @@ public interface VmEndpointBuilderFactory {
          * exception will be thrown stating that the queue is full. By enabling
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
             setProperty("blockWhenFull", blockWhenFull);
@@ -426,8 +487,10 @@ public interface VmEndpointBuilderFactory {
          * message to the queue), when sending to a queue with no active
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
@@ -439,8 +502,10 @@ public interface VmEndpointBuilderFactory {
          * message to the queue), when sending to a queue with no active
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
@@ -452,8 +517,10 @@ public interface VmEndpointBuilderFactory {
          * sending to a queue with no active consumers. Only one of the options
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
@@ -465,8 +532,10 @@ public interface VmEndpointBuilderFactory {
          * sending to a queue with no active consumers. Only one of the options
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
@@ -483,8 +552,10 @@ public interface VmEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -501,8 +572,10 @@ public interface VmEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -513,8 +586,10 @@ public interface VmEndpointBuilderFactory {
          * offerTimeout (in milliseconds) can be added to the block case when
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder offerTimeout(long offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
@@ -524,8 +599,10 @@ public interface VmEndpointBuilderFactory {
          * offerTimeout (in milliseconds) can be added to the block case when
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder offerTimeout(String offerTimeout) {
             setProperty("offerTimeout", offerTimeout);
@@ -535,8 +612,10 @@ public interface VmEndpointBuilderFactory {
          * Timeout (in milliseconds) before a SEDA producer will stop waiting
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
-         * The option is a <code>long</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder timeout(long timeout) {
             setProperty("timeout", timeout);
@@ -546,8 +625,10 @@ public interface VmEndpointBuilderFactory {
          * Timeout (in milliseconds) before a SEDA producer will stop waiting
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
+         * 
          * The option will be converted to a <code>long</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder timeout(String timeout) {
             setProperty("timeout", timeout);
@@ -560,9 +641,11 @@ public interface VmEndpointBuilderFactory {
          * self-explanatory. The last value, IfReplyExpected, will only wait if
          * the message is Request Reply based. The default option is
          * IfReplyExpected.
-         * The option is a <code>org.apache.camel.WaitForTaskToComplete</code>
+         * 
+         * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
          * type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
@@ -576,9 +659,11 @@ public interface VmEndpointBuilderFactory {
          * self-explanatory. The last value, IfReplyExpected, will only wait if
          * the message is Request Reply based. The default option is
          * IfReplyExpected.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
@@ -599,8 +684,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -610,8 +697,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -622,8 +711,11 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint. This
          * option is only for rare use-cases where you want to use a custom
          * queue instance.
-         * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
@@ -633,9 +725,11 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint. This
          * option is only for rare use-cases where you want to use a custom
          * queue instance.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder queue(String queue) {
             setProperty("queue", queue);
@@ -644,8 +738,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -655,8 +751,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);
@@ -675,8 +773,10 @@ public interface VmEndpointBuilderFactory {
         }
         /**
          * Name of queue.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default VmEndpointBuilder name(String name) {
             setProperty("name", name);
@@ -686,8 +786,10 @@ public interface VmEndpointBuilderFactory {
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default VmEndpointBuilder size(int size) {
             setProperty("size", size);
@@ -697,8 +799,10 @@ public interface VmEndpointBuilderFactory {
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default VmEndpointBuilder size(String size) {
             setProperty("size", size);
@@ -718,8 +822,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -729,8 +835,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -741,8 +849,11 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint. This
          * option is only for rare use-cases where you want to use a custom
          * queue instance.
-         * The option is a <code>java.util.concurrent.BlockingQueue</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
+         * type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointBuilder queue(BlockingQueue queue) {
             setProperty("queue", queue);
@@ -752,9 +863,11 @@ public interface VmEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint. This
          * option is only for rare use-cases where you want to use a custom
          * queue instance.
+         * 
          * The option will be converted to a
          * <code>java.util.concurrent.BlockingQueue</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointBuilder queue(String queue) {
             setProperty("queue", queue);
@@ -763,8 +876,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointBuilder synchronous(boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -773,8 +888,10 @@ public interface VmEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedVmEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

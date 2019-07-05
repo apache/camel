@@ -45,8 +45,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The protocol to use which is http or https.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointConsumerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
@@ -54,8 +56,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The hostname of the restlet service.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointConsumerBuilder host(String host) {
             setProperty("host", host);
@@ -63,8 +67,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The port number of the restlet service.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointConsumerBuilder port(int port) {
             setProperty("port", port);
@@ -72,8 +78,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The port number of the restlet service.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RestletEndpointConsumerBuilder port(String port) {
             setProperty("port", port);
@@ -81,8 +89,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The resource pattern such as /customer/{id}.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointConsumerBuilder uriPattern(String uriPattern) {
             setProperty("uriPattern", uriPattern);
@@ -92,8 +102,10 @@ public interface RestletEndpointBuilderFactory {
          * On a producer endpoint, specifies the request method to use. On a
          * consumer endpoint, specifies that the endpoint consumes only
          * restletMethod requests.
-         * The option is a <code>org.restlet.data.Method</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.restlet.data.Method</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointConsumerBuilder restletMethod(
                 Object restletMethod) {
@@ -104,9 +116,11 @@ public interface RestletEndpointBuilderFactory {
          * On a producer endpoint, specifies the request method to use. On a
          * consumer endpoint, specifies that the endpoint consumes only
          * restletMethod requests.
+         * 
          * The option will be converted to a
          * <code>org.restlet.data.Method</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RestletEndpointConsumerBuilder restletMethod(
                 String restletMethod) {
@@ -121,8 +135,10 @@ public interface RestletEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default RestletEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -137,8 +153,10 @@ public interface RestletEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RestletEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -151,8 +169,10 @@ public interface RestletEndpointBuilderFactory {
          * endpoint. If both restletMethod and restletMethods options are
          * specified, the restletMethod setting is ignored. The possible methods
          * are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE.
-         * The option is a <code>org.restlet.data.Method[]</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>org.restlet.data.Method[]</code> type.
+         * 
+         * Group: consumer
          */
         default RestletEndpointConsumerBuilder restletMethods(
                 Object[] restletMethods) {
@@ -165,9 +185,11 @@ public interface RestletEndpointBuilderFactory {
          * endpoint. If both restletMethod and restletMethods options are
          * specified, the restletMethod setting is ignored. The possible methods
          * are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE.
+         * 
          * The option will be converted to a
          * <code>org.restlet.data.Method[]</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default RestletEndpointConsumerBuilder restletMethods(
                 String restletMethods) {
@@ -176,9 +198,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure the security realms of restlet as a map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointConsumerBuilder restletRealm(
                 Map<String, String> restletRealm) {
@@ -187,10 +211,12 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure the security realms of restlet as a map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointConsumerBuilder restletRealm(String restletRealm) {
             setProperty("restletRealm", restletRealm);
@@ -198,9 +224,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -209,9 +237,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -240,8 +270,10 @@ public interface RestletEndpointBuilderFactory {
          * DefaultRestletBinding will copy the request input stream into a
          * stream cache and put it into message body if this option is false to
          * support reading the stream multiple times.
-         * The option is a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -259,8 +291,10 @@ public interface RestletEndpointBuilderFactory {
          * DefaultRestletBinding will copy the request input stream into a
          * stream cache and put it into message body if this option is false to
          * support reading the stream multiple times.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestletEndpointConsumerBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -272,9 +306,11 @@ public interface RestletEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
-         * The option is a <code>org.apache.camel.spi.ExceptionHandler</code>
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
          * type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -286,9 +322,11 @@ public interface RestletEndpointBuilderFactory {
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.ExceptionHandler</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestletEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -297,8 +335,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * The option is a <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestletEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -307,9 +347,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.ExchangePattern</code> type.
-         * @group consumer (advanced)
+         * 
+         * Group: consumer (advanced)
          */
         default AdvancedRestletEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -319,8 +361,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -330,8 +374,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -341,9 +387,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -353,9 +401,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -365,9 +415,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom RestletBinding to bind between Restlet and Camel
          * message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder restletBinding(
                 Object restletBinding) {
@@ -377,9 +429,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom RestletBinding to bind between Restlet and Camel
          * message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder restletBinding(
                 String restletBinding) {
@@ -389,8 +443,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder synchronous(
                 Boolean synchronous) {
@@ -400,9 +456,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -422,8 +480,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The protocol to use which is http or https.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointProducerBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
@@ -431,8 +491,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The hostname of the restlet service.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointProducerBuilder host(String host) {
             setProperty("host", host);
@@ -440,8 +502,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The port number of the restlet service.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointProducerBuilder port(int port) {
             setProperty("port", port);
@@ -449,8 +513,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The port number of the restlet service.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RestletEndpointProducerBuilder port(String port) {
             setProperty("port", port);
@@ -458,8 +524,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The resource pattern such as /customer/{id}.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointProducerBuilder uriPattern(String uriPattern) {
             setProperty("uriPattern", uriPattern);
@@ -469,8 +537,10 @@ public interface RestletEndpointBuilderFactory {
          * On a producer endpoint, specifies the request method to use. On a
          * consumer endpoint, specifies that the endpoint consumes only
          * restletMethod requests.
-         * The option is a <code>org.restlet.data.Method</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.restlet.data.Method</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointProducerBuilder restletMethod(
                 Object restletMethod) {
@@ -481,9 +551,11 @@ public interface RestletEndpointBuilderFactory {
          * On a producer endpoint, specifies the request method to use. On a
          * consumer endpoint, specifies that the endpoint consumes only
          * restletMethod requests.
+         * 
          * The option will be converted to a
          * <code>org.restlet.data.Method</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RestletEndpointProducerBuilder restletMethod(
                 String restletMethod) {
@@ -493,8 +565,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * The Client will give up connection if the connection is timeout, 0
          * for unlimited wait.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder connectTimeout(int connectTimeout) {
             setProperty("connectTimeout", connectTimeout);
@@ -503,8 +577,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * The Client will give up connection if the connection is timeout, 0
          * for unlimited wait.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -513,9 +589,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
@@ -524,9 +602,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
@@ -543,8 +623,10 @@ public interface RestletEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -561,8 +643,10 @@ public interface RestletEndpointBuilderFactory {
          * the first message is processed then creating and starting the
          * producer may take a little time and prolong the total processing time
          * of the processing.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -571,8 +655,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The Client socket receive timeout, 0 for unlimited wait.
-         * The option is a <code>int</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder socketTimeout(int socketTimeout) {
             setProperty("socketTimeout", socketTimeout);
@@ -580,8 +666,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The Client socket receive timeout, 0 for unlimited wait.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
@@ -592,8 +680,10 @@ public interface RestletEndpointBuilderFactory {
          * Whether to throw exception on a producer failure. If this option is
          * false then the http status code is set as a message header which can
          * be checked if it has an error value.
-         * The option is a <code>boolean</code> type.
-         * @group producer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
@@ -604,8 +694,10 @@ public interface RestletEndpointBuilderFactory {
          * Whether to throw exception on a producer failure. If this option is
          * false then the http status code is set as a message header which can
          * be checked if it has an error value.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer
+         * 
+         * Group: producer
          */
         default RestletEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
@@ -614,9 +706,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure the security realms of restlet as a map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointProducerBuilder restletRealm(
                 Map<String, String> restletRealm) {
@@ -625,10 +719,12 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure the security realms of restlet as a map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointProducerBuilder restletRealm(String restletRealm) {
             setProperty("restletRealm", restletRealm);
@@ -636,9 +732,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -647,9 +745,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -675,8 +775,10 @@ public interface RestletEndpointBuilderFactory {
          * ensure the input stream is closed when the Camel Exchange is done
          * being routed. However if you need to read the stream outside a Camel
          * route, you may need to not auto close the stream.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedRestletEndpointProducerBuilder autoCloseStream(
                 boolean autoCloseStream) {
@@ -691,8 +793,10 @@ public interface RestletEndpointBuilderFactory {
          * ensure the input stream is closed when the Camel Exchange is done
          * being routed. However if you need to read the stream outside a Camel
          * route, you may need to not auto close the stream.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedRestletEndpointProducerBuilder autoCloseStream(
                 String autoCloseStream) {
@@ -708,8 +812,10 @@ public interface RestletEndpointBuilderFactory {
          * stream is closed when the Camel Exchange is done being routed.
          * However if you need to read the stream outside a Camel route, you may
          * need to not auto close the stream.
-         * The option is a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedRestletEndpointProducerBuilder streamRepresentation(
                 boolean streamRepresentation) {
@@ -725,8 +831,10 @@ public interface RestletEndpointBuilderFactory {
          * stream is closed when the Camel Exchange is done being routed.
          * However if you need to read the stream outside a Camel route, you may
          * need to not auto close the stream.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group producer (advanced)
+         * 
+         * Group: producer (advanced)
          */
         default AdvancedRestletEndpointProducerBuilder streamRepresentation(
                 String streamRepresentation) {
@@ -736,8 +844,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -747,8 +857,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -758,9 +870,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -770,9 +884,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -782,9 +898,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom RestletBinding to bind between Restlet and Camel
          * message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder restletBinding(
                 Object restletBinding) {
@@ -794,9 +912,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom RestletBinding to bind between Restlet and Camel
          * message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder restletBinding(
                 String restletBinding) {
@@ -806,8 +926,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder synchronous(
                 Boolean synchronous) {
@@ -817,9 +939,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -839,8 +963,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The protocol to use which is http or https.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointBuilder protocol(String protocol) {
             setProperty("protocol", protocol);
@@ -848,8 +974,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The hostname of the restlet service.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointBuilder host(String host) {
             setProperty("host", host);
@@ -857,8 +985,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The port number of the restlet service.
-         * The option is a <code>int</code> type.
-         * @group common
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointBuilder port(int port) {
             setProperty("port", port);
@@ -866,8 +996,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The port number of the restlet service.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RestletEndpointBuilder port(String port) {
             setProperty("port", port);
@@ -875,8 +1007,10 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * The resource pattern such as /customer/{id}.
-         * The option is a <code>java.lang.String</code> type.
-         * @group common
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointBuilder uriPattern(String uriPattern) {
             setProperty("uriPattern", uriPattern);
@@ -886,8 +1020,10 @@ public interface RestletEndpointBuilderFactory {
          * On a producer endpoint, specifies the request method to use. On a
          * consumer endpoint, specifies that the endpoint consumes only
          * restletMethod requests.
-         * The option is a <code>org.restlet.data.Method</code> type.
-         * @group common
+         * 
+         * The option is a: <code>org.restlet.data.Method</code> type.
+         * 
+         * Group: common
          */
         default RestletEndpointBuilder restletMethod(Object restletMethod) {
             setProperty("restletMethod", restletMethod);
@@ -897,9 +1033,11 @@ public interface RestletEndpointBuilderFactory {
          * On a producer endpoint, specifies the request method to use. On a
          * consumer endpoint, specifies that the endpoint consumes only
          * restletMethod requests.
+         * 
          * The option will be converted to a
          * <code>org.restlet.data.Method</code> type.
-         * @group common
+         * 
+         * Group: common
          */
         default RestletEndpointBuilder restletMethod(String restletMethod) {
             setProperty("restletMethod", restletMethod);
@@ -907,9 +1045,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure the security realms of restlet as a map.
-         * The option is a <code>java.util.Map&lt;java.lang.String,
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.String&gt;</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointBuilder restletRealm(
                 Map<String, String> restletRealm) {
@@ -918,10 +1058,12 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure the security realms of restlet as a map.
+         * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
          * type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointBuilder restletRealm(String restletRealm) {
             setProperty("restletRealm", restletRealm);
@@ -929,9 +1071,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -940,9 +1084,11 @@ public interface RestletEndpointBuilderFactory {
         }
         /**
          * To configure security using SSLContextParameters.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
-         * @group security
+         * 
+         * Group: security
          */
         default RestletEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -963,8 +1109,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -974,8 +1122,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -985,9 +1135,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -997,9 +1149,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom HeaderFilterStrategy to filter header to and from
          * Camel message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1009,9 +1163,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom RestletBinding to bind between Restlet and Camel
          * message.
-         * The option is a
+         * 
+         * The option is a:
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder restletBinding(
                 Object restletBinding) {
@@ -1021,9 +1177,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * To use a custom RestletBinding to bind between Restlet and Camel
          * message.
+         * 
          * The option will be converted to a
          * <code>org.apache.camel.component.restlet.RestletBinding</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder restletBinding(
                 String restletBinding) {
@@ -1033,8 +1191,10 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>java.lang.Boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder synchronous(Boolean synchronous) {
             setProperty("synchronous", synchronous);
@@ -1043,9 +1203,11 @@ public interface RestletEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedRestletEndpointBuilder synchronous(String synchronous) {
             setProperty("synchronous", synchronous);

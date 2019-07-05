@@ -43,8 +43,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * Specifies an index for the endpoint.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder index(String index) {
             setProperty("index", index);
@@ -53,8 +55,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder accessToken(
                 String accessToken) {
@@ -64,8 +68,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Google Calendar application name. Example would be
          * camel-google-calendar/1.0.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder applicationName(
                 String applicationName) {
@@ -74,8 +80,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * The calendarId to be used.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder calendarId(String calendarId) {
             setProperty("calendarId", calendarId);
@@ -83,8 +91,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * Client ID of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder clientId(String clientId) {
             setProperty("clientId", clientId);
@@ -92,8 +102,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * Client secret of the calendar application.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder clientSecret(
                 String clientSecret) {
@@ -103,8 +115,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Take into account the lastUpdate of the last event polled as start
          * date for the next poll.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 boolean considerLastUpdate) {
@@ -114,8 +128,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Take into account the lastUpdate of the last event polled as start
          * date for the next poll.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 String considerLastUpdate) {
@@ -124,8 +140,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * Consume events in the selected calendar from now on.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 boolean consumeFromNow) {
@@ -134,8 +152,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * Consume events in the selected calendar from now on.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 String consumeFromNow) {
@@ -144,8 +164,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * Max results to be returned.
-         * The option is a <code>int</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder maxResults(int maxResults) {
             setProperty("maxResults", maxResults);
@@ -153,8 +175,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * Max results to be returned.
+         * 
          * The option will be converted to a <code>int</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder maxResults(String maxResults) {
             setProperty("maxResults", maxResults);
@@ -162,8 +186,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         }
         /**
          * The query to execute on calendar.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder query(String query) {
             setProperty("query", query);
@@ -173,8 +199,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
-         * The option is a <code>java.lang.String</code> type.
-         * @group consumer
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder refreshToken(
                 String refreshToken) {
@@ -185,9 +213,11 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Specifies the level of permissions you want a calendar application to
          * have to a user account. See
          * https://developers.google.com/calendar/auth for more info.
-         * The option is a <code>java.util.List&lt;java.lang.String&gt;</code>
+         * 
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
          * type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder scopes(List<String> scopes) {
             setProperty("scopes", scopes);
@@ -197,9 +227,11 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Specifies the level of permissions you want a calendar application to
          * have to a user account. See
          * https://developers.google.com/calendar/auth for more info.
+         * 
          * The option will be converted to a
          * <code>java.util.List&lt;java.lang.String&gt;</code> type.
-         * @group consumer
+         * 
+         * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder scopes(String scopes) {
             setProperty("scopes", scopes);
@@ -219,8 +251,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
@@ -230,8 +264,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
@@ -241,8 +277,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
-         * The option is a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -252,8 +290,10 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
+         * 
          * The option will be converted to a <code>boolean</code> type.
-         * @group advanced
+         * 
+         * Group: advanced
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 String synchronous) {
