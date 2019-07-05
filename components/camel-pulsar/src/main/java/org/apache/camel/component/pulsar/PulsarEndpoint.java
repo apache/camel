@@ -17,42 +17,36 @@
 package org.apache.camel.component.pulsar;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.PulsarClientException;
 
-@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Apache Pulsar", syntax = "pulsar:uri", label = "messaging")
+@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Apache Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
+    private String uri;
+
+    @UriPath(enums = "persistent,non-persistent") @Metadata(required = true)
+    private String persistence;
+    @UriPath @Metadata(required = true)
+    private String tenant;
+    @UriPath @Metadata(required = true)
+    private String namespace;
+    @UriPath @Metadata(required = true)
+    private String topic;
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
-    @UriPath(label = "consumer,producer", description = "The Topic's full URI path including type, tenant and namespace")
-    private final String topicUri;
 
-    public PulsarEndpoint(String uri, String path, PulsarConfiguration pulsarConfiguration, PulsarComponent component, PulsarClient pulsarClient) throws PulsarClientException {
+    public PulsarEndpoint(String uri, PulsarComponent component) {
         super(uri, component);
-        this.topicUri = path;
-        this.pulsarConfiguration = pulsarConfiguration;
-        this.pulsarClient = pulsarClient;
-    }
-
-    public static PulsarEndpoint create(final String uri, final String path, final PulsarConfiguration pulsarConfiguration, final PulsarComponent component,
-                                        final PulsarClient pulsarClient)
-        throws PulsarClientException, IllegalArgumentException {
-
-        if (null == pulsarConfiguration) {
-            throw new IllegalArgumentException("PulsarEndpointConfiguration cannot be null");
-        }
-
-        return new PulsarEndpoint(uri, path, pulsarConfiguration, component, pulsarClient);
     }
 
     @Override
@@ -67,21 +61,80 @@ public class PulsarEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    @Override
-    public Exchange createExchange() {
-        return super.createExchange();
-    }
-
     public PulsarClient getPulsarClient() {
         return pulsarClient;
+    }
+
+    /**
+     * To use a custom pulsar client
+     */
+    public void setPulsarClient(PulsarClient pulsarClient) {
+        this.pulsarClient = pulsarClient;
+    }
+
+    public String getPersistence() {
+        return persistence;
+    }
+
+    /**
+     * Whether the topic is persistent or non-persistent
+     */
+    public void setPersistence(String persistence) {
+        this.persistence = persistence;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    /**
+     * The tenant
+     */
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * The namespace
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    /**
+     * The topic
+     */
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
     public PulsarConfiguration getPulsarConfiguration() {
         return pulsarConfiguration;
     }
 
-    public String getTopicUri() {
-        return topicUri;
+    public void setPulsarConfiguration(PulsarConfiguration pulsarConfiguration) {
+        this.pulsarConfiguration = pulsarConfiguration;
     }
 
+    public String getUri() {
+        return persistence + "://" + tenant + "/" + namespace + "/" + topic;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(persistence, "persistence", this);
+        ObjectHelper.notNull(tenant, "tenant", this);
+        ObjectHelper.notNull(namespace, "namespace", this);
+        ObjectHelper.notNull(topic, "topic", this);
+
+        uri = persistence + "://" + tenant + "/" + namespace + "/" + topic;
+    }
 }

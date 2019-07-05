@@ -56,9 +56,6 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         final Exchange exchangeWithException = PulsarMessageUtils
             .updateExchangeWithException(exception, exchange);
 
-        exceptionHandler
-            .handleException("An error occurred", exchangeWithException, exception);
-
-        LOGGER.error("An error occurred while processing this exchange :: {}", exception);
+        exceptionHandler.handleException("An error occurred", exchangeWithException, exception);
     }
 }

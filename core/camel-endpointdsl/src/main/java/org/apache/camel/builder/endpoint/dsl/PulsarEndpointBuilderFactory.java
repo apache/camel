@@ -42,6 +42,42 @@ public interface PulsarEndpointBuilderFactory {
             return (AdvancedPulsarEndpointConsumerBuilder) this;
         }
         /**
+         * Whether the topic is persistent or non-persistent.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointConsumerBuilder persistence(String persistence) {
+            setProperty("persistence", persistence);
+            return this;
+        }
+        /**
+         * The tenant.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointConsumerBuilder tenant(String tenant) {
+            setProperty("tenant", tenant);
+            return this;
+        }
+        /**
+         * The namespace.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointConsumerBuilder namespace(String namespace) {
+            setProperty("namespace", namespace);
+            return this;
+        }
+        /**
+         * The topic.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointConsumerBuilder topic(String topic) {
+            setProperty("topic", topic);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -283,12 +319,39 @@ public interface PulsarEndpointBuilderFactory {
             return (AdvancedPulsarEndpointProducerBuilder) this;
         }
         /**
-         * The Topic's full URI path including type, tenant and namespace.
+         * Whether the topic is persistent or non-persistent.
          * The option is a <code>java.lang.String</code> type.
-         * @group producer
+         * @group common
          */
-        default PulsarEndpointProducerBuilder topicUri(String topicUri) {
-            setProperty("topicUri", topicUri);
+        default PulsarEndpointProducerBuilder persistence(String persistence) {
+            setProperty("persistence", persistence);
+            return this;
+        }
+        /**
+         * The tenant.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointProducerBuilder tenant(String tenant) {
+            setProperty("tenant", tenant);
+            return this;
+        }
+        /**
+         * The namespace.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointProducerBuilder namespace(String namespace) {
+            setProperty("namespace", namespace);
+            return this;
+        }
+        /**
+         * The topic.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointProducerBuilder topic(String topic) {
+            setProperty("topic", topic);
             return this;
         }
         /**
@@ -401,6 +464,42 @@ public interface PulsarEndpointBuilderFactory {
                 PulsarEndpointConsumerBuilder, PulsarEndpointProducerBuilder {
         default AdvancedPulsarEndpointBuilder advanced() {
             return (AdvancedPulsarEndpointBuilder) this;
+        }
+        /**
+         * Whether the topic is persistent or non-persistent.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointBuilder persistence(String persistence) {
+            setProperty("persistence", persistence);
+            return this;
+        }
+        /**
+         * The tenant.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointBuilder tenant(String tenant) {
+            setProperty("tenant", tenant);
+            return this;
+        }
+        /**
+         * The namespace.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointBuilder namespace(String namespace) {
+            setProperty("namespace", namespace);
+            return this;
+        }
+        /**
+         * The topic.
+         * The option is a <code>java.lang.String</code> type.
+         * @group common
+         */
+        default PulsarEndpointBuilder topic(String topic) {
+            setProperty("topic", topic);
+            return this;
         }
     }
 

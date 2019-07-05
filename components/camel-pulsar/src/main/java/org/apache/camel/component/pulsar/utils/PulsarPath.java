@@ -20,26 +20,39 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PulsarPath {
-    private static final Pattern PATTERN = Pattern.compile("^((persistent|non-persistent)://)?(?<namespace>(?<tenant>.+)/.+)/.+$");
+    private static final Pattern PATTERN = Pattern.compile("^(persistent|non-persistent):?/?/(.+)/(.+)/(.+)$");
 
+    private String persistence;
     private String tenant;
     private String namespace;
+    private String topic;
     private boolean autoConfigurable;
 
     public PulsarPath(String path) {
         Matcher matcher = PATTERN.matcher(path);
         autoConfigurable = matcher.matches();
         if (autoConfigurable) {
-            tenant = matcher.group("tenant");
-            namespace = matcher.group("namespace");
+            persistence = matcher.group(1);
+            tenant = matcher.group(2);
+            namespace = matcher.group(3);
+            topic = matcher.group(4);
         }
     }
+
+    public String getPersistence() {
+        return persistence;
+    }
+
     public String getTenant() {
         return tenant;
     }
 
     public String getNamespace() {
         return namespace;
+    }
+
+    public String getTopic() {
+        return topic;
     }
 
     public boolean isAutoConfigurable() {
