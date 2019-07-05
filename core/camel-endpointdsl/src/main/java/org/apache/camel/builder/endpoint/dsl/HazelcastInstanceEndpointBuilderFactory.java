@@ -392,8 +392,13 @@ public interface HazelcastInstanceEndpointBuilderFactory {
         poll;
     }
     /**
+     * Hazelcast Instance (camel-hazelcast)
      * The hazelcast-instance component is used to consume join/leave events of
      * the cache instance in the cluster.
+     * 
+     * Syntax: <code>hazelcast-instance:cacheName</code>
+     * Category: cache,datagrid
+     * Available as of version: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {

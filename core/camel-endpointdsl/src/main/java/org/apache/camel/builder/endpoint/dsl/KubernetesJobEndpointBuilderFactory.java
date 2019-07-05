@@ -1252,8 +1252,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         }
     }
     /**
+     * Kubernetes Job (camel-kubernetes)
      * The Kubernetes Jobs component provides a producer to execute kubernetes
      * job operations
+     * 
+     * Syntax: <code>kubernetes-job:masterUrl</code>
+     * Category: container,cloud,paas
+     * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesJobEndpointBuilder kubernetesJob(String path) {

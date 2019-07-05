@@ -181,8 +181,13 @@ public interface FopEndpointBuilderFactory {
         txt;
     }
     /**
+     * FOP (camel-fop)
      * The fop component allows you to render a message into different output
      * formats using Apache FOP.
+     * 
+     * Syntax: <code>fop:outputType</code>
+     * Category: transformation
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-fop
      */
     default FopEndpointBuilder fop(String path) {

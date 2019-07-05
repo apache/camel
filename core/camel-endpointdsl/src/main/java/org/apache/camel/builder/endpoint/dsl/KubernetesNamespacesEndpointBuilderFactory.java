@@ -1274,9 +1274,14 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
         }
     }
     /**
+     * Kubernetes Namespaces (camel-kubernetes)
      * The Kubernetes Namespaces component provides a producer to execute
      * kubernetes namespace operations and a consumer to consume namespace
      * events.
+     * 
+     * Syntax: <code>kubernetes-namespaces:masterUrl</code>
+     * Category: container,cloud,paas
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {

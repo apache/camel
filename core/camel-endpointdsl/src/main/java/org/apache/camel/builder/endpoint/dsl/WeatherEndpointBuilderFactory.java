@@ -2198,7 +2198,12 @@ public interface WeatherEndpointBuilderFactory {
         Daily;
     }
     /**
+     * Weather (camel-weather)
      * Polls the weather information from Open Weather Map.
+     * 
+     * Syntax: <code>weather:name</code>
+     * Category: api
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-weather
      */
     default WeatherEndpointBuilder weather(String path) {

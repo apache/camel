@@ -778,7 +778,12 @@ public interface CouchDbEndpointBuilderFactory {
         }
     }
     /**
+     * CouchDB (camel-couchdb)
      * The couchdb component is used for integrate with CouchDB databases.
+     * 
+     * Syntax: <code>couchdb:protocol:hostname:port/database</code>
+     * Category: database,nosql
+     * Available as of version: 2.11
      * Maven coordinates: org.apache.camel:camel-couchdb
      */
     default CouchDbEndpointBuilder couchDb(String path) {

@@ -499,7 +499,12 @@ public interface OptaPlannerEndpointBuilderFactory {
         }
     }
     /**
+     * OptaPlanner (camel-optaplanner)
      * Solves the planning problem contained in a message with OptaPlanner.
+     * 
+     * Syntax: <code>optaplanner:configFile</code>
+     * Category: engine,planning
+     * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-optaplanner
      */
     default OptaPlannerEndpointBuilder optaPlanner(String path) {

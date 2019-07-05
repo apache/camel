@@ -179,8 +179,13 @@ public interface DdbStreamEndpointBuilderFactory {
         AFTER_SEQUENCE_NUMBER;
     }
     /**
+     * AWS DynamoDB Streams (camel-aws-ddb)
      * The aws-ddbstream component is used for working with Amazon DynamoDB
      * Streams.
+     * 
+     * Syntax: <code>aws-ddbstream:tableName</code>
+     * Category: cloud,messaging,streams
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-ddb
      */
     default DdbStreamEndpointBuilder ddbStream(String path) {

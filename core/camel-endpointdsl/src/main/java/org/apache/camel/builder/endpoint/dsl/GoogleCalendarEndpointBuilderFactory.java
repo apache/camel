@@ -884,7 +884,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         SETTINGS;
     }
     /**
+     * Google Calendar (camel-google-calendar)
      * The google-calendar component provides access to Google Calendar.
+     * 
+     * Syntax: <code>google-calendar:apiName/methodName</code>
+     * Category: api,cloud
+     * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-google-calendar
      */
     default GoogleCalendarEndpointBuilder googleCalendar(String path) {

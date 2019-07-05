@@ -363,8 +363,13 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
         }
     }
     /**
+     * Openshift Builds (camel-kubernetes)
      * The Openshift Builds component provides a producer to execute openshift
      * build operations.
+     * 
+     * Syntax: <code>openshift-builds:masterUrl</code>
+     * Category: container,cloud,paas
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default OpenshiftBuildsEndpointBuilder openshiftBuilds(String path) {

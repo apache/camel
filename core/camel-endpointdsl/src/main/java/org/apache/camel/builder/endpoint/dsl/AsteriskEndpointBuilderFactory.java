@@ -562,7 +562,12 @@ public interface AsteriskEndpointBuilderFactory {
         EXTENSION_STATE;
     }
     /**
+     * Asterisk (camel-asterisk)
      * The asterisk component is used to interact with Asterisk PBX Server.
+     * 
+     * Syntax: <code>asterisk:name</code>
+     * Category: voip
+     * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-asterisk
      */
     default AsteriskEndpointBuilder asterisk(String path) {

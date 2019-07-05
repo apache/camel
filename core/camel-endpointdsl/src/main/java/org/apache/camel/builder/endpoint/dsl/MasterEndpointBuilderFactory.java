@@ -123,8 +123,13 @@ public interface MasterEndpointBuilderFactory {
         }
     }
     /**
+     * Master (camel-master)
      * Represents an endpoint which only becomes active when the
      * CamelClusterView has the leadership.
+     * 
+     * Syntax: <code>master:namespace:delegateUri</code>
+     * Category: clustering
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-master
      */
     default MasterEndpointBuilder master(String path) {

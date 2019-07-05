@@ -336,7 +336,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         }
     }
     /**
+     * Google Sheets Stream (camel-google-sheets)
      * The google-sheets component provides access to Google Sheets.
+     * 
+     * Syntax: <code>google-sheets-stream:apiName</code>
+     * Category: api,cloud,sheets
+     * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
      */
     default GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {

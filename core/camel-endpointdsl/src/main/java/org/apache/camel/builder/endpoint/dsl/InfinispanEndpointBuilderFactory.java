@@ -1301,8 +1301,13 @@ public interface InfinispanEndpointBuilderFactory {
         SKIP_SIZE_OPTIMIZATION;
     }
     /**
+     * Infinispan (camel-infinispan)
      * For reading/writing from/to Infinispan distributed key/value store and
      * data grid.
+     * 
+     * Syntax: <code>infinispan:cacheName</code>
+     * Category: cache,datagrid,clustering
+     * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-infinispan
      */
     default InfinispanEndpointBuilder infinispan(String path) {

@@ -1333,7 +1333,12 @@ public interface SoroushBotEndpointBuilderFactory {
         downloadFile;
     }
     /**
+     * Soroush (camel-soroush)
      * To integrate with the Soroush chat bot.
+     * 
+     * Syntax: <code>soroush:action/authorizationToken</code>
+     * Category: chat
+     * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-soroush
      */
     default SoroushBotEndpointBuilder soroushBot(String path) {

@@ -1288,9 +1288,14 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
         }
     }
     /**
+     * Kubernetes Replication Controller (camel-kubernetes)
      * The Kubernetes Replication Controllers component provides a producer to
      * execute kubernetes replication controller operations and a consumer to
      * consume replication controller events.
+     * 
+     * Syntax: <code>kubernetes-replication-controllers:masterUrl</code>
+     * Category: container,cloud,paas
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(

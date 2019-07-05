@@ -688,7 +688,12 @@ public interface GitHubEndpointBuilderFactory {
         CREATEISSUE;
     }
     /**
+     * GitHub (camel-github)
      * The github component is used for integrating Camel with github.
+     * 
+     * Syntax: <code>github:type/branchName</code>
+     * Category: api,file
+     * Available as of version: 2.15
      * Maven coordinates: org.apache.camel:camel-github
      */
     default GitHubEndpointBuilder gitHub(String path) {

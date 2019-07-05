@@ -3332,7 +3332,12 @@ public interface FileEndpointBuilderFactory {
         TryRename;
     }
     /**
+     * File (camel-file)
      * The file component is used for reading or writing files.
+     * 
+     * Syntax: <code>file:directoryName</code>
+     * Category: core,file
+     * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-file
      */
     default FileEndpointBuilder file(String path) {

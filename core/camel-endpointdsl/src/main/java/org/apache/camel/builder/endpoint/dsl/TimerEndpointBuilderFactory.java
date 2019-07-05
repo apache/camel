@@ -306,8 +306,13 @@ public interface TimerEndpointBuilderFactory {
         }
     }
     /**
+     * Timer (camel-timer)
      * The timer component is used for generating message exchanges when a timer
      * fires.
+     * 
+     * Syntax: <code>timer:timerName</code>
+     * Category: core,scheduling
+     * Available as of version: 1.0
      * Maven coordinates: org.apache.camel:camel-timer
      */
     default TimerEndpointBuilder timer(String path) {

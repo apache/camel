@@ -816,7 +816,12 @@ public interface GooglePubsubEndpointBuilderFactory {
         NONE;
     }
     /**
+     * Google Pubsub (camel-google-pubsub)
      * Messaging client for Google Cloud Platform PubSub Service
+     * 
+     * Syntax: <code>google-pubsub:projectId:destinationName</code>
+     * Category: messaging
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-google-pubsub
      */
     default GooglePubsubEndpointBuilder googlePubsub(String path) {

@@ -325,7 +325,12 @@ public interface ValidatorEndpointBuilderFactory {
         }
     }
     /**
+     * Validator (camel-validator)
      * Validates the payload of a message using XML Schema and JAXP Validation.
+     * 
+     * Syntax: <code>validator:resourceUri</code>
+     * Category: core,validation
+     * Available as of version: 1.1
      * Maven coordinates: org.apache.camel:camel-validator
      */
     default ValidatorEndpointBuilder validator(String path) {

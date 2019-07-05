@@ -373,8 +373,13 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
         }
     }
     /**
+     * Kubernetes Resources Quota (camel-kubernetes)
      * The Kubernetes Resources Quota component provides a producer to execute
      * kubernetes resources quota operations.
+     * 
+     * Syntax: <code>kubernetes-resources-quota:masterUrl</code>
+     * Category: container,cloud,paas
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(

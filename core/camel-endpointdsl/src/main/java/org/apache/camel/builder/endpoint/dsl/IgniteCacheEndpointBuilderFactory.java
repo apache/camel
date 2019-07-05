@@ -859,8 +859,13 @@ public interface IgniteCacheEndpointBuilderFactory {
         CLEAR;
     }
     /**
+     * Ignite Cache (camel-ignite)
      * The Ignite Cache endpoint is one of camel-ignite endpoints which allows
      * you to interact with an Ignite Cache.
+     * 
+     * Syntax: <code>ignite-cache:cacheName</code>
+     * Category: nosql,cache,compute
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
     default IgniteCacheEndpointBuilder igniteCache(String path) {

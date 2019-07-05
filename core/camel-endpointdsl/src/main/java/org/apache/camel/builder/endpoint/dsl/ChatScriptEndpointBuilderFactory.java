@@ -181,7 +181,12 @@ public interface ChatScriptEndpointBuilderFactory {
         }
     }
     /**
+     * ChatScript (camel-chatscript)
      * Represents a ChatScript endpoint.
+     * 
+     * Syntax: <code>chatscript:host:port/botname</code>
+     * Category: ai,chatscript
+     * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-chatscript
      */
     default ChatScriptEndpointBuilder chatScript(String path) {

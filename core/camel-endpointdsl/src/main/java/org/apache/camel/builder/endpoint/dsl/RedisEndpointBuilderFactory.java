@@ -991,8 +991,13 @@ public interface RedisEndpointBuilderFactory {
         GEORADIUSBYMEMBER;
     }
     /**
+     * Spring Redis (camel-spring-redis)
      * The spring-redis component allows sending and receiving messages from
      * Redis.
+     * 
+     * Syntax: <code>spring-redis:host:port</code>
+     * Category: spring,nosql
+     * Available as of version: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-redis
      */
     default RedisEndpointBuilder redis(String path) {

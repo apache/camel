@@ -1215,7 +1215,12 @@ public interface RestletEndpointBuilderFactory {
         }
     }
     /**
+     * Restlet (camel-restlet)
      * Component for consuming and producing Restful resources using Restlet.
+     * 
+     * Syntax: <code>restlet:protocol:host:port/uriPattern</code>
+     * Category: rest
+     * Available as of version: 2.0
      * Maven coordinates: org.apache.camel:camel-restlet
      */
     default RestletEndpointBuilder restlet(String path) {

@@ -451,8 +451,13 @@ public interface JGroupsRaftEndpointBuilderFactory {
         }
     }
     /**
+     * JGroups raft (camel-jgroups-raft)
      * The jgroups component provides exchange of messages between Camel and
      * JGroups clusters.
+     * 
+     * Syntax: <code>jgroups-raft:clusterName</code>
+     * Category: clustering,messaging
+     * Available as of version: 2.24
      * Maven coordinates: org.apache.camel:camel-jgroups-raft
      */
     default JGroupsRaftEndpointBuilder jGroupsRaft(String path) {

@@ -400,8 +400,19 @@ public class EndpointDslMojo extends AbstractMojo {
             .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
             .setBody("class " + builderName + "Impl extends AbstractEndpointBuilder implements " + builderName + ", Advanced" + builderName + " {\n" + "    public " + builderName
                      + "Impl(String path) {\n" + "        super(\"" + model.getScheme() + "\", path);\n" + "    }\n" + "}\n" + "return new " + builderName + "Impl(path);\n");
-        method.getJavaDoc().setText((StringHelper.isEmpty(model.getDescription()) ? "" : model.getDescription() + " ") + "\nMaven coordinates: "
-                                    + project.getGroupId() + ":" + project.getArtifactId());
+
+        if ("true".equals(model.getDeprecated())) {
+            method.addAnnotation(Deprecated.class);
+        }
+
+        String desc = model.getTitle() + " (" + model.getArtifactId() + ")";
+        desc += "\n" + model.getDescription();
+        desc += "\n";
+        desc += "\nSyntax: <code>" + model.getSyntax() + "</code>";
+        desc += "\nCategory: " + model.getLabel();
+        desc += "\nAvailable as of version: " + model.getFirstVersionShort();
+        desc += "\nMaven coordinates: " + project.getGroupId() + ":" + project.getArtifactId();
+        method.getJavaDoc().setText(desc);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + builderName + "Factory.java";
         writeSourceIfChanged(javaClass, fileName, false);

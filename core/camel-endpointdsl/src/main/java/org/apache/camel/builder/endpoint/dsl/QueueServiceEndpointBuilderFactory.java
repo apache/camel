@@ -683,8 +683,13 @@ public interface QueueServiceEndpointBuilderFactory {
         deleteMessage;
     }
     /**
+     * Azure Storage Queue Service (camel-azure)
      * The azure-queue component is used for storing and retrieving messages
      * from Azure Storage Queue Service.
+     * 
+     * Syntax: <code>azure-queue:containerAndQueueUri</code>
+     * Category: cloud,queue,azure
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
      */
     default QueueServiceEndpointBuilder queueService(String path) {

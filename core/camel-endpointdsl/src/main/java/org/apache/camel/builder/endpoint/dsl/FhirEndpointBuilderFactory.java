@@ -1947,8 +1947,13 @@ public interface FhirEndpointBuilderFactory {
         ONCE;
     }
     /**
+     * FHIR (camel-fhir)
      * The fhir component is used for working with the FHIR protocol (health
      * care).
+     * 
+     * Syntax: <code>fhir:apiName/methodName</code>
+     * Category: hl7,api
+     * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-fhir
      */
     default FhirEndpointBuilder fhir(String path) {

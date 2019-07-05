@@ -1783,7 +1783,12 @@ public interface IrcEndpointBuilderFactory {
         }
     }
     /**
+     * IRC (camel-irc)
      * The irc component implements an IRC (Internet Relay Chat) transport.
+     * 
+     * Syntax: <code>irc:hostname:port</code>
+     * Category: chat
+     * Available as of version: 1.1
      * Maven coordinates: org.apache.camel:camel-irc
      */
     default IrcEndpointBuilder irc(String path) {

@@ -602,8 +602,13 @@ public interface DirectVmEndpointBuilderFactory {
         }
     }
     /**
+     * Direct VM (camel-directvm)
      * The direct-vm component provides direct, synchronous call to another
      * endpoint from any CamelContext in the same JVM.
+     * 
+     * Syntax: <code>direct-vm:name</code>
+     * Category: core,endpoint
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-directvm
      */
     default DirectVmEndpointBuilder directVm(String path) {

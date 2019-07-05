@@ -1193,8 +1193,13 @@ public interface UndertowEndpointBuilderFactory {
         }
     }
     /**
+     * Undertow (camel-undertow)
      * The undertow component provides HTTP and WebSocket based endpoints for
      * consuming and producing HTTP/WebSocket requests.
+     * 
+     * Syntax: <code>undertow:httpURI</code>
+     * Category: http,websocket
+     * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-undertow
      */
     default UndertowEndpointBuilder undertow(String path) {

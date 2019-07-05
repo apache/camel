@@ -525,7 +525,12 @@ public interface XsltEndpointBuilderFactory {
         file;
     }
     /**
+     * XSLT (camel-xslt)
      * Transforms the message using a XSLT template.
+     * 
+     * Syntax: <code>xslt:resourceUri</code>
+     * Category: core,transformation
+     * Available as of version: 1.3
      * Maven coordinates: org.apache.camel:camel-xslt
      */
     default XsltEndpointBuilder xslt(String path) {

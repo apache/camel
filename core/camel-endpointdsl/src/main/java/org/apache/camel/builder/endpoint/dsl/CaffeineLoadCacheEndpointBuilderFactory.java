@@ -957,8 +957,13 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
         time_based;
     }
     /**
+     * Caffeine LoadCache (camel-caffeine)
      * The caffeine-loadcache component is used for integration with Caffeine
      * Load Cache.
+     * 
+     * Syntax: <code>caffeine-loadcache:cacheName</code>
+     * Category: cache,datagrid,clustering
+     * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-caffeine
      */
     default CaffeineLoadCacheEndpointBuilder caffeineLoadCache(String path) {

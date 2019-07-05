@@ -420,9 +420,14 @@ public interface ConsulEndpointBuilderFactory {
         }
     }
     /**
+     * Consul (camel-consul)
      * The camel consul component allows you to work with Consul, a distributed,
      * highly available, datacenter-aware, service discovery and configuration
      * system.
+     * 
+     * Syntax: <code>consul:apiEndpoint</code>
+     * Category: api,cloud
+     * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-consul
      */
     default ConsulEndpointBuilder consul(String path) {

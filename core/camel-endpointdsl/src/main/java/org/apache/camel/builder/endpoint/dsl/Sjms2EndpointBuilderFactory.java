@@ -2145,8 +2145,13 @@ public interface Sjms2EndpointBuilderFactory {
         SESSION_TRANSACTED;
     }
     /**
+     * Simple JMS2 (camel-sjms2)
      * The sjms2 component (simple jms) allows messages to be sent to (or
      * consumed from) a JMS Queue or Topic (uses JMS 2.x API).
+     * 
+     * Syntax: <code>sjms2:destinationType:destinationName</code>
+     * Category: messaging
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-sjms2
      */
     default Sjms2EndpointBuilder sjms2(String path) {

@@ -256,8 +256,13 @@ public interface FlinkEndpointBuilderFactory {
         datastream;
     }
     /**
+     * Apache Flink (camel-flink)
      * The flink component can be used to send DataSet jobs to Apache Flink
      * cluster.
+     * 
+     * Syntax: <code>flink:endpointType</code>
+     * Category: hadoop
+     * Available as of version: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
      */
     default FlinkEndpointBuilder flink(String path) {

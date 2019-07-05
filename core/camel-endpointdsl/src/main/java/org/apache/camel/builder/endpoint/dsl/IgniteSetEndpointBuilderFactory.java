@@ -180,8 +180,13 @@ public interface IgniteSetEndpointBuilderFactory {
         ARRAY;
     }
     /**
+     * Ignite Sets (camel-ignite)
      * The Ignite Sets endpoint is one of camel-ignite endpoints which allows
      * you to interact with Ignite Set data structures.
+     * 
+     * Syntax: <code>ignite-set:name</code>
+     * Category: nosql,cache
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      */
     default IgniteSetEndpointBuilder igniteSet(String path) {

@@ -608,8 +608,13 @@ public interface QuickfixjEndpointBuilderFactory {
         }
     }
     /**
+     * QuickFix (camel-quickfix)
      * The quickfix component allows to send Financial Interchange (FIX)
      * messages to the QuickFix engine.
+     * 
+     * Syntax: <code>quickfix:configurationName</code>
+     * Category: messaging
+     * Available as of version: 2.1
      * Maven coordinates: org.apache.camel:camel-quickfix
      */
     default QuickfixjEndpointBuilder quickfixj(String path) {

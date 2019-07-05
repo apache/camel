@@ -603,7 +603,12 @@ public interface ReactiveStreamsEndpointBuilderFactory {
         LATEST;
     }
     /**
+     * Reactive Streams (camel-reactive-streams)
      * Reactive Camel using reactive streams
+     * 
+     * Syntax: <code>reactive-streams:stream</code>
+     * Category: reactive,streams
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-reactive-streams
      */
     default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {

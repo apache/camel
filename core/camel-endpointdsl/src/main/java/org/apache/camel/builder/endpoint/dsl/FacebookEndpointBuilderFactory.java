@@ -5327,8 +5327,13 @@ public interface FacebookEndpointBuilderFactory {
         album;
     }
     /**
+     * Facebook (camel-facebook)
      * The Facebook component provides access to all of the Facebook APIs
      * accessible using Facebook4J.
+     * 
+     * Syntax: <code>facebook:methodName</code>
+     * Category: social
+     * Available as of version: 2.14
      * Maven coordinates: org.apache.camel:camel-facebook
      */
     default FacebookEndpointBuilder facebook(String path) {

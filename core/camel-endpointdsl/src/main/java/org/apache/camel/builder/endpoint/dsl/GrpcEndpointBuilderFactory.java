@@ -1409,8 +1409,13 @@ public interface GrpcEndpointBuilderFactory {
         PLAINTEXT;
     }
     /**
+     * gRPC (camel-grpc)
      * The gRPC component allows to call and expose remote procedures via HTTP/2
      * with protobuf dataformat
+     * 
+     * Syntax: <code>grpc:host:port/service</code>
+     * Category: rpc
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-grpc
      */
     default GrpcEndpointBuilder grpc(String path) {

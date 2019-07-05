@@ -616,8 +616,13 @@ public interface ZendeskEndpointBuilderFactory {
         }
     }
     /**
+     * Zendesk (camel-zendesk)
      * Allows producing messages to manage Zendesk ticket, user, organization,
      * etc.
+     * 
+     * Syntax: <code>zendesk:methodName</code>
+     * Category: api,support,cloud
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-zendesk
      */
     default ZendeskEndpointBuilder zendesk(String path) {

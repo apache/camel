@@ -217,8 +217,13 @@ public interface NovaEndpointBuilderFactory {
         }
     }
     /**
+     * OpenStack Nova (camel-openstack)
      * The openstack-nova component allows messages to be sent to an OpenStack
      * compute services.
+     * 
+     * Syntax: <code>openstack-nova:host</code>
+     * Category: cloud,paas
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      */
     default NovaEndpointBuilder nova(String path) {

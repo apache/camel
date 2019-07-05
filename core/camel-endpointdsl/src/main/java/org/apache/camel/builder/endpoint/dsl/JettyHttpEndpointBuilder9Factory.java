@@ -438,8 +438,13 @@ public interface JettyHttpEndpointBuilder9Factory {
         }
     }
     /**
+     * Jetty (camel-jetty)
      * The jetty component provides HTTP-based endpoints for consuming and
      * producing HTTP requests.
+     * 
+     * Syntax: <code>jetty:httpUri</code>
+     * Category: http
+     * Available as of version: 1.2
      * Maven coordinates: org.apache.camel:camel-jetty
      */
     default JettyHttpEndpointBuilder9 jettyHttp9(String path) {

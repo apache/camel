@@ -113,8 +113,13 @@ public interface StAXEndpointBuilderFactory {
         }
     }
     /**
+     * StAX (camel-stax)
      * The stax component allows messages to be process through a SAX
      * ContentHandler.
+     * 
+     * Syntax: <code>stax:contentHandlerClass</code>
+     * Category: transformation
+     * Available as of version: 2.9
      * Maven coordinates: org.apache.camel:camel-stax
      */
     default StAXEndpointBuilder stAX(String path) {

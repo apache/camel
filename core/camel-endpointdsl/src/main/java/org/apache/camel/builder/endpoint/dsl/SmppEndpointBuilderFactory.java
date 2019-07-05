@@ -2135,7 +2135,12 @@ public interface SmppEndpointBuilderFactory {
         TRUNCATE;
     }
     /**
+     * SMPP (camel-smpp)
      * To send and receive SMS using a SMSC (Short Message Service Center).
+     * 
+     * Syntax: <code>smpp:host:port</code>
+     * Category: mobile
+     * Available as of version: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
      */
     default SmppEndpointBuilder smpp(String path) {

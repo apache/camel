@@ -1221,8 +1221,13 @@ public interface HazelcastListEndpointBuilderFactory {
         poll;
     }
     /**
+     * Hazelcast List (camel-hazelcast)
      * The hazelcast-list component is used to access Hazelcast distributed
      * list.
+     * 
+     * Syntax: <code>hazelcast-list:cacheName</code>
+     * Category: cache,datagrid
+     * Available as of version: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      */
     default HazelcastListEndpointBuilder hazelcastList(String path) {

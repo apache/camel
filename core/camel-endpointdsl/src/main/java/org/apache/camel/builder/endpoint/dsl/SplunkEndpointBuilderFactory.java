@@ -1524,7 +1524,12 @@ public interface SplunkEndpointBuilderFactory {
         SSLv3;
     }
     /**
+     * Splunk (camel-splunk)
      * The splunk component allows to publish or search for events in Splunk.
+     * 
+     * Syntax: <code>splunk:name</code>
+     * Category: log,monitoring
+     * Available as of version: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
      */
     default SplunkEndpointBuilder splunk(String path) {

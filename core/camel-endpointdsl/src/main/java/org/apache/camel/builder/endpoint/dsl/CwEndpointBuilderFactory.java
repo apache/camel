@@ -269,8 +269,12 @@ public interface CwEndpointBuilderFactory {
         }
     }
     /**
+     * AWS CloudWatch (camel-aws-cw)
      * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
      * 
+     * Syntax: <code>aws-cw:namespace</code>
+     * Category: cloud,monitoring
+     * Available as of version: 2.11
      * Maven coordinates: org.apache.camel:camel-aws-cw
      */
     default CwEndpointBuilder cw(String path) {

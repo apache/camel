@@ -469,7 +469,12 @@ public interface ScpEndpointBuilderFactory {
         }
     }
     /**
+     * SCP (camel-jsch)
      * To copy files using the secure copy protocol (SCP).
+     * 
+     * Syntax: <code>scp:host:port/directoryName</code>
+     * Category: file
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-jsch
      */
     default ScpEndpointBuilder scp(String path) {

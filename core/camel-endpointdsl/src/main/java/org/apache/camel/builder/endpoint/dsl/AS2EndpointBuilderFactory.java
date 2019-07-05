@@ -2075,8 +2075,13 @@ public interface AS2EndpointBuilderFactory {
         SHA3_512WITHRSAANDMGF1;
     }
     /**
+     * AS2 (camel-as2)
      * Component used for transferring data secure and reliable over the
      * internet using the AS2 protocol.
+     * 
+     * Syntax: <code>as2:apiName/methodName</code>
+     * Category: AS2
+     * Available as of version: 2.22
      * Maven coordinates: org.apache.camel:camel-as2
      */
     default AS2EndpointBuilder aS2(String path) {

@@ -929,7 +929,12 @@ public interface AvroEndpointBuilderFactory {
         netty;
     }
     /**
+     * Avro (camel-avro)
      * Working with Apache Avro for data serialization.
+     * 
+     * Syntax: <code>avro:transport:host:port/messageName</code>
+     * Category: messaging,transformation
+     * Available as of version: 2.10
      * Maven coordinates: org.apache.camel:camel-avro
      */
     default AvroEndpointBuilder avro(String path) {

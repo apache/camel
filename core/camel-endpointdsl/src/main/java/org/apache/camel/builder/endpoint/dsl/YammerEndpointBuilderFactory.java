@@ -1186,8 +1186,13 @@ public interface YammerEndpointBuilderFactory {
         CURRENT;
     }
     /**
+     * Yammer (camel-yammer)
      * The yammer component allows you to interact with the Yammer enterprise
      * social network.
+     * 
+     * Syntax: <code>yammer:function</code>
+     * Category: social
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-yammer
      */
     default YammerEndpointBuilder yammer(String path) {

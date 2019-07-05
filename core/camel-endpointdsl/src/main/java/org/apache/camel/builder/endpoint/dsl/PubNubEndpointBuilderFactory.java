@@ -811,8 +811,13 @@ public interface PubNubEndpointBuilderFactory {
         }
     }
     /**
+     * PubNub (camel-pubnub)
      * To send and receive messages to PubNub data stream network for connected
      * devices.
+     * 
+     * Syntax: <code>pubnub:channel</code>
+     * Category: cloud,iot,messaging
+     * Available as of version: 2.19
      * Maven coordinates: org.apache.camel:camel-pubnub
      */
     default PubNubEndpointBuilder pubNub(String path) {

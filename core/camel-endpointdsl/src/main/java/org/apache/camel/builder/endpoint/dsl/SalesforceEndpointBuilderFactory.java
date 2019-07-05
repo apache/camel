@@ -2836,8 +2836,13 @@ public interface SalesforceEndpointBuilderFactory {
         UPDATE;
     }
     /**
+     * Salesforce (camel-salesforce)
      * The salesforce component is used for integrating Camel with the massive
      * Salesforce API.
+     * 
+     * Syntax: <code>salesforce:operationName:topicName</code>
+     * Category: api,cloud,crm
+     * Available as of version: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
      */
     default SalesforceEndpointBuilder salesforce(String path) {

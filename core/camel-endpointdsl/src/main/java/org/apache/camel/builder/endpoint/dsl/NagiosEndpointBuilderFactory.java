@@ -292,7 +292,12 @@ public interface NagiosEndpointBuilderFactory {
         TripleDes;
     }
     /**
+     * Nagios (camel-nagios)
      * To send passive checks to Nagios using JSendNSCA.
+     * 
+     * Syntax: <code>nagios:host:port</code>
+     * Category: monitoring
+     * Available as of version: 2.3
      * Maven coordinates: org.apache.camel:camel-nagios
      */
     default NagiosEndpointBuilder nagios(String path) {

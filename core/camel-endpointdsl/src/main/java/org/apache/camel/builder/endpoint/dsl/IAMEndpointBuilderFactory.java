@@ -142,7 +142,12 @@ public interface IAMEndpointBuilderFactory {
         removeUserFromGroup;
     }
     /**
+     * AWS IAM (camel-aws-iam)
      * The aws-iam is used for managing Amazon IAM
+     * 
+     * Syntax: <code>aws-iam:label</code>
+     * Category: cloud,management
+     * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-aws-iam
      */
     default IAMEndpointBuilder iAM(String path) {

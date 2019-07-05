@@ -1254,8 +1254,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         }
     }
     /**
+     * Kubernetes Pods (camel-kubernetes)
      * The Kubernetes Pods component provides a producer to execute kubernetes
      * pod operations and a consumer to consume pod events.
+     * 
+     * Syntax: <code>kubernetes-pods:masterUrl</code>
+     * Category: container,cloud,paas
+     * Available as of version: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      */
     default KubernetesPodsEndpointBuilder kubernetesPods(String path) {

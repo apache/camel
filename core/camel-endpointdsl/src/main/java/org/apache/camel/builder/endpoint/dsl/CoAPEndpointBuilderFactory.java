@@ -991,8 +991,13 @@ public interface CoAPEndpointBuilderFactory {
         }
     }
     /**
+     * CoAP (camel-coap)
      * The coap component is used for sending and receiving messages from COAP
      * capable devices.
+     * 
+     * Syntax: <code>coap:uri</code>
+     * Category: iot
+     * Available as of version: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
      */
     default CoAPEndpointBuilder coAP(String path) {
