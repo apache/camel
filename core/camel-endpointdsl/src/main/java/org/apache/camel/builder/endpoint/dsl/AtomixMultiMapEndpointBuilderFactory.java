@@ -44,17 +44,6 @@ public interface AtomixMultiMapEndpointBuilderFactory {
             return (AdvancedAtomixMultiMapEndpointBuilder) this;
         }
         /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default AtomixMultiMapEndpointBuilder resourceName(String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
          * The Atomix instance to use.
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.

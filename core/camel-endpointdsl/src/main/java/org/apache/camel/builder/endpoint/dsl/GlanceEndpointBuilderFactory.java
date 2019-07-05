@@ -39,17 +39,6 @@ public interface GlanceEndpointBuilderFactory {
             return (AdvancedGlanceEndpointBuilder) this;
         }
         /**
-         * OpenStack host url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GlanceEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
          * OpenStack API version.
          * 
          * The option is a: <code>java.lang.String</code> type.

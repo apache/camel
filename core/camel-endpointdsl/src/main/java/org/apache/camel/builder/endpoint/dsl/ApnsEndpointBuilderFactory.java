@@ -48,17 +48,6 @@ public interface ApnsEndpointBuilderFactory {
             return (AdvancedApnsEndpointConsumerBuilder) this;
         }
         /**
-         * Name of the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ApnsEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Configure this property in case you want to statically declare tokens
          * related to devices you want to notify. Tokens are separated by comma.
          * 
@@ -643,17 +632,6 @@ public interface ApnsEndpointBuilderFactory {
             return (AdvancedApnsEndpointProducerBuilder) this;
         }
         /**
-         * Name of the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ApnsEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Configure this property in case you want to statically declare tokens
          * related to devices you want to notify. Tokens are separated by comma.
          * 
@@ -778,17 +756,6 @@ public interface ApnsEndpointBuilderFactory {
                 ApnsEndpointConsumerBuilder, ApnsEndpointProducerBuilder {
         default AdvancedApnsEndpointBuilder advanced() {
             return (AdvancedApnsEndpointBuilder) this;
-        }
-        /**
-         * Name of the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ApnsEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * Configure this property in case you want to statically declare tokens

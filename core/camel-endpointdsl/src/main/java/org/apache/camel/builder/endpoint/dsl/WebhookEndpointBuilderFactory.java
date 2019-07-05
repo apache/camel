@@ -40,17 +40,6 @@ public interface WebhookEndpointBuilderFactory {
             return (AdvancedWebhookEndpointBuilder) this;
         }
         /**
-         * The delegate uri. Must belong to a component that supports webhooks.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default WebhookEndpointBuilder endpointUri(String endpointUri) {
-            setProperty("endpointUri", endpointUri);
-            return this;
-        }
-        /**
          * Automatically register the webhook at startup and unregister it on
          * shutdown.
          * 

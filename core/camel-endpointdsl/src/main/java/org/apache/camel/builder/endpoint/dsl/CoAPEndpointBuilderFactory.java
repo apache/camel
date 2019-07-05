@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URI;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import javax.annotation.Generated;
@@ -44,28 +43,6 @@ public interface CoAPEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedCoAPEndpointConsumerBuilder advanced() {
             return (AdvancedCoAPEndpointConsumerBuilder) this;
-        }
-        /**
-         * The URI for the CoAP endpoint.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default CoAPEndpointConsumerBuilder uri(URI uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
-         * The URI for the CoAP endpoint.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default CoAPEndpointConsumerBuilder uri(String uri) {
-            setProperty("uri", uri);
-            return this;
         }
         /**
          * Sets the alias used to query the KeyStore for the private key and
@@ -423,28 +400,6 @@ public interface CoAPEndpointBuilderFactory {
             return (AdvancedCoAPEndpointProducerBuilder) this;
         }
         /**
-         * The URI for the CoAP endpoint.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default CoAPEndpointProducerBuilder uri(URI uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
-         * The URI for the CoAP endpoint.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default CoAPEndpointProducerBuilder uri(String uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
          * Sets the alias used to query the KeyStore for the private key and
          * certificate. This parameter is used when we are enabling TLS with
          * certificates on the service side, and similarly on the client side
@@ -732,28 +687,6 @@ public interface CoAPEndpointBuilderFactory {
                 CoAPEndpointConsumerBuilder, CoAPEndpointProducerBuilder {
         default AdvancedCoAPEndpointBuilder advanced() {
             return (AdvancedCoAPEndpointBuilder) this;
-        }
-        /**
-         * The URI for the CoAP endpoint.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default CoAPEndpointBuilder uri(URI uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
-         * The URI for the CoAP endpoint.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default CoAPEndpointBuilder uri(String uri) {
-            setProperty("uri", uri);
-            return this;
         }
         /**
          * Sets the alias used to query the KeyStore for the private key and

@@ -39,39 +39,6 @@ public interface GangliaEndpointBuilderFactory {
             return (AdvancedGangliaEndpointBuilder) this;
         }
         /**
-         * Host name for Ganglia server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GangliaEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port for Ganglia server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default GangliaEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port for Ganglia server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default GangliaEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Minumum time in seconds before Ganglia will purge the metric value if
          * it expires. Set to 0 and the value will remain in Ganglia
          * indefinitely until a gmond agent restart.

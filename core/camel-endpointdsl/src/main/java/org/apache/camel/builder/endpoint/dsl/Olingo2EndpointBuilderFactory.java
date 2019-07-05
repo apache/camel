@@ -43,41 +43,6 @@ public interface Olingo2EndpointBuilderFactory {
             return (AdvancedOlingo2EndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointConsumerBuilder apiName(Olingo2ApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
@@ -499,41 +464,6 @@ public interface Olingo2EndpointBuilderFactory {
             return (AdvancedOlingo2EndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointProducerBuilder apiName(Olingo2ApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
@@ -902,41 +832,6 @@ public interface Olingo2EndpointBuilderFactory {
             return (AdvancedOlingo2EndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointBuilder apiName(Olingo2ApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Olingo2EndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
@@ -1249,15 +1144,6 @@ public interface Olingo2EndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.olingo2.internal.Olingo2ApiName</code>
-     * enum.
-     */
-    enum Olingo2ApiName {
-        DEFAULT;
     }
     /**
      * Olingo2 (camel-olingo2)

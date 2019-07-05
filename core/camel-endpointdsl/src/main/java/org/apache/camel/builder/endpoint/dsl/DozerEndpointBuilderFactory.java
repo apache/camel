@@ -39,17 +39,6 @@ public interface DozerEndpointBuilderFactory {
             return (AdvancedDozerEndpointBuilder) this;
         }
         /**
-         * A human readable name of the mapping.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default DozerEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The name of a DozerBeanMapperConfiguration bean in the Camel registry
          * which should be used for configuring the Dozer mapping. This is an
          * alternative to the mappingFile option that can be used for

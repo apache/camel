@@ -43,17 +43,6 @@ public interface IgniteCacheEndpointBuilderFactory {
             return (AdvancedIgniteCacheEndpointConsumerBuilder) this;
         }
         /**
-         * The cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IgniteCacheEndpointConsumerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -423,17 +412,6 @@ public interface IgniteCacheEndpointBuilderFactory {
             return (AdvancedIgniteCacheEndpointProducerBuilder) this;
         }
         /**
-         * The cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IgniteCacheEndpointProducerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -703,17 +681,6 @@ public interface IgniteCacheEndpointBuilderFactory {
                 IgniteCacheEndpointConsumerBuilder, IgniteCacheEndpointProducerBuilder {
         default AdvancedIgniteCacheEndpointBuilder advanced() {
             return (AdvancedIgniteCacheEndpointBuilder) this;
-        }
-        /**
-         * The cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IgniteCacheEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * Sets whether to propagate the incoming body if the return type of the

@@ -43,17 +43,6 @@ public interface PubNubEndpointBuilderFactory {
             return (AdvancedPubNubEndpointConsumerBuilder) this;
         }
         /**
-         * The channel used for subscribing/publishing events.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PubNubEndpointConsumerBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
-        }
-        /**
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
@@ -359,17 +348,6 @@ public interface PubNubEndpointBuilderFactory {
             return (AdvancedPubNubEndpointProducerBuilder) this;
         }
         /**
-         * The channel used for subscribing/publishing events.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PubNubEndpointProducerBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
-        }
-        /**
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
@@ -620,17 +598,6 @@ public interface PubNubEndpointBuilderFactory {
                 PubNubEndpointConsumerBuilder, PubNubEndpointProducerBuilder {
         default AdvancedPubNubEndpointBuilder advanced() {
             return (AdvancedPubNubEndpointBuilder) this;
-        }
-        /**
-         * The channel used for subscribing/publishing events.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PubNubEndpointBuilder channel(String channel) {
-            setProperty("channel", channel);
-            return this;
         }
         /**
          * UUID to be used as a device identifier, a default UUID is generated

@@ -44,61 +44,6 @@ public interface RestletEndpointBuilderFactory {
             return (AdvancedRestletEndpointConsumerBuilder) this;
         }
         /**
-         * The protocol to use which is http or https.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname of the restlet service.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number of the restlet service.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number of the restlet service.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The resource pattern such as /customer/{id}.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointConsumerBuilder uriPattern(String uriPattern) {
-            setProperty("uriPattern", uriPattern);
-            return this;
-        }
-        /**
          * On a producer endpoint, specifies the request method to use. On a
          * consumer endpoint, specifies that the endpoint consumes only
          * restletMethod requests.
@@ -477,61 +422,6 @@ public interface RestletEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedRestletEndpointProducerBuilder advanced() {
             return (AdvancedRestletEndpointProducerBuilder) this;
-        }
-        /**
-         * The protocol to use which is http or https.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname of the restlet service.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number of the restlet service.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number of the restlet service.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The resource pattern such as /customer/{id}.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointProducerBuilder uriPattern(String uriPattern) {
-            setProperty("uriPattern", uriPattern);
-            return this;
         }
         /**
          * On a producer endpoint, specifies the request method to use. On a
@@ -960,61 +850,6 @@ public interface RestletEndpointBuilderFactory {
                 RestletEndpointConsumerBuilder, RestletEndpointProducerBuilder {
         default AdvancedRestletEndpointBuilder advanced() {
             return (AdvancedRestletEndpointBuilder) this;
-        }
-        /**
-         * The protocol to use which is http or https.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The hostname of the restlet service.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number of the restlet service.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number of the restlet service.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The resource pattern such as /customer/{id}.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestletEndpointBuilder uriPattern(String uriPattern) {
-            setProperty("uriPattern", uriPattern);
-            return this;
         }
         /**
          * On a producer endpoint, specifies the request method to use. On a

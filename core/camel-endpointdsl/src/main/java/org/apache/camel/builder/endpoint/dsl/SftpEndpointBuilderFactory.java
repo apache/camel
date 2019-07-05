@@ -55,50 +55,6 @@ public interface SftpEndpointBuilderFactory {
             return (AdvancedSftpEndpointConsumerBuilder) this;
         }
         /**
-         * Hostname of the FTP server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointConsumerBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
          * This option is used to specify the encoding of the file. You can use
          * this on the consumer, to specify the encodings of the files, which
          * allow Camel to know the charset it should load the file content in
@@ -2907,50 +2863,6 @@ public interface SftpEndpointBuilderFactory {
             return (AdvancedSftpEndpointProducerBuilder) this;
         }
         /**
-         * Hostname of the FTP server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointProducerBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
          * This option is used to specify the encoding of the file. You can use
          * this on the consumer, to specify the encodings of the files, which
          * allow Camel to know the charset it should load the file content in
@@ -4308,50 +4220,6 @@ public interface SftpEndpointBuilderFactory {
                 SftpEndpointConsumerBuilder, SftpEndpointProducerBuilder {
         default AdvancedSftpEndpointBuilder advanced() {
             return (AdvancedSftpEndpointBuilder) this;
-        }
-        /**
-         * Hostname of the FTP server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port of the FTP server.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SftpEndpointBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
         }
         /**
          * This option is used to specify the encoding of the file. You can use

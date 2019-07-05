@@ -39,40 +39,6 @@ public interface SnmpEndpointBuilderFactory {
             return (AdvancedSnmpEndpointBuilder) this;
         }
         /**
-         * Hostname of the SNMP enabled device.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SnmpEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number of the SNMP enabled device.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: consumer
-         */
-        default SnmpEndpointBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number of the SNMP enabled device.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: consumer
-         */
-        default SnmpEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Defines which values you are interested in. Please have a look at the
          * Wikipedia to get a better understanding. You may provide a single OID
          * or a coma separated list of OIDs. Example:

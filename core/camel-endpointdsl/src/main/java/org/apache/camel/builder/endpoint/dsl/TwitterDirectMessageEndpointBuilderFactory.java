@@ -49,18 +49,6 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
             return (AdvancedTwitterDirectMessageEndpointConsumerBuilder) this;
         }
         /**
-         * The user name to send a direct message. This will be ignored for
-         * consumer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TwitterDirectMessageEndpointConsumerBuilder user(String user) {
-            setProperty("user", user);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -1095,18 +1083,6 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
             return (AdvancedTwitterDirectMessageEndpointProducerBuilder) this;
         }
         /**
-         * The user name to send a direct message. This will be ignored for
-         * consumer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TwitterDirectMessageEndpointProducerBuilder user(String user) {
-            setProperty("user", user);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1338,18 +1314,6 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
                 TwitterDirectMessageEndpointConsumerBuilder, TwitterDirectMessageEndpointProducerBuilder {
         default AdvancedTwitterDirectMessageEndpointBuilder advanced() {
             return (AdvancedTwitterDirectMessageEndpointBuilder) this;
-        }
-        /**
-         * The user name to send a direct message. This will be ignored for
-         * consumer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default TwitterDirectMessageEndpointBuilder user(String user) {
-            setProperty("user", user);
-            return this;
         }
         /**
          * The http proxy host which can be used for the camel-twitter. Can also

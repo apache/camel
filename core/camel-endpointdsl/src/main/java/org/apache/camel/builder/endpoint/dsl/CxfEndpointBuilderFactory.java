@@ -44,29 +44,6 @@ public interface CxfEndpointBuilderFactory {
             return (AdvancedCxfEndpointConsumerBuilder) this;
         }
         /**
-         * To lookup an existing configured CxfEndpoint. Must used bean: as
-         * prefix.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfEndpointConsumerBuilder beanId(String beanId) {
-            setProperty("beanId", beanId);
-            return this;
-        }
-        /**
-         * The service publish address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: service
-         */
-        default CxfEndpointConsumerBuilder address(String address) {
-            setProperty("address", address);
-            return this;
-        }
-        /**
          * The data type messages supported by the CXF endpoint.
          * 
          * The option is a:
@@ -776,29 +753,6 @@ public interface CxfEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedCxfEndpointProducerBuilder advanced() {
             return (AdvancedCxfEndpointProducerBuilder) this;
-        }
-        /**
-         * To lookup an existing configured CxfEndpoint. Must used bean: as
-         * prefix.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfEndpointProducerBuilder beanId(String beanId) {
-            setProperty("beanId", beanId);
-            return this;
-        }
-        /**
-         * The service publish address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: service
-         */
-        default CxfEndpointProducerBuilder address(String address) {
-            setProperty("address", address);
-            return this;
         }
         /**
          * The data type messages supported by the CXF endpoint.
@@ -1584,29 +1538,6 @@ public interface CxfEndpointBuilderFactory {
                 CxfEndpointConsumerBuilder, CxfEndpointProducerBuilder {
         default AdvancedCxfEndpointBuilder advanced() {
             return (AdvancedCxfEndpointBuilder) this;
-        }
-        /**
-         * To lookup an existing configured CxfEndpoint. Must used bean: as
-         * prefix.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfEndpointBuilder beanId(String beanId) {
-            setProperty("beanId", beanId);
-            return this;
-        }
-        /**
-         * The service publish address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: service
-         */
-        default CxfEndpointBuilder address(String address) {
-            setProperty("address", address);
-            return this;
         }
         /**
          * The data type messages supported by the CXF endpoint.

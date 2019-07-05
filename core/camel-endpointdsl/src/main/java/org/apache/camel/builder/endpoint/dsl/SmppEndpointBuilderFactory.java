@@ -43,40 +43,6 @@ public interface SmppEndpointBuilderFactory {
             return (AdvancedSmppEndpointConsumerBuilder) this;
         }
         /**
-         * Hostname for the SMSC server to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number for the SMSC server to use.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointConsumerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the SMSC server to use.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
@@ -675,40 +641,6 @@ public interface SmppEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedSmppEndpointProducerBuilder advanced() {
             return (AdvancedSmppEndpointProducerBuilder) this;
-        }
-        /**
-         * Hostname for the SMSC server to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number for the SMSC server to use.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointProducerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the SMSC server to use.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * Defines the initial delay in milliseconds after the consumer/producer
@@ -1611,40 +1543,6 @@ public interface SmppEndpointBuilderFactory {
                 SmppEndpointConsumerBuilder, SmppEndpointProducerBuilder {
         default AdvancedSmppEndpointBuilder advanced() {
             return (AdvancedSmppEndpointBuilder) this;
-        }
-        /**
-         * Hostname for the SMSC server to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port number for the SMSC server to use.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the SMSC server to use.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default SmppEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * Defines the initial delay in milliseconds after the consumer/producer

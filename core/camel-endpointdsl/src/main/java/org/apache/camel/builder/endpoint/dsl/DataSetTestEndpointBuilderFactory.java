@@ -41,18 +41,6 @@ public interface DataSetTestEndpointBuilderFactory {
             return (AdvancedDataSetTestEndpointBuilder) this;
         }
         /**
-         * Name of endpoint to lookup in the registry to use for polling
-         * messages used for testing.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default DataSetTestEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Whether the expected messages should arrive in the same order or can
          * be in any order.
          * 

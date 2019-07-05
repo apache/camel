@@ -39,17 +39,6 @@ public interface KeystoneEndpointBuilderFactory {
             return (AdvancedKeystoneEndpointBuilder) this;
         }
         /**
-         * OpenStack host url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default KeystoneEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
          * OpenStack configuration.
          * 
          * The option is a: <code>org.openstack4j.core.transport.Config</code>

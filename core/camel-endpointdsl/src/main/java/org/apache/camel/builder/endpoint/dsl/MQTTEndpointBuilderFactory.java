@@ -45,17 +45,6 @@ public interface MQTTEndpointBuilderFactory {
             return (AdvancedMQTTEndpointConsumerBuilder) this;
         }
         /**
-         * A logical name to use which is not the topic name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MQTTEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * SSL connections perform blocking operations against internal thread
          * pool unless you call the setBlockingExecutor method to configure that
          * executor they will use instead.
@@ -960,17 +949,6 @@ public interface MQTTEndpointBuilderFactory {
             return (AdvancedMQTTEndpointProducerBuilder) this;
         }
         /**
-         * A logical name to use which is not the topic name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MQTTEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * SSL connections perform blocking operations against internal thread
          * pool unless you call the setBlockingExecutor method to configure that
          * executor they will use instead.
@@ -1846,17 +1824,6 @@ public interface MQTTEndpointBuilderFactory {
                 MQTTEndpointConsumerBuilder, MQTTEndpointProducerBuilder {
         default AdvancedMQTTEndpointBuilder advanced() {
             return (AdvancedMQTTEndpointBuilder) this;
-        }
-        /**
-         * A logical name to use which is not the topic name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MQTTEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * SSL connections perform blocking operations against internal thread

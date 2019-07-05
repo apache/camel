@@ -38,30 +38,6 @@ public interface SagaEndpointBuilderFactory {
         default AdvancedSagaEndpointBuilder advanced() {
             return (AdvancedSagaEndpointBuilder) this;
         }
-        /**
-         * Action to execute (complete or compensate).
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> type.
-         * 
-         * Group: producer
-         */
-        default SagaEndpointBuilder action(SagaEndpointAction action) {
-            setProperty("action", action);
-            return this;
-        }
-        /**
-         * Action to execute (complete or compensate).
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> type.
-         * 
-         * Group: producer
-         */
-        default SagaEndpointBuilder action(String action) {
-            setProperty("action", action);
-            return this;
-        }
     }
 
     /**
@@ -123,15 +99,6 @@ public interface SagaEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.saga.SagaEndpoint$SagaEndpointAction</code> enum.
-     */
-    enum SagaEndpointAction {
-        COMPLETE,
-        COMPENSATE;
     }
     /**
      * Saga (camel-saga)

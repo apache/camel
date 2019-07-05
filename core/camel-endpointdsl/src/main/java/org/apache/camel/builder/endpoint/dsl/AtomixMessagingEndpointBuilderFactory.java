@@ -45,18 +45,6 @@ public interface AtomixMessagingEndpointBuilderFactory {
             return (AdvancedAtomixMessagingEndpointConsumerBuilder) this;
         }
         /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixMessagingEndpointConsumerBuilder resourceName(
-                String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
          * The Atomix instance to use.
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
@@ -556,18 +544,6 @@ public interface AtomixMessagingEndpointBuilderFactory {
             return (AdvancedAtomixMessagingEndpointProducerBuilder) this;
         }
         /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixMessagingEndpointProducerBuilder resourceName(
-                String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
-        }
-        /**
          * The Atomix instance to use.
          * 
          * The option is a: <code>io.atomix.AtomixClient</code> type.
@@ -1012,17 +988,6 @@ public interface AtomixMessagingEndpointBuilderFactory {
                 AtomixMessagingEndpointConsumerBuilder, AtomixMessagingEndpointProducerBuilder {
         default AdvancedAtomixMessagingEndpointBuilder advanced() {
             return (AdvancedAtomixMessagingEndpointBuilder) this;
-        }
-        /**
-         * The distributed resource name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixMessagingEndpointBuilder resourceName(String resourceName) {
-            setProperty("resourceName", resourceName);
-            return this;
         }
         /**
          * The Atomix instance to use.

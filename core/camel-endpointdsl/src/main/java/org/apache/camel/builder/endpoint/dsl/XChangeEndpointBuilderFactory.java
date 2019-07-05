@@ -39,17 +39,6 @@ public interface XChangeEndpointBuilderFactory {
             return (AdvancedXChangeEndpointBuilder) this;
         }
         /**
-         * The exchange to connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default XChangeEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The currency.
          * 
          * The option is a: <code>org.knowm.xchange.currency.Currency</code>

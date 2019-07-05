@@ -39,23 +39,6 @@ public interface XsltEndpointBuilderFactory {
             return (AdvancedXsltEndpointBuilder) this;
         }
         /**
-         * Path to the template. The following is supported by the default
-         * URIResolver. You can prefix with: classpath, file, http, ref, or
-         * bean. classpath, file and http loads the resource using these
-         * protocols (classpath is default). ref will lookup the resource in the
-         * registry. bean will call a method on a bean to be used as the
-         * resource. For bean you can specify the method name after dot, eg
-         * bean:myBean.myMethod.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default XsltEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether to allow using StAX as the javax.xml.transform.Source.
          * 
          * The option is a: <code>boolean</code> type.

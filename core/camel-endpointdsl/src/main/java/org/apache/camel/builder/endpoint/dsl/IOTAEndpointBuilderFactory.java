@@ -42,17 +42,6 @@ public interface IOTAEndpointBuilderFactory {
             return (AdvancedIOTAEndpointConsumerBuilder) this;
         }
         /**
-         * Component name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
          * 
@@ -330,17 +319,6 @@ public interface IOTAEndpointBuilderFactory {
             return (AdvancedIOTAEndpointProducerBuilder) this;
         }
         /**
-         * Component name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
          * 
@@ -563,17 +541,6 @@ public interface IOTAEndpointBuilderFactory {
                 IOTAEndpointConsumerBuilder, IOTAEndpointProducerBuilder {
         default AdvancedIOTAEndpointBuilder advanced() {
             return (AdvancedIOTAEndpointBuilder) this;
-        }
-        /**
-         * Component name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default IOTAEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * The depth determines how deep the tangle is analysed for getting

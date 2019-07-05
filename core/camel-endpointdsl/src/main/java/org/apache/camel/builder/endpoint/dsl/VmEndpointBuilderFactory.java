@@ -45,17 +45,6 @@ public interface VmEndpointBuilderFactory {
             return (AdvancedVmEndpointConsumerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default VmEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
@@ -416,17 +405,6 @@ public interface VmEndpointBuilderFactory {
             return (AdvancedVmEndpointProducerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default VmEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
@@ -770,17 +748,6 @@ public interface VmEndpointBuilderFactory {
                 VmEndpointConsumerBuilder, VmEndpointProducerBuilder {
         default AdvancedVmEndpointBuilder advanced() {
             return (AdvancedVmEndpointBuilder) this;
-        }
-        /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default VmEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages

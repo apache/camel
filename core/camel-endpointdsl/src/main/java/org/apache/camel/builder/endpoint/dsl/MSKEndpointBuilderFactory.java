@@ -38,17 +38,6 @@ public interface MSKEndpointBuilderFactory {
             return (AdvancedMSKEndpointBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MSKEndpointBuilder label(String label) {
-            setProperty("label", label);
-            return this;
-        }
-        /**
          * The region in which MSK client needs to work.
          * 
          * The option is a: <code>java.lang.String</code> type.

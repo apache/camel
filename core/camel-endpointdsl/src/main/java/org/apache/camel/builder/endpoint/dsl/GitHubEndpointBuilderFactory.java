@@ -42,41 +42,6 @@ public interface GitHubEndpointBuilderFactory {
             return (AdvancedGitHubEndpointConsumerBuilder) this;
         }
         /**
-         * What git operation to execute.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointConsumerBuilder type(GitHubType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * What git operation to execute.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Name of branch.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GitHubEndpointConsumerBuilder branchName(String branchName) {
-            setProperty("branchName", branchName);
-            return this;
-        }
-        /**
          * GitHub OAuth token, required unless username & password are provided.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -301,30 +266,6 @@ public interface GitHubEndpointBuilderFactory {
             return (AdvancedGitHubEndpointProducerBuilder) this;
         }
         /**
-         * What git operation to execute.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointProducerBuilder type(GitHubType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * What git operation to execute.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointProducerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * GitHub OAuth token, required unless username & password are provided.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -529,30 +470,6 @@ public interface GitHubEndpointBuilderFactory {
             return (AdvancedGitHubEndpointBuilder) this;
         }
         /**
-         * What git operation to execute.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointBuilder type(GitHubType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * What git operation to execute.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.github.GitHubType</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * GitHub OAuth token, required unless username & password are provided.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -670,22 +587,6 @@ public interface GitHubEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.github.GitHubType</code>
-     * enum.
-     */
-    enum GitHubType {
-        CLOSEPULLREQUEST,
-        PULLREQUESTCOMMENT,
-        COMMIT,
-        PULLREQUEST,
-        TAG,
-        PULLREQUESTSTATE,
-        PULLREQUESTFILES,
-        GETCOMMITFILE,
-        CREATEISSUE;
     }
     /**
      * GitHub (camel-github)

@@ -48,17 +48,6 @@ public interface SplunkEndpointBuilderFactory {
             return (AdvancedSplunkEndpointConsumerBuilder) this;
         }
         /**
-         * Name has no purpose.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SplunkEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Splunk app.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -900,17 +889,6 @@ public interface SplunkEndpointBuilderFactory {
             return (AdvancedSplunkEndpointProducerBuilder) this;
         }
         /**
-         * Name has no purpose.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SplunkEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Splunk app.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1277,17 +1255,6 @@ public interface SplunkEndpointBuilderFactory {
                 SplunkEndpointConsumerBuilder, SplunkEndpointProducerBuilder {
         default AdvancedSplunkEndpointBuilder advanced() {
             return (AdvancedSplunkEndpointBuilder) this;
-        }
-        /**
-         * Name has no purpose.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SplunkEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * Splunk app.

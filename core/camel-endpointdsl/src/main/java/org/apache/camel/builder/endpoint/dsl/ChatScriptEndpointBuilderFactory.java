@@ -40,50 +40,6 @@ public interface ChatScriptEndpointBuilderFactory {
             return (AdvancedChatScriptEndpointBuilder) this;
         }
         /**
-         * Hostname or IP of the server on which CS server is running.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ChatScriptEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Port on which ChatScript is listening to.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default ChatScriptEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port on which ChatScript is listening to.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: producer
-         */
-        default ChatScriptEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the Bot in CS to converse with.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ChatScriptEndpointBuilder botName(String botName) {
-            setProperty("botName", botName);
-            return this;
-        }
-        /**
          * Issues :reset command to start a new conversation everytime.
          * 
          * The option is a: <code>boolean</code> type.

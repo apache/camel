@@ -40,17 +40,6 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             return (AdvancedGoogleMailStreamEndpointBuilder) this;
         }
         /**
-         * Specifies an index for the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleMailStreamEndpointBuilder index(String index) {
-            setProperty("index", index);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,28 +51,6 @@ public interface FileEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedFileEndpointConsumerBuilder advanced() {
             return (AdvancedFileEndpointConsumerBuilder) this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: common
-         */
-        default FileEndpointConsumerBuilder directoryName(File directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: common
-         */
-        default FileEndpointConsumerBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
         }
         /**
          * This option is used to specify the encoding of the file. You can use
@@ -2276,28 +2253,6 @@ public interface FileEndpointBuilderFactory {
             return (AdvancedFileEndpointProducerBuilder) this;
         }
         /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: common
-         */
-        default FileEndpointProducerBuilder directoryName(File directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: common
-         */
-        default FileEndpointProducerBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
          * This option is used to specify the encoding of the file. You can use
          * this on the consumer, to specify the encodings of the files, which
          * allow Camel to know the charset it should load the file content in
@@ -3028,28 +2983,6 @@ public interface FileEndpointBuilderFactory {
                 FileEndpointConsumerBuilder, FileEndpointProducerBuilder {
         default AdvancedFileEndpointBuilder advanced() {
             return (AdvancedFileEndpointBuilder) this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option is a: <code>java.io.File</code> type.
-         * 
-         * Group: common
-         */
-        default FileEndpointBuilder directoryName(File directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
-        }
-        /**
-         * The starting directory.
-         * 
-         * The option will be converted to a <code>java.io.File</code> type.
-         * 
-         * Group: common
-         */
-        default FileEndpointBuilder directoryName(String directoryName) {
-            setProperty("directoryName", directoryName);
-            return this;
         }
         /**
          * This option is used to specify the encoding of the file. You can use

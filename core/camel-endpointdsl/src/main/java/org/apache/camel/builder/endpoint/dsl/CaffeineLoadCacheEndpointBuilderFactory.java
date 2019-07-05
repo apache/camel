@@ -43,18 +43,6 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
             return (AdvancedCaffeineLoadCacheEndpointConsumerBuilder) this;
         }
         /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CaffeineLoadCacheEndpointConsumerBuilder cacheName(
-                String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
@@ -299,18 +287,6 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedCaffeineLoadCacheEndpointProducerBuilder advanced() {
             return (AdvancedCaffeineLoadCacheEndpointProducerBuilder) this;
-        }
-        /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CaffeineLoadCacheEndpointProducerBuilder cacheName(
-                String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * Configure if a cache need to be created if it does exist or can't be
@@ -794,17 +770,6 @@ public interface CaffeineLoadCacheEndpointBuilderFactory {
                 CaffeineLoadCacheEndpointConsumerBuilder, CaffeineLoadCacheEndpointProducerBuilder {
         default AdvancedCaffeineLoadCacheEndpointBuilder advanced() {
             return (AdvancedCaffeineLoadCacheEndpointBuilder) this;
-        }
-        /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CaffeineLoadCacheEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * Configure if a cache need to be created if it does exist or can't be

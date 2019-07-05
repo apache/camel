@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URI;
 import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -66,28 +65,6 @@ public interface WsEndpointBuilderFactory {
         default WsEndpointConsumerBuilder sendMessageOnError(
                 String sendMessageOnError) {
             setProperty("sendMessageOnError", sendMessageOnError);
-            return this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default WsEndpointConsumerBuilder httpUri(URI httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default WsEndpointConsumerBuilder httpUri(String httpUri) {
-            setProperty("httpUri", httpUri);
             return this;
         }
         /**
@@ -479,28 +456,6 @@ public interface WsEndpointBuilderFactory {
          */
         default WsEndpointProducerBuilder useStreaming(String useStreaming) {
             setProperty("useStreaming", useStreaming);
-            return this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default WsEndpointProducerBuilder httpUri(URI httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default WsEndpointProducerBuilder httpUri(String httpUri) {
-            setProperty("httpUri", httpUri);
             return this;
         }
         /**
@@ -960,28 +915,6 @@ public interface WsEndpointBuilderFactory {
                 WsEndpointConsumerBuilder, WsEndpointProducerBuilder {
         default AdvancedWsEndpointBuilder advanced() {
             return (AdvancedWsEndpointBuilder) this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default WsEndpointBuilder httpUri(URI httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
-        }
-        /**
-         * The URI to use such as http://hostname:port/path.
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: producer
-         */
-        default WsEndpointBuilder httpUri(String httpUri) {
-            setProperty("httpUri", httpUri);
-            return this;
         }
         /**
          * If the option is true, then the Exchange.HTTP_URI header is ignored,

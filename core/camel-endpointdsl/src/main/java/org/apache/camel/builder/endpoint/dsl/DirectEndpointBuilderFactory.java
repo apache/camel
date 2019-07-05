@@ -43,17 +43,6 @@ public interface DirectEndpointBuilderFactory {
             return (AdvancedDirectEndpointConsumerBuilder) this;
         }
         /**
-         * Name of direct endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DirectEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -219,17 +208,6 @@ public interface DirectEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedDirectEndpointProducerBuilder advanced() {
             return (AdvancedDirectEndpointProducerBuilder) this;
-        }
-        /**
-         * Name of direct endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DirectEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * If sending a message to a direct endpoint which has no active
@@ -418,17 +396,6 @@ public interface DirectEndpointBuilderFactory {
                 DirectEndpointConsumerBuilder, DirectEndpointProducerBuilder {
         default AdvancedDirectEndpointBuilder advanced() {
             return (AdvancedDirectEndpointBuilder) this;
-        }
-        /**
-         * Name of direct endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DirectEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
     }
 

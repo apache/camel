@@ -43,19 +43,6 @@ public interface QuickfixjEndpointBuilderFactory {
             return (AdvancedQuickfixjEndpointConsumerBuilder) this;
         }
         /**
-         * The configFile is the name of the QuickFIX/J configuration to use for
-         * the FIX engine (located as a resource found in your classpath).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default QuickfixjEndpointConsumerBuilder configurationName(
-                String configurationName) {
-            setProperty("configurationName", configurationName);
-            return this;
-        }
-        /**
          * This option allows to create QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
@@ -284,19 +271,6 @@ public interface QuickfixjEndpointBuilderFactory {
             return (AdvancedQuickfixjEndpointProducerBuilder) this;
         }
         /**
-         * The configFile is the name of the QuickFIX/J configuration to use for
-         * the FIX engine (located as a resource found in your classpath).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default QuickfixjEndpointProducerBuilder configurationName(
-                String configurationName) {
-            setProperty("configurationName", configurationName);
-            return this;
-        }
-        /**
          * This option allows to create QuickFIX/J engine on demand. Value true
          * means the engine is started when first message is send or there's
          * consumer configured in route definition. When false value is used,
@@ -470,19 +444,6 @@ public interface QuickfixjEndpointBuilderFactory {
                 QuickfixjEndpointConsumerBuilder, QuickfixjEndpointProducerBuilder {
         default AdvancedQuickfixjEndpointBuilder advanced() {
             return (AdvancedQuickfixjEndpointBuilder) this;
-        }
-        /**
-         * The configFile is the name of the QuickFIX/J configuration to use for
-         * the FIX engine (located as a resource found in your classpath).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default QuickfixjEndpointBuilder configurationName(
-                String configurationName) {
-            setProperty("configurationName", configurationName);
-            return this;
         }
         /**
          * This option allows to create QuickFIX/J engine on demand. Value true

@@ -49,17 +49,6 @@ public interface KinesisEndpointBuilderFactory {
             return (AdvancedKinesisEndpointConsumerBuilder) this;
         }
         /**
-         * Name of the stream.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KinesisEndpointConsumerBuilder streamName(String streamName) {
-            setProperty("streamName", streamName);
-            return this;
-        }
-        /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -838,17 +827,6 @@ public interface KinesisEndpointBuilderFactory {
             return (AdvancedKinesisEndpointProducerBuilder) this;
         }
         /**
-         * Name of the stream.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KinesisEndpointProducerBuilder streamName(String streamName) {
-            setProperty("streamName", streamName);
-            return this;
-        }
-        /**
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
@@ -1054,17 +1032,6 @@ public interface KinesisEndpointBuilderFactory {
                 KinesisEndpointConsumerBuilder, KinesisEndpointProducerBuilder {
         default AdvancedKinesisEndpointBuilder advanced() {
             return (AdvancedKinesisEndpointBuilder) this;
-        }
-        /**
-         * Name of the stream.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KinesisEndpointBuilder streamName(String streamName) {
-            setProperty("streamName", streamName);
-            return this;
         }
         /**
          * Amazon Kinesis client to use for all requests for this endpoint.

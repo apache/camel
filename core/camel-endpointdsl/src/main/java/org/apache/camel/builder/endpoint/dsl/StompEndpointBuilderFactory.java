@@ -44,17 +44,6 @@ public interface StompEndpointBuilderFactory {
             return (AdvancedStompEndpointConsumerBuilder) this;
         }
         /**
-         * Name of the queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StompEndpointConsumerBuilder destination(String destination) {
-            setProperty("destination", destination);
-            return this;
-        }
-        /**
          * The URI of the Stomp broker to connect to.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -321,17 +310,6 @@ public interface StompEndpointBuilderFactory {
             return (AdvancedStompEndpointProducerBuilder) this;
         }
         /**
-         * Name of the queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StompEndpointProducerBuilder destination(String destination) {
-            setProperty("destination", destination);
-            return this;
-        }
-        /**
          * The URI of the Stomp broker to connect to.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -543,17 +521,6 @@ public interface StompEndpointBuilderFactory {
                 StompEndpointConsumerBuilder, StompEndpointProducerBuilder {
         default AdvancedStompEndpointBuilder advanced() {
             return (AdvancedStompEndpointBuilder) this;
-        }
-        /**
-         * Name of the queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StompEndpointBuilder destination(String destination) {
-            setProperty("destination", destination);
-            return this;
         }
         /**
          * The URI of the Stomp broker to connect to.

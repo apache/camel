@@ -42,17 +42,6 @@ public interface AsteriskEndpointBuilderFactory {
             return (AdvancedAsteriskEndpointConsumerBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AsteriskEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The hostname of the asterisk server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -256,17 +245,6 @@ public interface AsteriskEndpointBuilderFactory {
             return (AdvancedAsteriskEndpointProducerBuilder) this;
         }
         /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AsteriskEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The hostname of the asterisk server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -441,17 +419,6 @@ public interface AsteriskEndpointBuilderFactory {
                 AsteriskEndpointConsumerBuilder, AsteriskEndpointProducerBuilder {
         default AdvancedAsteriskEndpointBuilder advanced() {
             return (AdvancedAsteriskEndpointBuilder) this;
-        }
-        /**
-         * Logical name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AsteriskEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * The hostname of the asterisk server.

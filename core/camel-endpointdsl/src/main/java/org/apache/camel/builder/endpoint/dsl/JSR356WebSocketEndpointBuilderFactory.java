@@ -42,19 +42,6 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             return (AdvancedJSR356WebSocketEndpointConsumerBuilder) this;
         }
         /**
-         * If a path (/foo) it will deploy locally the endpoint, if an uri it
-         * will connect to the corresponding server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JSR356WebSocketEndpointConsumerBuilder websocketPathOrUri(
-                String websocketPathOrUri) {
-            setProperty("websocketPathOrUri", websocketPathOrUri);
-            return this;
-        }
-        /**
          * the servlet context to use (represented by its path).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -260,19 +247,6 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             return (AdvancedJSR356WebSocketEndpointProducerBuilder) this;
         }
         /**
-         * If a path (/foo) it will deploy locally the endpoint, if an uri it
-         * will connect to the corresponding server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JSR356WebSocketEndpointProducerBuilder websocketPathOrUri(
-                String websocketPathOrUri) {
-            setProperty("websocketPathOrUri", websocketPathOrUri);
-            return this;
-        }
-        /**
          * the servlet context to use (represented by its path).
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -423,19 +397,6 @@ public interface JSR356WebSocketEndpointBuilderFactory {
                 JSR356WebSocketEndpointConsumerBuilder, JSR356WebSocketEndpointProducerBuilder {
         default AdvancedJSR356WebSocketEndpointBuilder advanced() {
             return (AdvancedJSR356WebSocketEndpointBuilder) this;
-        }
-        /**
-         * If a path (/foo) it will deploy locally the endpoint, if an uri it
-         * will connect to the corresponding server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JSR356WebSocketEndpointBuilder websocketPathOrUri(
-                String websocketPathOrUri) {
-            setProperty("websocketPathOrUri", websocketPathOrUri);
-            return this;
         }
         /**
          * the servlet context to use (represented by its path).

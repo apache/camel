@@ -42,29 +42,6 @@ public interface ZooKeeperEndpointBuilderFactory {
             return (AdvancedZooKeeperEndpointConsumerBuilder) this;
         }
         /**
-         * The zookeeper server hosts (multiple servers can be separated by
-         * comma).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZooKeeperEndpointConsumerBuilder serverUrls(String serverUrls) {
-            setProperty("serverUrls", serverUrls);
-            return this;
-        }
-        /**
-         * The node in the ZooKeeper server (aka znode).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZooKeeperEndpointConsumerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * Not in use.
          * 
          * The option is a: <code>boolean</code> type.
@@ -374,29 +351,6 @@ public interface ZooKeeperEndpointBuilderFactory {
             return (AdvancedZooKeeperEndpointProducerBuilder) this;
         }
         /**
-         * The zookeeper server hosts (multiple servers can be separated by
-         * comma).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZooKeeperEndpointProducerBuilder serverUrls(String serverUrls) {
-            setProperty("serverUrls", serverUrls);
-            return this;
-        }
-        /**
-         * The node in the ZooKeeper server (aka znode).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZooKeeperEndpointProducerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * Not in use.
          * 
          * The option is a: <code>boolean</code> type.
@@ -614,29 +568,6 @@ public interface ZooKeeperEndpointBuilderFactory {
                 ZooKeeperEndpointConsumerBuilder, ZooKeeperEndpointProducerBuilder {
         default AdvancedZooKeeperEndpointBuilder advanced() {
             return (AdvancedZooKeeperEndpointBuilder) this;
-        }
-        /**
-         * The zookeeper server hosts (multiple servers can be separated by
-         * comma).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZooKeeperEndpointBuilder serverUrls(String serverUrls) {
-            setProperty("serverUrls", serverUrls);
-            return this;
-        }
-        /**
-         * The node in the ZooKeeper server (aka znode).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ZooKeeperEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
         }
         /**
          * Not in use.

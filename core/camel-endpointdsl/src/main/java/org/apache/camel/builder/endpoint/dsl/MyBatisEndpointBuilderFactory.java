@@ -49,18 +49,6 @@ public interface MyBatisEndpointBuilderFactory {
             return (AdvancedMyBatisEndpointConsumerBuilder) this;
         }
         /**
-         * The statement name in the MyBatis XML mapping file which maps to the
-         * query, insert, update or delete operation you wish to evaluate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MyBatisEndpointConsumerBuilder statement(String statement) {
-            setProperty("statement", statement);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -779,18 +767,6 @@ public interface MyBatisEndpointBuilderFactory {
             return (AdvancedMyBatisEndpointProducerBuilder) this;
         }
         /**
-         * The statement name in the MyBatis XML mapping file which maps to the
-         * query, insert, update or delete operation you wish to evaluate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MyBatisEndpointProducerBuilder statement(String statement) {
-            setProperty("statement", statement);
-            return this;
-        }
-        /**
          * The executor type to be used while executing statements. simple -
          * executor does nothing special. reuse - executor reuses prepared
          * statements. batch - executor reuses statements and batches updates.
@@ -993,18 +969,6 @@ public interface MyBatisEndpointBuilderFactory {
                 MyBatisEndpointConsumerBuilder, MyBatisEndpointProducerBuilder {
         default AdvancedMyBatisEndpointBuilder advanced() {
             return (AdvancedMyBatisEndpointBuilder) this;
-        }
-        /**
-         * The statement name in the MyBatis XML mapping file which maps to the
-         * query, insert, update or delete operation you wish to evaluate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MyBatisEndpointBuilder statement(String statement) {
-            setProperty("statement", statement);
-            return this;
         }
     }
 

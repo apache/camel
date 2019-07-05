@@ -40,29 +40,6 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
         default AdvancedZooKeeperMasterEndpointBuilder advanced() {
             return (AdvancedZooKeeperMasterEndpointBuilder) this;
         }
-        /**
-         * The name of the cluster group to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default ZooKeeperMasterEndpointBuilder groupName(String groupName) {
-            setProperty("groupName", groupName);
-            return this;
-        }
-        /**
-         * The consumer endpoint to use in master/slave mode.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default ZooKeeperMasterEndpointBuilder consumerEndpointUri(
-                String consumerEndpointUri) {
-            setProperty("consumerEndpointUri", consumerEndpointUri);
-            return this;
-        }
     }
 
     /**

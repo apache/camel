@@ -39,28 +39,6 @@ public interface GeoCoderEndpointBuilderFactory {
             return (AdvancedGeoCoderEndpointBuilder) this;
         }
         /**
-         * The geo address which should be prefixed with address:.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GeoCoderEndpointBuilder address(String address) {
-            setProperty("address", address);
-            return this;
-        }
-        /**
-         * The geo latitude and longitude which should be prefixed with latlng:.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default GeoCoderEndpointBuilder latlng(String latlng) {
-            setProperty("latlng", latlng);
-            return this;
-        }
-        /**
          * Whether to only enrich the Exchange with headers, and leave the body
          * as-is.
          * 

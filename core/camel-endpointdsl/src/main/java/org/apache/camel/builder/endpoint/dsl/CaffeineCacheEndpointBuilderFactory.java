@@ -42,17 +42,6 @@ public interface CaffeineCacheEndpointBuilderFactory {
             return (AdvancedCaffeineCacheEndpointConsumerBuilder) this;
         }
         /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CaffeineCacheEndpointConsumerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
@@ -296,17 +285,6 @@ public interface CaffeineCacheEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedCaffeineCacheEndpointProducerBuilder advanced() {
             return (AdvancedCaffeineCacheEndpointProducerBuilder) this;
-        }
-        /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CaffeineCacheEndpointProducerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * Configure if a cache need to be created if it does exist or can't be
@@ -788,17 +766,6 @@ public interface CaffeineCacheEndpointBuilderFactory {
                 CaffeineCacheEndpointConsumerBuilder, CaffeineCacheEndpointProducerBuilder {
         default AdvancedCaffeineCacheEndpointBuilder advanced() {
             return (AdvancedCaffeineCacheEndpointBuilder) this;
-        }
-        /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CaffeineCacheEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * Configure if a cache need to be created if it does exist or can't be

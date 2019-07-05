@@ -44,65 +44,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
             return (AdvancedSpringWebserviceEndpointConsumerBuilder) this;
         }
         /**
-         * Endpoint mapping type if endpoint mapping is used. rootqname - Offers
-         * the option to map web service requests based on the qualified name of
-         * the root element contained in the message. soapaction - Used to map
-         * web service requests based on the SOAP action specified in the header
-         * of the message. uri - In order to map web service requests that
-         * target a specific URI. xpathresult - Used to map web service requests
-         * based on the evaluation of an XPath expression against the incoming
-         * message. The result of the evaluation should match the XPath result
-         * specified in the endpoint URI. beanname - Allows you to reference an
-         * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
-         * object in order to integrate with existing (legacy) endpoint mappings
-         * like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.spring.ws.type.EndpointMappingType</code> type.
-         * 
-         * Group: consumer
-         */
-        default SpringWebserviceEndpointConsumerBuilder type(
-                EndpointMappingType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Endpoint mapping type if endpoint mapping is used. rootqname - Offers
-         * the option to map web service requests based on the qualified name of
-         * the root element contained in the message. soapaction - Used to map
-         * web service requests based on the SOAP action specified in the header
-         * of the message. uri - In order to map web service requests that
-         * target a specific URI. xpathresult - Used to map web service requests
-         * based on the evaluation of an XPath expression against the incoming
-         * message. The result of the evaluation should match the XPath result
-         * specified in the endpoint URI. beanname - Allows you to reference an
-         * org.apache.camel.component.spring.ws.bean.CamelEndpointDispatcher
-         * object in order to integrate with existing (legacy) endpoint mappings
-         * like PayloadRootQNameEndpointMapping, SoapActionEndpointMapping, etc.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.spring.ws.type.EndpointMappingType</code> type.
-         * 
-         * Group: consumer
-         */
-        default SpringWebserviceEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Endpoint mapping key if endpoint mapping is used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SpringWebserviceEndpointConsumerBuilder lookupKey(
-                String lookupKey) {
-            setProperty("lookupKey", lookupKey);
-            return this;
-        }
-        /**
          * Option to provide a custom MessageFilter. For example when you want
          * to process your headers or attachments by your own.
          * 
@@ -406,18 +347,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedSpringWebserviceEndpointProducerBuilder advanced() {
             return (AdvancedSpringWebserviceEndpointProducerBuilder) this;
-        }
-        /**
-         * The default Web Service endpoint uri to use for the producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SpringWebserviceEndpointProducerBuilder webServiceEndpointUri(
-                String webServiceEndpointUri) {
-            setProperty("webServiceEndpointUri", webServiceEndpointUri);
-            return this;
         }
         /**
          * Option to provide a custom MessageFilter. For example when you want
@@ -1074,21 +1003,6 @@ public interface SpringWebserviceEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.spring.ws.type.EndpointMappingType</code> enum.
-     */
-    enum EndpointMappingType {
-        ROOT_QNAME,
-        ACTION,
-        TO,
-        SOAP_ACTION,
-        XPATHRESULT,
-        URI,
-        URI_PATH,
-        BEANNAME;
     }
     /**
      * Spring WebService (camel-spring-ws)

@@ -42,40 +42,6 @@ public interface RedisEndpointBuilderFactory {
             return (AdvancedRedisEndpointConsumerBuilder) this;
         }
         /**
-         * The host where Redis server is running.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Redis server port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointConsumerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Redis server port number.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
@@ -385,40 +351,6 @@ public interface RedisEndpointBuilderFactory {
             return (AdvancedRedisEndpointProducerBuilder) this;
         }
         /**
-         * The host where Redis server is running.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Redis server port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointProducerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Redis server port number.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
          * List of topic names or name patterns to subscribe to. Multiple names
          * can be separated by comma.
          * 
@@ -645,40 +577,6 @@ public interface RedisEndpointBuilderFactory {
                 RedisEndpointConsumerBuilder, RedisEndpointProducerBuilder {
         default AdvancedRedisEndpointBuilder advanced() {
             return (AdvancedRedisEndpointBuilder) this;
-        }
-        /**
-         * The host where Redis server is running.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Redis server port number.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Redis server port number.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default RedisEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
         }
         /**
          * List of topic names or name patterns to subscribe to. Multiple names

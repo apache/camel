@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
@@ -44,40 +43,6 @@ public interface JBPMEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedJBPMEndpointConsumerBuilder advanced() {
             return (AdvancedJBPMEndpointConsumerBuilder) this;
-        }
-        /**
-         * The URL to the jBPM server.
-         * 
-         * The option is a: <code>java.net.URL</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointConsumerBuilder connectionURL(URL connectionURL) {
-            setProperty("connectionURL", connectionURL);
-            return this;
-        }
-        /**
-         * The URL to the jBPM server.
-         * 
-         * The option will be converted to a <code>java.net.URL</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointConsumerBuilder connectionURL(String connectionURL) {
-            setProperty("connectionURL", connectionURL);
-            return this;
-        }
-        /**
-         * Sets the event listener type to attach to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointConsumerBuilder eventListenerType(
-                String eventListenerType) {
-            setProperty("eventListenerType", eventListenerType);
-            return this;
         }
         /**
          * attachId to use when retrieving attachments.
@@ -736,40 +701,6 @@ public interface JBPMEndpointBuilderFactory {
             return (AdvancedJBPMEndpointProducerBuilder) this;
         }
         /**
-         * The URL to the jBPM server.
-         * 
-         * The option is a: <code>java.net.URL</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointProducerBuilder connectionURL(URL connectionURL) {
-            setProperty("connectionURL", connectionURL);
-            return this;
-        }
-        /**
-         * The URL to the jBPM server.
-         * 
-         * The option will be converted to a <code>java.net.URL</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointProducerBuilder connectionURL(String connectionURL) {
-            setProperty("connectionURL", connectionURL);
-            return this;
-        }
-        /**
-         * Sets the event listener type to attach to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointProducerBuilder eventListenerType(
-                String eventListenerType) {
-            setProperty("eventListenerType", eventListenerType);
-            return this;
-        }
-        /**
          * attachId to use when retrieving attachments.
          * 
          * The option is a: <code>java.lang.Long</code> type.
@@ -1382,39 +1313,6 @@ public interface JBPMEndpointBuilderFactory {
                 JBPMEndpointConsumerBuilder, JBPMEndpointProducerBuilder {
         default AdvancedJBPMEndpointBuilder advanced() {
             return (AdvancedJBPMEndpointBuilder) this;
-        }
-        /**
-         * The URL to the jBPM server.
-         * 
-         * The option is a: <code>java.net.URL</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointBuilder connectionURL(URL connectionURL) {
-            setProperty("connectionURL", connectionURL);
-            return this;
-        }
-        /**
-         * The URL to the jBPM server.
-         * 
-         * The option will be converted to a <code>java.net.URL</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointBuilder connectionURL(String connectionURL) {
-            setProperty("connectionURL", connectionURL);
-            return this;
-        }
-        /**
-         * Sets the event listener type to attach to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JBPMEndpointBuilder eventListenerType(String eventListenerType) {
-            setProperty("eventListenerType", eventListenerType);
-            return this;
         }
         /**
          * attachId to use when retrieving attachments.

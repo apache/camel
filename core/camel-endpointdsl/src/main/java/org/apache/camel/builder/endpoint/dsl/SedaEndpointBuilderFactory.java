@@ -45,17 +45,6 @@ public interface SedaEndpointBuilderFactory {
             return (AdvancedSedaEndpointConsumerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SedaEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
@@ -418,17 +407,6 @@ public interface SedaEndpointBuilderFactory {
             return (AdvancedSedaEndpointProducerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SedaEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
@@ -773,17 +751,6 @@ public interface SedaEndpointBuilderFactory {
                 SedaEndpointConsumerBuilder, SedaEndpointProducerBuilder {
         default AdvancedSedaEndpointBuilder advanced() {
             return (AdvancedSedaEndpointBuilder) this;
-        }
-        /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SedaEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages

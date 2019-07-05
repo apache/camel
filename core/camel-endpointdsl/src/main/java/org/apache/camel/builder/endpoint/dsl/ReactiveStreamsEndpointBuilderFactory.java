@@ -42,17 +42,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
             return (AdvancedReactiveStreamsEndpointConsumerBuilder) this;
         }
         /**
-         * Name of the stream channel used by the endpoint to exchange messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ReactiveStreamsEndpointConsumerBuilder stream(String stream) {
-            setProperty("stream", stream);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -364,17 +353,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
             return (AdvancedReactiveStreamsEndpointProducerBuilder) this;
         }
         /**
-         * Name of the stream channel used by the endpoint to exchange messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ReactiveStreamsEndpointProducerBuilder stream(String stream) {
-            setProperty("stream", stream);
-            return this;
-        }
-        /**
          * The backpressure strategy to use when pushing events to a slow
          * subscriber.
          * 
@@ -516,17 +494,6 @@ public interface ReactiveStreamsEndpointBuilderFactory {
                 ReactiveStreamsEndpointConsumerBuilder, ReactiveStreamsEndpointProducerBuilder {
         default AdvancedReactiveStreamsEndpointBuilder advanced() {
             return (AdvancedReactiveStreamsEndpointBuilder) this;
-        }
-        /**
-         * Name of the stream channel used by the endpoint to exchange messages.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ReactiveStreamsEndpointBuilder stream(String stream) {
-            setProperty("stream", stream);
-            return this;
         }
     }
 

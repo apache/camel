@@ -45,18 +45,6 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
             return (AdvancedKubernetesReplicationControllersEndpointConsumerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesReplicationControllersEndpointConsumerBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -556,18 +544,6 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
             return (AdvancedKubernetesReplicationControllersEndpointProducerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesReplicationControllersEndpointProducerBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -951,18 +927,6 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
                 KubernetesReplicationControllersEndpointConsumerBuilder, KubernetesReplicationControllersEndpointProducerBuilder {
         default AdvancedKubernetesReplicationControllersEndpointBuilder advanced() {
             return (AdvancedKubernetesReplicationControllersEndpointBuilder) this;
-        }
-        /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesReplicationControllersEndpointBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
         }
         /**
          * The Kubernetes API Version to use.

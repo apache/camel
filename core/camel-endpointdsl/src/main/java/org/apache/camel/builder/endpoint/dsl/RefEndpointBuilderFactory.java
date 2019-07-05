@@ -43,17 +43,6 @@ public interface RefEndpointBuilderFactory {
             return (AdvancedRefEndpointConsumerBuilder) this;
         }
         /**
-         * Name of endpoint to lookup in the registry.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RefEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -221,17 +210,6 @@ public interface RefEndpointBuilderFactory {
             return (AdvancedRefEndpointProducerBuilder) this;
         }
         /**
-         * Name of endpoint to lookup in the registry.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RefEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -344,17 +322,6 @@ public interface RefEndpointBuilderFactory {
                 RefEndpointConsumerBuilder, RefEndpointProducerBuilder {
         default AdvancedRefEndpointBuilder advanced() {
             return (AdvancedRefEndpointBuilder) this;
-        }
-        /**
-         * Name of endpoint to lookup in the registry.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RefEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
     }
 

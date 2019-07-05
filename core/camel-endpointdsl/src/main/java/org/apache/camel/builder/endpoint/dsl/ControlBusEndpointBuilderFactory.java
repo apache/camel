@@ -21,7 +21,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
-import org.apache.camel.spi.Language;
 
 /**
  * The controlbus component provides easy management of Camel applications based
@@ -41,44 +40,6 @@ public interface ControlBusEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedControlBusEndpointBuilder advanced() {
             return (AdvancedControlBusEndpointBuilder) this;
-        }
-        /**
-         * Command can be either route or language.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ControlBusEndpointBuilder command(String command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * Allows you to specify the name of a Language to use for evaluating
-         * the message body. If there is any result from the evaluation, then
-         * the result is put in the message body.
-         * 
-         * The option is a: <code>org.apache.camel.spi.Language</code> type.
-         * 
-         * Group: producer
-         */
-        default ControlBusEndpointBuilder language(Language language) {
-            setProperty("language", language);
-            return this;
-        }
-        /**
-         * Allows you to specify the name of a Language to use for evaluating
-         * the message body. If there is any result from the evaluation, then
-         * the result is put in the message body.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.Language</code> type.
-         * 
-         * Group: producer
-         */
-        default ControlBusEndpointBuilder language(String language) {
-            setProperty("language", language);
-            return this;
         }
         /**
          * To denote an action that can be either: start, stop, or status. To

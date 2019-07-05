@@ -43,17 +43,6 @@ public interface JGroupsEndpointBuilderFactory {
             return (AdvancedJGroupsEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the JGroups cluster the component should connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JGroupsEndpointConsumerBuilder clusterName(String clusterName) {
-            setProperty("clusterName", clusterName);
-            return this;
-        }
-        /**
          * Specifies configuration properties of the JChannel used by the
          * endpoint.
          * 
@@ -262,17 +251,6 @@ public interface JGroupsEndpointBuilderFactory {
             return (AdvancedJGroupsEndpointProducerBuilder) this;
         }
         /**
-         * The name of the JGroups cluster the component should connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JGroupsEndpointProducerBuilder clusterName(String clusterName) {
-            setProperty("clusterName", clusterName);
-            return this;
-        }
-        /**
          * Specifies configuration properties of the JChannel used by the
          * endpoint.
          * 
@@ -398,17 +376,6 @@ public interface JGroupsEndpointBuilderFactory {
                 JGroupsEndpointConsumerBuilder, JGroupsEndpointProducerBuilder {
         default AdvancedJGroupsEndpointBuilder advanced() {
             return (AdvancedJGroupsEndpointBuilder) this;
-        }
-        /**
-         * The name of the JGroups cluster the component should connect to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JGroupsEndpointBuilder clusterName(String clusterName) {
-            setProperty("clusterName", clusterName);
-            return this;
         }
         /**
          * Specifies configuration properties of the JChannel used by the

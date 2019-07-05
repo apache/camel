@@ -43,17 +43,6 @@ public interface IgniteComputeEndpointBuilderFactory {
             return (AdvancedIgniteComputeEndpointBuilder) this;
         }
         /**
-         * The endpoint ID (not used).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default IgniteComputeEndpointBuilder endpointId(String endpointId) {
-            setProperty("endpointId", endpointId);
-            return this;
-        }
-        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 

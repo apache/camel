@@ -42,42 +42,6 @@ public interface XmlSignatureEndpointBuilderFactory {
             return (AdvancedXmlSignatureEndpointBuilder) this;
         }
         /**
-         * Whether to sign or verify.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.xmlsecurity.XmlCommand</code> type.
-         * 
-         * Group: producer
-         */
-        default XmlSignatureEndpointBuilder command(XmlCommand command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * Whether to sign or verify.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.xmlsecurity.XmlCommand</code> type.
-         * 
-         * Group: producer
-         */
-        default XmlSignatureEndpointBuilder command(String command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * The name part in the URI can be chosen by the user to distinguish
-         * between different signer/verifier endpoints within the camel context.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default XmlSignatureEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * You can set a base URI which is used in the URI dereferencing.
          * Relative URIs are then concatenated with the base URI.
          * 
@@ -1041,15 +1005,6 @@ public interface XmlSignatureEndpointBuilderFactory {
             setProperty("uriDereferencer", uriDereferencer);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.xmlsecurity.XmlCommand</code> enum.
-     */
-    enum XmlCommand {
-        sign,
-        verify;
     }
     /**
      * XML Security (camel-xmlsecurity)

@@ -39,17 +39,6 @@ public interface DdbEndpointBuilderFactory {
             return (AdvancedDdbEndpointBuilder) this;
         }
         /**
-         * The name of the table currently worked with.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default DdbEndpointBuilder tableName(String tableName) {
-            setProperty("tableName", tableName);
-            return this;
-        }
-        /**
          * To use the AmazonDynamoDB as the client.
          * 
          * The option is a:

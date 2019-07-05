@@ -44,18 +44,6 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
             return (AdvancedHazelcastReplicatedmapEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastReplicatedmapEndpointConsumerBuilder cacheName(
-                String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -529,18 +517,6 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
             return (AdvancedHazelcastReplicatedmapEndpointProducerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastReplicatedmapEndpointProducerBuilder cacheName(
-                String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -884,17 +860,6 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
                 HazelcastReplicatedmapEndpointConsumerBuilder, HazelcastReplicatedmapEndpointProducerBuilder {
         default AdvancedHazelcastReplicatedmapEndpointBuilder advanced() {
             return (AdvancedHazelcastReplicatedmapEndpointBuilder) this;
-        }
-        /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastReplicatedmapEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * To specify a default operation to use, if no operation header has

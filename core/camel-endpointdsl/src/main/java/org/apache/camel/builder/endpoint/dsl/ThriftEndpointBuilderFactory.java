@@ -43,53 +43,6 @@ public interface ThriftEndpointBuilderFactory {
             return (AdvancedThriftEndpointConsumerBuilder) this;
         }
         /**
-         * The Thrift server host name. This is localhost or 0.0.0.0 (if not
-         * defined) when being a consumer or remote server host name when using
-         * producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The Thrift server port.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The Thrift server port.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Fully qualified service name from the thrift descriptor file (package
-         * dot service definition name).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointConsumerBuilder service(String service) {
-            setProperty("service", service);
-            return this;
-        }
-        /**
          * Protocol compression mechanism type.
          * 
          * The option is a:
@@ -431,53 +384,6 @@ public interface ThriftEndpointBuilderFactory {
             return (AdvancedThriftEndpointProducerBuilder) this;
         }
         /**
-         * The Thrift server host name. This is localhost or 0.0.0.0 (if not
-         * defined) when being a consumer or remote server host name when using
-         * producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The Thrift server port.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The Thrift server port.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Fully qualified service name from the thrift descriptor file (package
-         * dot service definition name).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointProducerBuilder service(String service) {
-            setProperty("service", service);
-            return this;
-        }
-        /**
          * Protocol compression mechanism type.
          * 
          * The option is a:
@@ -709,53 +615,6 @@ public interface ThriftEndpointBuilderFactory {
                 ThriftEndpointConsumerBuilder, ThriftEndpointProducerBuilder {
         default AdvancedThriftEndpointBuilder advanced() {
             return (AdvancedThriftEndpointBuilder) this;
-        }
-        /**
-         * The Thrift server host name. This is localhost or 0.0.0.0 (if not
-         * defined) when being a consumer or remote server host name when using
-         * producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The Thrift server port.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The Thrift server port.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Fully qualified service name from the thrift descriptor file (package
-         * dot service definition name).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ThriftEndpointBuilder service(String service) {
-            setProperty("service", service);
-            return this;
         }
         /**
          * Protocol compression mechanism type.

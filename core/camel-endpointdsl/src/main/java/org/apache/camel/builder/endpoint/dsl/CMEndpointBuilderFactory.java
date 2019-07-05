@@ -38,17 +38,6 @@ public interface CMEndpointBuilderFactory {
             return (AdvancedCMEndpointBuilder) this;
         }
         /**
-         * SMS Provider HOST with scheme.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default CMEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
          * This is the sender name. The maximum length is 11 characters.
          * 
          * The option is a: <code>java.lang.String</code> type.

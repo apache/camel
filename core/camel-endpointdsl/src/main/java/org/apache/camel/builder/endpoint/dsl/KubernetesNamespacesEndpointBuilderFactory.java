@@ -43,18 +43,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
             return (AdvancedKubernetesNamespacesEndpointConsumerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesNamespacesEndpointConsumerBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -553,18 +541,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
             return (AdvancedKubernetesNamespacesEndpointProducerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesNamespacesEndpointProducerBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -948,17 +924,6 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
                 KubernetesNamespacesEndpointConsumerBuilder, KubernetesNamespacesEndpointProducerBuilder {
         default AdvancedKubernetesNamespacesEndpointBuilder advanced() {
             return (AdvancedKubernetesNamespacesEndpointBuilder) this;
-        }
-        /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesNamespacesEndpointBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
         }
         /**
          * The Kubernetes API Version to use.

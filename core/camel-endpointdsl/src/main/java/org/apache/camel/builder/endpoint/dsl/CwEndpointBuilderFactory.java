@@ -39,17 +39,6 @@ public interface CwEndpointBuilderFactory {
             return (AdvancedCwEndpointBuilder) this;
         }
         /**
-         * The metric namespace.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default CwEndpointBuilder namespace(String namespace) {
-            setProperty("namespace", namespace);
-            return this;
-        }
-        /**
          * To use the AmazonCloudWatch as the client.
          * 
          * The option is a:

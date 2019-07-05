@@ -46,17 +46,6 @@ public interface InfinispanEndpointBuilderFactory {
             return (AdvancedInfinispanEndpointConsumerBuilder) this;
         }
         /**
-         * The cache to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default InfinispanEndpointConsumerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * Specifies the host of the cache on Infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -569,17 +558,6 @@ public interface InfinispanEndpointBuilderFactory {
             return (AdvancedInfinispanEndpointProducerBuilder) this;
         }
         /**
-         * The cache to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default InfinispanEndpointProducerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * Specifies the host of the cache on Infinispan instance.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -939,17 +917,6 @@ public interface InfinispanEndpointBuilderFactory {
                 InfinispanEndpointConsumerBuilder, InfinispanEndpointProducerBuilder {
         default AdvancedInfinispanEndpointBuilder advanced() {
             return (AdvancedInfinispanEndpointBuilder) this;
-        }
-        /**
-         * The cache to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default InfinispanEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * Specifies the host of the cache on Infinispan instance.

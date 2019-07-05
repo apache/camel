@@ -43,54 +43,6 @@ public interface WebsocketEndpointBuilderFactory {
             return (AdvancedWebsocketEndpointConsumerBuilder) this;
         }
         /**
-         * The hostname. The default value is 0.0.0.0. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointConsumerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the websocket channel to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointConsumerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Can be used to set the size in bytes that the websocket created by
          * the websocketServlet may be accept before closing. (Default is -1 -
          * or unlimited).
@@ -536,54 +488,6 @@ public interface WebsocketEndpointBuilderFactory {
             return (AdvancedWebsocketEndpointProducerBuilder) this;
         }
         /**
-         * The hostname. The default value is 0.0.0.0. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointProducerBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the websocket channel to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointProducerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Can be used to set the size in bytes that the websocket created by
          * the websocketServlet may be accept before closing. (Default is -1 -
          * or unlimited).
@@ -983,54 +887,6 @@ public interface WebsocketEndpointBuilderFactory {
                 WebsocketEndpointConsumerBuilder, WebsocketEndpointProducerBuilder {
         default AdvancedWebsocketEndpointBuilder advanced() {
             return (AdvancedWebsocketEndpointBuilder) this;
-        }
-        /**
-         * The hostname. The default value is 0.0.0.0. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option is a: <code>java.lang.Integer</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointBuilder port(Integer port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The port number. The default value is 9292. Setting this option on
-         * the component will use the component configured value as default.
-         * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the websocket channel to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default WebsocketEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
         }
         /**
          * Can be used to set the size in bytes that the websocket created by

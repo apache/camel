@@ -44,17 +44,6 @@ public interface DisruptorEndpointBuilderFactory {
             return (AdvancedDisruptorEndpointConsumerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DisruptorEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
          * option, then its the first endpoint being created with the queue
@@ -340,17 +329,6 @@ public interface DisruptorEndpointBuilderFactory {
             return (AdvancedDisruptorEndpointProducerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DisruptorEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively
          * increased to the nearest power of two. Notice: Mind if you use this
          * option, then its the first endpoint being created with the queue
@@ -619,17 +597,6 @@ public interface DisruptorEndpointBuilderFactory {
                 DisruptorEndpointConsumerBuilder, DisruptorEndpointProducerBuilder {
         default AdvancedDisruptorEndpointBuilder advanced() {
             return (AdvancedDisruptorEndpointBuilder) this;
-        }
-        /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DisruptorEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * The maximum capacity of the Disruptors ringbuffer Will be effectively

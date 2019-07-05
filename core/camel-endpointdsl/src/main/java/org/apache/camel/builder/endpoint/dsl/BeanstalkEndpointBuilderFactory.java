@@ -49,18 +49,6 @@ public interface BeanstalkEndpointBuilderFactory {
             return (AdvancedBeanstalkEndpointConsumerBuilder) this;
         }
         /**
-         * Connection settings host:port/tube.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BeanstalkEndpointConsumerBuilder connectionSettings(
-                String connectionSettings) {
-            setProperty("connectionSettings", connectionSettings);
-            return this;
-        }
-        /**
          * put means to put the job into Beanstalk. Job body is specified in the
          * Camel message body. Job ID will be returned in beanstalk.jobId
          * message header. delete, release, touch or bury expect Job ID in the
@@ -818,18 +806,6 @@ public interface BeanstalkEndpointBuilderFactory {
             return (AdvancedBeanstalkEndpointProducerBuilder) this;
         }
         /**
-         * Connection settings host:port/tube.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BeanstalkEndpointProducerBuilder connectionSettings(
-                String connectionSettings) {
-            setProperty("connectionSettings", connectionSettings);
-            return this;
-        }
-        /**
          * put means to put the job into Beanstalk. Job body is specified in the
          * Camel message body. Job ID will be returned in beanstalk.jobId
          * message header. delete, release, touch or bury expect Job ID in the
@@ -1050,18 +1026,6 @@ public interface BeanstalkEndpointBuilderFactory {
                 BeanstalkEndpointConsumerBuilder, BeanstalkEndpointProducerBuilder {
         default AdvancedBeanstalkEndpointBuilder advanced() {
             return (AdvancedBeanstalkEndpointBuilder) this;
-        }
-        /**
-         * Connection settings host:port/tube.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BeanstalkEndpointBuilder connectionSettings(
-                String connectionSettings) {
-            setProperty("connectionSettings", connectionSettings);
-            return this;
         }
         /**
          * put means to put the job into Beanstalk. Job body is specified in the

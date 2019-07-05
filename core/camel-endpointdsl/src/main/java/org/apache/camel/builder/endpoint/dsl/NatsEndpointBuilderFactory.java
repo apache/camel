@@ -42,18 +42,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointConsumerBuilder) this;
         }
         /**
-         * URLs to one or more NAT servers. Use comma to separate URLs when
-         * specifying multiple servers.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointConsumerBuilder servers(String servers) {
-            setProperty("servers", servers);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
@@ -659,18 +647,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointProducerBuilder) this;
         }
         /**
-         * URLs to one or more NAT servers. Use comma to separate URLs when
-         * specifying multiple servers.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointProducerBuilder servers(String servers) {
-            setProperty("servers", servers);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
@@ -1187,18 +1163,6 @@ public interface NatsEndpointBuilderFactory {
                 NatsEndpointConsumerBuilder, NatsEndpointProducerBuilder {
         default AdvancedNatsEndpointBuilder advanced() {
             return (AdvancedNatsEndpointBuilder) this;
-        }
-        /**
-         * URLs to one or more NAT servers. Use comma to separate URLs when
-         * specifying multiple servers.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointBuilder servers(String servers) {
-            setProperty("servers", servers);
-            return this;
         }
         /**
          * Reference an already instantiated connection to Nats server.

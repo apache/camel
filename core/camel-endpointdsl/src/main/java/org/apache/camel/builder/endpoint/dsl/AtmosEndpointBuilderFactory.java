@@ -42,43 +42,6 @@ public interface AtmosEndpointBuilderFactory {
             return (AdvancedAtmosEndpointConsumerBuilder) this;
         }
         /**
-         * Atmos name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
-         * Operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointConsumerBuilder operation(AtmosOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Atmos SSL validation.
          * 
          * The option is a: <code>boolean</code> type.
@@ -347,43 +310,6 @@ public interface AtmosEndpointBuilderFactory {
             return (AdvancedAtmosEndpointProducerBuilder) this;
         }
         /**
-         * Atmos name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
-         * Operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointProducerBuilder operation(AtmosOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Atmos SSL validation.
          * 
          * The option is a: <code>boolean</code> type.
@@ -599,43 +525,6 @@ public interface AtmosEndpointBuilderFactory {
             return (AdvancedAtmosEndpointBuilder) this;
         }
         /**
-         * Atmos name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
-         * Operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointBuilder operation(AtmosOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.atmos.util.AtmosOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default AtmosEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Atmos SSL validation.
          * 
          * The option is a: <code>boolean</code> type.
@@ -797,18 +686,6 @@ public interface AtmosEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.atmos.util.AtmosOperation</code> enum.
-     */
-    enum AtmosOperation {
-        put,
-        del,
-        search,
-        get,
-        move;
     }
     /**
      * Atmos (camel-atmos)

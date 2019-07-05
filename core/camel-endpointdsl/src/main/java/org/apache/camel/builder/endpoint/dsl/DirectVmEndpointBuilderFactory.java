@@ -44,17 +44,6 @@ public interface DirectVmEndpointBuilderFactory {
             return (AdvancedDirectVmEndpointConsumerBuilder) this;
         }
         /**
-         * Name of direct-vm endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DirectVmEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -246,17 +235,6 @@ public interface DirectVmEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedDirectVmEndpointProducerBuilder advanced() {
             return (AdvancedDirectVmEndpointProducerBuilder) this;
-        }
-        /**
-         * Name of direct-vm endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DirectVmEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * If sending a message to a direct endpoint which has no active
@@ -501,17 +479,6 @@ public interface DirectVmEndpointBuilderFactory {
                 DirectVmEndpointConsumerBuilder, DirectVmEndpointProducerBuilder {
         default AdvancedDirectVmEndpointBuilder advanced() {
             return (AdvancedDirectVmEndpointBuilder) this;
-        }
-        /**
-         * Name of direct-vm endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default DirectVmEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
     }
 

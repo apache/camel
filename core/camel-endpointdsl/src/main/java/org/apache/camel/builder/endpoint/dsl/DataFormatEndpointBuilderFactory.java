@@ -40,28 +40,6 @@ public interface DataFormatEndpointBuilderFactory {
         default AdvancedDataFormatEndpointBuilder advanced() {
             return (AdvancedDataFormatEndpointBuilder) this;
         }
-        /**
-         * Name of data format.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default DataFormatEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
-         * Operation to use either marshal or unmarshal.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default DataFormatEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
     }
 
     /**

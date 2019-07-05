@@ -42,42 +42,6 @@ public interface JcloudsEndpointBuilderFactory {
             return (AdvancedJcloudsEndpointConsumerBuilder) this;
         }
         /**
-         * What command to execute such as blobstore or compute.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointConsumerBuilder command(JcloudsCommand command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * What command to execute such as blobstore or compute.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointConsumerBuilder command(String command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * The name of the cloud provider that provides the target service (e.g.
-         * aws-s3 or aws_ec2).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointConsumerBuilder providerId(String providerId) {
-            setProperty("providerId", providerId);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -265,42 +229,6 @@ public interface JcloudsEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedJcloudsEndpointProducerBuilder advanced() {
             return (AdvancedJcloudsEndpointProducerBuilder) this;
-        }
-        /**
-         * What command to execute such as blobstore or compute.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointProducerBuilder command(JcloudsCommand command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * What command to execute such as blobstore or compute.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointProducerBuilder command(String command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * The name of the cloud provider that provides the target service (e.g.
-         * aws-s3 or aws_ec2).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointProducerBuilder providerId(String providerId) {
-            setProperty("providerId", providerId);
-            return this;
         }
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -532,42 +460,6 @@ public interface JcloudsEndpointBuilderFactory {
             return (AdvancedJcloudsEndpointBuilder) this;
         }
         /**
-         * What command to execute such as blobstore or compute.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointBuilder command(JcloudsCommand command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * What command to execute such as blobstore or compute.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointBuilder command(String command) {
-            setProperty("command", command);
-            return this;
-        }
-        /**
-         * The name of the cloud provider that provides the target service (e.g.
-         * aws-s3 or aws_ec2).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default JcloudsEndpointBuilder providerId(String providerId) {
-            setProperty("providerId", providerId);
-            return this;
-        }
-        /**
          * The name of the blob container.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -639,15 +531,6 @@ public interface JcloudsEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.jclouds.JcloudsCommand</code> enum.
-     */
-    enum JcloudsCommand {
-        blobstore,
-        compute;
     }
     /**
      * JClouds (camel-jclouds)

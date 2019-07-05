@@ -42,42 +42,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return (AdvancedGoogleMailEndpointConsumerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointConsumerBuilder apiName(
-                GoogleMailApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointConsumerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointConsumerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -317,42 +281,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return (AdvancedGoogleMailEndpointProducerBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointProducerBuilder apiName(
-                GoogleMailApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointProducerBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointProducerBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -539,41 +467,6 @@ public interface GoogleMailEndpointBuilderFactory {
             return (AdvancedGoogleMailEndpointBuilder) this;
         }
         /**
-         * What kind of operation to perform.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointBuilder apiName(GoogleMailApiName apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What kind of operation to perform.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
-         * What sub operation to use for the selected operation.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GoogleMailEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
@@ -704,20 +597,6 @@ public interface GoogleMailEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.google.mail.internal.GoogleMailApiName</code> enum.
-     */
-    enum GoogleMailApiName {
-        THREADS,
-        MESSAGES,
-        ATTACHMENTS,
-        LABELS,
-        HISTORY,
-        DRAFTS,
-        USERS;
     }
     /**
      * Google Mail (camel-google-mail)

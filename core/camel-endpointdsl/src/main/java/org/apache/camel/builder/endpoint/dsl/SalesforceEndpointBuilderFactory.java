@@ -44,17 +44,6 @@ public interface SalesforceEndpointBuilderFactory {
             return (AdvancedSalesforceEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the topic/channel to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SalesforceEndpointConsumerBuilder topicName(String topicName) {
-            setProperty("topicName", topicName);
-            return this;
-        }
-        /**
          * APEX method name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1010,32 +999,6 @@ public interface SalesforceEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedSalesforceEndpointProducerBuilder advanced() {
             return (AdvancedSalesforceEndpointProducerBuilder) this;
-        }
-        /**
-         * The operation to use.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.salesforce.internal.OperationName</code> type.
-         * 
-         * Group: producer
-         */
-        default SalesforceEndpointProducerBuilder operationName(
-                OperationName operationName) {
-            setProperty("operationName", operationName);
-            return this;
-        }
-        /**
-         * The operation to use.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.salesforce.internal.OperationName</code> type.
-         * 
-         * Group: producer
-         */
-        default SalesforceEndpointProducerBuilder operationName(
-                String operationName) {
-            setProperty("operationName", operationName);
-            return this;
         }
         /**
          * APEX method name.
@@ -2728,57 +2691,6 @@ public interface SalesforceEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.salesforce.internal.OperationName</code>
-     * enum.
-     */
-    enum OperationName {
-        GET_VERSIONS,
-        GET_RESOURCES,
-        GET_GLOBAL_OBJECTS,
-        GET_BASIC_INFO,
-        GET_DESCRIPTION,
-        GET_SOBJECT,
-        CREATE_SOBJECT,
-        UPDATE_SOBJECT,
-        DELETE_SOBJECT,
-        GET_SOBJECT_WITH_ID,
-        UPSERT_SOBJECT,
-        DELETE_SOBJECT_WITH_ID,
-        GET_BLOB_FIELD,
-        QUERY,
-        QUERY_MORE,
-        QUERY_ALL,
-        SEARCH,
-        APEX_CALL,
-        RECENT,
-        CREATE_JOB,
-        GET_JOB,
-        CLOSE_JOB,
-        ABORT_JOB,
-        CREATE_BATCH,
-        GET_BATCH,
-        GET_ALL_BATCHES,
-        GET_REQUEST,
-        GET_RESULTS,
-        CREATE_BATCH_QUERY,
-        GET_QUERY_RESULT_IDS,
-        GET_QUERY_RESULT,
-        GET_RECENT_REPORTS,
-        GET_REPORT_DESCRIPTION,
-        EXECUTE_SYNCREPORT,
-        EXECUTE_ASYNCREPORT,
-        GET_REPORT_INSTANCES,
-        GET_REPORT_RESULTS,
-        LIMITS,
-        APPROVAL,
-        APPROVALS,
-        COMPOSITE_TREE,
-        COMPOSITE_BATCH,
-        COMPOSITE;
     }
 
     /**

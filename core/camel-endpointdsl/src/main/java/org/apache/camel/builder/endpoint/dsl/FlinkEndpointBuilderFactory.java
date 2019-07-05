@@ -38,30 +38,6 @@ public interface FlinkEndpointBuilderFactory {
             return (AdvancedFlinkEndpointBuilder) this;
         }
         /**
-         * Type of the endpoint (dataset, datastream).
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.flink.EndpointType</code> type.
-         * 
-         * Group: producer
-         */
-        default FlinkEndpointBuilder endpointType(EndpointType endpointType) {
-            setProperty("endpointType", endpointType);
-            return this;
-        }
-        /**
-         * Type of the endpoint (dataset, datastream).
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.flink.EndpointType</code> type.
-         * 
-         * Group: producer
-         */
-        default FlinkEndpointBuilder endpointType(String endpointType) {
-            setProperty("endpointType", endpointType);
-            return this;
-        }
-        /**
          * Indicates if results should be collected or counted.
          * 
          * The option is a: <code>boolean</code> type.
@@ -245,15 +221,6 @@ public interface FlinkEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.flink.EndpointType</code>
-     * enum.
-     */
-    enum EndpointType {
-        dataset,
-        datastream;
     }
     /**
      * Apache Flink (camel-flink)

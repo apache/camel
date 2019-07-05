@@ -43,52 +43,6 @@ public interface GrpcEndpointBuilderFactory {
             return (AdvancedGrpcEndpointConsumerBuilder) this;
         }
         /**
-         * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-         * consumer or remote server host name when using producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The gRPC local or remote server port.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The gRPC local or remote server port.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Fully qualified service name from the protocol buffer descriptor file
-         * (package dot service definition name).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointConsumerBuilder service(String service) {
-            setProperty("service", service);
-            return this;
-        }
-        /**
          * The HTTP/2 flow control window size (MiB).
          * 
          * The option is a: <code>int</code> type.
@@ -590,52 +544,6 @@ public interface GrpcEndpointBuilderFactory {
             return (AdvancedGrpcEndpointProducerBuilder) this;
         }
         /**
-         * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-         * consumer or remote server host name when using producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The gRPC local or remote server port.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The gRPC local or remote server port.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Fully qualified service name from the protocol buffer descriptor file
-         * (package dot service definition name).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointProducerBuilder service(String service) {
-            setProperty("service", service);
-            return this;
-        }
-        /**
          * The HTTP/2 flow control window size (MiB).
          * 
          * The option is a: <code>int</code> type.
@@ -1038,52 +946,6 @@ public interface GrpcEndpointBuilderFactory {
                 GrpcEndpointConsumerBuilder, GrpcEndpointProducerBuilder {
         default AdvancedGrpcEndpointBuilder advanced() {
             return (AdvancedGrpcEndpointBuilder) this;
-        }
-        /**
-         * The gRPC server host name. This is localhost or 0.0.0.0 when being a
-         * consumer or remote server host name when using producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The gRPC local or remote server port.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The gRPC local or remote server port.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Fully qualified service name from the protocol buffer descriptor file
-         * (package dot service definition name).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GrpcEndpointBuilder service(String service) {
-            setProperty("service", service);
-            return this;
         }
         /**
          * The HTTP/2 flow control window size (MiB).

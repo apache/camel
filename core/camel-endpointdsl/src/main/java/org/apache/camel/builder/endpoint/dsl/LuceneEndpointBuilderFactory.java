@@ -39,41 +39,6 @@ public interface LuceneEndpointBuilderFactory {
             return (AdvancedLuceneEndpointBuilder) this;
         }
         /**
-         * The URL to the lucene server.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default LuceneEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * Operation to do such as insert or query.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.lucene.LuceneOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default LuceneEndpointBuilder operation(LuceneOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * Operation to do such as insert or query.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.lucene.LuceneOperation</code> type.
-         * 
-         * Group: producer
-         */
-        default LuceneEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * An Analyzer builds TokenStreams, which analyze text. It thus
          * represents a policy for extracting index terms from text. The value
          * for analyzer can be any class that extends the abstract class
@@ -236,15 +201,6 @@ public interface LuceneEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.lucene.LuceneOperation</code> enum.
-     */
-    enum LuceneOperation {
-        insert,
-        query;
     }
     /**
      * Lucene (camel-lucene)

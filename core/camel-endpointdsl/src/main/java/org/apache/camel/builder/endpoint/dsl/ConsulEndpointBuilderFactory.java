@@ -44,17 +44,6 @@ public interface ConsulEndpointBuilderFactory {
             return (AdvancedConsulEndpointConsumerBuilder) this;
         }
         /**
-         * The API endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ConsulEndpointConsumerBuilder apiEndpoint(String apiEndpoint) {
-            setProperty("apiEndpoint", apiEndpoint);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -222,17 +211,6 @@ public interface ConsulEndpointBuilderFactory {
             return (AdvancedConsulEndpointProducerBuilder) this;
         }
         /**
-         * The API endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ConsulEndpointProducerBuilder apiEndpoint(String apiEndpoint) {
-            setProperty("apiEndpoint", apiEndpoint);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -345,17 +323,6 @@ public interface ConsulEndpointBuilderFactory {
                 ConsulEndpointConsumerBuilder, ConsulEndpointProducerBuilder {
         default AdvancedConsulEndpointBuilder advanced() {
             return (AdvancedConsulEndpointBuilder) this;
-        }
-        /**
-         * The API endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default ConsulEndpointBuilder apiEndpoint(String apiEndpoint) {
-            setProperty("apiEndpoint", apiEndpoint);
-            return this;
         }
     }
 

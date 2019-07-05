@@ -41,17 +41,6 @@ public interface KubernetesSecretsEndpointBuilderFactory {
             return (AdvancedKubernetesSecretsEndpointBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default KubernetesSecretsEndpointBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.

@@ -41,17 +41,6 @@ public interface KinesisFirehoseEndpointBuilderFactory {
             return (AdvancedKinesisFirehoseEndpointBuilder) this;
         }
         /**
-         * Name of the stream.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default KinesisFirehoseEndpointBuilder streamName(String streamName) {
-            setProperty("streamName", streamName);
-            return this;
-        }
-        /**
          * Amazon Kinesis Firehose client to use for all requests for this
          * endpoint.
          * 

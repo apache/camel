@@ -44,17 +44,6 @@ public interface SWFEndpointBuilderFactory {
             return (AdvancedSWFEndpointConsumerBuilder) this;
         }
         /**
-         * Activity or workflow.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SWFEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option is a:
@@ -554,17 +543,6 @@ public interface SWFEndpointBuilderFactory {
             return (AdvancedSWFEndpointProducerBuilder) this;
         }
         /**
-         * Activity or workflow.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SWFEndpointProducerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option is a:
@@ -1004,17 +982,6 @@ public interface SWFEndpointBuilderFactory {
                 SWFEndpointConsumerBuilder, SWFEndpointProducerBuilder {
         default AdvancedSWFEndpointBuilder advanced() {
             return (AdvancedSWFEndpointBuilder) this;
-        }
-        /**
-         * Activity or workflow.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SWFEndpointBuilder type(String type) {
-            setProperty("type", type);
-            return this;
         }
         /**
          * To use the given AmazonSimpleWorkflowClient as client.

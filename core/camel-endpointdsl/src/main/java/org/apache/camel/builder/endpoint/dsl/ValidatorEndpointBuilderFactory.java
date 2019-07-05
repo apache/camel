@@ -38,19 +38,6 @@ public interface ValidatorEndpointBuilderFactory {
             return (AdvancedValidatorEndpointBuilder) this;
         }
         /**
-         * URL to a local resource on the classpath,or a reference to lookup a
-         * bean in the Registry, or a full URL to a remote resource or resource
-         * on the file system which contains the XSD to validate against.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ValidatorEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Whether to fail if no body exists.
          * 
          * The option is a: <code>boolean</code> type.

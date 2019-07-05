@@ -41,17 +41,6 @@ public interface ElasticsearchEndpointBuilderFactory {
             return (AdvancedElasticsearchEndpointBuilder) this;
         }
         /**
-         * Name of the cluster.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ElasticsearchEndpointBuilder clusterName(String clusterName) {
-            setProperty("clusterName", clusterName);
-            return this;
-        }
-        /**
          * The time in ms to wait before connection will timeout.
          * 
          * The option is a: <code>int</code> type.

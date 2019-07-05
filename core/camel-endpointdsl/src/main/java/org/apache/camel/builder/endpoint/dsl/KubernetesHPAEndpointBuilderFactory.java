@@ -43,17 +43,6 @@ public interface KubernetesHPAEndpointBuilderFactory {
             return (AdvancedKubernetesHPAEndpointConsumerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesHPAEndpointConsumerBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -543,17 +532,6 @@ public interface KubernetesHPAEndpointBuilderFactory {
             return (AdvancedKubernetesHPAEndpointProducerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesHPAEndpointProducerBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -931,17 +909,6 @@ public interface KubernetesHPAEndpointBuilderFactory {
                 KubernetesHPAEndpointConsumerBuilder, KubernetesHPAEndpointProducerBuilder {
         default AdvancedKubernetesHPAEndpointBuilder advanced() {
             return (AdvancedKubernetesHPAEndpointBuilder) this;
-        }
-        /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesHPAEndpointBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
         }
         /**
          * The Kubernetes API Version to use.

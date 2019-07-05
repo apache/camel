@@ -42,61 +42,6 @@ public interface CouchDbEndpointBuilderFactory {
             return (AdvancedCouchDbEndpointConsumerBuilder) this;
         }
         /**
-         * The protocol to use for communicating with the database.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * Hostname of the running couchdb instance.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointConsumerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the running couchdb instance.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the running couchdb instance.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the database to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointConsumerBuilder database(String database) {
-            setProperty("database", database);
-            return this;
-        }
-        /**
          * Creates the database if it does not already exist.
          * 
          * The option is a: <code>boolean</code> type.
@@ -402,61 +347,6 @@ public interface CouchDbEndpointBuilderFactory {
             return (AdvancedCouchDbEndpointProducerBuilder) this;
         }
         /**
-         * The protocol to use for communicating with the database.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * Hostname of the running couchdb instance.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointProducerBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the running couchdb instance.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the running couchdb instance.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the database to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointProducerBuilder database(String database) {
-            setProperty("database", database);
-            return this;
-        }
-        /**
          * Creates the database if it does not already exist.
          * 
          * The option is a: <code>boolean</code> type.
@@ -615,61 +505,6 @@ public interface CouchDbEndpointBuilderFactory {
                 CouchDbEndpointConsumerBuilder, CouchDbEndpointProducerBuilder {
         default AdvancedCouchDbEndpointBuilder advanced() {
             return (AdvancedCouchDbEndpointBuilder) this;
-        }
-        /**
-         * The protocol to use for communicating with the database.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * Hostname of the running couchdb instance.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointBuilder hostname(String hostname) {
-            setProperty("hostname", hostname);
-            return this;
-        }
-        /**
-         * Port number for the running couchdb instance.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Port number for the running couchdb instance.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Name of the database to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CouchDbEndpointBuilder database(String database) {
-            setProperty("database", database);
-            return this;
         }
         /**
          * Creates the database if it does not already exist.

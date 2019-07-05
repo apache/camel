@@ -44,29 +44,6 @@ public interface CxfRsEndpointBuilderFactory {
             return (AdvancedCxfRsEndpointConsumerBuilder) this;
         }
         /**
-         * To lookup an existing configured CxfRsEndpoint. Must used bean: as
-         * prefix.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfRsEndpointConsumerBuilder beanId(String beanId) {
-            setProperty("beanId", beanId);
-            return this;
-        }
-        /**
-         * The service publish address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfRsEndpointConsumerBuilder address(String address) {
-            setProperty("address", address);
-            return this;
-        }
-        /**
          * Set the feature list to the CxfRs endpoint.
          * 
          * The option is a:
@@ -748,29 +725,6 @@ public interface CxfRsEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedCxfRsEndpointProducerBuilder advanced() {
             return (AdvancedCxfRsEndpointProducerBuilder) this;
-        }
-        /**
-         * To lookup an existing configured CxfRsEndpoint. Must used bean: as
-         * prefix.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfRsEndpointProducerBuilder beanId(String beanId) {
-            setProperty("beanId", beanId);
-            return this;
-        }
-        /**
-         * The service publish address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfRsEndpointProducerBuilder address(String address) {
-            setProperty("address", address);
-            return this;
         }
         /**
          * Set the feature list to the CxfRs endpoint.
@@ -1494,29 +1448,6 @@ public interface CxfRsEndpointBuilderFactory {
                 CxfRsEndpointConsumerBuilder, CxfRsEndpointProducerBuilder {
         default AdvancedCxfRsEndpointBuilder advanced() {
             return (AdvancedCxfRsEndpointBuilder) this;
-        }
-        /**
-         * To lookup an existing configured CxfRsEndpoint. Must used bean: as
-         * prefix.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfRsEndpointBuilder beanId(String beanId) {
-            setProperty("beanId", beanId);
-            return this;
-        }
-        /**
-         * The service publish address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default CxfRsEndpointBuilder address(String address) {
-            setProperty("address", address);
-            return this;
         }
         /**
          * Set the feature list to the CxfRs endpoint.

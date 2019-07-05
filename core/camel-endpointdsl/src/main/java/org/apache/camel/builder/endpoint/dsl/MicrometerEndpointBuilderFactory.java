@@ -41,65 +41,6 @@ public interface MicrometerEndpointBuilderFactory {
             return (AdvancedMicrometerEndpointBuilder) this;
         }
         /**
-         * Type of metrics.
-         * 
-         * The option is a:
-         * <code>io.micrometer.core.instrument.Meter$Type</code> type.
-         * 
-         * Group: producer
-         */
-        default MicrometerEndpointBuilder metricsType(Type metricsType) {
-            setProperty("metricsType", metricsType);
-            return this;
-        }
-        /**
-         * Type of metrics.
-         * 
-         * The option will be converted to a
-         * <code>io.micrometer.core.instrument.Meter$Type</code> type.
-         * 
-         * Group: producer
-         */
-        default MicrometerEndpointBuilder metricsType(String metricsType) {
-            setProperty("metricsType", metricsType);
-            return this;
-        }
-        /**
-         * Name of metrics.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MicrometerEndpointBuilder metricsName(String metricsName) {
-            setProperty("metricsName", metricsName);
-            return this;
-        }
-        /**
-         * Tags of metrics.
-         * 
-         * The option is a:
-         * <code>java.lang.Iterable&lt;io.micrometer.core.instrument.Tag&gt;</code> type.
-         * 
-         * Group: producer
-         */
-        default MicrometerEndpointBuilder tags(Iterable<Object> tags) {
-            setProperty("tags", tags);
-            return this;
-        }
-        /**
-         * Tags of metrics.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Iterable&lt;io.micrometer.core.instrument.Tag&gt;</code> type.
-         * 
-         * Group: producer
-         */
-        default MicrometerEndpointBuilder tags(String tags) {
-            setProperty("tags", tags);
-            return this;
-        }
-        /**
          * Action expression when using timer type.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -205,19 +146,6 @@ public interface MicrometerEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>io.micrometer.core.instrument.Meter$Type</code>
-     * enum.
-     */
-    enum Type {
-        COUNTER,
-        GAUGE,
-        LONG_TASK_TIMER,
-        TIMER,
-        DISTRIBUTION_SUMMARY,
-        OTHER;
     }
     /**
      * Micrometer (camel-micrometer)

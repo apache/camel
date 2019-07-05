@@ -41,31 +41,6 @@ public interface DigitalOceanEndpointBuilderFactory {
             return (AdvancedDigitalOceanEndpointBuilder) this;
         }
         /**
-         * The operation to perform to the given resource.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> type.
-         * 
-         * Group: producer
-         */
-        default DigitalOceanEndpointBuilder operation(
-                DigitalOceanOperations operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The operation to perform to the given resource.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> type.
-         * 
-         * Group: producer
-         */
-        default DigitalOceanEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * Use for pagination. Force the page number.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
@@ -297,49 +272,6 @@ public interface DigitalOceanEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.digitalocean.constants.DigitalOceanOperations</code> enum.
-     */
-    enum DigitalOceanOperations {
-        create,
-        update,
-        delete,
-        list,
-        ownList,
-        get,
-        listBackups,
-        listActions,
-        listNeighbors,
-        listSnapshots,
-        listKernels,
-        listAllNeighbors,
-        enableBackups,
-        disableBackups,
-        reboot,
-        powerCycle,
-        shutdown,
-        powerOn,
-        powerOff,
-        restore,
-        resetPassword,
-        resize,
-        rebuild,
-        rename,
-        changeKernel,
-        enableIpv6,
-        enablePrivateNetworking,
-        takeSnapshot,
-        transfer,
-        convert,
-        attach,
-        detach,
-        assign,
-        unassign,
-        tag,
-        untag;
     }
 
     /**

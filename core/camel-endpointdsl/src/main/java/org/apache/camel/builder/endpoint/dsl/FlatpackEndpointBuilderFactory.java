@@ -49,42 +49,6 @@ public interface FlatpackEndpointBuilderFactory {
             return (AdvancedFlatpackEndpointConsumerBuilder) this;
         }
         /**
-         * Whether to use fixed or delimiter.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointConsumerBuilder type(FlatpackType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Whether to use fixed or delimiter.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * URL for loading the flatpack mapping file from classpath or file
-         * system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointConsumerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
@@ -807,42 +771,6 @@ public interface FlatpackEndpointBuilderFactory {
             return (AdvancedFlatpackEndpointProducerBuilder) this;
         }
         /**
-         * Whether to use fixed or delimiter.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointProducerBuilder type(FlatpackType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Whether to use fixed or delimiter.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointProducerBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * URL for loading the flatpack mapping file from classpath or file
-         * system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointProducerBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
@@ -1104,42 +1032,6 @@ public interface FlatpackEndpointBuilderFactory {
             return (AdvancedFlatpackEndpointBuilder) this;
         }
         /**
-         * Whether to use fixed or delimiter.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointBuilder type(FlatpackType type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * Whether to use fixed or delimiter.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.flatpack.FlatpackType</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointBuilder type(String type) {
-            setProperty("type", type);
-            return this;
-        }
-        /**
-         * URL for loading the flatpack mapping file from classpath or file
-         * system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default FlatpackEndpointBuilder resourceUri(String resourceUri) {
-            setProperty("resourceUri", resourceUri);
-            return this;
-        }
-        /**
          * Allows for lines to be shorter than expected and ignores the extra
          * characters.
          * 
@@ -1344,15 +1236,6 @@ public interface FlatpackEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.flatpack.FlatpackType</code> enum.
-     */
-    enum FlatpackType {
-        fixed,
-        delim;
     }
     /**
      * Flatpack (camel-flatpack)

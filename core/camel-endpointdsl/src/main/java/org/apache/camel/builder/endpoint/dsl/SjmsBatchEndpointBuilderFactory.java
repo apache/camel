@@ -43,18 +43,6 @@ public interface SjmsBatchEndpointBuilderFactory {
             return (AdvancedSjmsBatchEndpointBuilder) this;
         }
         /**
-         * The destination name. Only queues are supported, names may be
-         * prefixed by 'queue:'.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default SjmsBatchEndpointBuilder destinationName(String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
-        }
-        /**
          * The aggregation strategy to use, which merges all the batched
          * messages into a single message.
          * 

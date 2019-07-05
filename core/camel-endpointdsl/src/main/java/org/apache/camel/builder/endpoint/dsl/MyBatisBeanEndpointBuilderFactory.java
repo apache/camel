@@ -40,29 +40,6 @@ public interface MyBatisBeanEndpointBuilderFactory {
         default AdvancedMyBatisBeanEndpointBuilder advanced() {
             return (AdvancedMyBatisBeanEndpointBuilder) this;
         }
-        /**
-         * Name of the bean with the MyBatis annotations. This can either by a
-         * type alias or a FQN class name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MyBatisBeanEndpointBuilder beanName(String beanName) {
-            setProperty("beanName", beanName);
-            return this;
-        }
-        /**
-         * Name of the method on the bean that has the SQL query to be executed.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default MyBatisBeanEndpointBuilder methodName(String methodName) {
-            setProperty("methodName", methodName);
-            return this;
-        }
     }
 
     /**

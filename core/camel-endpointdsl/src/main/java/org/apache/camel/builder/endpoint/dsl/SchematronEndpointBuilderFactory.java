@@ -40,18 +40,6 @@ public interface SchematronEndpointBuilderFactory {
             return (AdvancedSchematronEndpointBuilder) this;
         }
         /**
-         * The path to the schematron rules file. Can either be in class path or
-         * location in the file system.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SchematronEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * Flag to abort the route and throw a schematron validation exception.
          * 
          * The option is a: <code>boolean</code> type.

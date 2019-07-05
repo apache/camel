@@ -40,18 +40,6 @@ public interface PaxLoggingEndpointBuilderFactory {
         default AdvancedPaxLoggingEndpointBuilder advanced() {
             return (AdvancedPaxLoggingEndpointBuilder) this;
         }
-        /**
-         * Appender is the name of the pax appender that need to be configured
-         * in the PaxLogging service configuration.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default PaxLoggingEndpointBuilder appender(String appender) {
-            setProperty("appender", appender);
-            return this;
-        }
     }
 
     /**

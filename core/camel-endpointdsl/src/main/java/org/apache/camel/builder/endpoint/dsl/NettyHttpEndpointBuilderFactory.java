@@ -47,63 +47,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return (AdvancedNettyHttpEndpointConsumerBuilder) this;
         }
         /**
-         * The protocol to use which is either http, https or proxy - a consumer
-         * only option.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointConsumerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The local hostname such as localhost, or 0.0.0.0 when being a
-         * consumer. The remote HTTP server hostname when using producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Resource path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointConsumerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * If the option is true, the producer will ignore the Exchange.HTTP_URI
          * header, and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the producer send all the
@@ -1939,63 +1882,6 @@ public interface NettyHttpEndpointBuilderFactory {
             return (AdvancedNettyHttpEndpointProducerBuilder) this;
         }
         /**
-         * The protocol to use which is either http, https or proxy - a consumer
-         * only option.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointProducerBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The local hostname such as localhost, or 0.0.0.0 when being a
-         * consumer. The remote HTTP server hostname when using producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Resource path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointProducerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * If the option is true, the producer will ignore the Exchange.HTTP_URI
          * header, and use the endpoint's URI for request. You may also set the
          * throwExceptionOnFailure to be false to let the producer send all the
@@ -3494,63 +3380,6 @@ public interface NettyHttpEndpointBuilderFactory {
                 NettyHttpEndpointConsumerBuilder, NettyHttpEndpointProducerBuilder {
         default AdvancedNettyHttpEndpointBuilder advanced() {
             return (AdvancedNettyHttpEndpointBuilder) this;
-        }
-        /**
-         * The protocol to use which is either http, https or proxy - a consumer
-         * only option.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointBuilder protocol(String protocol) {
-            setProperty("protocol", protocol);
-            return this;
-        }
-        /**
-         * The local hostname such as localhost, or 0.0.0.0 when being a
-         * consumer. The remote HTTP server hostname when using producer.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointBuilder host(String host) {
-            setProperty("host", host);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The host port number.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * Resource path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NettyHttpEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
         }
         /**
          * If the option is true, the producer will ignore the Exchange.HTTP_URI

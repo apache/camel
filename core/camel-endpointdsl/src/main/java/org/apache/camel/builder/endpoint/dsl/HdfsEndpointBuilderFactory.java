@@ -48,50 +48,6 @@ public interface HdfsEndpointBuilderFactory {
             return (AdvancedHdfsEndpointConsumerBuilder) this;
         }
         /**
-         * HDFS host to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointConsumerBuilder hostName(String hostName) {
-            setProperty("hostName", hostName);
-            return this;
-        }
-        /**
-         * HDFS port to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * HDFS port to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The directory path to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointConsumerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * Whether to connect to the HDFS file system on starting the
          * producer/consumer. If false then the connection is created on-demand.
          * Notice that HDFS may take up till 15 minutes to establish a
@@ -1044,50 +1000,6 @@ public interface HdfsEndpointBuilderFactory {
             return (AdvancedHdfsEndpointProducerBuilder) this;
         }
         /**
-         * HDFS host to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointProducerBuilder hostName(String hostName) {
-            setProperty("hostName", hostName);
-            return this;
-        }
-        /**
-         * HDFS port to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * HDFS port to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The directory path to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointProducerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
          * Whether to connect to the HDFS file system on starting the
          * producer/consumer. If false then the connection is created on-demand.
          * Notice that HDFS may take up till 15 minutes to establish a
@@ -1615,50 +1527,6 @@ public interface HdfsEndpointBuilderFactory {
                 HdfsEndpointConsumerBuilder, HdfsEndpointProducerBuilder {
         default AdvancedHdfsEndpointBuilder advanced() {
             return (AdvancedHdfsEndpointBuilder) this;
-        }
-        /**
-         * HDFS host to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointBuilder hostName(String hostName) {
-            setProperty("hostName", hostName);
-            return this;
-        }
-        /**
-         * HDFS port to use.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointBuilder port(int port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * HDFS port to use.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointBuilder port(String port) {
-            setProperty("port", port);
-            return this;
-        }
-        /**
-         * The directory path to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HdfsEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
         }
         /**
          * Whether to connect to the HDFS file system on starting the

@@ -41,17 +41,6 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return (AdvancedGoogleSheetsStreamEndpointBuilder) this;
         }
         /**
-         * Sets the apiName.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default GoogleSheetsStreamEndpointBuilder apiName(String apiName) {
-            setProperty("apiName", apiName);
-            return this;
-        }
-        /**
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 

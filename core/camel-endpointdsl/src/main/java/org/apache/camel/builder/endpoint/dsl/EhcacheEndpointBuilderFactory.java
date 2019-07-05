@@ -45,17 +45,6 @@ public interface EhcacheEndpointBuilderFactory {
             return (AdvancedEhcacheEndpointConsumerBuilder) this;
         }
         /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EhcacheEndpointConsumerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * The cache manager.
          * 
          * The option is a:
@@ -492,17 +481,6 @@ public interface EhcacheEndpointBuilderFactory {
             return (AdvancedEhcacheEndpointProducerBuilder) this;
         }
         /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EhcacheEndpointProducerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * The cache manager.
          * 
          * The option is a:
@@ -846,17 +824,6 @@ public interface EhcacheEndpointBuilderFactory {
                 EhcacheEndpointConsumerBuilder, EhcacheEndpointProducerBuilder {
         default AdvancedEhcacheEndpointBuilder advanced() {
             return (AdvancedEhcacheEndpointBuilder) this;
-        }
-        /**
-         * the cache name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EhcacheEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * The cache manager.

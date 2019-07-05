@@ -41,17 +41,6 @@ public interface SpringLdapEndpointBuilderFactory {
             return (AdvancedSpringLdapEndpointBuilder) this;
         }
         /**
-         * Name of the Spring LDAP Template bean.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SpringLdapEndpointBuilder templateName(String templateName) {
-            setProperty("templateName", templateName);
-            return this;
-        }
-        /**
          * The LDAP operation to be performed.
          * 
          * The option is a:

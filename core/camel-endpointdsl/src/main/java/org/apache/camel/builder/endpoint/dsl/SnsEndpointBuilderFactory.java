@@ -40,17 +40,6 @@ public interface SnsEndpointBuilderFactory {
             return (AdvancedSnsEndpointBuilder) this;
         }
         /**
-         * Topic name or ARN.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SnsEndpointBuilder topicNameOrArn(String topicNameOrArn) {
-            setProperty("topicNameOrArn", topicNameOrArn);
-            return this;
-        }
-        /**
          * To use the AmazonSNS as the client.
          * 
          * The option is a: <code>com.amazonaws.services.sns.AmazonSNS</code>

@@ -44,17 +44,6 @@ public interface HBaseEndpointBuilderFactory {
             return (AdvancedHBaseEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the table.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HBaseEndpointConsumerBuilder tableName(String tableName) {
-            setProperty("tableName", tableName);
-            return this;
-        }
-        /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
          * 
@@ -486,17 +475,6 @@ public interface HBaseEndpointBuilderFactory {
             return (AdvancedHBaseEndpointProducerBuilder) this;
         }
         /**
-         * The name of the table.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HBaseEndpointProducerBuilder tableName(String tableName) {
-            setProperty("tableName", tableName);
-            return this;
-        }
-        /**
          * To use a custom CellMappingStrategyFactory that is responsible for
          * mapping cells.
          * 
@@ -804,17 +782,6 @@ public interface HBaseEndpointBuilderFactory {
                 HBaseEndpointConsumerBuilder, HBaseEndpointProducerBuilder {
         default AdvancedHBaseEndpointBuilder advanced() {
             return (AdvancedHBaseEndpointBuilder) this;
-        }
-        /**
-         * The name of the table.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HBaseEndpointBuilder tableName(String tableName) {
-            setProperty("tableName", tableName);
-            return this;
         }
         /**
          * To use a custom CellMappingStrategyFactory that is responsible for

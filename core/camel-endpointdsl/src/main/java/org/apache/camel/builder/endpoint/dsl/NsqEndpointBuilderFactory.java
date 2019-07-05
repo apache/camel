@@ -42,18 +42,6 @@ public interface NsqEndpointBuilderFactory {
             return (AdvancedNsqEndpointConsumerBuilder) this;
         }
         /**
-         * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
-         * servers (producer).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NsqEndpointConsumerBuilder servers(String servers) {
-            setProperty("servers", servers);
-            return this;
-        }
-        /**
          * The name of topic we want to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -440,18 +428,6 @@ public interface NsqEndpointBuilderFactory {
             return (AdvancedNsqEndpointProducerBuilder) this;
         }
         /**
-         * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
-         * servers (producer).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NsqEndpointProducerBuilder servers(String servers) {
-            setProperty("servers", servers);
-            return this;
-        }
-        /**
          * The name of topic we want to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -657,18 +633,6 @@ public interface NsqEndpointBuilderFactory {
                 NsqEndpointConsumerBuilder, NsqEndpointProducerBuilder {
         default AdvancedNsqEndpointBuilder advanced() {
             return (AdvancedNsqEndpointBuilder) this;
-        }
-        /**
-         * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
-         * servers (producer).
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default NsqEndpointBuilder servers(String servers) {
-            setProperty("servers", servers);
-            return this;
         }
         /**
          * The name of topic we want to use.

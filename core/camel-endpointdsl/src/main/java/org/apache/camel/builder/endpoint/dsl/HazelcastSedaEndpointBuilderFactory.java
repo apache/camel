@@ -42,17 +42,6 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return (AdvancedHazelcastSedaEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointConsumerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -519,17 +508,6 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return (AdvancedHazelcastSedaEndpointProducerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointProducerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -869,17 +847,6 @@ public interface HazelcastSedaEndpointBuilderFactory {
                 HazelcastSedaEndpointConsumerBuilder, HazelcastSedaEndpointProducerBuilder {
         default AdvancedHazelcastSedaEndpointBuilder advanced() {
             return (AdvancedHazelcastSedaEndpointBuilder) this;
-        }
-        /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * To specify a default operation to use, if no operation header has

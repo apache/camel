@@ -42,17 +42,6 @@ public interface ServiceNowEndpointBuilderFactory {
             return (AdvancedServiceNowEndpointBuilder) this;
         }
         /**
-         * The ServiceNow instance name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ServiceNowEndpointBuilder instanceName(String instanceName) {
-            setProperty("instanceName", instanceName);
-            return this;
-        }
-        /**
          * Set this parameter to true to return only scorecards where the
          * indicator Display field is selected. Set this parameter to all to
          * return scorecards with any Display field value. This parameter is

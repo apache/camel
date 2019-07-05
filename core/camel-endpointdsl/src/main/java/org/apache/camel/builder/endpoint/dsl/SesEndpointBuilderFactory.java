@@ -39,17 +39,6 @@ public interface SesEndpointBuilderFactory {
             return (AdvancedSesEndpointBuilder) this;
         }
         /**
-         * The sender's email address.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SesEndpointBuilder from(String from) {
-            setProperty("from", from);
-            return this;
-        }
-        /**
          * To use the AmazonSimpleEmailService as the client.
          * 
          * The option is a:

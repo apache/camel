@@ -45,17 +45,6 @@ public interface MiloClientEndpointBuilderFactory {
             return (AdvancedMiloClientEndpointConsumerBuilder) this;
         }
         /**
-         * The OPC UA server endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointConsumerBuilder endpointUri(String endpointUri) {
-            setProperty("endpointUri", endpointUri);
-            return this;
-        }
-        /**
          * A virtual client id to force the creation of a new connection
          * instance.
          * 
@@ -643,17 +632,6 @@ public interface MiloClientEndpointBuilderFactory {
             return (AdvancedMiloClientEndpointProducerBuilder) this;
         }
         /**
-         * The OPC UA server endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointProducerBuilder endpointUri(String endpointUri) {
-            setProperty("endpointUri", endpointUri);
-            return this;
-        }
-        /**
          * A virtual client id to force the creation of a new connection
          * instance.
          * 
@@ -1186,17 +1164,6 @@ public interface MiloClientEndpointBuilderFactory {
                 MiloClientEndpointConsumerBuilder, MiloClientEndpointProducerBuilder {
         default AdvancedMiloClientEndpointBuilder advanced() {
             return (AdvancedMiloClientEndpointBuilder) this;
-        }
-        /**
-         * The OPC UA server endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default MiloClientEndpointBuilder endpointUri(String endpointUri) {
-            setProperty("endpointUri", endpointUri);
-            return this;
         }
         /**
          * A virtual client id to force the creation of a new connection

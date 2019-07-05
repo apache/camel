@@ -42,18 +42,6 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
             return (AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default KubernetesPersistentVolumesClaimsEndpointBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.

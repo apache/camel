@@ -39,17 +39,6 @@ public interface SqlStoredEndpointBuilderFactory {
             return (AdvancedSqlStoredEndpointBuilder) this;
         }
         /**
-         * Sets the StoredProcedure template to perform.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default SqlStoredEndpointBuilder template(String template) {
-            setProperty("template", template);
-            return this;
-        }
-        /**
          * Enables or disables batch mode.
          * 
          * The option is a: <code>boolean</code> type.

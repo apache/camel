@@ -43,18 +43,6 @@ public interface KubernetesNodesEndpointBuilderFactory {
             return (AdvancedKubernetesNodesEndpointConsumerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesNodesEndpointConsumerBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -547,18 +535,6 @@ public interface KubernetesNodesEndpointBuilderFactory {
             return (AdvancedKubernetesNodesEndpointProducerBuilder) this;
         }
         /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesNodesEndpointProducerBuilder masterUrl(
-                String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
-        }
-        /**
          * The Kubernetes API Version to use.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -939,17 +915,6 @@ public interface KubernetesNodesEndpointBuilderFactory {
                 KubernetesNodesEndpointConsumerBuilder, KubernetesNodesEndpointProducerBuilder {
         default AdvancedKubernetesNodesEndpointBuilder advanced() {
             return (AdvancedKubernetesNodesEndpointBuilder) this;
-        }
-        /**
-         * Kubernetes Master url.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default KubernetesNodesEndpointBuilder masterUrl(String masterUrl) {
-            setProperty("masterUrl", masterUrl);
-            return this;
         }
         /**
          * The Kubernetes API Version to use.

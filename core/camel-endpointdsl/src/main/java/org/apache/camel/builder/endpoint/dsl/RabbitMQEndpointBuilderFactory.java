@@ -44,19 +44,6 @@ public interface RabbitMQEndpointBuilderFactory {
             return (AdvancedRabbitMQEndpointConsumerBuilder) this;
         }
         /**
-         * The exchange name determines which exchange produced messages will
-         * sent to. In the case of consumers, the exchange name determines which
-         * exchange the queue will bind to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RabbitMQEndpointConsumerBuilder exchangeName(String exchangeName) {
-            setProperty("exchangeName", exchangeName);
-            return this;
-        }
-        /**
          * If this option is set, camel-rabbitmq will try to create connection
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
@@ -1196,19 +1183,6 @@ public interface RabbitMQEndpointBuilderFactory {
             return (AdvancedRabbitMQEndpointProducerBuilder) this;
         }
         /**
-         * The exchange name determines which exchange produced messages will
-         * sent to. In the case of consumers, the exchange name determines which
-         * exchange the queue will bind to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RabbitMQEndpointProducerBuilder exchangeName(String exchangeName) {
-            setProperty("exchangeName", exchangeName);
-            return this;
-        }
-        /**
          * If this option is set, camel-rabbitmq will try to create connection
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
@@ -2326,19 +2300,6 @@ public interface RabbitMQEndpointBuilderFactory {
                 RabbitMQEndpointConsumerBuilder, RabbitMQEndpointProducerBuilder {
         default AdvancedRabbitMQEndpointBuilder advanced() {
             return (AdvancedRabbitMQEndpointBuilder) this;
-        }
-        /**
-         * The exchange name determines which exchange produced messages will
-         * sent to. In the case of consumers, the exchange name determines which
-         * exchange the queue will bind to.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RabbitMQEndpointBuilder exchangeName(String exchangeName) {
-            setProperty("exchangeName", exchangeName);
-            return this;
         }
         /**
          * If this option is set, camel-rabbitmq will try to create connection

@@ -43,35 +43,6 @@ public interface DropboxEndpointBuilderFactory {
             return (AdvancedDropboxEndpointConsumerBuilder) this;
         }
         /**
-         * The specific action (typically is a CRUD action) to perform on
-         * Dropbox remote folder.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default DropboxEndpointConsumerBuilder operation(
-                DropboxOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The specific action (typically is a CRUD action) to perform on
-         * Dropbox remote folder.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default DropboxEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * The access token to make API requests for a specific Dropbox user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -366,35 +337,6 @@ public interface DropboxEndpointBuilderFactory {
             return (AdvancedDropboxEndpointProducerBuilder) this;
         }
         /**
-         * The specific action (typically is a CRUD action) to perform on
-         * Dropbox remote folder.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default DropboxEndpointProducerBuilder operation(
-                DropboxOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The specific action (typically is a CRUD action) to perform on
-         * Dropbox remote folder.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default DropboxEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * The access token to make API requests for a specific Dropbox user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -636,34 +578,6 @@ public interface DropboxEndpointBuilderFactory {
             return (AdvancedDropboxEndpointBuilder) this;
         }
         /**
-         * The specific action (typically is a CRUD action) to perform on
-         * Dropbox remote folder.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default DropboxEndpointBuilder operation(DropboxOperation operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
-         * The specific action (typically is a CRUD action) to perform on
-         * Dropbox remote folder.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default DropboxEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
-            return this;
-        }
-        /**
          * The access token to make API requests for a specific Dropbox user.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -848,19 +762,6 @@ public interface DropboxEndpointBuilderFactory {
             setProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.dropbox.util.DropboxOperation</code>
-     * enum.
-     */
-    enum DropboxOperation {
-        put,
-        del,
-        search,
-        get,
-        move;
     }
 
     /**

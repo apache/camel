@@ -42,18 +42,6 @@ public interface GridFsEndpointBuilderFactory {
             return (AdvancedGridFsEndpointConsumerBuilder) this;
         }
         /**
-         * Name of com.mongodb.Mongo to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointConsumerBuilder connectionBean(
-                String connectionBean) {
-            setProperty("connectionBean", connectionBean);
-            return this;
-        }
-        /**
          * Sets the name of the GridFS bucket within the database. Default is
          * fs.
          * 
@@ -464,18 +452,6 @@ public interface GridFsEndpointBuilderFactory {
             return (AdvancedGridFsEndpointProducerBuilder) this;
         }
         /**
-         * Name of com.mongodb.Mongo to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointProducerBuilder connectionBean(
-                String connectionBean) {
-            setProperty("connectionBean", connectionBean);
-            return this;
-        }
-        /**
          * Sets the name of the GridFS bucket within the database. Default is
          * fs.
          * 
@@ -716,17 +692,6 @@ public interface GridFsEndpointBuilderFactory {
                 GridFsEndpointConsumerBuilder, GridFsEndpointProducerBuilder {
         default AdvancedGridFsEndpointBuilder advanced() {
             return (AdvancedGridFsEndpointBuilder) this;
-        }
-        /**
-         * Name of com.mongodb.Mongo to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GridFsEndpointBuilder connectionBean(String connectionBean) {
-            setProperty("connectionBean", connectionBean);
-            return this;
         }
         /**
          * Sets the name of the GridFS bucket within the database. Default is

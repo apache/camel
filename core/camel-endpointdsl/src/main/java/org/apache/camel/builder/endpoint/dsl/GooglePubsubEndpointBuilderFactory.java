@@ -42,29 +42,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (AdvancedGooglePubsubEndpointConsumerBuilder) this;
         }
         /**
-         * Project Id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GooglePubsubEndpointConsumerBuilder projectId(String projectId) {
-            setProperty("projectId", projectId);
-            return this;
-        }
-        /**
-         * Destination Name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GooglePubsubEndpointConsumerBuilder destinationName(
-                String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
-        }
-        /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
          * 
@@ -349,29 +326,6 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (AdvancedGooglePubsubEndpointProducerBuilder) this;
         }
         /**
-         * Project Id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GooglePubsubEndpointProducerBuilder projectId(String projectId) {
-            setProperty("projectId", projectId);
-            return this;
-        }
-        /**
-         * Destination Name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GooglePubsubEndpointProducerBuilder destinationName(
-                String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
-        }
-        /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream
          * process has to ack/nack explicitly.
          * 
@@ -601,29 +555,6 @@ public interface GooglePubsubEndpointBuilderFactory {
                 GooglePubsubEndpointConsumerBuilder, GooglePubsubEndpointProducerBuilder {
         default AdvancedGooglePubsubEndpointBuilder advanced() {
             return (AdvancedGooglePubsubEndpointBuilder) this;
-        }
-        /**
-         * Project Id.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GooglePubsubEndpointBuilder projectId(String projectId) {
-            setProperty("projectId", projectId);
-            return this;
-        }
-        /**
-         * Destination Name.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GooglePubsubEndpointBuilder destinationName(
-                String destinationName) {
-            setProperty("destinationName", destinationName);
-            return this;
         }
         /**
          * AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream

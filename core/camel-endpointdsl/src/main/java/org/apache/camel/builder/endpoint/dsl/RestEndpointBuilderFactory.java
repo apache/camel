@@ -43,39 +43,6 @@ public interface RestEndpointBuilderFactory {
             return (AdvancedRestEndpointConsumerBuilder) this;
         }
         /**
-         * HTTP method to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointConsumerBuilder method(String method) {
-            setProperty("method", method);
-            return this;
-        }
-        /**
-         * The base path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointConsumerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
-         * The uri template.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointConsumerBuilder uriTemplate(String uriTemplate) {
-            setProperty("uriTemplate", uriTemplate);
-            return this;
-        }
-        /**
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
          * 
@@ -326,39 +293,6 @@ public interface RestEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedRestEndpointProducerBuilder advanced() {
             return (AdvancedRestEndpointProducerBuilder) this;
-        }
-        /**
-         * HTTP method to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointProducerBuilder method(String method) {
-            setProperty("method", method);
-            return this;
-        }
-        /**
-         * The base path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointProducerBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
-         * The uri template.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointProducerBuilder uriTemplate(String uriTemplate) {
-            setProperty("uriTemplate", uriTemplate);
-            return this;
         }
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST
@@ -616,39 +550,6 @@ public interface RestEndpointBuilderFactory {
                 RestEndpointConsumerBuilder, RestEndpointProducerBuilder {
         default AdvancedRestEndpointBuilder advanced() {
             return (AdvancedRestEndpointBuilder) this;
-        }
-        /**
-         * HTTP method to use.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointBuilder method(String method) {
-            setProperty("method", method);
-            return this;
-        }
-        /**
-         * The base path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointBuilder path(String path) {
-            setProperty("path", path);
-            return this;
-        }
-        /**
-         * The uri template.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default RestEndpointBuilder uriTemplate(String uriTemplate) {
-            setProperty("uriTemplate", uriTemplate);
-            return this;
         }
         /**
          * Media type such as: 'text/xml', or 'application/json' this REST

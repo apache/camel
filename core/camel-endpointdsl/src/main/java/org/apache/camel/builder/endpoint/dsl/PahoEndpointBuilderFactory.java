@@ -43,17 +43,6 @@ public interface PahoEndpointBuilderFactory {
             return (AdvancedPahoEndpointConsumerBuilder) this;
         }
         /**
-         * Name of the topic.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointConsumerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
-        }
-        /**
          * Client will automatically attempt to reconnect to the server if the
          * connection is lost.
          * 
@@ -420,17 +409,6 @@ public interface PahoEndpointBuilderFactory {
             return (AdvancedPahoEndpointProducerBuilder) this;
         }
         /**
-         * Name of the topic.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointProducerBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
-        }
-        /**
          * Client will automatically attempt to reconnect to the server if the
          * connection is lost.
          * 
@@ -742,17 +720,6 @@ public interface PahoEndpointBuilderFactory {
                 PahoEndpointConsumerBuilder, PahoEndpointProducerBuilder {
         default AdvancedPahoEndpointBuilder advanced() {
             return (AdvancedPahoEndpointBuilder) this;
-        }
-        /**
-         * Name of the topic.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default PahoEndpointBuilder topic(String topic) {
-            setProperty("topic", topic);
-            return this;
         }
         /**
          * Client will automatically attempt to reconnect to the server if the

@@ -40,18 +40,6 @@ public interface JMXEndpointBuilderFactory {
             return (AdvancedJMXEndpointBuilder) this;
         }
         /**
-         * Server url comes from the remaining endpoint. Use platform to connect
-         * to local JVM.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default JMXEndpointBuilder serverURL(String serverURL) {
-            setProperty("serverURL", serverURL);
-            return this;
-        }
-        /**
          * Format for the message body. Either xml or raw. If xml, the
          * notification is serialized to xml. If raw, then the raw java object
          * is set as the body.

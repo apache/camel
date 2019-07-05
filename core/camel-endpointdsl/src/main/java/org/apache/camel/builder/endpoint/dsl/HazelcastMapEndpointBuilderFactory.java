@@ -42,17 +42,6 @@ public interface HazelcastMapEndpointBuilderFactory {
             return (AdvancedHazelcastMapEndpointConsumerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointConsumerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -518,17 +507,6 @@ public interface HazelcastMapEndpointBuilderFactory {
             return (AdvancedHazelcastMapEndpointProducerBuilder) this;
         }
         /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointProducerBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -867,17 +845,6 @@ public interface HazelcastMapEndpointBuilderFactory {
                 HazelcastMapEndpointConsumerBuilder, HazelcastMapEndpointProducerBuilder {
         default AdvancedHazelcastMapEndpointBuilder advanced() {
             return (AdvancedHazelcastMapEndpointBuilder) this;
-        }
-        /**
-         * The name of the cache.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointBuilder cacheName(String cacheName) {
-            setProperty("cacheName", cacheName);
-            return this;
         }
         /**
          * To specify a default operation to use, if no operation header has

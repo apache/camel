@@ -51,17 +51,6 @@ public interface SqsEndpointBuilderFactory {
             return (AdvancedSqsEndpointConsumerBuilder) this;
         }
         /**
-         * Queue name or ARN.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SqsEndpointConsumerBuilder queueNameOrArn(String queueNameOrArn) {
-            setProperty("queueNameOrArn", queueNameOrArn);
-            return this;
-        }
-        /**
          * The hostname of the Amazon AWS cloud.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1264,17 +1253,6 @@ public interface SqsEndpointBuilderFactory {
             return (AdvancedSqsEndpointProducerBuilder) this;
         }
         /**
-         * Queue name or ARN.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SqsEndpointProducerBuilder queueNameOrArn(String queueNameOrArn) {
-            setProperty("queueNameOrArn", queueNameOrArn);
-            return this;
-        }
-        /**
          * The hostname of the Amazon AWS cloud.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1813,17 +1791,6 @@ public interface SqsEndpointBuilderFactory {
                 SqsEndpointConsumerBuilder, SqsEndpointProducerBuilder {
         default AdvancedSqsEndpointBuilder advanced() {
             return (AdvancedSqsEndpointBuilder) this;
-        }
-        /**
-         * Queue name or ARN.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SqsEndpointBuilder queueNameOrArn(String queueNameOrArn) {
-            setProperty("queueNameOrArn", queueNameOrArn);
-            return this;
         }
         /**
          * The hostname of the Amazon AWS cloud.

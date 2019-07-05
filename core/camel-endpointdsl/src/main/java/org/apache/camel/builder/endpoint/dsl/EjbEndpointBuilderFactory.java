@@ -39,17 +39,6 @@ public interface EjbEndpointBuilderFactory {
             return (AdvancedEjbEndpointBuilder) this;
         }
         /**
-         * Sets the name of the bean to invoke.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default EjbEndpointBuilder beanName(String beanName) {
-            setProperty("beanName", beanName);
-            return this;
-        }
-        /**
          * If enabled, Camel will cache the result of the first Registry
          * look-up. Cache can be enabled if the bean in the Registry is defined
          * as a singleton scope.

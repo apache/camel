@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.net.URI;
 import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
@@ -43,30 +42,6 @@ public interface SipEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedSipEndpointConsumerBuilder advanced() {
             return (AdvancedSipEndpointConsumerBuilder) this;
-        }
-        /**
-         * URI of the SIP server to connect to (the username and password can be
-         * included such as: john:secretmyserver:9999).
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default SipEndpointConsumerBuilder uri(URI uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
-         * URI of the SIP server to connect to (the username and password can be
-         * included such as: john:secretmyserver:9999).
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default SipEndpointConsumerBuilder uri(String uri) {
-            setProperty("uri", uri);
-            return this;
         }
         /**
          * Should connections be cached by the SipStack to reduce cost of
@@ -1086,30 +1061,6 @@ public interface SipEndpointBuilderFactory {
             return (AdvancedSipEndpointProducerBuilder) this;
         }
         /**
-         * URI of the SIP server to connect to (the username and password can be
-         * included such as: john:secretmyserver:9999).
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default SipEndpointProducerBuilder uri(URI uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
-         * URI of the SIP server to connect to (the username and password can be
-         * included such as: john:secretmyserver:9999).
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default SipEndpointProducerBuilder uri(String uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
          * Should connections be cached by the SipStack to reduce cost of
          * connection creation. This is useful if the connection is used for
          * long running conversations.
@@ -2020,30 +1971,6 @@ public interface SipEndpointBuilderFactory {
                 SipEndpointConsumerBuilder, SipEndpointProducerBuilder {
         default AdvancedSipEndpointBuilder advanced() {
             return (AdvancedSipEndpointBuilder) this;
-        }
-        /**
-         * URI of the SIP server to connect to (the username and password can be
-         * included such as: john:secretmyserver:9999).
-         * 
-         * The option is a: <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default SipEndpointBuilder uri(URI uri) {
-            setProperty("uri", uri);
-            return this;
-        }
-        /**
-         * URI of the SIP server to connect to (the username and password can be
-         * included such as: john:secretmyserver:9999).
-         * 
-         * The option will be converted to a <code>java.net.URI</code> type.
-         * 
-         * Group: common
-         */
-        default SipEndpointBuilder uri(String uri) {
-            setProperty("uri", uri);
-            return this;
         }
         /**
          * Should connections be cached by the SipStack to reduce cost of

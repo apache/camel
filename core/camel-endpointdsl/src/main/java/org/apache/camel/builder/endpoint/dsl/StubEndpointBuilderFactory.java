@@ -45,17 +45,6 @@ public interface StubEndpointBuilderFactory {
             return (AdvancedStubEndpointConsumerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StubEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
@@ -418,17 +407,6 @@ public interface StubEndpointBuilderFactory {
             return (AdvancedStubEndpointProducerBuilder) this;
         }
         /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StubEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
@@ -773,17 +751,6 @@ public interface StubEndpointBuilderFactory {
                 StubEndpointConsumerBuilder, StubEndpointProducerBuilder {
         default AdvancedStubEndpointBuilder advanced() {
             return (AdvancedStubEndpointBuilder) this;
-        }
-        /**
-         * Name of queue.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default StubEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
         /**
          * The maximum capacity of the SEDA queue (i.e., the number of messages

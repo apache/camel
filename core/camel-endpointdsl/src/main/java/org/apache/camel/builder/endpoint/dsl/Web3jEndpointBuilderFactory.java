@@ -46,17 +46,6 @@ public interface Web3jEndpointBuilderFactory {
             return (AdvancedWeb3jEndpointConsumerBuilder) this;
         }
         /**
-         * Sets the node address used to communicate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointConsumerBuilder nodeAddress(String nodeAddress) {
-            setProperty("nodeAddress", nodeAddress);
-            return this;
-        }
-        /**
          * Contract address or a list of addresses.
          * 
          * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
@@ -466,17 +455,6 @@ public interface Web3jEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedWeb3jEndpointProducerBuilder advanced() {
             return (AdvancedWeb3jEndpointProducerBuilder) this;
-        }
-        /**
-         * Sets the node address used to communicate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointProducerBuilder nodeAddress(String nodeAddress) {
-            setProperty("nodeAddress", nodeAddress);
-            return this;
         }
         /**
          * Contract address or a list of addresses.
@@ -1194,17 +1172,6 @@ public interface Web3jEndpointBuilderFactory {
                 Web3jEndpointConsumerBuilder, Web3jEndpointProducerBuilder {
         default AdvancedWeb3jEndpointBuilder advanced() {
             return (AdvancedWeb3jEndpointBuilder) this;
-        }
-        /**
-         * Sets the node address used to communicate.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointBuilder nodeAddress(String nodeAddress) {
-            setProperty("nodeAddress", nodeAddress);
-            return this;
         }
         /**
          * Contract address or a list of addresses.

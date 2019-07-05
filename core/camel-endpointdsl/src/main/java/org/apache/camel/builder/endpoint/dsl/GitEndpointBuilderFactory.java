@@ -42,17 +42,6 @@ public interface GitEndpointBuilderFactory {
             return (AdvancedGitEndpointConsumerBuilder) this;
         }
         /**
-         * Local repository path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointConsumerBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
-            return this;
-        }
-        /**
          * The branch name to work on.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -310,17 +299,6 @@ public interface GitEndpointBuilderFactory {
             return (AdvancedGitEndpointProducerBuilder) this;
         }
         /**
-         * Local repository path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointProducerBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
-            return this;
-        }
-        /**
          * The branch name to work on.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -532,17 +510,6 @@ public interface GitEndpointBuilderFactory {
                 GitEndpointConsumerBuilder, GitEndpointProducerBuilder {
         default AdvancedGitEndpointBuilder advanced() {
             return (AdvancedGitEndpointBuilder) this;
-        }
-        /**
-         * Local repository path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointBuilder localPath(String localPath) {
-            setProperty("localPath", localPath);
-            return this;
         }
         /**
          * The branch name to work on.

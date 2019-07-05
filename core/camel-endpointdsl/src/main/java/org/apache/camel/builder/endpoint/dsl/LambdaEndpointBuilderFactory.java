@@ -39,17 +39,6 @@ public interface LambdaEndpointBuilderFactory {
             return (AdvancedLambdaEndpointBuilder) this;
         }
         /**
-         * Name of the Lambda function.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default LambdaEndpointBuilder function(String function) {
-            setProperty("function", function);
-            return this;
-        }
-        /**
          * The operation to perform. It can be listFunctions, getFunction,
          * createFunction, deleteFunction or invokeFunction.
          * 

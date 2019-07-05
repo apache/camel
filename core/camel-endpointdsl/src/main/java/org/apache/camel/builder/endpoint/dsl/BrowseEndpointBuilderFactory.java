@@ -43,17 +43,6 @@ public interface BrowseEndpointBuilderFactory {
             return (AdvancedBrowseEndpointConsumerBuilder) this;
         }
         /**
-         * A name which can be any string to uniquely identify the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BrowseEndpointConsumerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -221,17 +210,6 @@ public interface BrowseEndpointBuilderFactory {
             return (AdvancedBrowseEndpointProducerBuilder) this;
         }
         /**
-         * A name which can be any string to uniquely identify the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BrowseEndpointProducerBuilder name(String name) {
-            setProperty("name", name);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -344,17 +322,6 @@ public interface BrowseEndpointBuilderFactory {
                 BrowseEndpointConsumerBuilder, BrowseEndpointProducerBuilder {
         default AdvancedBrowseEndpointBuilder advanced() {
             return (AdvancedBrowseEndpointBuilder) this;
-        }
-        /**
-         * A name which can be any string to uniquely identify the endpoint.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default BrowseEndpointBuilder name(String name) {
-            setProperty("name", name);
-            return this;
         }
     }
 
