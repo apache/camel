@@ -135,7 +135,7 @@ public final class StringHelper {
      * @param watermark a watermark to denote the size to cut after
      * @param wrapLongWords whether to wrap long words
      */
-    private static String wrapWords(String line, String newLine, int watermark, boolean wrapLongWords) {
+    public static String wrapWords(String line, String newLine, int watermark, boolean wrapLongWords) {
         if (line == null) {
             return null;
         } else {

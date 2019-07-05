@@ -1220,7 +1220,7 @@ public interface EtcdEndpointBuilderFactory {
      * 
      * Path parameter: namespace (required)
      * The API namespace to use
-     * The value can be one of: keys,stats,watch
+     * The value can be one of: keys, stats, watch
      * 
      * Path parameter: path
      * The path the endpoint refers to

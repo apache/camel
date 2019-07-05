@@ -832,7 +832,7 @@ public interface WordpressEndpointBuilderFactory {
      * 
      * Path parameter: operation (required)
      * The endpoint operation.
-     * The value can be one of: post, user
+     * The value can be one of: post, , user
      * 
      * Path parameter: operationDetail
      * The second part of an endpoint operation. Needed only when endpoint

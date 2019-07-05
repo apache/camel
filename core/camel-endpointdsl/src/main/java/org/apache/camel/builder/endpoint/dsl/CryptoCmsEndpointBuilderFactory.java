@@ -513,7 +513,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * Set the Crypto operation from that supplied after the crypto scheme in
      * the endpoint uri e.g. crypto-cms:sign sets sign as the operation.
      * Possible values: sign, verify, encrypt, or decrypt.
-     * The value can be one of: sign,verify,encrypt,decrypt
+     * The value can be one of: sign, verify, encrypt, decrypt
      * 
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between

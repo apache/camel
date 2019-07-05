@@ -111,7 +111,7 @@ public interface DnsEndpointBuilderFactory {
      * 
      * Path parameter: dnsType (required)
      * The type of the lookup.
-     * The value can be one of: dig,ip,lookup,wikipedia
+     * The value can be one of: dig, ip, lookup, wikipedia
      */
     default DnsEndpointBuilder dns(String path) {
         class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {

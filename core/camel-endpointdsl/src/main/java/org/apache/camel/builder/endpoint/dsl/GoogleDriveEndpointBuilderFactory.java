@@ -786,13 +786,15 @@ public interface GoogleDriveEndpointBuilderFactory {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of:
-     * drive-about,drive-apps,drive-changes,drive-channels,drive-children,drive-comments,drive-files,drive-parents,drive-permissions,drive-properties,drive-realtime,drive-replies,drive-revisions
+     * The value can be one of: drive-about, drive-apps, drive-changes,
+     * drive-channels, drive-children, drive-comments, drive-files,
+     * drive-parents, drive-permissions, drive-properties, drive-realtime,
+     * drive-replies, drive-revisions
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * The value can be one of:
-     * copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,trash,untrash,update,watch
+     * The value can be one of: copy, delete, get, getIdForEmail, insert, list,
+     * patch, stop, touch, trash, untrash, update, watch
      */
     default GoogleDriveEndpointBuilder googleDrive(String path) {
         class GoogleDriveEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleDriveEndpointBuilder, AdvancedGoogleDriveEndpointBuilder {

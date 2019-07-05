@@ -1544,7 +1544,8 @@ public interface TwitterTimelineEndpointBuilderFactory {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * The value can be one of: PUBLIC,HOME,USER,MENTIONS,RETWEETSOFME,UNKNOWN
+     * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
+     * UNKNOWN
      */
     default TwitterTimelineEndpointBuilder twitterTimeline(String path) {
         class TwitterTimelineEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterTimelineEndpointBuilder, AdvancedTwitterTimelineEndpointBuilder {

@@ -119,7 +119,7 @@ public interface DataFormatEndpointBuilderFactory {
      * 
      * Path parameter: operation (required)
      * Operation to use either marshal or unmarshal
-     * The value can be one of: marshal,unmarshal
+     * The value can be one of: marshal, unmarshal
      */
     default DataFormatEndpointBuilder dataFormat(String path) {
         class DataFormatEndpointBuilderImpl extends AbstractEndpointBuilder implements DataFormatEndpointBuilder, AdvancedDataFormatEndpointBuilder {

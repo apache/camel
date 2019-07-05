@@ -2760,8 +2760,16 @@ public interface SalesforceEndpointBuilderFactory {
      * 
      * Path parameter: operationName
      * The operation to use
-     * The value can be one of:
-     * getVersions,getResources,getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,updateSObject,deleteSObject,getSObjectWithId,upsertSObject,deleteSObjectWithId,getBlobField,query,queryMore,queryAll,search,apexCall,recent,createJob,getJob,closeJob,abortJob,createBatch,getBatch,getAllBatches,getRequest,getResults,createBatchQuery,getQueryResultIds,getQueryResult,getRecentReports,getReportDescription,executeSyncReport,executeAsyncReport,getReportInstances,getReportResults,limits,approval,approvals,composite-tree,composite-batch,composite
+     * The value can be one of: getVersions, getResources, getGlobalObjects,
+     * getBasicInfo, getDescription, getSObject, createSObject, updateSObject,
+     * deleteSObject, getSObjectWithId, upsertSObject, deleteSObjectWithId,
+     * getBlobField, query, queryMore, queryAll, search, apexCall, recent,
+     * createJob, getJob, closeJob, abortJob, createBatch, getBatch,
+     * getAllBatches, getRequest, getResults, createBatchQuery,
+     * getQueryResultIds, getQueryResult, getRecentReports,
+     * getReportDescription, executeSyncReport, executeAsyncReport,
+     * getReportInstances, getReportResults, limits, approval, approvals,
+     * composite-tree, composite-batch, composite
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use

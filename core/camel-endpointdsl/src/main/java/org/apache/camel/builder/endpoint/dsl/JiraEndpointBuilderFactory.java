@@ -759,8 +759,8 @@ public interface JiraEndpointBuilderFactory {
      * Operation to perform. Consumers: NewIssues, NewComments. Producers:
      * AddIssue, AttachFile, DeleteIssue, TransitionIssue, UpdateIssue,
      * Watchers. See this class javadoc description for more information.
-     * The value can be one of:
-     * ADDCOMMENT,ADDISSUE,ATTACH,DELETEISSUE,NEWISSUES,NEWCOMMENTS,UPDATEISSUE,TRANSITIONISSUE,WATCHERS
+     * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
+     * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS
      */
     default JiraEndpointBuilder jira(String path) {
         class JiraEndpointBuilderImpl extends AbstractEndpointBuilder implements JiraEndpointBuilder, AdvancedJiraEndpointBuilder {

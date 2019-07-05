@@ -1018,7 +1018,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      * 
      * Path parameter: command (required)
      * Whether to sign or verify.
-     * The value can be one of: sign,verify
+     * The value can be one of: sign, verify
      * 
      * Path parameter: name (required)
      * The name part in the URI can be chosen by the user to distinguish between

@@ -205,7 +205,7 @@ public interface TikaEndpointBuilderFactory {
      * 
      * Path parameter: operation (required)
      * Tika Operation. parse or detect
-     * The value can be one of: parse,detect
+     * The value can be one of: parse, detect
      */
     default TikaEndpointBuilder tika(String path) {
         class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {

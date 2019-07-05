@@ -1102,8 +1102,8 @@ public interface YammerEndpointBuilderFactory {
      * 
      * Path parameter: function (required)
      * The function to use
-     * The value can be one of:
-     * MESSAGES,MY_FEED,ALGO,FOLLOWING,SENT,PRIVATE,RECEIVED,USERS,CURRENT
+     * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
+     * PRIVATE, RECEIVED, USERS, CURRENT
      */
     default YammerEndpointBuilder yammer(String path) {
         class YammerEndpointBuilderImpl extends AbstractEndpointBuilder implements YammerEndpointBuilder, AdvancedYammerEndpointBuilder {

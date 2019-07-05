@@ -1167,8 +1167,8 @@ public interface BoxEndpointBuilderFactory {
      * 
      * Path parameter: apiName (required)
      * What kind of operation to perform
-     * The value can be one of:
-     * COLLABORATIONS,COMMENTS,EVENT_LOGS,FILES,FOLDERS,GROUPS,EVENTS,SEARCH,TASKS,USERS
+     * The value can be one of: COLLABORATIONS, COMMENTS, EVENT_LOGS, FILES,
+     * FOLDERS, GROUPS, EVENTS, SEARCH, TASKS, USERS
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation

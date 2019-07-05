@@ -1079,7 +1079,7 @@ public interface StreamEndpointBuilderFactory {
      * 
      * Path parameter: kind (required)
      * Kind of stream to use such as System.in or System.out.
-     * The value can be one of: in,out,err,header,file,url
+     * The value can be one of: in, out, err, header, file, url
      */
     default StreamEndpointBuilder stream(String path) {
         class StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements StreamEndpointBuilder, AdvancedStreamEndpointBuilder {

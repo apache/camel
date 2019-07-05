@@ -304,8 +304,12 @@ public interface DigitalOceanEndpointBuilderFactory {
      * 
      * Path parameter: operation
      * The operation to perform to the given resource.
-     * The value can be one of:
-     * create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors,enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,attach,detach,assign,unassign,tag,untag
+     * The value can be one of: create, update, delete, list, ownList, get,
+     * listBackups, listActions, listNeighbors, listSnapshots, listKernels,
+     * listAllNeighbors, enableBackups, disableBackups, reboot, powerCycle,
+     * shutdown, powerOn, powerOff, restore, resetPassword, resize, rebuild,
+     * rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot,
+     * transfer, convert, attach, detach, assign, unassign, tag, untag
      */
     default DigitalOceanEndpointBuilder digitalOcean(String path) {
         class DigitalOceanEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalOceanEndpointBuilder, AdvancedDigitalOceanEndpointBuilder {

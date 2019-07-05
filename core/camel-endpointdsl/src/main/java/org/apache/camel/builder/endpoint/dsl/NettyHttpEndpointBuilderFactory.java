@@ -4477,7 +4477,7 @@ public interface NettyHttpEndpointBuilderFactory {
      * Path parameter: protocol (required)
      * The protocol to use which is either http, https or proxy - a consumer
      * only option.
-     * The value can be one of: http,https
+     * The value can be one of: http, https
      * 
      * Path parameter: host (required)
      * The local hostname such as localhost, or 0.0.0.0 when being a consumer.

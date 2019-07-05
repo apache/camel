@@ -243,7 +243,7 @@ public interface TwitterStreamingEndpointBuilderFactory {
      * 
      * Path parameter: streamingType (required)
      * The streaming type to consume.
-     * The value can be one of: SAMPLE,FILTER,USER,UNKNOWN
+     * The value can be one of: SAMPLE, FILTER, USER, UNKNOWN
      */
     default TwitterStreamingEndpointBuilder twitterStreaming(String path) {
         class TwitterStreamingEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterStreamingEndpointBuilder, AdvancedTwitterStreamingEndpointBuilder {

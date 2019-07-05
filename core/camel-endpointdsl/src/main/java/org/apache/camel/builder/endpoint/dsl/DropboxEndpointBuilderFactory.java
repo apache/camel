@@ -787,7 +787,7 @@ public interface DropboxEndpointBuilderFactory {
      * Path parameter: operation (required)
      * The specific action (typically is a CRUD action) to perform on Dropbox
      * remote folder.
-     * The value can be one of: put,del,search,get,move
+     * The value can be one of: put, del, search, get, move
      */
     default DropboxEndpointBuilder dropbox(String path) {
         class DropboxEndpointBuilderImpl extends AbstractEndpointBuilder implements DropboxEndpointBuilder, AdvancedDropboxEndpointBuilder {
