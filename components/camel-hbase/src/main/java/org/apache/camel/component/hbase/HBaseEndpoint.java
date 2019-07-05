@@ -320,7 +320,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
             if (parameters.containsKey(HBaseAttribute.HBASE_VALUE_TYPE.asOption(i))) {
                 String valueType = String.valueOf(parameters.remove(HBaseAttribute.HBASE_VALUE_TYPE.asOption(i)));
                 if (valueType != null && !valueType.isEmpty()) {
-                    rowModel.setRowType(getCamelContext().getClassResolver().resolveClass(valueType));
+                    cellModel.setValueType(getCamelContext().getClassResolver().resolveClass(valueType));
                 }
             }
             rowModel.getCells().add(cellModel);
