@@ -204,7 +204,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The region in which S3 client needs to work
+     * The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
+     * You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
