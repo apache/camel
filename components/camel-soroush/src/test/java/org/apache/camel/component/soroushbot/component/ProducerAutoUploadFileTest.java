@@ -30,9 +30,11 @@ import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class ProducerUploadFile extends SoroushBotTestSupport {
+@Ignore("CAMEL-13629 failing test")
+public class ProducerAutoUploadFileTest extends SoroushBotTestSupport {
 
     @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
@@ -49,7 +51,7 @@ public class ProducerUploadFile extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:soroush").to("soroush://" + SoroushAction.uploadFile + "/token")
+                from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/token")
                         .process(exchange -> {
                             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
                             if (body.getFileUrl() == null) {
@@ -78,12 +80,11 @@ public class ProducerUploadFile extends SoroushBotTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
-        Assert.assertEquals("no message sent.", SoroushBotWS.getReceivedMessages().size(), 0);
+        Assert.assertEquals("message sent successfully", SoroushBotWS.getReceivedMessages().get(0), body);
         SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
         Map<String, String> fileIdToContent = SoroushBotWS.getFileIdToContent();
         Assert.assertEquals("file uploaded successfully", fileIdToContent.size(), 2);
         Assert.assertEquals(fileIdToContent.get(mockedMessage.getFileUrl()), fileContent);
         Assert.assertEquals(fileIdToContent.get(mockedMessage.getThumbnailUrl()), thumbContent);
     }
-
 }

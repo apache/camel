@@ -29,7 +29,7 @@ import org.junit.Test;
  * Checks that body of type {@link java.io.File} is simply moved avoiding
  * copying using IO streams.
  */
-public class FileProducerFileBodyGetsMoved extends ContextTestSupport {
+public class FileProducerFileBodyGetsMovedTest extends ContextTestSupport {
 
     @Before
     @Override

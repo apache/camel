@@ -29,13 +29,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
-public class ShardListAtSequenceParametrised {
+public class ShardListAfterSequenceParametrisedTest {
     private ShardList undertest;
 
     private final String inputSequenceNumber;
     private final String expectedShardId;
 
-    public ShardListAtSequenceParametrised(String inputSequenceNumber, String expectedShardId) {
+    public ShardListAfterSequenceParametrisedTest(String inputSequenceNumber, String expectedShardId) {
         this.inputSequenceNumber = inputSequenceNumber;
         this.expectedShardId = expectedShardId;
     }
@@ -47,8 +47,8 @@ public class ShardListAtSequenceParametrised {
         results.add(new Object[]{"3", "a"});
         results.add(new Object[]{"6", "b"});
         results.add(new Object[]{"8", "b"});
-        results.add(new Object[]{"15", "b"});
-        results.add(new Object[]{"16", "c"});
+        results.add(new Object[]{"15", "c"});
+        results.add(new Object[]{"16", "d"});
         results.add(new Object[]{"18", "d"});
         results.add(new Object[]{"25", "d"});
         results.add(new Object[]{"30", "d"});
@@ -68,6 +68,6 @@ public class ShardListAtSequenceParametrised {
 
     @Test
     public void assertions() throws Exception {
-        assertThat(undertest.atSeq(inputSequenceNumber).getShardId(), is(expectedShardId));
+        assertThat(undertest.afterSeq(inputSequenceNumber).getShardId(), is(expectedShardId));
     }
 }

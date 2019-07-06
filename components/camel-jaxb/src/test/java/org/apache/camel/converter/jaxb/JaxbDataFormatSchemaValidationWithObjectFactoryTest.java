@@ -32,7 +32,7 @@ import org.apache.camel.converter.jaxb.message.ObjectFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JaxbDataFormatSchemaValidationTestWithObjectFactory extends CamelTestSupport {
+public class JaxbDataFormatSchemaValidationWithObjectFactoryTest extends CamelTestSupport {
 
     @EndpointInject("mock:marshall")
     private MockEndpoint mockMarshall;

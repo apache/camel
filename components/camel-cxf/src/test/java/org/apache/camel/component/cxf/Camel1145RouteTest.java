@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
-public class TestCamel1145Route extends AbstractJUnit4SpringContextTests {
+public class Camel1145RouteTest extends AbstractJUnit4SpringContextTests {
    
     @Test
     public void testCamel1145Route() throws Exception {
