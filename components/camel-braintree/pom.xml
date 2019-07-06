@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-M4</version>
     </parent>
 
     <artifactId>camel-braintree</artifactId>
@@ -129,22 +128,22 @@
                                 <api>
                                     <apiName>addOn</apiName>
                                     <proxyClass>com.braintreegateway.AddOnGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>address</apiName>
                                     <proxyClass>com.braintreegateway.AddressGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>clientToken</apiName>
                                     <proxyClass>com.braintreegateway.ClientTokenGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>creditCardVerification</apiName>
                                     <proxyClass>com.braintreegateway.CreditCardVerificationGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>customer</apiName>
@@ -156,22 +155,22 @@
                                 <api>
                                     <apiName>discount</apiName>
                                     <proxyClass>com.braintreegateway.DiscountGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>dispute</apiName>
                                     <proxyClass>com.braintreegateway.DisputeGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>documentUpload</apiName>
                                     <proxyClass>com.braintreegateway.DocumentUploadGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>merchantAccount</apiName>
                                     <proxyClass>com.braintreegateway.MerchantAccountGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <substitutions>
                                         <substitution>
                                             <method>^.+$</method>
@@ -223,22 +222,22 @@
                                 <api>
                                     <apiName>plan</apiName>
                                     <proxyClass>com.braintreegateway.PlanGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>report</apiName>
                                     <proxyClass>com.braintreegateway.ReportGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>settlementBatchSummary</apiName>
                                     <proxyClass>com.braintreegateway.SettlementBatchSummaryGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>subscription</apiName>
                                     <proxyClass>com.braintreegateway.SubscriptionGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                                 <api>
                                     <apiName>transaction</apiName>
@@ -273,7 +272,7 @@
                                 <api>
                                     <apiName>webhookNotification</apiName>
                                     <proxyClass>com.braintreegateway.WebhookNotificationGateway</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                 </api>
                             </apis>
                         </configuration>
