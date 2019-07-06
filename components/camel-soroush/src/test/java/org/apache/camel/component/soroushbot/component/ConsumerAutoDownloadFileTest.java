@@ -14,31 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.soroushbot.component;
 
-import org.apache.camel.RoutesBuilder;
+import java.util.List;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
+import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class ConsumerRetryOnConnectionFailure extends SoroushBotTestSupport {
+public class ConsumerAutoDownloadFileTest extends SoroushBotTestSupport {
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    public RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush://" + SoroushAction.getMessage + "/5 CLOSE?maxConnectionRetry=1")
-                        .to("mock:ConsumerRetryOnConnectionFailure");
+                from("soroush://" + SoroushAction.getMessage + "?authorizationToken=4 File&autoDownload=true")
+                        .to("mock:soroush");
             }
         };
     }
 
     @Test
-    public void checkIfConsumerReceive15message() throws InterruptedException {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:ConsumerRetryOnConnectionFailure");
-        mockEndpoint.expectedMessageCount(15);
+    public void checkIfAutoDownloadFiles() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
+        mockEndpoint.setExpectedCount(4);
         mockEndpoint.assertIsSatisfied();
+        List<Exchange> exchanges = mockEndpoint.getExchanges();
+        Assert.assertEquals(exchanges.size(), 4);
+        exchanges.forEach(exchange -> {
+            SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
+            Assert.assertTrue("if fileUrl is not null file may not be null and visa versa", body.getFile() == null ^ body.getFileUrl() != null);
+            Assert.assertTrue("if and only if thumbnail url is null thumbnail may be null", body.getThumbnail() == null ^ body.getThumbnailUrl() != null);
+        });
+
     }
 }

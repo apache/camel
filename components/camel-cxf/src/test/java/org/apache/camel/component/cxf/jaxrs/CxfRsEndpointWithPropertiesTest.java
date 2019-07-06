@@ -29,7 +29,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class CxfRsEndpointWithProperties extends AbstractSpringBeanTestSupport {
+public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSupport {
 
     @Override
     protected String[] getApplicationContextFiles() {

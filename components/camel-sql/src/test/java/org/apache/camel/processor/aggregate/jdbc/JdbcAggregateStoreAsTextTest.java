@@ -32,7 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * Tests to ensure that arbitrary headers can be stored as raw text within a dataSource
  * Tests to ensure the body can be stored as readable text within a dataSource
  */
-public class JdbcAggregateStoreAsText extends CamelSpringTestSupport {
+public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
     protected JdbcAggregationRepository repo;
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;

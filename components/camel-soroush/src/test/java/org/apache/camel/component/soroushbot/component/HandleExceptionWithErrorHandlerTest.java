@@ -28,7 +28,7 @@ import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class HandleExceptionWithErrorHandler extends SoroushBotTestSupport {
+public class HandleExceptionWithErrorHandlerTest extends SoroushBotTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {

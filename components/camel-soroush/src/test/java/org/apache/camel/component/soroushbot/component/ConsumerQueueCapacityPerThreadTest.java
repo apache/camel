@@ -14,44 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.soroushbot.component;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
-import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class ConsumerAutoDownloadFile extends SoroushBotTestSupport {
+public class ConsumerQueueCapacityPerThreadTest extends SoroushBotTestSupport {
     @Override
-    public RouteBuilder createRouteBuilder() {
+    protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush://" + SoroushAction.getMessage + "?authorizationToken=4 File&autoDownload=true")
-                        .to("mock:soroush");
+                from("soroush:" + SoroushAction.getMessage + "/150?queueCapacityPerThread=1&concurrentConsumers=2")
+                        .process(exchange -> {
+                            Thread.sleep(1000);
+                        }).to("mock:ConsumerQueueCapacityPerThread");
             }
         };
     }
 
     @Test
-    public void checkIfAutoDownloadFiles() throws InterruptedException {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
-        mockEndpoint.setExpectedCount(4);
+    public void checkOnly4ExchangeReceiveToTheEnd() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:ConsumerQueueCapacityPerThread");
+        mockEndpoint.expectedMessageCount(6);
+        mockEndpoint.setAssertPeriod(4000);
         mockEndpoint.assertIsSatisfied();
-        List<Exchange> exchanges = mockEndpoint.getExchanges();
-        Assert.assertEquals(exchanges.size(), 4);
-        exchanges.forEach(exchange -> {
-            SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
-            Assert.assertTrue("if fileUrl is not null file may not be null and visa versa", body.getFile() == null ^ body.getFileUrl() != null);
-            Assert.assertTrue("if and only if thumbnail url is null thumbnail may be null", body.getThumbnail() == null ^ body.getThumbnailUrl() != null);
-        });
-
     }
 }

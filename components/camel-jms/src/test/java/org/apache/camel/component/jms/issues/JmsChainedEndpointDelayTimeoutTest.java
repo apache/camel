@@ -31,7 +31,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * Unit test to assert that timeouts don't trigger twice when JMS InOut endpoints are chained, and the second endpoint
  * takes longer to respond than the timeout set for the first endpoint.
  */
-public class JmsChainedEndpointDelayTimeout extends CamelTestSupport {
+public class JmsChainedEndpointDelayTimeoutTest extends CamelTestSupport {
 
     @Test
     public void testTimeoutNotTriggeredTempQueue() throws Exception {
