@@ -37,6 +37,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
+import org.apache.camel.spi.NotifyBuilderMatcher;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EndpointHelper;
@@ -968,6 +969,171 @@ public class NotifyBuilder {
                     return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
                 } else {
                     return "" + (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Sets a condition when the provided mock is satisfied based on {@link Exchange}
+     * being sent to it when they are <b>done</b>.
+     * <p/>
+     * The idea is that you can use mock endpoints (or other matchers) for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param matcher the matcher such as mock endpoint
+     * @return the builder
+     */
+    public NotifyBuilder whenDoneSatisfied(final NotifyBuilderMatcher matcher) {
+        return doWhenSatisfied(matcher, false);
+    }
+
+    /**
+     * Sets a condition when the provided mock endpoint (or other matchers) is satisfied based on {@link Exchange}
+     * being sent to it when they are <b>received</b>.
+     * <p/>
+     * The idea is that you can use mock endpoints (or other matchers) for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param matcher the matcher such as mock endpoint
+     * @return the builder
+     */
+    public NotifyBuilder whenReceivedSatisfied(final NotifyBuilderMatcher matcher) {
+        return doWhenSatisfied(matcher, true);
+    }
+
+    private NotifyBuilder doWhenSatisfied(final NotifyBuilderMatcher matcher, final boolean received) {
+        stack.add(new EventPredicateSupport() {
+
+            @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (received) {
+                    matcher.notifyBuilderOnExchange(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeFailed(Exchange exchange) {
+                if (!received) {
+                    matcher.notifyBuilderOnExchange(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                if (!received) {
+                    matcher.notifyBuilderOnExchange(exchange);
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                return matcher.notifyBuilderMatches();
+            }
+
+            @Override
+            public void reset() {
+                matcher.notifyBuilderReset();
+            }
+
+            @Override
+            public String toString() {
+                if (received) {
+                    return "whenReceivedSatisfied(" + matcher + ")";
+                } else {
+                    return "whenDoneSatisfied(" + matcher + ")";
+                }
+            }
+        });
+        return this;
+    }
+
+    /**
+     * Sets a condition when the provided mock (or other matchers) is <b>not</b> satisfied based on {@link Exchange}
+     * being sent to it when they are <b>received</b>.
+     * <p/>
+     * The idea is that you can use  mock endpoints (or other matchers) for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param matcher the matcher such as mock endpoint
+     * @return the builder
+     */
+    @Deprecated
+    public NotifyBuilder whenReceivedNotSatisfied(final NotifyBuilderMatcher matcher) {
+        return doWhenNotSatisfied(matcher, true);
+    }
+
+    /**
+     * Sets a condition when the provided mock (or other matchers) is <b>not</b> satisfied based on {@link Exchange}
+     * being sent to it when they are <b>done</b>.
+     * <p/>
+     * The idea is that you can use  mock endpoints (or other matchers) for setting fine grained expectations
+     * and then use that together with this builder. The mock provided does <b>NOT</b>
+     * have to already exist in the route. You can just create a new pseudo mock
+     * and this builder will send the done {@link Exchange} to it. So its like
+     * adding the mock to the end of your route(s).
+     *
+     * @param matcher the matcher such as mock endpoint
+     * @return the builder
+     */
+    public NotifyBuilder whenDoneNotSatisfied(final NotifyBuilderMatcher matcher) {
+        return doWhenNotSatisfied(matcher, false);
+    }
+
+    private NotifyBuilder doWhenNotSatisfied(final NotifyBuilderMatcher mock, final boolean received) {
+        stack.add(new EventPredicateSupport() {
+
+            @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (received) {
+                    mock.notifyBuilderOnExchange(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeFailed(Exchange exchange) {
+                if (!received) {
+                    mock.notifyBuilderOnExchange(exchange);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                if (!received) {
+                    mock.notifyBuilderOnExchange(exchange);
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                return !mock.notifyBuilderMatches();
+            }
+
+            @Override
+            public void reset() {
+                mock.notifyBuilderReset();
+            }
+
+            @Override
+            public String toString() {
+                if (received) {
+                    return "whenReceivedNotSatisfied(" + mock + ")";
+                } else {
+                    return "whenDoneNotSatisfied(" + mock + ")";
                 }
             }
         });

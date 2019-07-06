@@ -43,8 +43,10 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.InterceptSendToEndpoint;
+import org.apache.camel.spi.NotifyBuilderMatcher;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -88,7 +90,7 @@ import org.apache.camel.util.StopWatch;
  * number of values provided in the bodies/headers.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
-public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
+public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, NotifyBuilderMatcher {
 
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
@@ -1083,6 +1085,29 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         int count = getReceivedCounter();
         assertTrue("Not enough messages received. Was: " + count, count > index);
         return getReceivedExchange(index);
+    }
+
+    @Override
+    public void notifyBuilderOnExchange(Exchange exchange) {
+        onExchange(exchange);
+    }
+
+    @Override
+    public void notifyBuilderReset() {
+        reset();
+    }
+
+    @Override
+    public boolean notifyBuilderMatches() {
+        if (latch != null) {
+            try {
+                return latch.await(0, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                throw RuntimeExchangeException.wrapRuntimeException(e);
+            }
+        } else {
+            return true;
+        }
     }
 
     // Properties
