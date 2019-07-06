@@ -20,6 +20,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
+import org.apache.camel.processor.aggregate.StringAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 
@@ -140,6 +141,23 @@ public final class AggregationStrategies {
         adapter.setAllowNullOldExchange(true);
         adapter.setAllowNullNewExchange(true);
         return adapter;
+    }
+
+    /**
+     * Creates a {@link StringAggregationStrategy}.
+     * @since 3.0.0
+     */
+    public static StringAggregationStrategy string() {
+        return new StringAggregationStrategy();
+    }
+
+    /**
+     * Creates a {@link StringAggregationStrategy} with delimiter.
+     * @param delimiter The delimiter to join with.
+     * @since 3.0.0
+     */
+    public static StringAggregationStrategy string(String delimiter) {
+        return string().delimiter(delimiter);
     }
 
 }
