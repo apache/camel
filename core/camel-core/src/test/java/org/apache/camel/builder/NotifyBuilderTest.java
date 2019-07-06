@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class NotifyBuilderTest extends ContextTestSupport {
@@ -742,6 +743,160 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
         // should NOT keep being true
         template.sendBody("direct:foo", "Damn World");
+        assertEquals(false, notify.matches());
+    }
+
+    @Test
+    public void testWhenReceivedSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
+
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("direct:foo").whenDoneSatisfied(mock)
+                .create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, notify.matches());
+
+        // the notify  is based on direct:foo so sending to bar should not trigger match
+        template.sendBody("direct:bar", "Hi World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(true, notify.matches());
+    }
+
+    @Test
+    public void testWhenReceivedNotSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedMessageCount(2);
+        mock.message(1).body().contains("Camel");
+
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("direct:foo").whenReceivedNotSatisfied(mock)
+                .create();
+
+        // is always false to start with
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(true, notify.matches());
+
+        template.sendBody("direct:foo", "Hello Camel");
+        assertEquals(false, notify.matches());
+    }
+
+    @Test
+    public void testWhenNotSatisfiedUsingSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedMessageCount(2);
+        mock.message(1).body().contains("Camel");
+
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("direct:foo").whenReceivedSatisfied(mock)
+                .create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello Camel");
+        assertEquals(true, notify.matches());
+    }
+
+    @Test
+    public void testComplexOrCamel() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
+
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("direct:foo").whenReceivedSatisfied(mock)
+                .and().from("direct:bar").whenExactlyDone(5).whenAnyReceivedMatches(body().contains("Camel"))
+                .create();
+
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, notify.matches());
+
+        // the notify  is based on direct:foo so sending to bar should not trigger match
+        template.sendBody("direct:bar", "Hi World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hi World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "Hi Camel");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "A");
+        template.sendBody("direct:bar", "B");
+        template.sendBody("direct:bar", "C");
+        assertEquals(true, notify.matches());
+    }
+
+    @Test
+    public void testWhenDoneSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceived("Bye World", "Bye Camel");
+
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenDoneSatisfied(mock)
+                .create();
+
+        // is always false to start with
+        assertEquals(false, notify.matches());
+
+        template.requestBody("direct:cake", "World");
+        assertEquals(false, notify.matches());
+
+        template.requestBody("direct:cake", "Camel");
+        assertEquals(true, notify.matches());
+
+        template.requestBody("direct:cake", "Damn");
+        // will still be true as the mock has been completed
+        assertEquals(true, notify.matches());
+    }
+
+    @Test
+    public void testWhenDoneNotSatisfied() throws Exception {
+        // lets use a mock to set the expressions as it got many great assertions for that
+        // notice we use mock:assert which does NOT exist in the route, its just a pseudo name
+        MockEndpoint mock = getMockEndpoint("mock:assert");
+        mock.expectedBodiesReceived("Bye World", "Bye Camel");
+
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenDoneNotSatisfied(mock)
+                .create();
+
+        // is always false to start with
+        assertEquals(false, notify.matches());
+
+        template.requestBody("direct:cake", "World");
+        assertEquals(true, notify.matches());
+
+        template.requestBody("direct:cake", "Camel");
+        assertEquals(false, notify.matches());
+
+        template.requestBody("direct:cake", "Damn");
+        // will still be false as the mock has been completed
         assertEquals(false, notify.matches());
     }
 

@@ -132,7 +132,7 @@ The `camel-script` component has been removed and there is no support for javax.
 
 ### Mock component
 
-The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. Also we had to remove a few methods on `NotifyBuilder` that were using the `mock` component.
+The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. 
 
 ### ActiveMQ
 
