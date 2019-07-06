@@ -976,7 +976,7 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided mock is satisfied based on {@link Exchange}
+     * Sets a condition when the provided matcher (such as mock endpoint) is satisfied based on {@link Exchange}
      * being sent to it when they are <b>done</b>.
      * <p/>
      * The idea is that you can use mock endpoints (or other matchers) for setting fine grained expectations
@@ -993,7 +993,7 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided mock endpoint (or other matchers) is satisfied based on {@link Exchange}
+     * Sets a condition when the provided matcher (such as mock endpoint) is satisfied based on {@link Exchange}
      * being sent to it when they are <b>received</b>.
      * <p/>
      * The idea is that you can use mock endpoints (or other matchers) for setting fine grained expectations
@@ -1058,7 +1058,7 @@ public class NotifyBuilder {
     }
 
     /**
-     * Sets a condition when the provided mock (or other matchers) is <b>not</b> satisfied based on {@link Exchange}
+     * Sets a condition when the provided matcher (such as mock endpoint) is <b>not</b> satisfied based on {@link Exchange}
      * being sent to it when they are <b>received</b>.
      * <p/>
      * The idea is that you can use  mock endpoints (or other matchers) for setting fine grained expectations
@@ -1070,13 +1070,12 @@ public class NotifyBuilder {
      * @param matcher the matcher such as mock endpoint
      * @return the builder
      */
-    @Deprecated
     public NotifyBuilder whenReceivedNotSatisfied(final NotifyBuilderMatcher matcher) {
         return doWhenNotSatisfied(matcher, true);
     }
 
     /**
-     * Sets a condition when the provided mock (or other matchers) is <b>not</b> satisfied based on {@link Exchange}
+     * Sets a condition when the provided matcher (such as mock endpoint) is <b>not</b> satisfied based on {@link Exchange}
      * being sent to it when they are <b>done</b>.
      * <p/>
      * The idea is that you can use  mock endpoints (or other matchers) for setting fine grained expectations
