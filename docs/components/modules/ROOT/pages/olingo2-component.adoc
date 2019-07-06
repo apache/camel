@@ -1,0 +1,337 @@
+[[olingo2-component]]
+== Olingo2 Component
+
+*Available as of Camel version 2.14*
+
+The Olingo2 component utilizes http://olingo.apache.org/[Apache Olingo]
+version 2.0 APIs to interact with OData 2.0 compliant services.
+A number of popular commercial and enterprise vendors and products
+support the OData protocol. A sample list of supporting products can be
+found on the OData http://www.odata.org/ecosystem/[website].
+
+The Olingo2 component supports reading feeds, delta feeds, entities,
+simple and complex properties, links, counts, using custom and OData
+system query parameters. It supports updating entities, properties, and
+association links. It also supports submitting queries and change
+requests as a single OData batch operation. 
+
+The component supports configuring HTTP connection parameters and
+headers for OData service connection. This allows configuring use of
+SSL, OAuth2.0, etc. as required by the target OData service. 
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,java]
+----------------------------------------------
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-olingo2</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+----------------------------------------------
+
+### URI format
+
+[source,java]
+------------------------------------------------
+    olingo2://endpoint/<resource-path>?[options]
+------------------------------------------------
+
+### Olingo2 Options
+
+
+
+
+// component options: START
+The Olingo2 component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | To use the shared configuration |  | Olingo2Configuration
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The Olingo2 endpoint is configured using URI syntax:
+
+----
+olingo2:apiName/methodName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiName* | *Required* What kind of operation to perform |  | Olingo2ApiName
+| *methodName* | *Required* What sub operation to use for the selected operation |  | String
+|===
+
+
+==== Query Parameters (17 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectTimeout* (common) | HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | int
+| *contentType* (common) | Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8 | application/json;charset=utf-8 | String
+| *filterAlreadySeen* (common) | Set this to true to filter out results that have already been communicated by this component. | false | boolean
+| *httpAsyncClientBuilder* (common) | Custom HTTP async client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext. Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely |  | HttpAsyncClientBuilder
+| *httpClientBuilder* (common) | Custom HTTP client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext. Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely |  | HttpClientBuilder
+| *httpHeaders* (common) | Custom HTTP headers to inject into every request, this could include OAuth tokens, etc. |  | Map
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *proxy* (common) | HTTP proxy server configuration |  | HttpHost
+| *serviceUri* (common) | Target OData service base URI, e.g. http://services.odata.org/OData/OData.svc |  | String
+| *socketTimeout* (common) | HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | int
+| *sslContextParameters* (common) | To configure security using SSLContextParameters |  | SSLContextParameters
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-olingo2-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 16 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.olingo2.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.olingo2.configuration.api-name* | What kind of operation to perform |  | Olingo2ApiName
+| *camel.component.olingo2.configuration.connect-timeout* | HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer
+| *camel.component.olingo2.configuration.content-type* | Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8 | application/json;charset=utf-8 | String
+| *camel.component.olingo2.configuration.filter-already-seen* | Set this to true to filter out results that have already been communicated by this component. | false | Boolean
+| *camel.component.olingo2.configuration.http-async-client-builder* | Custom HTTP async client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext. Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely |  | HttpAsyncClientBuilder
+| *camel.component.olingo2.configuration.http-client-builder* | Custom HTTP client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext. Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely |  | HttpClientBuilder
+| *camel.component.olingo2.configuration.http-headers* | Custom HTTP headers to inject into every request, this could include OAuth tokens, etc. |  | Map
+| *camel.component.olingo2.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.olingo2.configuration.proxy* | HTTP proxy server configuration |  | HttpHost
+| *camel.component.olingo2.configuration.service-uri* | Target OData service base URI, e.g. http://services.odata.org/OData/OData.svc |  | String
+| *camel.component.olingo2.configuration.socket-timeout* | HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer
+| *camel.component.olingo2.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
+| *camel.component.olingo2.enabled* | Enable olingo2 component | true | Boolean
+| *camel.component.olingo2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.olingo2.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+### Producer Endpoints
+
+Producer endpoints can use endpoint names and options listed
+next. Producer endpoints can also use a special option *`inBody`* that
+in turn should contain the name of the endpoint option whose value will
+be contained in the Camel Exchange In message. The *inBody* option
+defaults to *data* for endpoints that take that option. 
+
+### Endpoint Options
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *`CamelOlingo2.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint
+option *`inBody=option`* would override
+a *`CamelOlingo2.option`* header. In addition, query parameters can be
+specified. 
+
+[width="100%",cols="10%,20%,70%",options="header",]
+|=======================================================================
+|Name |Type |Description
+|data |Object |Data with appropriate type used to create or modify the OData resource
+|keyPredicate |String |Key predicate to create a parameterized OData resource endpoint. Useful for 
+create/update operations where the key predicate value is dynamically provided in a header
+|queryParams |java.util.Map<String,String> |OData system options and custom query options. For more 
+information see http://www.odata.org/documentation/odata-version-2-0/uri-conventions/[OData 2.0 URI Conventions]
+|resourcePath |String |OData resource path, may or may not contain key predicate
+|endpointHttpHeaders |java.util.Map<String, String> |Dynamic HTTP Headers to be sent to the endpoint
+|responseHttpHeaders |java.util.Map<String, String> |Dynamic HTTP Response Headers from the endpoint 
+|=======================================================================
+
+Note that the resourcePath option can either in specified in the URI as
+a part of the URI path, as an endpoint option
+?resourcePath=<resource-path> or as a header value
+CamelOlingo2.resourcePath. The OData entity key predicate can either be
+a part of the resource path, e.g. _Manufacturers('1')_, where _'__1'_ is
+the key predicate, or be specified separately with resource path
+_Manufacturers_ and keyPredicate option _'1'_. 
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Endpoint |Options |HTTP Method |Result Body Type
+
+|batch |data, endpointHttpHeaders |POST with multipart/mixed batch request |java.util.List<org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse>
+
+|create |data, resourcePath, endpointHttpHeaders |POST |org.apache.olingo.odata2.api.ep.entry.ODataEntry for new entries
+org.apache.olingo.odata2.api.commons.HttpStatusCodes for other OData resources
+
+|delete |resourcePath, endpointHttpHeaders |DELETE |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+
+|merge |data, resourcePath, endpointHttpHeaders |MERGE |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+
+|patch |data, resourcePath, endpointHttpHeaders |PATCH |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+
+|read |queryParams, resourcePath, endpointHttpHeaders |GET |Depends on OData resource being queried as described next
+
+|update |data, resourcePath, endpointHttpHeaders |PUT |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+|=======================================================================
+
+### Endpoint HTTP Headers
+The component level configuration property **httpHeaders** supplies static HTTP header information. 
+However, some systems requires dynamic header information to be passed to and received from the endpoint.
+A sample use case would be systems that require dynamic security tokens.  The **endpointHttpHeaders** 
+and **responseHttpHeaders** endpoint properties provides this capability.  Set headers that need to 
+be passed to the endpoint in the *`CamelOlingo2.endpointHttpHeaders`* property and the 
+response headers will be returned in a *`CamelOlingo2.responseHttpHeaders`* property.  
+Both properties are of the type *`java.util.Map<String, String>`*.
+
+### OData Resource Type Mapping
+
+The result of *read* endpoint and data type of *data* option depends on
+the OData resource being queried, created or modified. 
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|OData Resource Type |Resource URI from resourcePath and keyPredicate |In or Out Body Type
+
+|Entity data model |$metadata |org.apache.olingo.odata2.api.edm.Edm
+
+|Service document |/ |org.apache.olingo.odata2.api.servicedocument.ServiceDocument
+
+|OData feed |<entity-set> |org.apache.olingo.odata2.api.ep.feed.ODataFeed
+
+|OData entry |<entity-set>(<key-predicate>) |org.apache.olingo.odata2.api.ep.entry.ODataEntry for Out body (response)
+java.util.Map<String, Object> for In body (request)
+
+|Simple property |<entity-set>(<key-predicate>)/<simple-property> |Appropriate Java data type as described by Olingo EdmProperty
+
+|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |Appropriate Java data type as described by Olingo EdmProperty
+
+|Complex property |<entity-set>(<key-predicate>)/<complex-property> |java.util.Map<String, Object>
+
+|Zero or one association link |<entity-set>(<key-predicate>/$link/<one-to-one-entity-set-property> |String for response
+java.util.Map<String, Object> with key property names and values for request
+
+|Zero or many association links |<entity-set>(<key-predicate>/$link/<one-to-many-entity-set-property> |java.util.List<String> for response
+java.util.List<java.util.Map<String, Object>> containing list of key property names and values for request
+
+|Count |<resource-uri>/$count |java.lang.Long
+|=======================================================================
+
+### Consumer Endpoints
+
+Only the *read* endpoint can be used as a consumer endpoint. Consumer
+endpoints can
+use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a *`consumer.`* prefix to schedule endpoint
+invocation. By default consumer endpoints that return an array or
+collection will generate one exchange per element, and their routes will
+be executed once for each exchange. This behavior can be disabled by
+setting the endpoint property *consumer.splitResult=false*. 
+
+### Message Headers
+
+Any URI option can be provided in a message header for producer
+endpoints with a *`CamelOlingo2.`* prefix.
+
+### Message Body
+
+All result message bodies utilize objects provided by the underlying
+http://olingo.apache.org/javadoc/odata2/index.html[Apache Olingo 2.0
+API] used by the Olingo2Component. Producer endpoints can specify the
+option name for incoming message body in the *`inBody`* endpoint URI
+parameter. For endpoints that return an array or collection, a consumer
+endpoint will map every element to distinct messages, unless
+*consumer.splitResult* is set to *false*.
+
+### Use cases
+
+The following route reads top 5 entries from the Manufacturer feed
+ordered by ascending Name property. 
+
+ 
+
+[source,java]
+------------------------------------------------------------
+from("direct:...")
+    .setHeader("CamelOlingo2.$top", "5");
+    .to("olingo2://read/Manufacturers?orderBy=Name%20asc");
+------------------------------------------------------------
+
+ 
+
+The following route reads Manufacturer entry using the key property
+value in incoming *id* header. 
+
+ 
+
+[source,java]
+------------------------------------------------------------
+from("direct:...")
+    .setHeader("CamelOlingo2.keyPredicate", header("id"))
+    .to("olingo2://read/Manufacturers");
+------------------------------------------------------------
+
+ 
+
+The following route creates Manufacturer entry using the
+*java.util.Map<String, Object>* in body message. 
+
+ 
+
+[source,java]
+------------------------------------------------------------
+from("direct:...")
+    .to("olingo2://create/Manufacturers");
+------------------------------------------------------------
+
+ 
+
+The following route polls Manufacturer
+http://olingo.apache.org/doc/tutorials/deltaClient.html[delta
+feed] every 30 seconds. The bean *blah* updates the bean *paramsBean* to
+add an updated *!deltatoken* property with the value returned in the
+*ODataDeltaFeed* result. Since the initial delta token is not known, the
+consumer endpoint will produce an *ODataFeed* value the first time, and
+*ODataDeltaFeed* on subsequent polls. 
+
+ 
+
+[source,java]
+---------------------------------------------------------------------------------------------------------
+from("olingo2://read/Manufacturers?queryParams=#paramsBean&consumer.timeUnit=SECONDS&consumer.delay=30")
+    .to("bean:blah");
+---------------------------------------------------------------------------------------------------------

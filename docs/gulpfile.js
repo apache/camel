@@ -27,7 +27,7 @@ function deleteComponentSymlinks() {
 }
 
 function createComponentSymlinks() {
-    return src('../components/*/src/main/docs/*.adoc')
+    return src('../components/{*,*/*}/src/main/docs/*.adoc')
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
             // instead of .../pages/camel-.../src/main/docs/....adoc
@@ -86,7 +86,7 @@ function insertGeneratedNotice() {
 function createComponentNav() {
     return src('component-nav.adoc.template')
         .pipe(insertGeneratedNotice())
-        .pipe(inject(src('../components/*/src/main/docs/*.adoc').pipe(sort()), {
+        .pipe(inject(src('../components/{*,*/*}/src/main/docs/*.adoc').pipe(sort()), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
