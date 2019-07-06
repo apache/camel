@@ -1,0 +1,820 @@
+[[box-component]]
+== Box Component
+
+*Available as of Camel version 2.14*
+
+The Box component provides access to all of the Box.com APIs accessible
+using https://github.com/box/box-java-sdk/[https://github.com/box/box-java-sdk]. It
+allows producing messages to upload and download files, create, edit,
+and manage folders, etc. It also supports APIs that allow polling for
+updates to user accounts and even changes to enterprise accounts, etc.
+
+Box.com requires the use of OAuth2.0 for all client application
+authentication. In order to use camel-box with your account, you'll need
+to create a new application within Box.com at
+https://developer.box.com/[https://developer.box.com].
+The Box application's client id and secret will allow access to Box APIs
+which require a current user. A user access token is generated and
+managed by the API for an end user. 
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-box</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+----
+
+=== Connection Authentication Types
+
+The Box component supports three different types of authenticated connections.
+
+==== Standard Authentication
+
+*Standard Authentication* uses the *OAuth 2.0 three-legged authentication process* to authenticate its connections with Box.com. This type of authentication enables Box *managed users* and *external users* to access, edit, and save their Box content through the Box component.
+
+==== App Enterprise Authentication
+
+*App Enterprise Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as a *Service Account* for a *Box Application*. This type of authentication enables a service account to access, edit, and save the Box content of its *Box Application* through the Box component.
+
+==== App User Authentication
+
+*App User Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as an *App User* for a *Box Application*. This type of authentication enables app users to access, edit, and save their Box content in its *Box Application* through the Box component.
+
+=== Box Options
+
+// component options: START
+The Box component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | To use the shared configuration |  | BoxConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Box endpoint is configured using URI syntax:
+
+----
+box:apiName/methodName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiName* | *Required* What kind of operation to perform |  | BoxApiName
+| *methodName* | *Required* What sub operation to use for the selected operation |  | String
+|===
+
+
+==== Query Parameters (22 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *clientId* (common) | Box application client ID |  | String
+| *enterpriseId* (common) | The enterprise ID to use for an App Enterprise. |  | String
+| *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| *userId* (common) | The user ID to use for an App User. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *httpParams* (advanced) | Custom HTTP params for settings like proxy host |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *accessTokenCache* (security) | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
+| *clientSecret* (security) | Box application client secret |  | String
+| *encryptionAlgorithm* (security) | The type of encryption algorithm for JWT. Supported Algorithms: RSA_SHA_256 RSA_SHA_384 RSA_SHA_512 | RSA_SHA_256 | EncryptionAlgorithm
+| *maxCacheEntries* (security) | The maximum number of access tokens in cache. | 100 | int
+| *authenticationType* (authentication) | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
+| *privateKeyFile* (security) | The private key for generating the JWT signature. |  | String
+| *privateKeyPassword* (security) | The password for the private key. |  | String
+| *publicKeyId* (security) | The ID for public key for validating the JWT signature. |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *userName* (security) | Box user name, MUST be provided |  | String
+| *userPassword* (security) | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-box-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 20 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.box.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.box.configuration.access-token-cache* | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
+| *camel.component.box.configuration.api-name* | What kind of operation to perform |  | BoxApiName
+| *camel.component.box.configuration.authentication-type* | The type of authentication for connection. <p> Types of Authentication: <ul> <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged)</li> <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens</li> </ul> | APP_USER_AUTHENTICATION | String
+| *camel.component.box.configuration.client-id* | Box application client ID |  | String
+| *camel.component.box.configuration.client-secret* | Box application client secret |  | String
+| *camel.component.box.configuration.encryption-algorithm* | The type of encryption algorithm for JWT. <p> Supported Algorithms: <ul> <li>RSA_SHA_256</li> <li>RSA_SHA_384</li> <li>RSA_SHA_512</li> </ul> |  | EncryptionAlgorithm
+| *camel.component.box.configuration.enterprise-id* | The enterprise ID to use for an App Enterprise. |  | String
+| *camel.component.box.configuration.http-params* | Custom HTTP params for settings like proxy host |  | Map
+| *camel.component.box.configuration.max-cache-entries* | The maximum number of access tokens in cache. | 100 | Integer
+| *camel.component.box.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.box.configuration.private-key-file* | The private key for generating the JWT signature. |  | String
+| *camel.component.box.configuration.private-key-password* | The password for the private key. |  | String
+| *camel.component.box.configuration.public-key-id* | The ID for public key for validating the JWT signature. |  | String
+| *camel.component.box.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *camel.component.box.configuration.user-id* | The user ID to use for an App User. |  | String
+| *camel.component.box.configuration.user-name* | Box user name, MUST be provided |  | String
+| *camel.component.box.configuration.user-password* | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
+| *camel.component.box.enabled* | Enable box component | true | Boolean
+| *camel.component.box.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== URI format
+
+[source]
+----
+box:apiName/methodName
+----
+
+apiName can be one of:
+
+* collaborations
+* comments
+* event-logs
+* files
+* folders
+* groups
+* events
+* search
+* tasks
+* users
+
+
+=== Producer Endpoints:
+
+Producer endpoints can use endpoint prefixes followed by endpoint names
+and associated options described next. A shorthand alias can be used for
+some endpoints. The endpoint URI MUST contain a prefix.
+
+Endpoint options that are not mandatory are denoted by *[]*. When there
+are no mandatory options for an endpoint, one of the set of *[]* options
+MUST be provided. Producer endpoints can also use a special
+option *`inBody`* that in turn should contain the name of the endpoint
+option whose value will be contained in the Camel Exchange In message.
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *`CamelBox.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint
+option *`inBody=option`* would override a *`CamelBox.option`* header.
+
+If a value is not provided for the option *defaultRequest* either in the
+endpoint URI or in a message header, it will be assumed to be `null`.
+Note that the `null` value will only be used if other options do not
+satisfy matching endpoints.
+
+In case of Box API errors the endpoint will throw a
+RuntimeCamelException with a
+*com.box.sdk.BoxAPIException* derived exception
+cause.
+
+==== Endpoint Prefix _collaborations_
+
+For more information on Box collaborations see
+https://developer.box.com/reference#collaboration-object[https://developer.box.com/reference#collaboration-object]. The
+following endpoints can be invoked with the prefix *`collaborations`* as
+follows:
+
+[source]
+----
+box:collaborations/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|addFolderCollaboration |add |folderId, collaborator, role |com.box.sdk.BoxCollaboration
+
+|addFolderCollaborationByEmail |addByEmail |folderId, email, role |com.box.sdk.BoxCollaboration
+
+|deleteCollaboration |delete |collaborationId |
+
+|getFolderCollaborations |collaborations |folderId |java.util.Collection
+
+|getPendingCollaborations |pendingCollaborations | |java.util.Collection
+
+|getCollaborationInfo |info |collaborationId |com.box.sdk.BoxCollaboration.Info
+
+|updateCollaborationInfo |updateInfo |collaborationId, info |com.box.sdk.BoxCollaboration
+|===
+
+URI Options for _collaborations_
+
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|collaborationId |String
+
+|collaborator |com.box.sdk.BoxCollaborator
+
+|role |com.box.sdk.BoxCollaboration.Role
+
+|folderId |String
+
+|email |String
+
+|info |com.box.sdk.BoxCollaboration.Info
+|===
+
+==== Endpoint Prefix _comments_
+
+For more information on Box comments see
+https://developer.box.com/reference#comment-object[https://developer.box.com/reference#comment-object]. The
+following endpoints can be invoked with the prefix *`comments`* as
+follows:
+
+[source]
+----
+box:comments/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|addFileComment |add |fileId, message |com.box.sdk.BoxFile
+
+|changeCommentMessage |updateMessage |commentId, message |com.box.sdk.BoxComment
+
+|deleteComment |delete |commentId |
+
+|getCommentInfo |info |commentId |com.box.sdk.BoxComment.Info
+
+|getFileComments |comments |fileId |java.util.List
+
+|replyToComment |reply |commentId, message |com.box.sdk.BoxComment
+|===
+
+URI Options for _collaborations_
+
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|commentId |String
+
+|fileId |String
+
+|message |String
+
+|===
+
+==== Endpoint Prefix _events-logs_
+
+For more information on Box event logs see
+https://developer.box.com/reference#events[https://developer.box.com/reference#events].
+The following endpoints can be invoked with the prefix *`event-logs`* as follows:
+
+[source]
+----
+box:event-logs/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|getEnterpriseEvents |events |position, after, before, [types] |java.util.List
+|===
+
+URI Options for _event-logs_
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|position |String
+
+|after |Date
+
+|before |Date
+
+|types |com.box.sdk.BoxEvent.Types[]
+|===
+
+==== Endpoint Prefix _files_
+
+For more information on Box files see
+https://developer.box.com/reference#file-object[https://developer.box.com/reference#file-object].
+The following endpoints can be invoked with the
+prefix *`files`* as follows. 
+
+[source]
+----
+box:files/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|uploadFile |upload |parentFolderId, content, fileName, [created], [modified], [size], [listener] |com.box.sdk.BoxFile
+
+|downloadFile |download |fileId, output, [rangeStart], [rangeEnd], [listener]  |java.io.OutputStream
+
+|copyFile |copy |fileId, destinationFolderId, [newName] |com.box.sdk.BoxFile
+
+|moveFile |move |fileId, destinationFolderId,  [newName] |com.box.sdk.BoxFile
+
+|renameFile |rename |fileId, newFileName |com.box.sdk.BoxFile 
+
+|createFileSharedLink |link |fileId, access, [unshareDate], [permissions] |com.box.sdk.BoxSharedLink
+
+|deleteFile |delete |fileId |
+
+|uploadNewFileVersion |uploadVersion |fileId, fileContent, [modified], [fileSize], [listener] |com.box.boxsdk.BoxFile
+
+|promoteFileVersion |promoteVersion |fileId, version |com.box.sdk.BoxFileVersion
+
+|getFileVersions |versions |fileId |java.util.Collection
+
+|downloadPreviousFileVersion |downloadVersion |fileId, version, output, [listener] |java.io.OutputStream
+
+|deleteFileVersion |deleteVersion |fileId, version |
+
+|getFileInfo |info |fileId, fields |com.box.sdk.BoxFile.Info
+
+|updateFileInfo |updateInfo |fileId, info |com.box.sdk.BoxFile
+
+|createFileMetadata |createMetadata |fileId, metadata, [typeName] |com.box.sdk.Metadata
+
+|getFileMetadata |metadata |fileId, [typeName] |com.box.sdk.Metadata
+
+|updateFileMetadata |updateMetadata |fileId, metadata |com.box.sdk.Metadata
+
+|deleteFileMetadata |deleteMetadata |fileId | 
+
+|getDownloadUrl |url |fileId |java.net.URL
+
+|getPreviewLink |preview |fileId |java.net.URL
+
+|getFileThumbnail |thumbnail |fileId, fileType, minWidth, minHeight, maxWidth, maxHeight |byte[]
+|===
+
+URI Options for _files_
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|parentFolderId |String
+
+|content |java.io.InputStream
+
+|fileName |String
+
+|created |Date
+
+|modified |Date
+
+|size |Long
+
+|listener |com.box.sdk.ProgressListener 
+
+|output |java.io.OutputStream
+
+|rangeStart |Long
+
+|rangeEnd |Long
+
+|outputStreams |java.io.OutputStream[]
+
+|destinationFolderId |String
+
+|newName |String
+
+|fields |String[]
+
+|info |com.box.sdk.BoxFile.Info
+
+|fileSize |Long
+
+|version |Integer
+
+|access |com.box.sdk.BoxSharedLink.Access
+
+|unshareDate |Date
+
+|permissions |com.box.sdk.BoxSharedLink.Permissions
+
+|fileType |com.box.sdk.BoxFile.ThumbnailFileType
+
+|minWidth |Integer
+
+|minHeight |Integer
+
+|maxWidth |Integer
+
+|maxHeight |Integer
+
+|metadata |com.box.sdk.Metadata
+
+|typeName |String
+|===
+
+==== Endpoint Prefix _folders_
+
+For more information on Box folders see
+https://developer.box.com/reference#folder-object[https://developer.box.com/reference#folder-object].
+The following endpoints can be invoked with the prefix
+*`folders`* as follows. 
+
+[source]
+----
+box:folders/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|getRootFolder |root  | |com.box.sdk.BoxFolder
+
+|createFolder |create |parentFolderId, folderName |com.box.sdk.BoxFolder
+
+|createFolder |create |parentFolderId, path |com.box.sdk.BoxFolder
+
+|copyFolder |copy |folderId, destinationfolderId, [newName] |com.box.sdk.BoxFolder 
+
+|moveFolder |move |folderId, destinationFolderId, newName |com.box.sdk.BoxFolder
+
+|renameFolder |rename |folderId, newFolderName |com.box.sdk.BoxFolder
+
+|createFolderSharedLink |link |folderId, access, [unsharedDate], [permissions] |java.util.List
+
+|deleteFolder |delete |folderId |
+
+|getFolder |folder |path |com.box.sdk.BoxFolder
+
+|getFolderInfo |info |folderId, fields |com.box.sdk.BoxFolder.Info
+
+|getFolderItems |items |folderId, offset, limit, fields |java.util.List
+
+|updateFolderInfo |updateInfo |folderId, info |com.box.sdk.BoxFolder
+|===
+
+URI Options for _folders_
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|path |String[]
+
+|folderId |String
+
+|offset |Long
+
+|limit |Long
+
+|fields |String[]
+
+|parentFolderId |String
+
+|folderName |String
+
+|destinationFolderId |String
+
+|newName |String
+
+|newFolderName |String
+
+|info |String
+
+|access |com.box.sdk.BoxSharedLink.Access
+
+|unshareDate |Date
+
+|permissions |com.box.sdk.BoxSharedLink.Permissions
+|===
+
+==== Endpoint Prefix _groups_
+
+For more information on Box groups see
+https://developer.box.com/reference#group-object[https://developer.box.com/reference#group-object].
+The following endpoints can be invoked with the prefix *`groups`* as
+follows:
+
+[source]
+----
+box:groups/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|createGroup |create |name, [provenance, externalSyncIdentifier, description, invitabilityLevel, memberViewabilityLevel] |com.box.sdk.BoxGroup 
+
+|addGroupMembership |createMembership |groupId, userId, role |com.box.sdk.BoxGroupMembership
+
+|deleteGroup |delete |groupId |
+
+|getAllGroups |groups | |java.util.Collection
+
+|getGroupInfo |info |groupId |com.box.sdk.BoxGroup.Info
+
+|updateGroupInfo |updateInfo |groupId, groupInfo |com.box.sdk.BoxGroup
+
+|addGroupMembership |addMembership |groupId, userId, role |com.box.sdk.BoxGroupMembership
+
+|deleteGroupMembership |deleteMembership |groupMembershipId |
+
+|getGroupMemberships |memberships |groupId |java.uti.Collection
+
+|getGroupMembershipInfo |membershipInfo |groupMembershipId |com.box.sdk.BoxGroup.Info
+
+|updateGroupMembershipInfo |updateMembershipInfo |groupMembershipId, info |com.box.sdk.BoxGroupMembership
+|===
+
+URI Options for _groups_
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|name |String
+
+|groupId |String
+
+|userId |String
+
+|role |com.box.sdk.BoxGroupMembership.Role
+
+|groupMembershipId |String
+
+|info |com.box.sdk.BoxGroupMembership.Info
+
+|===
+
+==== Endpoint Prefix _search_
+
+For more information on Box search API see
+https://developer.box.com/reference#searching-for-content[https://developer.box.com/reference#searching-for-content]. The
+following endpoints can be invoked with the prefix *`search`* as
+follows:
+
+[source]
+----
+box:search/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|searchFolder |search |folderId, query |java.util.Collection
+|===
+
+URI Options for _search_
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|folderId |String
+
+|query |String
+|===
+
+==== Endpoint Prefix _tasks_
+
+For information on Box tasks see
+https://developer.box.com/reference#task-object-1[https://developer.box.com/reference#task-object-1].
+The following endpoints can be invoked with the prefix *`tasks`* as
+follows:
+
+[source]
+----
+box:tasks/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|addFileTask |add  |fileId, action, dueAt, [message] |com.box.sdk.BoxUser
+
+|deleteTask |delete |taskId |
+
+|getFileTasks |tasks  |fileId |java.util.List
+
+|getTaskInfo |info  |taskId |com.box.sdk.BoxTask.Info
+
+|updateTaskInfo |updateInfo |taskId, info |com.box.sdk.BoxTask
+
+|addAssignmentToTask |addAssignment |taskId, assignTo |com.box.sdk.BoxTask
+
+|deleteTaskAssignment |deleteAssignment |taskAssignmentId |
+
+|getTaskAssignments |assignments  | taskId |java.util.List
+
+|getTaskAssignmentInfo |assignmentInfo |taskAssignmentId |com.box.sdk.BoxTaskAssignment.Info
+|===
+
+URI Options for _tasks_
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|fileId |String
+
+|action |com.box.sdk.BoxTask.Action
+
+|dueAt |Date
+
+|message |String
+
+|taskId |String
+
+|info |com.box.sdk.BoxTask.Info
+
+|assignTo |com.box.sdk.BoxUser
+
+|taskAssignmentId |String
+|===
+
+==== Endpoint Prefix _users_
+
+For information on Box users see
+https://developer.box.com/reference#user-object[https://developer.box.com/reference#user-object].
+The following endpoints can be invoked with the prefix *`users`* as
+follows:
+
+[source]
+----
+box:users/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|getCurrentUser |currentUser  | |com.box.sdk.BoxUser
+
+|getAllEnterpriseOrExternalUsers |users |filterTerm, [fields] |com.box.sdk.BoxUser
+
+|createAppUser |create  |name, [params] |com.box.sdk.BoxUser
+
+|createEnterpriseUser |create  |login, name, [params] |com.box.sdk.BoxUser
+
+|deleteUser |delete |userId, notifyUser, force |
+
+|getUserEmailAlias |emailAlias |userId |com.box.sdk.BoxUser
+
+|deleteUserEmailAlias |deleteEmailAlias |userId, emailAliasId |java.util.List
+
+|getUserInfo |info  | userId |com.box.sdk.BoxUser.Info
+
+|updateUserInfo |updateInfo |userId, info |com.box.sdk.BoxUser
+
+|moveFolderToUser |- |userId, sourceUserId |com.box.sdk.BoxFolder.Info
+|===
+
+URI Options for _users_
+
+[width="100%",cols="10%,90%",options="header"]
+|===
+|Name |Type
+
+|email |String
+
+|emailAliasId |String
+
+|fields |String[]
+
+|filterTerm |String
+
+|folderId |String
+
+|force |boolean
+
+|info |com.box.sdk.BoxUser.Info
+
+|login |String
+
+|name |String
+
+|notifyUser |boolean
+
+|params |com.box.sdk.CreateUserParams
+
+|sourceUserId |String
+
+|userId |String
+|===
+
+=== Consumer Endpoints:
+
+For more information on Box events see
+https://developer.box.com/reference#events[https://developer.box.com/reference#events].
+Consumer endpoints can only use the endpoint prefix *events* as
+shown in the example next.
+
+[source]
+----
+box:events/endpoint?[options]
+----
+
+[width="100%",cols="10%,10%,10%,70%",options="header"]
+|===
+|Endpoint |Shorthand Alias |Options |Result Body Type
+
+|events |  |[startingPosition] |com.box.sdk.BoxEvent 
+|===
+
+URI Options for _events_
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Name |Type
+
+|startingPosition |Long
+|===
+
+=== Message header
+
+Any of the options can be provided in a message header for producer
+endpoints with *CamelBox.* prefix.
+
+=== Message body
+
+All result message bodies utilize objects provided by the Box Java SDK.
+Producer endpoints can specify the option name for incoming message body
+in the *inBody* endpoint parameter.
+
+=== Samples
+
+The following route uploads new files to the user's root folder:
+
+[source,java]
+----
+from("file:...")
+    .to("box://files/upload/inBody=fileUploadRequest");
+----
+
+The following route polls user's account for updates:
+
+[source,java]
+----
+from("box://events/listen?startingPosition=-1")
+    .to("bean:blah");
+----
+
+The following route uses a producer with dynamic header options. The
+*fileId* property has the Box file id and the *output* property has 
+the output stream of the file contents, so they are assigned to the
+*CamelBox.fileId* header and *CamelBox.output* header respectively
+as follows:
+
+[source,java]
+----
+from("direct:foo")
+    .setHeader("CamelBox.fileId", header("fileId"))
+    .setHeader("CamelBox.output", header("output"))
+    .to("box://files/download")
+    .to("file://...");
+----
