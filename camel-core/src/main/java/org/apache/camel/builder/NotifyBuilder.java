@@ -856,7 +856,6 @@ public class NotifyBuilder {
      * @param mock the mock
      * @return the builder
      */
-    @Deprecated
     public NotifyBuilder whenDoneSatisfied(final MockEndpoint mock) {
         return doWhenSatisfied(mock, false);
     }
@@ -874,7 +873,6 @@ public class NotifyBuilder {
      * @param mock the mock
      * @return the builder
      */
-    @Deprecated
     public NotifyBuilder whenReceivedSatisfied(final MockEndpoint mock) {
         return doWhenSatisfied(mock, true);
     }
@@ -957,7 +955,6 @@ public class NotifyBuilder {
      * @param mock the mock
      * @return the builder
      */
-    @Deprecated
     public NotifyBuilder whenReceivedNotSatisfied(final MockEndpoint mock) {
         return doWhenNotSatisfied(mock, true);
     }
@@ -975,7 +972,6 @@ public class NotifyBuilder {
      * @param mock the mock
      * @return the builder
      */
-    @Deprecated
     public NotifyBuilder whenDoneNotSatisfied(final MockEndpoint mock) {
         return doWhenNotSatisfied(mock, false);
     }
