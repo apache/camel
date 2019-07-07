@@ -27,7 +27,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "///foo/bar/baz/xxx?password=admin&autoCreate=true";
+        return "ftp://admin@localhost:" + getPort() + "///foo/bar/baz/xxx?password=admin";
     }
 
     @Override
@@ -38,7 +38,7 @@ public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
 
     @Test
     public void testAutoCreate() throws Exception {
-        FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl());
+        FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
         assertTrue(new File("target/res/home/foo/bar/baz/xxx").exists());
