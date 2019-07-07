@@ -27,7 +27,7 @@ import org.junit.Test;
 public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/foo/bar/baz/xxx?password=admin&autoCreate=true";
+        return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/foo/bar/baz/xxx?password=admin";
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
         if (!canTest()) {
             return;
         }
-        SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl());
+        SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
         assertTrue(new File(FTP_ROOT_DIR + "/foo/bar/baz/xxx").exists());
