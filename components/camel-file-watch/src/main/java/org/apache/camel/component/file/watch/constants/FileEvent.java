@@ -17,9 +17,7 @@
 package org.apache.camel.component.file.watch.constants;
 
 import java.nio.file.Path;
-import java.util.Date;
-
-import io.methvin.watcher.DirectoryChangeEvent;
+import java.nio.file.WatchEvent;
 
 public class FileEvent {
     private FileEventEnum eventType;
@@ -36,12 +34,6 @@ public class FileEvent {
         this.eventPath = eventPath;
     }
 
-    public FileEvent(DirectoryChangeEvent event) {
-        this();
-        this.eventType = FileEventEnum.valueOf(event.eventType());
-        this.eventPath = event.path();
-    }
-
     public FileEventEnum getEventType() {
         return eventType;
     }
@@ -53,4 +45,5 @@ public class FileEvent {
     public long getEventDate() {
         return this.eventDate;
     }
+
 }
