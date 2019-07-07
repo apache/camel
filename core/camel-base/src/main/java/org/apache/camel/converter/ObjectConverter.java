@@ -44,7 +44,10 @@ public final class ObjectConverter {
     @Converter
     public static boolean toBool(Object value) {
         Boolean answer = toBoolean(value);
-        return answer != null && answer;
+        if (answer == null) {
+            throw new IllegalArgumentException("Cannot convert type: " + value.getClass().getName() + " to boolean");
+        }
+        return answer;
     }
 
     /**

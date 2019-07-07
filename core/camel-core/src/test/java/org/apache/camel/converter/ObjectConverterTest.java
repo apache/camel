@@ -159,9 +159,25 @@ public class ObjectConverterTest extends Assert {
         assertTrue(ObjectConverter.toBool("TRUE"));
         assertFalse(ObjectConverter.toBool("false"));
         assertFalse(ObjectConverter.toBool("FALSE"));
-        assertFalse(ObjectConverter.toBool("1"));
-        assertFalse(ObjectConverter.toBool(""));
-        assertFalse(ObjectConverter.toBool("yes"));
+        // primitive boolean is more strict
+        try {
+            ObjectConverter.toBool("1");
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+        try {
+            ObjectConverter.toBool("");
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+        try {
+            ObjectConverter.toBool("yes");
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
 }
