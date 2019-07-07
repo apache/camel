@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Logs the defined message to the logger
@@ -34,8 +33,6 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
-    @XmlTransient
-    private static final Logger LOG = LoggerFactory.getLogger(LogDefinition.class);
     @XmlAttribute(required = true)
     private String message;
     @XmlAttribute @Metadata(defaultValue = "INFO")
