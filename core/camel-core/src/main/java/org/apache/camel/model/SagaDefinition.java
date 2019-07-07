@@ -31,8 +31,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Enables sagas on the route
@@ -41,8 +39,6 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement(name = "saga")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SagaDefinition.class);
 
     @XmlAttribute
     @Metadata(defaultValue = "REQUIRED")
