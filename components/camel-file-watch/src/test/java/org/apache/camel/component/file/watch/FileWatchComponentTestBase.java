@@ -58,7 +58,7 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
         new File(testPath()).mkdirs();
         for (int i = 0; i < 10; i++) {
             File newFile = new File(testPath(), getTestName().getMethodName() + "-" + i);
-            Assume.assumeTrue(newFile.createNewFile());
+            newFile.createNewFile();
             testFiles.add(newFile.toPath());
         }
     }
@@ -78,13 +78,13 @@ public class FileWatchComponentTestBase extends CamelTestSupport {
                 cleanTestDir(childFile);
             } else {
                 if (!childFile.delete()) {
-                    throw new IOException();
+                    log.warn("Cannot delete " + childFile);
                 }
             }
         }
 
         if (!file.delete()) {
-            throw new IOException();
+            log.warn("Cannot delete " + file);
         }
     }
 

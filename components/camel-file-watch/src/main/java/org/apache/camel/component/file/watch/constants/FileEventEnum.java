@@ -20,29 +20,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 
-import io.methvin.watcher.DirectoryChangeEvent;
-
 public enum FileEventEnum {
     CREATE,
     DELETE,
     MODIFY;
-
-    public static FileEventEnum valueOf(DirectoryChangeEvent directoryChangeEvent) {
-        return valueOf(directoryChangeEvent.eventType());
-    }
-
-    public static FileEventEnum valueOf(DirectoryChangeEvent.EventType directoryChangeEventType) {
-        switch (directoryChangeEventType) {
-        case CREATE:
-            return FileEventEnum.CREATE;
-        case DELETE:
-            return FileEventEnum.DELETE;
-        case MODIFY:
-            return FileEventEnum.MODIFY;
-        default:
-            return null;
-        }
-    }
 
     public static FileEventEnum valueOf(WatchEvent<?> watchEvent) {
         if (watchEvent.context() instanceof Path) {
@@ -72,19 +53,6 @@ public enum FileEventEnum {
             return StandardWatchEventKinds.ENTRY_MODIFY;
         case DELETE:
             return StandardWatchEventKinds.ENTRY_DELETE;
-        default:
-            return null;
-        }
-    }
-
-    public DirectoryChangeEvent.EventType eventType() {
-        switch (this) {
-        case CREATE:
-            return DirectoryChangeEvent.EventType.CREATE;
-        case MODIFY:
-            return DirectoryChangeEvent.EventType.MODIFY;
-        case DELETE:
-            return DirectoryChangeEvent.EventType.DELETE;
         default:
             return null;
         }

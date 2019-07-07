@@ -18,23 +18,29 @@ package org.apache.camel.component.file.watch;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import io.methvin.watcher.DirectoryChangeEvent;
-import io.methvin.watcher.DirectoryChangeListener;
-import io.methvin.watcher.DirectoryWatcher;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.watch.constants.FileEvent;
+import org.apache.camel.component.file.watch.constants.FileEventEnum;
 import org.apache.camel.component.file.watch.utils.PathUtils;
+import org.apache.camel.component.file.watch.utils.WatchServiceUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.AntPathMatcher;
 
@@ -43,12 +49,14 @@ import org.apache.camel.util.AntPathMatcher;
  */
 public class FileWatchConsumer extends DefaultConsumer {
 
+    private WatchService watchService;
     private ExecutorService watchDirExecutorService;
     private ExecutorService pollExecutorService;
     private LinkedBlockingQueue<FileEvent> eventQueue;
     private Path baseDirectory;
     private AntPathMatcher antPathMatcher;
-    private DirectoryWatcher watcher;
+    private WatchEvent.Kind[] kinds;
+
 
     public FileWatchConsumer(FileWatchEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -60,6 +68,16 @@ public class FileWatchConsumer extends DefaultConsumer {
 
         antPathMatcher = new AntPathMatcher();
         baseDirectory = Paths.get(getEndpoint().getPath());
+
+        Set<FileEventEnum> events = new HashSet<>(endpoint.getEvents());
+
+        kinds = new WatchEvent.Kind[endpoint.getEvents().size() + 1];
+        kinds[0] = StandardWatchEventKinds.OVERFLOW; //always watch Overflow event for logging purposes
+        int i = 0;
+        for (FileEventEnum fileEventEnum: events) {
+            kinds[i + 1] = fileEventEnum.kind();
+            i++;
+        }
     }
 
     @Override
@@ -78,43 +96,59 @@ public class FileWatchConsumer extends DefaultConsumer {
             throw new RuntimeCamelException(String.format("Parameter path must be directory, %s given", baseDirectory.toString()));
         }
 
-        DirectoryWatcher.Builder watcherBuilder = DirectoryWatcher.builder()
-            .path(this.baseDirectory)
-            .logger(log)
-            .listener(new FileWatchDirectoryChangeListener());
-
-        if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
-            // If not macOS, use FileSystem WatchService. io.methvin.watcher uses by default WatchService associated to default FileSystem.
-            // We need per FileSystem WatchService, to allow monitoring on machine with multiple file systems.
-            // Keep default for macOS
-            watcherBuilder.watchService(this.baseDirectory.getFileSystem().newWatchService());
-        }
-
-        watcherBuilder.fileHashing(getEndpoint().isUseFileHashing());
-        if (getEndpoint().getFileHasher() != null && getEndpoint().isUseFileHashing()) {
-            watcherBuilder.fileHasher(getEndpoint().getFileHasher());
-        }
-
-        this.watcher = watcherBuilder.build();
+        watchService = baseDirectory.getFileSystem().newWatchService();
 
         watchDirExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-            .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
+            .newSingleThreadExecutor(this, "CamelFileWatchService");
         pollExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
             .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
 
-        for (int i = 0; i < getEndpoint().getPollThreads(); i++) {
-            this.watcher.watchAsync(watchDirExecutorService);
-        }
+        register(baseDirectory);
+
+        watchDirExecutorService.submit(new WatchServiceRunnable());
+
         for (int i = 0; i < getEndpoint().getConcurrentConsumers(); i++) {
             pollExecutorService.submit(new PollRunnable());
         }
     }
 
+    private void register(Path path) throws IOException {
+        boolean registered = false;
+        if (WatchServiceUtils.isPollingWatchService(watchService)) {
+            try {
+               // Find enum value SensitivityWatchEventModifier.HIGH using reflection to avoid importing com.sun packages
+                Class<?> sensitivityWatchEventModifierClass = getEndpoint().getCamelContext()
+                    .getClassResolver().resolveClass("com.sun.nio.file.SensitivityWatchEventModifier");
+                if (sensitivityWatchEventModifierClass != null) {
+                    Field enumConstantField = sensitivityWatchEventModifierClass.getDeclaredField("HIGH");
+                    WatchEvent.Modifier sensitivityModifier = (WatchEvent.Modifier) enumConstantField.get(null);
+
+                    if (sensitivityModifier != null) {
+                        path.register(watchService, kinds, sensitivityModifier);
+                        registered = true;
+                    }
+                }
+            } catch (IllegalAccessException | NoSuchFieldException ignored) {
+                // This is expected on JVMs where PollingWatchService or SensitivityWatchEventModifier are not available
+            }
+        }
+
+        if (!registered) {
+            path.register(watchService, kinds);
+        }
+    }
+
     @Override
     protected void doStop() throws Exception {
-        if (this.watcher != null) {
-            this.watcher.close();
+        if (watchService != null) {
+            try {
+                watchService.close();
+                log.info("WatchService closed");
+            } catch (IOException e) {
+                log.info("Cannot close WatchService", e);
+            }
         }
+
         if (watchDirExecutorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(watchDirExecutorService);
         }
@@ -163,19 +197,6 @@ public class FileWatchConsumer extends DefaultConsumer {
             return false;
         }
 
-        if (!getEndpoint().isRecursive()) {
-            // On some platforms (eg macOS) is WatchService always recursive,
-            // so we need to filter this out to make this component platform independent
-            try {
-                if (!Files.isSameFile(fileEvent.getEventPath().getParent(), this.baseDirectory)) {
-                    return false;
-                }
-            } catch (IOException e) {
-                log.warn(String.format("Exception occurred during executing filter. Filtering file %s out.", fileEvent.getEventPath()), e);
-                return false;
-            }
-        }
-
         String pattern = getEndpoint().getAntInclude();
         if (pattern == null || pattern.trim().isEmpty()) {
             return true;
@@ -192,27 +213,50 @@ public class FileWatchConsumer extends DefaultConsumer {
         return (FileWatchEndpoint) super.getEndpoint();
     }
 
-    class FileWatchDirectoryChangeListener implements DirectoryChangeListener {
+    class WatchServiceRunnable implements Runnable {
+        WatchKey watchKey;
+
         @Override
-        public void onEvent(DirectoryChangeEvent directoryChangeEvent) {
-            if (directoryChangeEvent.eventType() == DirectoryChangeEvent.EventType.OVERFLOW) {
-                log.warn("OVERFLOW occurred, some events may be lost. Consider increasing of option 'pollThreads'");
-                return;
-            }
-            FileEvent fileEvent = new FileEvent(directoryChangeEvent);
-            if (matchFilters(fileEvent)) {
-                eventQueue.offer(fileEvent);
+        public void run() {
+            while (take() && isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
+                for (WatchEvent<?> event : watchKey.pollEvents()) {
+                    if (event.kind().equals(StandardWatchEventKinds.OVERFLOW)) {
+                        log.warn("OVERFLOW occurred. Some events may be lost");
+                        continue;
+                    }
+
+                    Path base = (Path) watchKey.watchable();
+                    WatchEvent<Path> eventCast = cast(event);
+                    FileEvent fileEvent = new FileEvent(FileEventEnum.valueOf(eventCast.kind()), base.resolve(eventCast.context()));
+
+                    if (matchFilters(fileEvent)) {
+                        eventQueue.offer(fileEvent);
+                    }
+                }
             }
         }
 
-        @Override
-        public boolean isWatching() {
-            return !isStoppingOrStopped() && !isSuspendingOrSuspended();
+        private boolean take() {
+            if (watchKey != null && !watchKey.reset()) {
+                log.info("WatchDirRunnable stopping, because watchKey is in invalid state");
+                return false;
+            }
+            try {
+                watchKey = watchService.take();
+                return true;
+            } catch (ClosedWatchServiceException | InterruptedException e) {
+                log.info("WatchDirRunnable stopping because " + e.getClass().getSimpleName() + ": " + e.getMessage());
+                return false;
+            }
         }
+    }
 
-        @Override
-        public void onException(Exception e) {
-            handleException(e);
+    @SuppressWarnings("unchecked")
+    private WatchEvent<Path> cast(WatchEvent<?> event) {
+        if (event != null && event.kind().type() == Path.class) {
+            return (WatchEvent<Path>) event;
+        } else {
+            throw new ClassCastException("Cannot cast " + event + " to WatchEvent<Path>");
         }
     }
 
@@ -238,4 +282,6 @@ public class FileWatchConsumer extends DefaultConsumer {
             }
         }
     }
+
+
 }
