@@ -331,10 +331,6 @@ public class MethodInfo {
             old = exchange.getOut();
             // propagate headers
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-            // propagate attachments
-            if (exchange.getIn().hasAttachments()) {
-                exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
-            }
         } else {
             old = exchange.getIn();
         }

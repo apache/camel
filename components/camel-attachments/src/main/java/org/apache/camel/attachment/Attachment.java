@@ -28,8 +28,6 @@ import org.apache.camel.Message;
  */
 public interface Attachment {
 
-    // TODO: Move this to camel-attachment
-
     /**
      * Return a DataHandler for the content within this attachment.
      *
