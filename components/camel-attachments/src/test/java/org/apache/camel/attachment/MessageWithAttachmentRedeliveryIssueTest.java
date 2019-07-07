@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.issues;
+package org.apache.camel.attachment;
 
 import java.io.File;
-
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  *
  */
-public class MessageWithAttachmentRedeliveryIssueTest extends ContextTestSupport {
+public class MessageWithAttachmentRedeliveryIssueTest extends CamelTestSupport {
 
     @Test
     public void testMessageWithAttachmentRedeliveryIssue() throws Exception {
@@ -42,18 +40,18 @@ public class MessageWithAttachmentRedeliveryIssueTest extends ContextTestSupport
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
-                exchange.getIn().addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
-                exchange.getIn().addAttachmentObject("message2.xml", new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
+                exchange.getIn(AttachmentMessage.class).addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("src/test/data/message1.xml"))));
+                exchange.getIn(AttachmentMessage.class).addAttachmentObject("message2.xml", new DefaultAttachment(new FileDataSource(new File("src/test/data/message2.xml"))));
             }
         });
 
         assertMockEndpointsSatisfied();
 
-        Message msg = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn();
-        assertNotNull(msg);
+        AttachmentMessage msg = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
+        Assert.assertNotNull(msg);
 
         assertEquals("Hello World", msg.getBody());
-        assertTrue(msg.hasAttachments());
+        Assert.assertTrue(msg.hasAttachments());
     }
 
     @Override

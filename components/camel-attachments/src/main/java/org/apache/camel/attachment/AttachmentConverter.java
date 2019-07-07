@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.attachment;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import javax.activation.DataHandler;
 
-import org.apache.camel.Attachment;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.apache.camel.Converter;
+import org.apache.camel.Message;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+@Converter(loader = true)
+public final class AttachmentConverter {
 
-public class DefaultMessageTest {
-
-    @Test
-    public void testAttachmentsAreSorted() {
-        DefaultMessage message = new DefaultMessage(new DefaultCamelContext());
-
-        Map<String, Attachment> attachments = message.createAttachments();
-
-        assertThat(attachments, instanceOf(LinkedHashMap.class));
+    /**
+     * Utility classes should not have a public constructor.
+     */
+    private AttachmentConverter() {
     }
 
+    @Converter
+    public static AttachmentMessage toAttachmentMessage(final Message message) {
+        return new DefaultAttachmentMessage(message);
+    }
+
+    @Converter
+    public static DataHandler toDataHandler(final Attachment attachment) {
+        return attachment.getDataHandler();
+    }
 }

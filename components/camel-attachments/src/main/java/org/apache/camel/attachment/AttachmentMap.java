@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.attachment;
 
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -24,7 +24,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
-import org.apache.camel.Attachment;
+// TODO: Use this map?
 
 /**
  * The AttachmentMap class provides a transparent Map<String, DataHandler>

@@ -231,8 +231,6 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
                 getHeaders().putAll(that.getHeaders());
             }
         }
-
-        copyAttachments(that);
     }
 
     @Override
@@ -252,26 +250,6 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    @Override
-    public void copyAttachments(Message that) {
-        // the attachments may be the same instance if the end user has made some mistake
-        // and set the OUT message with the same attachment instance of the IN message etc
-        boolean sameAttachments = false;
-        if (hasAttachments() && that.hasAttachments() && getAttachmentObjects() == that.getAttachmentObjects()) {
-            sameAttachments = true;
-        }
-
-        if (!sameAttachments) {
-            if (hasAttachments()) {
-                // okay its safe to clear the attachments
-                getAttachmentObjects().clear();
-            }
-            if (that.hasAttachments()) {
-                getAttachmentObjects().putAll(that.getAttachmentObjects());
-            }
-        }
     }
 
     /**
