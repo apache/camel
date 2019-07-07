@@ -214,7 +214,8 @@ public interface PgReplicationSlotEndpointBuilderFactory {
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-pg-replication-slot
      * 
-     * Syntax: <code>pg-replication-slot:host:port/database/slot:plugin</code>
+     * Syntax:
+     * <code>pg-replication-slot:host:port/database/slot:outputPlugin</code>
      * 
      * Path parameter: slot (required)
      * Replication slot name.

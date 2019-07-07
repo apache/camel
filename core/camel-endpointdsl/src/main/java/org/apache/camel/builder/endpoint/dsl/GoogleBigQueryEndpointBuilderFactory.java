@@ -150,7 +150,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
      * Available as of version: 2.20
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      * 
-     * Syntax: <code>google-bigquery:projectId:datasetId:tableName</code>
+     * Syntax: <code>google-bigquery:projectId:datasetId:tableId</code>
      * 
      * Path parameter: projectId (required)
      * Google Cloud Project Id

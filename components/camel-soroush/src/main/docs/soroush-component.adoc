@@ -67,7 +67,7 @@ The Soroush component supports 3 options, which are listed below.
 The Soroush endpoint is configured using URI syntax:
 
 ----
-soroush:action/authorizationToken
+soroush:action
 ----
 
 with the following path and query parameters:

@@ -1256,7 +1256,7 @@ public interface SoroushBotEndpointBuilderFactory {
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-soroush
      * 
-     * Syntax: <code>soroush:action/authorizationToken</code>
+     * Syntax: <code>soroush:action</code>
      * 
      * Path parameter: action (required)
      * The action to do.

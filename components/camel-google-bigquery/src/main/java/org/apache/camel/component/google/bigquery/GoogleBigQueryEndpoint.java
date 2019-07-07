@@ -40,7 +40,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be handled
  * by Camel.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "google-bigquery", title = "Google BigQuery", syntax = "google-bigquery:projectId:datasetId:tableName",
+@UriEndpoint(firstVersion = "2.20.0", scheme = "google-bigquery", title = "Google BigQuery", syntax = "google-bigquery:projectId:datasetId:tableId",
     label = "cloud,messaging", producerOnly = true)
 public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 

@@ -92,7 +92,7 @@ The Google BigQuery Standard SQL component supports 4 options, which are listed 
 The Google BigQuery Standard SQL endpoint is configured using URI syntax:
 
 ----
-google-bigquery-sql:query
+google-bigquery-sql:projectId:query
 ----
 
 with the following path and query parameters:
@@ -103,8 +103,8 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *projectId* | *Required* Google Cloud Project Id |  | String
 | *query* | *Required* BigQuery standard SQL query |  | String
+| *projectId* | *Required* Google Cloud Project Id |  | String
 |===
 
 

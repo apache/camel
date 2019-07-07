@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * The camel-ipfs component provides access to the Interplanetary File System
  * (IPFS).
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS", syntax = "ipfs:host:port/cmd", producerOnly = true, label = "file,ipfs")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS", syntax = "ipfs:ipfsHost:ipfsPort/ipfsCmd", producerOnly = true, label = "file,ipfs")
 public class IPFSEndpoint extends DefaultEndpoint {
 
     public static final long DEFAULT_TIMEOUT = 10000L;

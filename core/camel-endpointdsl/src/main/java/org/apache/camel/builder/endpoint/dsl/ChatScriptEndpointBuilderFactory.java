@@ -144,7 +144,7 @@ public interface ChatScriptEndpointBuilderFactory {
      * Available as of version: 3.0
      * Maven coordinates: org.apache.camel:camel-chatscript
      * 
-     * Syntax: <code>chatscript:host:port/botname</code>
+     * Syntax: <code>chatscript:host:port/botName</code>
      * 
      * Path parameter: host (required)
      * Hostname or IP of the server on which CS server is running

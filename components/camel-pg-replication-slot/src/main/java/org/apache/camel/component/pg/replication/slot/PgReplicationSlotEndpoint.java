@@ -40,7 +40,7 @@ import org.postgresql.PGProperty;
  * Consumer endpoint to receive from PostgreSQL Replication Slot.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "pg-replication-slot", title = "PostgresSQL Replication Slot",
-        syntax = "pg-replication-slot:host:port/database/slot:plugin", label = "database,sql", consumerOnly = true)
+        syntax = "pg-replication-slot:host:port/database/slot:outputPlugin", label = "database,sql", consumerOnly = true)
 public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     private static final Pattern URI_PATTERN = Pattern.compile(
