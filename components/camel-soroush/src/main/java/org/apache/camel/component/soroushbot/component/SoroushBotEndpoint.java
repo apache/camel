@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 /**
  * To integrate with the Soroush chat bot.
  */
-@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:action/authorizationToken", label = "chat")
+@UriEndpoint(firstVersion = "3.0", scheme = "soroush", title = "Soroush", syntax = "soroush:action", label = "chat")
 public class SoroushBotEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SoroushBotEndpoint.class);

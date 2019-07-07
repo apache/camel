@@ -36,7 +36,7 @@ import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DE
 /**
  * Represents a ChatScript endpoint.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botname",  producerOnly = true, label = "ai,chatscript")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",  producerOnly = true, label = "ai,chatscript")
 public class ChatScriptEndpoint extends DefaultEndpoint { 
     @UriPath (description = "Hostname or IP of the server on which CS server is running") 
     @Metadata(required = true)

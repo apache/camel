@@ -54,7 +54,7 @@ The PostgresSQL Replication Slot component supports 2 options, which are listed 
 The PostgresSQL Replication Slot endpoint is configured using URI syntax:
 
 ----
-pg-replication-slot:host:port/database/slot:plugin
+pg-replication-slot:host:port/database/slot:outputPlugin
 ----
 
 with the following path and query parameters:

@@ -32,14 +32,15 @@ public class IPFSConfiguration {
     public enum IPFSCommand {
         add, cat, get, version 
     }
-    
-    @UriPath(description = "The ipfs command")
+
+    @UriPath(description = "The ipfs host")
+    private String ipfsHost = "127.0.0.1";
+    @UriPath(description = "The ipfs port")
+    private int ipfsPort = 5001;
+    @UriPath(description = "The ipfs command", enums = "add,cat,get,version")
     private String ipfsCmd;
     @UriParam(description = "The ipfs output directory")
     private Path outdir;
-
-    private String ipfsHost = "127.0.0.1";
-    private int ipfsPort = 5001;
     
     public IPFSConfiguration(IPFSComponent component) {
         ObjectHelper.notNull(component, "component");

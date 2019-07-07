@@ -27,7 +27,7 @@ The Wordpress component supports 3 options, which are listed below.
 The Wordpress endpoint is configured using URI syntax:
 
 ----
-wordpress:operationDetail
+wordpress:operation
 ----
 
 with the following path and query parameters:

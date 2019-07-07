@@ -54,7 +54,7 @@ The ChatScript component supports 2 options, which are listed below.
 The ChatScript endpoint is configured using URI syntax:
 
 ----
-chatscript:host:port/botname
+chatscript:host:port/botName
 ----
 
 with the following path and query parameters:

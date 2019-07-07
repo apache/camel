@@ -161,7 +161,7 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 `cql:beanRef:hosts:port/keyspace` | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
 
 | link:camel-chatscript/src/main/docs/chatscript-component.adoc[ChatScript] (camel-chatscript) +
-`chatscript:host:port/botname` | 3.0 | Represents a ChatScript endpoint.
+`chatscript:host:port/botName` | 3.0 | Represents a ChatScript endpoint.
 
 | link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | 2.15 | Transforms the message using a Chunk template.
@@ -299,10 +299,10 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 `github:type/branchName` | 2.15 | The github component is used for integrating Camel with github.
 
 | link:camel-google-bigquery/src/main/docs/google-bigquery-component.adoc[Google BigQuery] (camel-google-bigquery) +
-`google-bigquery:projectId:datasetId:tableName` | 2.20 | Google BigQuery data warehouse for analytics.
+`google-bigquery:projectId:datasetId:tableId` | 2.20 | Google BigQuery data warehouse for analytics.
 
 | link:camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc[Google BigQuery Standard SQL] (camel-google-bigquery) +
-`google-bigquery-sql:query` | 2.23 | Google BigQuery data warehouse for analytics (using SQL queries).
+`google-bigquery-sql:projectId:query` | 2.23 | Google BigQuery data warehouse for analytics (using SQL queries).
 
 | link:camel-google-calendar/src/main/docs/google-calendar-component.adoc[Google Calendar] (camel-google-calendar) +
 `google-calendar:apiName/methodName` | 2.15 | The google-calendar component provides access to Google Calendar.
@@ -422,7 +422,7 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 `iota:name` | 2.23 | Component for integrate IOTA DLT
 
 | link:camel-ipfs/src/main/docs/ipfs-component.adoc[IPFS] (camel-ipfs) +
-`ipfs:host:port/cmd` | 2.23 | The camel-ipfs component provides access to the Interplanetary File System (IPFS).
+`ipfs:ipfsHost:ipfsPort/ipfsCmd` | 2.23 | The camel-ipfs component provides access to the Interplanetary File System (IPFS).
 
 | link:camel-irc/src/main/docs/irc-component.adoc[IRC] (camel-irc) +
 `irc:hostname:port` | 1.1 | The irc component implements an IRC (Internet Relay Chat) transport.
@@ -668,7 +668,7 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 `pgevent:host:port/database/channel` | 2.15 | The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
 
 | link:camel-pg-replication-slot/src/main/docs/pg-replication-slot-component.adoc[PostgresSQL Replication Slot] (camel-pg-replication-slot) +
-`pg-replication-slot:host:port/database/slot:plugin` | 3.0 | Consumer endpoint to receive from PostgreSQL Replication Slot.
+`pg-replication-slot:host:port/database/slot:outputPlugin` | 3.0 | Consumer endpoint to receive from PostgreSQL Replication Slot.
 
 | link:camel-printer/src/main/docs/lpr-component.adoc[Printer] (camel-printer) +
 `lpr:hostname:port/printername` | 2.1 | The printer component is used for sending messages to printers as print jobs.
@@ -767,7 +767,7 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 `solr:url` | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
 
 | link:camel-soroush/src/main/docs/soroush-component.adoc[Soroush] (camel-soroush) +
-`soroush:action/authorizationToken` | 3.0 | To integrate with the Soroush chat bot.
+`soroush:action` | 3.0 | To integrate with the Soroush chat bot.
 
 | link:camel-spark-rest/src/main/docs/spark-rest-component.adoc[Spark Rest] (camel-spark-rest) +
 `spark-rest:verb:path` | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
@@ -869,7 +869,7 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 `webhook:endpointUri` | 3.0 | The webhook component allows other Camel components that can receive push notifications to expose webhook endpoints and automatically register them with their own webhook provider.
 
 | link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
-`wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
+`wordpress:operation` | 2.21 | Integrates Camel with Wordpress.
 
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
