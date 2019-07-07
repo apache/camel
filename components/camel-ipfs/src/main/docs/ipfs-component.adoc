@@ -44,17 +44,19 @@ The IPFS component supports 2 options, which are listed below.
 The IPFS endpoint is configured using URI syntax:
 
 ----
-ipfs:host:port/cmd
+ipfs:ipfsHost:ipfsPort/ipfsCmd
 ----
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+==== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *ipfsHost* | The ipfs host |  | String
+| *ipfsPort* | The ipfs port |  | int
 | *ipfsCmd* | The ipfs command |  | String
 |===
 

@@ -828,7 +828,7 @@ public interface WordpressEndpointBuilderFactory {
      * Available as of version: 2.21
      * Maven coordinates: org.apache.camel:camel-wordpress
      * 
-     * Syntax: <code>wordpress:operationDetail</code>
+     * Syntax: <code>wordpress:operation</code>
      * 
      * Path parameter: operation (required)
      * The endpoint operation.

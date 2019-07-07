@@ -76,7 +76,7 @@ The Google BigQuery component supports 5 options, which are listed below.
 The Google BigQuery endpoint is configured using URI syntax:
 
 ----
-google-bigquery:projectId:datasetId:tableName
+google-bigquery:projectId:datasetId:tableId
 ----
 
 with the following path and query parameters:

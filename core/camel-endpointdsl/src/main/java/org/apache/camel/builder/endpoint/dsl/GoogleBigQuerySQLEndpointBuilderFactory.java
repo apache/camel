@@ -140,13 +140,13 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
      * Available as of version: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      * 
-     * Syntax: <code>google-bigquery-sql:query</code>
-     * 
-     * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * Syntax: <code>google-bigquery-sql:projectId:query</code>
      * 
      * Path parameter: query (required)
      * BigQuery standard SQL query
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project Id
      */
     default GoogleBigQuerySQLEndpointBuilder googleBigQuerySQL(String path) {
         class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder, AdvancedGoogleBigQuerySQLEndpointBuilder {
