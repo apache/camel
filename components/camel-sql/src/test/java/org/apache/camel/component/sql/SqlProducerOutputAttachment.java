@@ -17,8 +17,6 @@
 package org.apache.camel.component.sql;
 
 import java.net.MalformedURLException;
-import java.net.URL;
-import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,10 +52,9 @@ public class SqlProducerOutputAttachment extends CamelTestSupport {
     }
 
     @Test
-    public void testHeaderAndAttachmentAreAvailableAfterProducer()
+    public void testHeaderAreAvailableAfterProducer()
             throws InterruptedException, MalformedURLException {
         MockEndpoint mock = getMockEndpoint("mock:query");
-        DataHandler content = new DataHandler(new URL("http://www.nu.nl"));
 
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(SqlConstants.SQL_ROW_COUNT, 1);
@@ -66,7 +63,6 @@ public class SqlProducerOutputAttachment extends CamelTestSupport {
         mock.expects(() -> {
             assertThat(mock.getReceivedExchanges().get(0).getIn().getAttachments().size(), is(1));
             assertThat(mock.getReceivedExchanges().get(0).getIn().getAttachment("att1"), notNullValue());
-            assertThat(mock.getReceivedExchanges().get(0).getIn().getAttachment("att1"), is(content));
         });
         mock.message(0).body().isEqualTo("Hi there!");
 
@@ -74,7 +70,6 @@ public class SqlProducerOutputAttachment extends CamelTestSupport {
         exchange.getIn().setBody("Hi there!");
         exchange.getIn().setHeader("myProject", "Camel");
         exchange.getIn().setHeader("maintain", "this");
-        exchange.getIn().addAttachment("att1", content);
         template.send("direct:query", exchange);
 
         assertMockEndpointsSatisfied();
