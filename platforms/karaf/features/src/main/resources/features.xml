@@ -965,7 +965,6 @@
   </feature>
   <feature name='camel-file-watch' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:io.methvin/directory-watcher/${directory-watcher-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-file-watch/${project.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${project.version}' start-level='50'>

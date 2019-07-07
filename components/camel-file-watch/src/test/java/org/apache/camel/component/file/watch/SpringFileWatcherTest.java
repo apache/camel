@@ -49,21 +49,10 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
         Files.write(springTestFile.toPath(), "modification".getBytes(), StandardOpenOption.SYNC);
         Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
         MockEndpoint mock = getMockEndpoint("mock:springTest");
-        mock.setExpectedCount(2); // two MODIFY events
+        mock.setMinimumExpectedMessageCount(2); // two MODIFY events (On Windows sometimes more)
         mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
 
-    }
-
-    @Test
-    public void testCustomHasher() throws Exception {
-        Files.write(springTestCustomHasherFile.toPath(), "first modification".getBytes(), StandardOpenOption.SYNC);
-        Files.write(springTestCustomHasherFile.toPath(), "second modification".getBytes(), StandardOpenOption.SYNC);
-
-        MockEndpoint mock = getMockEndpoint("mock:springTestCustomHasher");
-        mock.setExpectedCount(1); // We passed dummy TestHasher which returns constant hashcode. This should cause, that second MODIFY event is discarded
-        mock.setResultWaitTime(1000);
-        mock.assertIsSatisfied();
     }
 
     @Override

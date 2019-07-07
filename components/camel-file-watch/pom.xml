@@ -39,11 +39,6 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.methvin</groupId>
-            <artifactId>directory-watcher</artifactId>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
