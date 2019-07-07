@@ -314,9 +314,11 @@ public final class JsonSchemaHelper {
             first = false;
         }
 
-        // remove double whitespaces, and trim
         String s = sb.toString();
+        // remove double whitespaces, and trim
         s = s.replaceAll("\\s+", " ");
+        // unescape http links
+        s = s.replaceAll("\\\\(http:|https:)", "$1");
         return s.trim();
     }
 
