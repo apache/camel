@@ -123,7 +123,7 @@ public final class RestSwaggerComponent extends DefaultComponent implements SSLC
         + " specification, but these can be overriden with properties on the component or endpoint level. If not"
         + " given the component tries to load `swagger.json` resource. Note that the `host` defined on the"
         + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-        + " port in the URI syntax (i.e. `\\https://api.example.com:8080`). Can be overridden in endpoint"
+        + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
         + " configuration.", defaultValue = DEFAULT_SPECIFICATION_URI_STR, label = "producer", required = false)
     private URI specificationUri;
 

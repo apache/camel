@@ -8,6 +8,6 @@ The @{title} language supports @{languageOptions.size()} options, which are list
 [width="100%",cols="2,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-@foreach{row : languageOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} | @{row.description.replaceAll("\\$", "\\\\\\$")}
+@foreach{row : languageOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} | @{util.escape(row.description)}
 @end{}|===
 @end{}

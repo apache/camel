@@ -6,7 +6,7 @@ Number of Languages: @{languages.size} in @{numberOfArtifacts} JAR artifacts (@{
 |===
 | Language | Available From | Description
 @foreach{row : languages}
-| link:@{row.docLink}/${row.name}-language.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description.replaceAll("\\$", "\\\\\\$")}
+| link:@{row.docLink}/${row.name}-language.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{util.escape(row.description)}
 @end{}|===
 
 @end{}

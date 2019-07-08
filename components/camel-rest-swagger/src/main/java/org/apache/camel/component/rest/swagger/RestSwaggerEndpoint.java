@@ -132,7 +132,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         + " specification, but these can be overridden with properties on the component or endpoint level. If not"
         + " given the component tries to load `swagger.json` resource from the classpath. Note that the `host` defined on the"
         + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-        + " port in the URI syntax (i.e. `\\http://api.example.com:8080`). Overrides component configuration."
+        + " port in the URI syntax (i.e. `http://api.example.com:8080`). Overrides component configuration."
         + " The Swagger specification can be loaded from different sources by prefixing with file: classpath: http: https:."
         + " Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup"
         + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."

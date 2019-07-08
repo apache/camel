@@ -96,7 +96,7 @@ with the following path and query parameters:
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *models* (producer) | Defines both request and response models |  | String
 | *perPage* (producer) | Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is 100. | 10 | Integer
-| *release* (producer) | The ServiceNow release to target, default to Helsinki See https://docs.servicenow.com | HELSINKI | ServiceNowRelease
+| *release* (producer) | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com | HELSINKI | ServiceNowRelease
 | *requestModels* (producer) | Defines the request model |  | String
 | *resource* (producer) | The default resource, can be overridden by header CamelServiceNowResource |  | String
 | *responseModels* (producer) | Defines the response model |  | String
@@ -126,7 +126,7 @@ with the following path and query parameters:
 | *password* (security) | *Required* ServiceNow account password, MUST be provided |  | String
 | *proxyPassword* (security) | Password for proxy authentication |  | String
 | *proxyUserName* (security) | Username for proxy authentication |  | String
-| *sslContextParameters* (security) | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. See \http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
 | *userName* (security) | *Required* ServiceNow user account name, MUST be provided |  | String
 |===
 // endpoint options: END
@@ -183,14 +183,14 @@ The component supports 58 options, which are listed below.
 | *camel.component.servicenow.configuration.proxy-password* | Password for proxy authentication |  | String
 | *camel.component.servicenow.configuration.proxy-port* | The proxy port number |  | Integer
 | *camel.component.servicenow.configuration.proxy-user-name* | Username for proxy authentication |  | String
-| *camel.component.servicenow.configuration.release* | The ServiceNow release to target, default to Helsinki See https://docs.servicenow.com |  | ServiceNowRelease
+| *camel.component.servicenow.configuration.release* | The ServiceNow release to target, default to Helsinki See \https://docs.servicenow.com |  | ServiceNowRelease
 | *camel.component.servicenow.configuration.request-models* | Defines the request model |  | Map
 | *camel.component.servicenow.configuration.resource* | The default resource, can be overridden by header CamelServiceNowResource |  | String
 | *camel.component.servicenow.configuration.response-models* | Defines the response model |  | Map
 | *camel.component.servicenow.configuration.retrieve-target-record-on-import* | Set this parameter to true to retrieve the target record when using import set api. The import set result is then replaced by the target record | false | Boolean
 | *camel.component.servicenow.configuration.sort-by* | Specify the value to use when sorting results. By default, queries sort records by value. |  | String
 | *camel.component.servicenow.configuration.sort-dir* | Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order. |  | String
-| *camel.component.servicenow.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
+| *camel.component.servicenow.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. See \http://camel.apache.org/camel-configuration-utilities.html |  | SSLContextParameters
 | *camel.component.servicenow.configuration.suppress-auto-sys-field* | True to suppress auto generation of system fields (default: false) |  | Boolean
 | *camel.component.servicenow.configuration.suppress-pagination-header* | Set this value to true to remove the Link header from the response. The Link header allows you to request additional pages of data when the number of records matching your query exceeds the query limit |  | Boolean
 | *camel.component.servicenow.configuration.table* | The default table, can be overridden by header CamelServiceNowTable |  | String
