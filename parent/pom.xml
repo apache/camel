@@ -393,7 +393,7 @@
         <jing-version>20030619</jing-version>
         <jmh-version>1.21</jmh-version>
         <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
-        <jodatime2-bundle-version>2.10.1</jodatime2-bundle-version>
+        <jodatime2-bundle-version>2.10.3</jodatime2-bundle-version>
         <jota-version>1.0.0-beta3</jota-version>
         <jolokia-version>1.6.2</jolokia-version>
         <jolt-version>0.1.1</jolt-version>
