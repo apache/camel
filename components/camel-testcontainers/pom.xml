@@ -81,7 +81,7 @@
             <id>testcontainers-skip-tests</id>
             <activation>
                 <property>
-                    <name>!testcontainers-integration-tests-docker-file </name>
+                    <name>!integration.test</name>
                 </property>
             </activation>
             <properties>
@@ -89,7 +89,7 @@
             </properties>
         </profile>
 
-        <!-- activate integration test if the docker socket file is accessible -->
+        <!-- activate integration test if the docker socket file is accessible with -Dintegration.test -->
         <profile>
             <id>testcontainers-integration-tests-docker-file</id>
             <activation>
@@ -121,7 +121,7 @@
             </build>
         </profile>
 
-        <!-- activate integration test if the DOCKER_HOST env var is set -->
+        <!-- activate integration test if the DOCKER_HOST env var is set with -Dintegration.test-->
         <profile>
             <id>testcontainers-integration-tests-docker-env</id>
             <activation>
