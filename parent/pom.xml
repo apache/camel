@@ -919,11 +919,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-attachments</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-atmos</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -940,6 +935,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-atomix</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-attachments</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

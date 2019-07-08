@@ -413,7 +413,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate attachments
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        if (camelExchange.getOut(AttachmentMessage.class).hasAttachments()) {
+        if (camelExchange.hasOut() && camelExchange.getOut(AttachmentMessage.class).hasAttachments()) {
             for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange.getOut(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
                 if (attachments == null) {
                     attachments = new HashSet<>();
