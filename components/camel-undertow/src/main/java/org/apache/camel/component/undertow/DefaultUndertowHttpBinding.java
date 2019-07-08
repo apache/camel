@@ -150,7 +150,22 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         //retrieve response headers
         populateCamelHeaders(clientExchange.getResponse(), result.getHeaders(), exchange);
 
-        result.setBody(readFromChannel(clientExchange.getResponseChannel()));
+        StreamSourceChannel source = clientExchange.getResponseChannel();
+        if (useStreaming) {
+            // client connection can be closed only after input stream is fully read
+            result.setBody(new ChannelInputStream(source) {
+                @Override
+                public void close() throws IOException {
+                    try {
+                        super.close();
+                    } finally {
+                        clientExchange.getConnection().close();
+                    }
+                }
+            });
+        } else {
+            result.setBody(readFromChannel(source));
+        }
 
         return result;
     }
