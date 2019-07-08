@@ -76,6 +76,22 @@
     </dependencies>
 
     <profiles>
+          <profile>
+            <id>testcontainers-skip-tests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!-- activate integration test if the docker socket file is accessible -->
         <profile>
             <id>testcontainers-integration-tests-docker-file</id>
@@ -90,6 +106,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <skipTests>${skipTests}</skipTests>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
@@ -121,6 +138,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <skipTests>${skipTests}</skipTests>
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
