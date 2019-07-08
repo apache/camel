@@ -30,7 +30,11 @@ import org.apache.camel.Message;
 
 public final class DefaultAttachmentMessage implements AttachmentMessage {
 
-    public static final String ATTACHMENT_OBJECTS = "CamelAttachmentObjects";
+    /*
+     * Attachments are stores as a property on the {@link Exchange} which ensures they are propagated
+     * during routing and we dont have to pollute the generic {@link Message} with attachment APIs
+     */
+    private static final String ATTACHMENT_OBJECTS = "CamelAttachmentObjects";
 
     private final Message delegate;
 
@@ -172,8 +176,6 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     public void copyFromWithNewBody(Message message, Object newBody) {
         delegate.copyFromWithNewBody(message, newBody);
     }
-
-    // TODO: implement these
 
     @Override
     @SuppressWarnings("unchecked")
