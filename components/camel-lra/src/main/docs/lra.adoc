@@ -41,9 +41,9 @@ The component supports 5 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.service.lra.coordinator-context-path* | The context path of the LRA coordinator service |  | String
-| *camel.service.lra.coordinator-url* | The base URL of the LRA coordinator service (e.g. http://lra-host:8080) |  | String
+| *camel.service.lra.coordinator-url* | The base URL of the LRA coordinator service (e.g. \http://lra-host:8080) |  | String
 | *camel.service.lra.enabled* | Global option to enable/disable component auto-configuration, default is true. | true | Boolean
 | *camel.service.lra.local-participant-context-path* | The context path of the local participant callback services |  | String
-| *camel.service.lra.local-participant-url* | The local URL where the coordinator should send callbacks to (e.g. http://my-host-name:8080) |  | String
+| *camel.service.lra.local-participant-url* | The local URL where the coordinator should send callbacks to (e.g. \http://my-host-name:8080) |  | String
 |===
 // spring-boot-auto-configure options: END

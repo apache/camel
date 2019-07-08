@@ -55,7 +55,7 @@ with the following path and query parameters:
 | *id* (common) | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
 | *password* (common) | Password from authorized user |  | String
 | *searchCriteria* (common) | Search criteria |  | SearchCriteria
-| *url* (common) | *Required* The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
+| *url* (common) | *Required* The Wordpress API URL from your site, e.g. \http://myblog.com/wp-json/ |  | String
 | *user* (common) | Authorized user to perform writing operations |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -94,7 +94,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.wordpress.configuration.id* | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
 | *camel.component.wordpress.configuration.password* | Password from authorized user |  | String
 | *camel.component.wordpress.configuration.search-criteria* | Search criteria |  | SearchCriteria
-| *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
+| *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. \http://myblog.com/wp-json/ |  | String
 | *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
 | *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is enabled by default. |  | Boolean
 | *camel.component.wordpress.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
