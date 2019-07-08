@@ -66,6 +66,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
 
     @UriPath @Metadata(required = true)
     private URI httpURI;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean useStreaming;
     @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
     @UriParam(label = "advanced")
@@ -80,8 +82,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Boolean matchOnUriPrefix = Boolean.FALSE;
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean accessLog = Boolean.FALSE;
-    @UriParam(label = "consumer", defaultValue = "false")
-    private boolean useStreaming;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "false")

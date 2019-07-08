@@ -45,6 +45,41 @@ public interface UndertowEndpointBuilderFactory {
             return (AdvancedUndertowEndpointConsumerBuilder) this;
         }
         /**
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
+         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * true, text and binary messages will be wrapped as java.io.Reader and
+         * java.io.InputStream respectively before they are passed to an
+         * Exchange; otherwise they will be passed as String and byte
+         * respectively.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default UndertowEndpointConsumerBuilder useStreaming(
+                boolean useStreaming) {
+            setProperty("useStreaming", useStreaming);
+            return this;
+        }
+        /**
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
+         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * true, text and binary messages will be wrapped as java.io.Reader and
+         * java.io.InputStream respectively before they are passed to an
+         * Exchange; otherwise they will be passed as String and byte
+         * respectively.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default UndertowEndpointConsumerBuilder useStreaming(String useStreaming) {
+            setProperty("useStreaming", useStreaming);
+            return this;
+        }
+        /**
          * Whether or not the consumer should write access log.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
@@ -171,37 +206,6 @@ public interface UndertowEndpointBuilderFactory {
             return this;
         }
         /**
-         * For HTTP endpoint: if true, text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true, text and binary messages will be wrapped as java.io.Reader and
-         * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
-         * respectively.
-         * The option is a <code>boolean</code> type.
-         * @group consumer
-         */
-        default UndertowEndpointConsumerBuilder useStreaming(
-                boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
-            return this;
-        }
-        /**
-         * For HTTP endpoint: if true, text and binary messages will be wrapped
-         * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
-         * true, text and binary messages will be wrapped as java.io.Reader and
-         * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
-         * respectively.
-         * The option will be converted to a <code>boolean</code> type.
-         * @group consumer
-         */
-        default UndertowEndpointConsumerBuilder useStreaming(String useStreaming) {
-            setProperty("useStreaming", useStreaming);
-            return this;
-        }
-        /**
          * if true, the consumer will post notifications to the route when a new
          * WebSocket peer connects, disconnects, etc. See
          * UndertowConstants.EVENT_TYPE and EventType.
@@ -227,35 +231,6 @@ public interface UndertowEndpointBuilderFactory {
         default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
                 String fireWebSocketChannelEvents) {
             setProperty("fireWebSocketChannelEvents", fireWebSocketChannelEvents);
-            return this;
-        }
-        /**
-         * if true, text and binary messages coming through a WebSocket will be
-         * wrapped as java.io.Reader and java.io.InputStream respectively before
-         * they are passed to an Exchange; otherwise they will be passed as
-         * String and byte respectively.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: websocket
-         */
-        default UndertowEndpointConsumerBuilder useStreaming(
-                boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
-            return this;
-        }
-        /**
-         * if true, text and binary messages coming through a WebSocket will be
-         * wrapped as java.io.Reader and java.io.InputStream respectively before
-         * they are passed to an Exchange; otherwise they will be passed as
-         * String and byte respectively.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: websocket
-         */
-        default UndertowEndpointConsumerBuilder useStreaming(String useStreaming) {
-            setProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -502,6 +477,41 @@ public interface UndertowEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedUndertowEndpointProducerBuilder advanced() {
             return (AdvancedUndertowEndpointProducerBuilder) this;
+        }
+        /**
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
+         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * true, text and binary messages will be wrapped as java.io.Reader and
+         * java.io.InputStream respectively before they are passed to an
+         * Exchange; otherwise they will be passed as String and byte
+         * respectively.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default UndertowEndpointProducerBuilder useStreaming(
+                boolean useStreaming) {
+            setProperty("useStreaming", useStreaming);
+            return this;
+        }
+        /**
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
+         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * true, text and binary messages will be wrapped as java.io.Reader and
+         * java.io.InputStream respectively before they are passed to an
+         * Exchange; otherwise they will be passed as String and byte
+         * respectively.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default UndertowEndpointProducerBuilder useStreaming(String useStreaming) {
+            setProperty("useStreaming", useStreaming);
+            return this;
         }
         /**
          * Configure a cookie handler to maintain a HTTP session.
@@ -979,6 +989,40 @@ public interface UndertowEndpointBuilderFactory {
                 UndertowEndpointConsumerBuilder, UndertowEndpointProducerBuilder {
         default AdvancedUndertowEndpointBuilder advanced() {
             return (AdvancedUndertowEndpointBuilder) this;
+        }
+        /**
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
+         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * true, text and binary messages will be wrapped as java.io.Reader and
+         * java.io.InputStream respectively before they are passed to an
+         * Exchange; otherwise they will be passed as String and byte
+         * respectively.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default UndertowEndpointBuilder useStreaming(boolean useStreaming) {
+            setProperty("useStreaming", useStreaming);
+            return this;
+        }
+        /**
+         * For HTTP endpoint: if true, text and binary messages will be wrapped
+         * as java.io.InputStream before they are passed to an Exchange;
+         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * true, text and binary messages will be wrapped as java.io.Reader and
+         * java.io.InputStream respectively before they are passed to an
+         * Exchange; otherwise they will be passed as String and byte
+         * respectively.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default UndertowEndpointBuilder useStreaming(String useStreaming) {
+            setProperty("useStreaming", useStreaming);
+            return this;
         }
         /**
          * To configure security using SSLContextParameters.
