@@ -26,14 +26,14 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SlackProducerTest extends CamelTestSupport {
-
+    
+    protected static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
+    
     @EndpointInject("mock:errors")
     MockEndpoint errors;
 
     @EndpointInject("direct:test")
     DirectEndpoint test;
-    
-    protected static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSlackMessage() throws Exception {
