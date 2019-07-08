@@ -675,7 +675,7 @@
         <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
         <tagsoup-version>1.2.1</tagsoup-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
-        <testcontainers-version>1.11.3</testcontainers-version>
+        <testcontainers-version>1.11.4</testcontainers-version>
         <testng-version>6.14.2</testng-version>
         <tinybundles-version>2.1.1</tinybundles-version>
         <tika-version>1.21</tika-version>
