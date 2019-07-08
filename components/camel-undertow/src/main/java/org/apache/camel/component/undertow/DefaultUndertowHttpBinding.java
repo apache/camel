@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.channels.BlockingReadableByteChannel;
 import org.xnio.channels.StreamSourceChannel;
+import org.xnio.streams.ChannelInputStream;
 
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
@@ -68,10 +69,16 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     //use default filter strategy from Camel HTTP
     private HeaderFilterStrategy headerFilterStrategy;
     private Boolean transferException;
+    private boolean useStreaming;
 
     public DefaultUndertowHttpBinding() {
+        this(false);
+    }
+
+    public DefaultUndertowHttpBinding(boolean useStreaming) {
         this.headerFilterStrategy = new UndertowHeaderFilterStrategy();
         this.transferException = Boolean.FALSE;
+        this.useStreaming = useStreaming;
     }
 
     public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException) {
@@ -123,7 +130,12 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             //extract body by myself if undertow parser didn't handle and the method is allowed to have one
             //body is extracted as byte[] then auto TypeConverter kicks in
             if (Methods.POST.equals(httpExchange.getRequestMethod()) || Methods.PUT.equals(httpExchange.getRequestMethod()) || Methods.PATCH.equals(httpExchange.getRequestMethod())) {
-                result.setBody(readFromChannel(httpExchange.getRequestChannel()));
+                StreamSourceChannel source = httpExchange.getRequestChannel();
+                if (useStreaming) {
+                    result.setBody(new ChannelInputStream(source));
+                } else {
+                    result.setBody(readFromChannel(source));
+                }
             } else {
                 result.setBody(null);
             }
