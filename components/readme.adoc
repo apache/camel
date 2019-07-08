@@ -202,10 +202,10 @@ Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 | link:camel-crypto-cms/src/main/docs/crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) +
 `crypto-cms:cryptoOperation:name` | 2.20 | The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
 
-| link:camel-cxf/src/main/docs/cxf-component.adoc[CXF] (camel-cxf) +
+| link:@@@ARTIFACTID@@@/src/main/docs/cxf-component.adoc[CXF] (@@@ARTIFACTID@@@) +
 `cxf:beanId:address` | 1.0 | The cxf component is used for SOAP WebServices using Apache CXF.
 
-| link:camel-cxf/src/main/docs/cxfrs-component.adoc[CXF-RS] (camel-cxf) +
+| link:@@@ARTIFACTID@@@/src/main/docs/cxfrs-component.adoc[CXF-RS] (@@@ARTIFACTID@@@) +
 `cxfrs:beanId:address` | 2.0 | The cxfrs component is used for JAX-RS REST services using Apache CXF.
 
 | link:camel-dataformat/src/main/docs/dataformat-component.adoc[Data Format] (camel-dataformat) +
@@ -1053,11 +1053,13 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 33 in 33 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
+
+| link:camel-attachments/src/main/docs/attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 
 | link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
