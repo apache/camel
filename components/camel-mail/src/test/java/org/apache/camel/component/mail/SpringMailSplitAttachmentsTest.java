@@ -63,40 +63,9 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testSplitAttachments() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMessageCount(2);
-
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-
-        mock.assertIsSatisfied();
-
-        AttachmentMessage first = mock.getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
-        AttachmentMessage second = mock.getReceivedExchanges().get(1).getIn(AttachmentMessage.class);
-
-        assertEquals(1, first.getAttachments().size());
-        assertEquals(1, second.getAttachments().size());
-
-        String file1 = first.getAttachments().keySet().iterator().next();
-        String file2 = second.getAttachments().keySet().iterator().next();
-
-        boolean logo = file1.equals("logo.jpeg") || file2.equals("logo.jpeg");
-        boolean license = file1.equals("log4j2.properties") || file2.equals("log4j2.properties");
-
-        assertTrue("Should have logo.jpeg file attachment", logo);
-        assertTrue("Should have log4j2.properties file attachment", license);
-    }
-
-    @Test
     public void testExtractAttachments() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(2);
-
-        // set the expression to extract the attachments as byte[]s
-        SplitAttachmentsExpression splitAttachmentsExpression = context.getRegistry().findByType(SplitAttachmentsExpression.class).iterator().next();
-        splitAttachmentsExpression.setExtractAttachments(true);
 
         Producer producer = endpoint.createProducer();
         producer.start();

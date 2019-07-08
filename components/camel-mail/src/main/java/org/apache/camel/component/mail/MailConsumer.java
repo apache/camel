@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 import javax.mail.Flags;
@@ -34,6 +37,9 @@ import com.sun.mail.imap.IMAPStore;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.attachment.Attachment;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -351,6 +357,16 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                         log.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
                         exchange.getIn().getBody();
                         exchange.getIn().getHeaders();
+                        // must also map attachments
+                        try {
+                            Map<String, Attachment> att = new HashMap<>();
+                            getEndpoint().getBinding().extractAttachmentsFromMail(message, att);
+                            if (!att.isEmpty()) {
+                                exchange.getIn(AttachmentMessage.class).setAttachmentObjects(att);
+                            }
+                        } catch (MessagingException | IOException e) {
+                            throw new RuntimeCamelException("Error accessing attachments due to: " + e.getMessage(), e);
+                        }
                     }
 
                     // If the protocol is POP3 we need to remember the uid on the exchange

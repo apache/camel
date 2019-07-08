@@ -24,9 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="splitAttachments" class="org.apache.camel.component.mail.SplitAttachmentsExpression">
-    <constructor-arg index="0" value="false"/>
-  </bean>
+  <bean id="splitAttachments" class="org.apache.camel.component.mail.SplitAttachmentsExpression"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
