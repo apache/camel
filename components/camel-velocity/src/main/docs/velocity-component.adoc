@@ -30,7 +30,7 @@ velocity:templateName[?options]
 
 Where *templateName* is the classpath-local URI of the template to
 invoke; or the complete URL of the remote template (eg:
-file://folder/myfile.vm[file://folder/myfile.vm]).
+\file://folder/myfile.vm).
 
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
