@@ -33,6 +33,7 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.xpath.XPathConstants;
 
+import org.apache.camel.attachment.AttachmentMessage;
 import org.w3c.dom.Element;
 
 import org.apache.camel.CamelContext;
@@ -99,10 +100,10 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
                 CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
-                exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 
+                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
-                exchange.getIn().addAttachment(MtomTestHelper.REQ_IMAGE_CID, 
+                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
 
             }
@@ -129,11 +130,11 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
 
         
-        DataHandler dr = exchange.getOut().getAttachment(decodingReference(photoId));
+        DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(photoId));
         Assert.assertEquals("application/octet-stream", dr.getContentType());
         MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
    
-        dr = exchange.getOut().getAttachment(decodingReference(imageId));
+        dr = exchange.getOut(AttachmentMessage.class).getAttachment(decodingReference(imageId));
         Assert.assertEquals("image/jpeg", dr.getContentType());
         
         BufferedImage image = ImageIO.read(dr.getInputStream());

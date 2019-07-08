@@ -162,7 +162,6 @@ public class SqlProducer extends DefaultProducer {
                         if (isResultSet) {
                             // preserve headers first, so we can override the SQL_ROW_COUNT header
                             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                            exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
 
                             rs = ps.getResultSet();
                             SqlOutputType outputType = getEndpoint().getOutputType();
@@ -212,7 +211,6 @@ public class SqlProducer extends DefaultProducer {
                         // if no OUT message yet then create one and propagate headers
                         if (!exchange.hasOut()) {
                             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                            exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
                         }
 
                         if (isResultSet) {
@@ -284,7 +282,6 @@ public class SqlProducer extends DefaultProducer {
                 ResultSetIterator iterator = getEndpoint().queryForStreamList(con, ps, rs);
                 //pass through all headers
                 exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-                exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
 
                 if (getEndpoint().isNoop()) {
                     exchange.getOut().setBody(exchange.getIn().getBody());

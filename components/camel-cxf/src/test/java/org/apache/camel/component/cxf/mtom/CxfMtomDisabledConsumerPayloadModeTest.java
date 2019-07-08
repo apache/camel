@@ -27,6 +27,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.cxf.binding.soap.SoapHeader;
@@ -57,11 +58,11 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
             // verify request
             Assert.assertEquals(1, in.getBody().size());
             
-            DataHandler dr = exchange.getIn().getAttachment(MtomTestHelper.REQ_PHOTO_CID);
+            DataHandler dr = exchange.getIn(AttachmentMessage.class).getAttachment(MtomTestHelper.REQ_PHOTO_CID);
             Assert.assertEquals("application/octet-stream", dr.getContentType());
             MtomTestHelper.assertEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
        
-            dr = exchange.getIn().getAttachment(MtomTestHelper.REQ_IMAGE_CID);
+            dr = exchange.getIn(AttachmentMessage.class).getAttachment(MtomTestHelper.REQ_IMAGE_CID);
             Assert.assertEquals("image/jpeg", dr.getContentType());
             MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
@@ -71,10 +72,10 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
             CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                 elements, null);
             exchange.getOut().setBody(body);
-            exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID, 
+            exchange.getOut(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_PHOTO_CID,
                 new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 
-            exchange.getOut().addAttachment(MtomTestHelper.RESP_IMAGE_CID, 
+            exchange.getOut(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_IMAGE_CID,
                 new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
 
         }

@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -48,7 +49,7 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
 
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         Exchange exchange = endpoint.createExchange();
-        Message in = exchange.getIn();
+        AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
         in.setBody("<html><body><h1>Hello</h1>World</body></html>");
         in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
 
@@ -73,11 +74,11 @@ public class MailHtmlAttachmentTest extends CamelTestSupport {
         assertEquals("<html><body><h1>Hello</h1>World</body></html>", out.getIn().getBody(String.class));
 
         // attachment
-        Map<String, DataHandler> attachments = out.getIn().getAttachments();
+        Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
         assertNotNull("Should have attachments", attachments);
         assertEquals(1, attachments.size());
 
-        DataHandler handler = out.getIn().getAttachment("logo.jpeg");
+        DataHandler handler = out.getIn(AttachmentMessage.class).getAttachment("logo.jpeg");
         assertNotNull("The logo should be there", handler);
         byte[] bytes = context.getTypeConverter().convertTo(byte[].class, handler.getInputStream());
         assertNotNull("content should be there", bytes);

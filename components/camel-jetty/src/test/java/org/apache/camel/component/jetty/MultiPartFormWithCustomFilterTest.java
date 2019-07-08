@@ -27,8 +27,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.httpclient.HttpClient;
@@ -113,7 +113,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 
                 from("jetty://http://localhost:{{port}}/test?multipartFilterRef=myMultipartFilter").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
+                        AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
                         assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
                         // The file name is attachment id
                         DataHandler data = in.getAttachment("log4j2.properties");
@@ -137,7 +137,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 // Test to ensure that setting a multipartFilterRef overrides the enableMultipartFilter=false parameter
                 from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
+                        AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
                         assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
                         DataHandler data = in.getAttachment("log4j2.properties");
 

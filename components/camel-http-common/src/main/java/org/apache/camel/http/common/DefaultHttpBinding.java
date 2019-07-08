@@ -44,6 +44,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
@@ -316,7 +317,8 @@ public class DefaultHttpBinding implements HttpBinding {
                     }
                 }
                 if (accepted) {
-                    message.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File) object, fileName)));
+                    AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
+                    am.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File) object, fileName)));
                 } else {
                     LOG.debug("Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}", fileName, fileNameExtWhitelist);
                 }

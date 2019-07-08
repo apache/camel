@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.Attachment;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.IOHelper;
@@ -71,13 +72,13 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
     @Override
     public Object evaluate(Exchange exchange) {
         // must use getAttachments to ensure attachments is initial populated
-        if (exchange.getIn().getAttachments().isEmpty()) {
+        if (!exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             return null;
         }
 
         try {
             List<Message> answer = new ArrayList<>();
-            Message inMessage = exchange.getIn();
+            AttachmentMessage inMessage = exchange.getIn(AttachmentMessage.class);
             for (Map.Entry<String, Attachment> entry : inMessage.getAttachmentObjects().entrySet()) {
                 Message attachmentMessage;
                 if (extractAttachments) {
@@ -99,14 +100,15 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
 
     private Message splitAttachment(Message inMessage, String attachmentName, Attachment attachmentHandler) {
         final Message copy = inMessage.copy();
-        Map<String, Attachment> attachments = copy.getAttachmentObjects();
+        final AttachmentMessage am = copy.getExchange().getMessage(AttachmentMessage.class);
+        Map<String, Attachment> attachments = am.getAttachmentObjects();
         attachments.clear();
         attachments.put(attachmentName, attachmentHandler);
         copy.setHeader(HEADER_NAME, attachmentName);
         return copy;
     }
 
-    private Message extractAttachment(Message inMessage, String attachmentName) throws Exception {
+    private Message extractAttachment(AttachmentMessage inMessage, String attachmentName) throws Exception {
         final Message outMessage = new DefaultMessage(inMessage.getExchange().getContext());
         outMessage.setHeader(HEADER_NAME, attachmentName);
         Object attachment = inMessage.getAttachment(attachmentName).getContent();

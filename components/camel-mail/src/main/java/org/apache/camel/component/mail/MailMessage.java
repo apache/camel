@@ -18,11 +18,9 @@ package org.apache.camel.component.mail;
 
 import java.io.IOException;
 import java.util.Map;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
-import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultMessage;
@@ -55,13 +53,6 @@ public class MailMessage extends DefaultMessage {
         MailMessage answer = (MailMessage)super.copy();
         answer.originalMailMessage = originalMailMessage;
         answer.mailMessage = mailMessage;
-
-        if (mapMailMessage) {
-            // force attachments to be created (by getting attachments) to ensure they are always available due Camel error handler
-            // makes defensive copies, and we have optimized it to avoid populating initial attachments, when not needed,
-            // as all other Camel components do not use attachments
-            getAttachments();
-        }
         return answer;
     }
 
@@ -112,20 +103,6 @@ public class MailMessage extends DefaultMessage {
                 }
             } catch (MessagingException | IOException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
-            }
-        }
-    }
-
-    @Override
-    protected void populateInitialAttachments(Map<String, Attachment> map) {
-        if (mailMessage != null) {
-            try {
-                MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
-                if (binding != null) {
-                    binding.extractAttachmentsFromMail(mailMessage, map);
-                }
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error populating the initial mail message attachments", e);
             }
         }
     }

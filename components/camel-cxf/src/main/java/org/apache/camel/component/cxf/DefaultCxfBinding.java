@@ -45,12 +45,13 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.ReaderInputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.support.DefaultAttachment;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
@@ -132,18 +133,20 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream 
         // already has the attachment information
         if (!DataFormat.CXF_MESSAGE.equals(dataFormat)) {
-            for (Map.Entry<String, org.apache.camel.Attachment> entry : camelExchange.getIn().getAttachmentObjects().entrySet()) {
-                if (attachments == null) {
-                    attachments = new HashSet<>();
+            if (camelExchange.getIn(AttachmentMessage.class).hasAttachments()) {
+                for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+                    if (attachments == null) {
+                        attachments = new HashSet<>();
+                    }
+                    AttachmentImpl attachment = new AttachmentImpl(entry.getKey());
+                    org.apache.camel.attachment.Attachment camelAttachment = entry.getValue();
+                    attachment.setDataHandler(camelAttachment.getDataHandler());
+                    for (String name : camelAttachment.getHeaderNames()) {
+                        attachment.setHeader(name, camelAttachment.getHeader(name));
+                    }
+                    attachment.setXOP(isXop);
+                    attachments.add(attachment);
                 }
-                AttachmentImpl attachment = new AttachmentImpl(entry.getKey());
-                org.apache.camel.Attachment camelAttachment = entry.getValue();
-                attachment.setDataHandler(camelAttachment.getDataHandler());
-                for (String name : camelAttachment.getHeaderNames()) {
-                    attachment.setHeader(name, camelAttachment.getHeader(name));
-                }
-                attachment.setXOP(isXop);
-                attachments.add(attachment);
             }
         }
         
@@ -193,7 +196,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (cxfMessage.getAttachments() != null) {
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
-                camelExchange.getOut().addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
+                camelExchange.getOut(AttachmentMessage.class).addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
             }        
         }
     }
@@ -308,7 +311,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (cxfMessage.getAttachments() != null 
             && !camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class).equals(DataFormat.POJO)) {
             for (Attachment attachment : cxfMessage.getAttachments()) {
-                camelExchange.getIn().addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
+                camelExchange.getIn(AttachmentMessage.class).addAttachmentObject(attachment.getId(), createCamelAttachment(attachment));
             }
         }
     }
@@ -408,28 +411,27 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         
         // propagate attachments
-        
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        for (Map.Entry<String, org.apache.camel.Attachment> entry : camelExchange.getOut().getAttachmentObjects().entrySet()) {
-            if (attachments == null) {
-                attachments = new HashSet<>();
+        if (camelExchange.getOut(AttachmentMessage.class).hasAttachments()) {
+            for (Map.Entry<String, org.apache.camel.attachment.Attachment> entry : camelExchange.getOut(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+                if (attachments == null) {
+                    attachments = new HashSet<>();
+                }
+                AttachmentImpl attachment = new AttachmentImpl(entry.getKey());
+                org.apache.camel.attachment.Attachment camelAttachment = entry.getValue();
+                attachment.setDataHandler(camelAttachment.getDataHandler());
+                for (String name : camelAttachment.getHeaderNames()) {
+                    attachment.setHeader(name, camelAttachment.getHeader(name));
+                }
+                attachment.setXOP(isXop);
+                attachments.add(attachment);
             }
-            AttachmentImpl attachment = new AttachmentImpl(entry.getKey());
-            org.apache.camel.Attachment camelAttachment = entry.getValue();
-            attachment.setDataHandler(camelAttachment.getDataHandler());
-            for (String name : camelAttachment.getHeaderNames()) {
-                attachment.setHeader(name, camelAttachment.getHeader(name));
-            }
-            attachment.setXOP(isXop);
-            attachments.add(attachment);
         }
-
         if (attachments != null) {
             outMessage.setAttachments(attachments);
         }
-        
-       
+
         BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
         if (boi != null) {
             cxfExchange.put(BindingMessageInfo.class, boi.getOutput());

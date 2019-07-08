@@ -45,8 +45,10 @@ import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.DefaultAttachment;
+import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.support.DefaultAttachment;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
@@ -97,7 +99,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Message toCamelMessage(HttpServerExchange httpExchange, Exchange exchange) throws Exception {
-        Message result = new DefaultMessage(exchange.getContext());
+        Message result = new DefaultMessage(exchange);
 
         populateCamelHeaders(httpExchange, result.getHeaders(), exchange);
 
@@ -109,7 +111,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 formData.get(key).forEach(value -> {
                     if (value.isFile()) {
                         DefaultAttachment attachment = new DefaultAttachment(new FilePartDataSource(value));
-                        result.addAttachmentObject(key, attachment);
+                        AttachmentMessage am = result.getExchange().getMessage(AttachmentMessage.class);
+                        am.addAttachmentObject(key, attachment);
                         body.put(key, attachment.getDataHandler());
                     } else if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(key, value.getValue(), exchange)) {

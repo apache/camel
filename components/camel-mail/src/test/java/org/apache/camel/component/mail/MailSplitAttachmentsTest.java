@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -50,7 +51,7 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
         exchange = endpoint.createExchange();
-        Message in = exchange.getIn();
+        AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
         in.setBody("Hello World");
         in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
         in.addAttachment("log4j2.properties", new DataHandler(new FileDataSource("src/test/resources/log4j2.properties")));
@@ -67,8 +68,8 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        Message first = mock.getReceivedExchanges().get(0).getIn();
-        Message second = mock.getReceivedExchanges().get(1).getIn();
+        AttachmentMessage first = mock.getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
+        AttachmentMessage second = mock.getReceivedExchanges().get(1).getIn(AttachmentMessage.class);
 
         assertEquals(1, first.getAttachments().size());
         assertEquals(1, second.getAttachments().size());
@@ -97,8 +98,8 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        Message first = mock.getReceivedExchanges().get(0).getIn();
-        Message second = mock.getReceivedExchanges().get(1).getIn();
+        AttachmentMessage first = mock.getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
+        AttachmentMessage second = mock.getReceivedExchanges().get(1).getIn(AttachmentMessage.class);
 
         // check it's no longer an attachment, but is the message body
         assertEquals(0, first.getAttachments().size());

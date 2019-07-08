@@ -45,11 +45,12 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.attachment.Attachment;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.support.DefaultAttachment;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -129,7 +130,7 @@ public class MailBinding {
         if (hasAlternativeBody(endpoint.getConfiguration(), exchange)) {
             createMultipartAlternativeMessage(mimeMessage, endpoint.getConfiguration(), exchange);
         } else {
-            if (exchange.getIn().hasAttachments()) {
+            if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
                 appendAttachmentsFromCamel(mimeMessage, endpoint.getConfiguration(), exchange);
             } else {
                 populateContentOnMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange);
@@ -467,7 +468,7 @@ public class MailBinding {
         addBodyToMultipart(configuration, multipart, exchange);
         String partDisposition = configuration.isUseInlineAttachments() ? Part.INLINE : Part.ATTACHMENT;
         AttachmentsContentTransferEncodingResolver contentTransferEncodingResolver = configuration.getAttachmentsContentTransferEncodingResolver();
-        if (exchange.getIn().hasAttachments()) {
+        if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             addAttachmentsToMultipart(multipart, partDisposition, contentTransferEncodingResolver, exchange);
         }
         return multipart;
@@ -477,7 +478,7 @@ public class MailBinding {
                                              AttachmentsContentTransferEncodingResolver encodingResolver, Exchange exchange) throws MessagingException {
         LOG.trace("Adding attachments +++ start +++");
         int i = 0;
-        for (Map.Entry<String, Attachment> entry : exchange.getIn().getAttachmentObjects().entrySet()) {
+        for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
             String attachmentFilename = entry.getKey();
             Attachment attachment = entry.getValue();
 
@@ -565,7 +566,7 @@ public class MailBinding {
         multipartAlternative.addBodyPart(plainText);
 
         // if there are no attachments, add the body to the same mulitpart message
-        if (!exchange.getIn().hasAttachments()) {
+        if (!exchange.getIn(AttachmentMessage.class).hasAttachments()) {
             addBodyToMultipart(configuration, multipartAlternative, exchange);
         } else {
             // if there are attachments, but they aren't set to be inline, add them to

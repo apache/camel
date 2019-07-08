@@ -351,7 +351,6 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                         log.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
                         exchange.getIn().getBody();
                         exchange.getIn().getHeaders();
-                        exchange.getIn().getAttachments();
                     }
 
                     // If the protocol is POP3 we need to remember the uid on the exchange
