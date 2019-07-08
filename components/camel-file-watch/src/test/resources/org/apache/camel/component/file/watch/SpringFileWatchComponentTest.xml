@@ -24,10 +24,17 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="testHasher" class="org.apache.camel.component.file.watch.TestHasher"/>
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="file-watch:target/fileWatchSpringTest"/>
             <to uri="mock:springTest"/>
+        </route>
+
+        <route>
+            <from uri="file-watch:target/fileWatchSpringTestCustomHasher?fileHasher=#testHasher"/>
+            <to uri="mock:springTestCustomHasher"/>
         </route>
     </camelContext>
 
