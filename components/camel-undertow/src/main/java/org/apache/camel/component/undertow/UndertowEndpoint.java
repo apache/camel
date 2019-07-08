@@ -78,6 +78,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private String httpMethodRestrict;
     @UriParam(label = "consumer", defaultValue = "false")
     private Boolean matchOnUriPrefix = Boolean.FALSE;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean useStreaming;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "false")
@@ -98,8 +100,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Boolean sendToAll;
     @UriParam(label = "producer,websocket", defaultValue = "30000")
     private Integer sendTimeout = 30000;
-    @UriParam(label = "consumer,websocket", defaultValue = "false")
-    private boolean useStreaming;
     @UriParam(label = "consumer,websocket", defaultValue = "false")
     private boolean fireWebSocketChannelEvents;
 
@@ -253,7 +253,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     public UndertowHttpBinding getUndertowHttpBinding() {
         if (undertowHttpBinding == null) {
             // create a new binding and use the options from this endpoint
-            undertowHttpBinding = new DefaultUndertowHttpBinding();
+            undertowHttpBinding = new DefaultUndertowHttpBinding(useStreaming);
             undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             undertowHttpBinding.setTransferException(getTransferException());
         }
@@ -363,9 +363,18 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     }
 
     /**
-     * if {@code true}, text and binary messages coming through a WebSocket will be wrapped as java.io.Reader and
-     * java.io.InputStream respectively before they are passed to an {@link Exchange}; otherwise they will be passed as
-     * String and byte[] respectively.
+     * <p>
+     * For HTTP endpoint:
+     * if {@code true}, text and binary messages will be wrapped as {@link java.io.InputStream}
+     * before they are passed to an {@link Exchange}; otherwise they will be passed as byte[].
+     * </p>
+     *
+     * <p>
+     * For WebSocket endpoint:
+     * if {@code true}, text and binary messages will be wrapped as {@link java.io.Reader} and
+     * {@link java.io.InputStream} respectively before they are passed to an {@link Exchange};
+     * otherwise they will be passed as String and byte[] respectively.
+     * </p>
      */
     public void setUseStreaming(boolean useStreaming) {
         this.useStreaming = useStreaming;
