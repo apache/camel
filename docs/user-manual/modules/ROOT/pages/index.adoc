@@ -129,7 +129,7 @@ camel routes without them knowing
 * xref:java-dsl.adoc[Java DSL]
 * xref:spring.adoc[Spring DSL]
 * xref:using-osgi-blueprint-with-camel.adoc[Blueprint DSL]
-* xref:../../../camel-core/src/main/docs/rest-dsl.adoc[Rest DSL]
+* xref:rest-dsl.adoc[Rest DSL]
 * xref:groovy-dsl.adoc[Groovy DSL]
 * xref:scala-dsl.adoc[Scala DSL]
 * xref:bean-integration.adoc[Annotation DSL]

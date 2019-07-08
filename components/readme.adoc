@@ -1007,7 +1007,7 @@ Number of Data Formats: 45 in 37 JAR artifacts (0 deprecated)
 ==== Expression Languages
 
 // languages: START
-Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
+Number of Languages: 16 in 10 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1041,8 +1041,6 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 
 | link:camel-base/src/main/docs/tokenize-language.adoc[Tokenize] (camel-base) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
-| link:camel-jaxp/src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-jaxp) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
-
 | link:camel-xpath/src/main/docs/xpath-language.adoc[XPath] (camel-xpath) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
 
 | link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | To use XQuery (XML) in Camel expressions or predicates.
@@ -1053,7 +1051,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1067,6 +1065,8 @@ Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
+| link:camel-ignite/src/main/docs/ignite.adoc[Ignite] (camel-ignite) |  | Camel Ignite component
+
 | link:camel-jasypt/src/main/docs/jasypt.adoc[Jasypt] (camel-jasypt) | 2.5 | Security using Jasypt
 
 | link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
@@ -1078,6 +1078,8 @@ Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
 | link:camel-microprofile-config/src/main/docs/microprofile-config.adoc[Microprofile Config] (camel-microprofile-config) | 3.0 | Bridging Eclipse MicroProfile Config with Camel properties
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
+
+| link:camel-pulsar/src/main/docs/pulsar.adoc[Pulsar] (camel-pulsar) |  | Camel Apache Pulsar Component
 
 | link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
 
