@@ -20,6 +20,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
@@ -31,9 +32,8 @@ public class SlackProducerTest extends CamelTestSupport {
 
     @EndpointInject("direct:test")
     DirectEndpoint test;
-
-    @EndpointInject("direct:error")
-    DirectEndpoint error;
+    
+    protected static final int UNDERTOW_PORT = AvailablePortFinder.getNextAvailable();
 
     @Test
     public void testSlackMessage() throws Exception {
@@ -44,30 +44,21 @@ public class SlackProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testSlackError() throws Exception {
-        errors.expectedMessageCount(1);
-
-        template.sendBody(error, "Error from Camel!");
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 SlackComponent slack = new SlackComponent();
-                slack.setWebhookUrl(System.getProperty("SLACK_HOOK", "https://hooks.slack.com/services/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"));
+                slack.setWebhookUrl("http://localhost:" + UNDERTOW_PORT + "/slack/webhook");
                 context.addComponent("slack", slack);
 
                 onException(Exception.class).handled(true).to(errors);
 
                 final String slacUser =  System.getProperty("SLACK_USER", "CamelTest");
+                from("undertow:http://localhost:" + UNDERTOW_PORT + "/slack/webhook").setBody(constant("{\"ok\": true}"));
+                
                 from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slacUser));
-
-                from(error).to(String.format("slack:#badchannel?iconEmoji=:camel:&username=%s", slack));
             }
         };
     }
