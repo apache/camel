@@ -146,7 +146,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
     private void populateMessageAttachmentsFromResponse(AttachmentMessage inOrOut, Iterator<Attachment> attachments) {
         while (attachments.hasNext()) {
             Attachment attachment = attachments.next();
-            inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());
+            inOrOut.addAttachment(attachment.getContentId(), attachment.getDataHandler());
         }
     }    
     

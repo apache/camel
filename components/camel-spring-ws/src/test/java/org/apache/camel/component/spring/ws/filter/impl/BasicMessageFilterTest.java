@@ -71,8 +71,12 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         exchange.getIn().getHeaders().clear();
         exchange.getOut().getHeaders().clear();
 
-        exchange.getIn(AttachmentMessage.class).getAttachments().clear();
-        exchange.getOut(AttachmentMessage.class).getAttachments().clear();
+        if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+            exchange.getIn(AttachmentMessage.class).getAttachments().clear();
+        }
+        if (exchange.getOut(AttachmentMessage.class).hasAttachments()) {
+            exchange.getOut(AttachmentMessage.class).getAttachments().clear();
+        }
 
         filter.filterProducer(exchange, message);
         filter.filterConsumer(exchange, message);
@@ -153,7 +157,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void consumerWithAttachment() throws Exception {
-        exchange.getOut(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterConsumer(exchange, message);
 
