@@ -76,22 +76,19 @@
     </dependencies>
 
     <profiles>
-          <profile>
+
+        <profile>
             <id>testcontainers-skip-tests</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!testcontainers-integration-tests-docker-file </name>
+                </property>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>true</skipTests>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
         </profile>
+
         <!-- activate integration test if the docker socket file is accessible -->
         <profile>
             <id>testcontainers-integration-tests-docker-file</id>
