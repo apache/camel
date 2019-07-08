@@ -35,7 +35,8 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
-            org.eclipse.jetty.*;version="[9.3,10)",
+            org.eclipse.jetty.*;version="[9.4,10)",
+            javax.activation.*;version="${javax-activation-version-range}",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
     </properties>

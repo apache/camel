@@ -34,6 +34,9 @@
     <description>Java Attachments support for Camel Message</description>
 
     <properties>
+        <camel.osgi.import.before.defaults>
+            javax.activation.*;version="${javax-activation-version-range}"
+        </camel.osgi.import.before.defaults>
         <firstVersion>3.0.0</firstVersion>
         <label>core</label>
     </properties>
@@ -50,8 +53,7 @@
         <dependency>
             <groupId>com.sun.activation</groupId>
             <artifactId>javax.activation</artifactId>
-            <version>1.2.0</version>
-            <!-- TODO: move version to parent -->
+            <version>${javax-activation-version}</version>
         </dependency>
 
         <!-- testing -->

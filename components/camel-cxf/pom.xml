@@ -47,7 +47,7 @@
             !org.apache.camel.component.cxf.spring,
             !org.apache.camel.component.cxf.util,
             !org.apache.camel.blueprint,
-            javax.activation*;version="[0.0,2)",
+            javax.activation.*;version="${javax-activation-version-range}",
             javax.jws*;version="[0.0,3)",
             javax.ws.rs*;version="[0.0,3)",
             javax.xml.soap*;version="[1.3,2)",
@@ -68,6 +68,7 @@
             *
         </camel.osgi.import>
         <camel.osgi.failok>true</camel.osgi.failok>
+
     </properties>
 
     <dependencies>

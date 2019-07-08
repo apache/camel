@@ -35,13 +35,13 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
+            javax.activation.*;version="${javax-activation-version-range}",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
 
-        <!-- TODO: requires camel-core due camel.cloud is not in camel-support -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cloud</artifactId>
