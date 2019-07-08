@@ -76,7 +76,6 @@ public class SpringIntegrationMessage extends DefaultMessage {
             SpringIntegrationMessage orig = (SpringIntegrationMessage) that;
             setMessage(orig.getMessage());
         }
-        getAttachments().putAll(that.getAttachments());
     }
 
     @Override

@@ -422,12 +422,11 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
             out.setBody(body);
         }
 
-        // copy headers and attachments
+        // copy headers
         Message inboundMessage = exchange.getIn();
         Map<String, Object> outboundHeaders = out.getHeaders();
         outboundHeaders.putAll(inboundMessage.getHeaders());
         outboundHeaders.putAll(headers);
-        out.copyAttachments(inboundMessage);
 
         // signal exchange completion
         callback.done(false);

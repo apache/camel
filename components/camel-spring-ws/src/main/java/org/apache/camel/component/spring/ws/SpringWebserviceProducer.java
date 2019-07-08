@@ -33,6 +33,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.springframework.ws.WebServiceMessage;
@@ -96,10 +97,10 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 SoapMessage soapMessage = (SoapMessage) responseMessage;
                 if (ExchangeHelper.isOutCapable(exchange)) {
                     exchange.getOut().copyFromWithNewBody(exchange.getIn(), soapMessage.getPayloadSource());
-                    populateHeaderAndAttachmentsFromResponse(exchange.getOut(), soapMessage);
+                    populateHeaderAndAttachmentsFromResponse(exchange.getOut(AttachmentMessage.class), soapMessage);
                 } else {
                     exchange.getIn().setBody(soapMessage.getPayloadSource());
-                    populateHeaderAndAttachmentsFromResponse(exchange.getIn(), soapMessage);
+                    populateHeaderAndAttachmentsFromResponse(exchange.getIn(AttachmentMessage.class), soapMessage);
                 }
 
             }
@@ -109,7 +110,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
     /**
      * Populates soap message headers and attachments from soap response
      */
-    private void populateHeaderAndAttachmentsFromResponse(Message inOrOut, SoapMessage soapMessage) {
+    private void populateHeaderAndAttachmentsFromResponse(AttachmentMessage inOrOut, SoapMessage soapMessage) {
         if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
             populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
         }
@@ -142,7 +143,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
     /**
      * Populates message attachments from soap response attachments 
      */
-    private void populateMessageAttachmentsFromResponse(Message inOrOut, Iterator<Attachment> attachments) {
+    private void populateMessageAttachmentsFromResponse(AttachmentMessage inOrOut, Iterator<Attachment> attachments) {
         while (attachments.hasNext()) {
             Attachment attachment = attachments.next();
             inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());

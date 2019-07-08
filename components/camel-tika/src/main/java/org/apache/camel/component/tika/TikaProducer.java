@@ -83,7 +83,6 @@ public class TikaProducer extends DefaultProducer {
         }
         // propagate headers
         exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-        exchange.getOut().setAttachments(exchange.getIn().getAttachments());
         // and set result
         exchange.getOut().setBody(result);
     }

@@ -210,12 +210,11 @@ public class AnalyticsApiProcessor extends AbstractSalesforceProcessor {
             out.setBody(body);
         }
 
-        // copy headers and attachments
+        // copy headers
         final Message inboundMessage = exchange.getIn();
         final Map<String, Object> outputHeaders = out.getHeaders();
         outputHeaders.putAll(inboundMessage.getHeaders());
         outputHeaders.putAll(headers);
-        out.copyAttachments(inboundMessage);
 
         // signal exchange completion
         callback.done(false);

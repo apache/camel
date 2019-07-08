@@ -100,6 +100,5 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
         out.setBody(buffer.toString());
         out.setHeaders(exchange.getIn().getHeaders());
         out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, getResourceUri());
-        out.setAttachments(exchange.getIn().getAttachments());
     }
 }
