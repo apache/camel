@@ -38,7 +38,7 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         MockEndpoint watchDelete = getMockEndpoint("mock:watchDelete");
         MockEndpoint watchDeleteOrCreate = getMockEndpoint("mock:watchDeleteOrCreate");
 
-        File newFile = createFile(testPath(), UUID.randomUUID().toString()); // should emit CREATE event
+        File newFile = createFile(testPath(), UUID.randomUUID().toString());
 
         watchAll.expectedMessageCount(1);
         watchAll.setAssertPeriod(1000);
@@ -80,18 +80,33 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
     @Test
     public void testAntMatcher() throws Exception {
         MockEndpoint all = getMockEndpoint("mock:watchAll");
-        MockEndpoint onlyTxtInRoot = getMockEndpoint("mock:onlyTxt");
+        MockEndpoint onlyTxtAnywhere = getMockEndpoint("mock:onlyTxtAnywhere");
+        MockEndpoint onlyTxtInSubdirectory = getMockEndpoint("mock:onlyTxtInSubdirectory");
+        MockEndpoint onlyTxtInRoot = getMockEndpoint("mock:onlyTxtInRoot");
 
         Path root = Paths.get(testPath());
+        Path a = Paths.get(testPath(), "a");
+        Path b = Paths.get(testPath(), "a", "b");
 
-        Files.createDirectories(root);
+        Files.createDirectories(b);
 
         createFile(root.toFile(), "inRoot.txt");
         createFile(root.toFile(), "inRoot.java");
-        all.expectedMessageCount(2); // 1 java file 1 txt file
+        createFile(a.toFile(), "inA.txt");
+        createFile(a.toFile(), "inA.java");
+        createFile(b.toFile(), "inB.txt");
+        createFile(b.toFile(), "inB.java");
+
+        all.expectedMessageCount(8); // 2 directories, 6 files
         all.assertIsSatisfied();
 
-        onlyTxtInRoot.expectedMessageCount(1); // 1 txt file
+        onlyTxtAnywhere.expectedMessageCount(3); // 3 txt files
+        onlyTxtAnywhere.assertIsSatisfied();
+
+        onlyTxtInSubdirectory.expectedMessageCount(1); // 1 txt file in first subdirectory
+        onlyTxtInSubdirectory.assertIsSatisfied();
+
+        onlyTxtInRoot.expectedMessageCount(1); // 1 txt file inRoot.txt (should exclude everything in subdirectories)
         onlyTxtInRoot.assertIsSatisfied();
     }
 
@@ -100,12 +115,13 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
 
         Files.write(testFiles.get(0), "Hello".getBytes(), StandardOpenOption.SYNC);
+        //testFiles.get(0).toFile().renameTo(new File(testPath(), "hello.txt"));
+        //Assert.assertTrue(newFile.createNewFile());
 
         mock.setExpectedCount(1);
         mock.setResultWaitTime(1000);
         mock.assertIsSatisfied();
         assertEquals("Hello", mock.getExchanges().get(0).getIn().getBody(String.class));
-        assertEquals(FileEventEnum.MODIFY, mock.getExchanges().get(0).getIn().getHeader(FileWatchComponent.EVENT_TYPE_HEADER));
     }
 
     @Test
@@ -131,8 +147,16 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
                     .to("mock:watchAll");
 
                 from("file-watch://" + testPath() + "?events=CREATE&antInclude=*.txt")
-                    .routeId("onlyTxt")
-                    .to("mock:onlyTxt");
+                    .routeId("onlyTxtInRoot")
+                    .to("mock:onlyTxtInRoot");
+
+                from("file-watch://" + testPath() + "?events=CREATE&antInclude=*/*.txt")
+                    .routeId("onlyTxtInSubdirectory")
+                    .to("mock:onlyTxtInSubdirectory");
+
+                from("file-watch://" + testPath() + "?events=CREATE&antInclude=**/*.txt")
+                    .routeId("onlyTxtAnywhere")
+                    .to("mock:onlyTxtAnywhere");
 
                 from("file-watch://" + testPath() + "?events=CREATE")
                     .to("mock:watchCreate");

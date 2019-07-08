@@ -160,6 +160,7 @@
         <derby-version>10.14.2.0</derby-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <digitalocean-api-client-bundle-version>2.17_1</digitalocean-api-client-bundle-version>
+        <directory-watcher-version>0.9.5</directory-watcher-version>
         <disruptor-version>3.4.2</disruptor-version>
         <dnsjava-version>2.1.9</dnsjava-version>
         <dnsjava-bundle-version>2.1.9_1</dnsjava-bundle-version>
@@ -5126,6 +5127,13 @@
               <groupId>io.krakens</groupId>
               <artifactId>java-grok</artifactId>
               <version>${java-grok-version}</version>
+            </dependency>
+
+            <!-- directory-watcher for camel-file-watch component -->
+            <dependency>
+                <groupId>io.methvin</groupId>
+                <artifactId>directory-watcher</artifactId>
+                <version>${directory-watcher-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

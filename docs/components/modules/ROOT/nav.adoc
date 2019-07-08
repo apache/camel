@@ -105,7 +105,6 @@
 * xref:fhir-component.adoc[FHIR Component]
 * xref:fhirJson-dataformat.adoc[FHIR JSon DataFormat]
 * xref:fhirXml-dataformat.adoc[FHIR XML DataFormat]
-* xref:file-watch-component.adoc[file-watch Component]
 * xref:file-component.adoc[File Component]
 * xref:flatpack-component.adoc[Flatpack Component]
 * xref:flatpack-dataformat.adoc[Flatpack DataFormat]

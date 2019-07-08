@@ -18,7 +18,9 @@ package org.apache.camel.component.file.watch;
 
 import java.util.Map;
 
+import io.methvin.watcher.hashing.FileHasher;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -33,5 +35,17 @@ public class FileWatchComponent extends DefaultComponent {
         Endpoint endpoint = new FileWatchEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        Registry registry = getCamelContext().getRegistry();
+        if (registry.lookupByNameAndType("murmur3FFileHasher", FileHasher.class) == null) {
+            registry.bind("murmur3FFileHasher", FileHasher.class, FileHasher.DEFAULT_FILE_HASHER);
+        }
+        if (registry.lookupByNameAndType("lastModifiedTimeFileHasher", FileHasher.class) == null) {
+            registry.bind("lastModifiedTimeFileHasher", FileHasher.class, FileHasher.LAST_MODIFIED_TIME);
+        }
     }
 }
