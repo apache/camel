@@ -23,6 +23,14 @@ import org.apache.camel.Exchange;
 
 public class RestUndertowHttpBinding extends DefaultUndertowHttpBinding {
 
+    public RestUndertowHttpBinding() {
+        super();
+    }
+
+    public RestUndertowHttpBinding(boolean useStreaming) {
+        super(useStreaming);
+    }
+
     @Override
     public void populateCamelHeaders(HttpServerExchange httpExchange, Map<String, Object> headersMap, Exchange exchange) throws Exception {
         super.populateCamelHeaders(httpExchange, headersMap, exchange);
