@@ -36,7 +36,6 @@
 
     <modules>
         <!-- components used by camel-core -->
-        <module>camel-attachments</module>
         <module>camel-bean</module>
         <module>camel-browse</module>
         <module>camel-controlbus</module>
@@ -70,6 +69,7 @@
         <module>camel-blueprint</module>
         <module>camel-spring</module>
         <module>camel-groovy</module>
+        <module>camel-attachments</module>
         <module>camel-http-common</module>
         <module>camel-http4</module>
         <module>camel-hystrix</module>
