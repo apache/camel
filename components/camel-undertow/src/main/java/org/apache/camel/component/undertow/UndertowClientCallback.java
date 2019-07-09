@@ -94,6 +94,12 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowClientCallback.class);
 
+    protected final UndertowEndpoint endpoint;
+
+    protected final Exchange exchange;
+
+    protected final ClientRequest request;
+
     private final ByteBuffer body;
 
     private final AsyncCallback callback;
@@ -103,12 +109,6 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
      * resources via {@link #deferClose(Closeable)}.
      */
     private final BlockingDeque<Closeable> closables = new LinkedBlockingDeque<>();
-
-    protected final UndertowEndpoint endpoint;
-
-    protected final Exchange exchange;
-
-    protected final ClientRequest request;
 
     private final Boolean throwExceptionOnFailure;
 
