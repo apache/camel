@@ -36,6 +36,7 @@
 
     <modules>
         <!-- components used by camel-core -->
+        <module>camel-attachments</module>
         <module>camel-bean</module>
         <module>camel-browse</module>
         <module>camel-controlbus</module>
