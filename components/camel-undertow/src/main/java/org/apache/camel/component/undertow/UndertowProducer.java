@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.net.ssl.SSLContext;
 
 import io.undertow.client.ClientRequest;
@@ -92,51 +91,62 @@ public class UndertowProducer extends DefaultAsyncProducer {
     public boolean process(final Exchange camelExchange, final AsyncCallback callback) {
         if (endpoint.isWebSocket()) {
             return processWebSocket(camelExchange, callback);
-        } else {
-            /* not a WebSocket */
-            final URI uri;
-            final HttpString method;
+        }
+
+        /* not a WebSocket */
+        final URI uri;
+        final HttpString method;
+        try {
+            final String exchangeUri = UndertowHelper.createURL(camelExchange, getEndpoint());
+            uri = UndertowHelper.createURI(camelExchange, exchangeUri, getEndpoint());
+            method = UndertowHelper.createMethod(camelExchange, endpoint, camelExchange.getIn().getBody() != null);
+        } catch (final URISyntaxException e) {
+            camelExchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+
+        final String pathAndQuery = URISupport.pathAndQueryOf(uri);
+
+        final UndertowHttpBinding undertowHttpBinding = endpoint.getUndertowHttpBinding();
+
+        final CookieHandler cookieHandler = endpoint.getCookieHandler();
+        final Map<String, List<String>> cookieHeaders;
+        if (cookieHandler != null) {
             try {
-                final String exchangeUri = UndertowHelper.createURL(camelExchange, getEndpoint());
-                uri = UndertowHelper.createURI(camelExchange, exchangeUri, getEndpoint());
-                method = UndertowHelper.createMethod(camelExchange, endpoint, camelExchange.getIn().getBody() != null);
-            } catch (final URISyntaxException e) {
+                cookieHeaders = cookieHandler.loadCookies(camelExchange, uri);
+            } catch (final IOException e) {
                 camelExchange.setException(e);
                 callback.done(true);
                 return true;
             }
+        } else {
+            cookieHeaders = Collections.emptyMap();
+        }
 
-            final String pathAndQuery = URISupport.pathAndQueryOf(uri);
+        final ClientRequest request = new ClientRequest();
+        request.setMethod(method);
+        request.setPath(pathAndQuery);
 
-            final UndertowHttpBinding undertowHttpBinding = endpoint.getUndertowHttpBinding();
+        final HeaderMap requestHeaders = request.getRequestHeaders();
 
-            final CookieHandler cookieHandler = endpoint.getCookieHandler();
-            final Map<String, List<String>> cookieHeaders;
-            if (cookieHandler != null) {
-                try {
-                    cookieHeaders = cookieHandler.loadCookies(camelExchange, uri);
-                } catch (final IOException e) {
-                    camelExchange.setException(e);
-                    callback.done(true);
-                    return true;
-                }
-            } else {
-                cookieHeaders = Collections.emptyMap();
-            }
+        // Set the Host header
+        final Message message = camelExchange.getIn();
+        final String host = message.getHeader(Headers.HOST_STRING, String.class);
+        requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(uri::getAuthority));
 
-            final ClientRequest request = new ClientRequest();
-            request.setMethod(method);
-            request.setPath(pathAndQuery);
+        cookieHeaders.forEach((key, values) -> {
+            requestHeaders.putAll(HttpString.tryFromString(key), values);
+        });
 
-            final HeaderMap requestHeaders = request.getRequestHeaders();
-
-            // Set the Host header
-            final Message message = camelExchange.getIn();
-            final String host = message.getHeader(Headers.HOST_STRING, String.class);
-            requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(() -> uri.getAuthority()));
-
-            final Object body = undertowHttpBinding.toHttpRequest(request, camelExchange.getIn());
-
+        final Object body = undertowHttpBinding.toHttpRequest(request, camelExchange.getIn());
+        final UndertowClientCallback clientCallback;
+        if (getEndpoint().isUseStreaming() && (body instanceof InputStream)) {
+            // For streaming, make it chunked encoding instead of specifying content length
+            requestHeaders.put(Headers.TRANSFER_ENCODING, "chunked");
+            clientCallback = new UndertowStreamingClientCallback(camelExchange, callback, getEndpoint(),
+                    request, (InputStream) body);
+        } else {
             final TypeConverter tc = endpoint.getCamelContext().getTypeConverter();
             final ByteBuffer bodyAsByte = tc.tryConvertTo(ByteBuffer.class, body);
 
@@ -146,29 +156,24 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 requestHeaders.put(Headers.CONTENT_LENGTH, bodyAsByte.remaining());
             }
 
-            for (final Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
-                requestHeaders.putAll(HttpString.tryFromString(entry.getKey()), entry.getValue());
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", method, pathAndQuery);
-            }
-
-            final UndertowClientCallback clientCallback = new UndertowClientCallback(camelExchange, callback, getEndpoint(),
-                request, bodyAsByte);
-
-            // when connect succeeds or fails UndertowClientCallback will
-            // get notified on a I/O thread run by Xnio worker. The writing
-            // of request and reading of response is performed also in the
-            // callback
-            client.connect(clientCallback, uri, worker, ssl, pool, options);
-
-            // the call above will proceed on Xnio I/O thread we will
-            // notify the exchange asynchronously when the HTTP exchange
-            // ends with success or failure from UndertowClientCallback
-            return false;
+            clientCallback = new UndertowClientCallback(camelExchange, callback, getEndpoint(),
+                    request, bodyAsByte);
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Executing http {} method: {}", method, pathAndQuery);
+        }
+
+        // when connect succeeds or fails UndertowClientCallback will
+        // get notified on a I/O thread run by Xnio worker. The writing
+        // of request and reading of response is performed also in the
+        // callback
+        client.connect(clientCallback, uri, worker, ssl, pool, options);
+
+        // the call above will proceed on Xnio I/O thread we will
+        // notify the exchange asynchronously when the HTTP exchange
+        // ends with success or failure from UndertowClientCallback
+        return false;
     }
 
     private boolean processWebSocket(final Exchange camelExchange, final AsyncCallback camelCallback) {
