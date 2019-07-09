@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -61,6 +61,7 @@ public class MvelHelperTest {
             arguments("some http://example.com here", "some \\http://example.com here"),
             arguments("https://example.com", "\\https://example.com"),
             arguments("ftp://example.com", "\\ftp://example.com"),
-            arguments("Sets the POST URL for zipkin's <a href=\"http://zipkin.io/zipkin-api/#/\">v2 api</a>, usually \"http://zipkinhost:9411/api/v2/spans\"", "Sets the POST URL for zipkin's <a href=\"http://zipkin.io/zipkin-api/#/\">v2 api</a>, usually \"\\http://zipkinhost:9411/api/v2/spans\""));
+            arguments("Sets the POST URL for zipkin's <a href=\"http://zipkin.io/zipkin-api/#/\">v2 api</a>, usually \"http://zipkinhost:9411/api/v2/spans\"", 
+            "Sets the POST URL for zipkin's <a href=\"http://zipkin.io/zipkin-api/#/\">v2 api</a>, usually \"\\http://zipkinhost:9411/api/v2/spans\""));
     }
 }
