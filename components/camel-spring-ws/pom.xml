@@ -39,6 +39,7 @@
             org.springframework.util.*;version="${spring-version-range}",
             org.springframework.ws.*;version="[3,4)",
             org.springframework.xml.*;version="[3,4)",
+            javax.activation.*;version="${javax-activation-version-range}",
             javax.xml.soap*;version="[1.3,2)"
         </camel.osgi.import.before.defaults>
         <!-- for some weird reason org.springframework.ws and org.springframework.xml
@@ -51,6 +52,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-attachments</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

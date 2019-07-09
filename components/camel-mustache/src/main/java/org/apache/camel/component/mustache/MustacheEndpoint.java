@@ -101,7 +101,6 @@ public class MustacheEndpoint extends ResourceEndpoint {
             Message out = exchange.getOut();
             out.setBody(writer.toString());
             out.setHeaders(exchange.getIn().getHeaders());
-            out.setAttachments(exchange.getIn().getAttachments());
         } else {
             exchange.getIn().removeHeader(MustacheConstants.MUSTACHE_RESOURCE_URI);
             MustacheEndpoint newEndpoint = getCamelContext().getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX + newResourceUri, MustacheEndpoint.class);

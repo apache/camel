@@ -26,8 +26,9 @@ import javax.mail.MessagingException;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
+import org.apache.camel.attachment.Attachment;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -56,11 +57,11 @@ public class NestedMimeMessageConsumeTest extends CamelTestSupport {
         assertThat(text, containsString("Test with bold face, pictures and attachments"));
         assertEquals("text/plain; charset=us-ascii", exchange.getIn().getHeader("Content-Type"));
 
-        Set<String> attachmentNames = exchange.getIn().getAttachmentNames();
+        Set<String> attachmentNames = exchange.getIn(AttachmentMessage.class).getAttachmentNames();
         assertNotNull("attachments got lost", attachmentNames);
         assertEquals(2, attachmentNames.size());
         for (String s : attachmentNames) {
-            Attachment att = exchange.getIn().getAttachmentObject(s);
+            Attachment att = exchange.getIn(AttachmentMessage.class).getAttachmentObject(s);
             DataHandler dh = att.getDataHandler();
             Object content = dh.getContent();
             assertNotNull("Content should not be empty", content);

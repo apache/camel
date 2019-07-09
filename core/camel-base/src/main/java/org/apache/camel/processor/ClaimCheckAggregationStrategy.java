@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * This strategy supports the following include rules syntax:
  * <ul>
  *     <li>body</li> - to aggregate the message body
- *     <li>attachments</li> - to aggregate all the message attachments
  *     <li>headers</li> - to aggregate all the message headers
  *     <li>header:pattern</li> - to aggregate all the message headers that matches the pattern.
  *     The pattern syntax is documented by: {@link PatternHelper#matchPattern(String, String)}.
@@ -74,10 +73,6 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
                 oldExchange.getMessage().getHeaders().putAll(newExchange.getMessage().getHeaders());
                 LOG.trace("Including: headers");
             }
-            if (newExchange.getMessage().hasAttachments()) {
-                oldExchange.getMessage().getAttachments().putAll(newExchange.getMessage().getAttachments());
-                LOG.trace("Including: attachments");
-            }
             return oldExchange;
         }
 
@@ -85,14 +80,6 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
         if (isBodyEnabled()) {
             oldExchange.getMessage().setBody(newExchange.getMessage().getBody());
             LOG.trace("Including: body");
-        }
-
-        // attachments is by default often included
-        if (isAttachmentsEnabled()) {
-            if (newExchange.getMessage().hasAttachments()) {
-                oldExchange.getMessage().getAttachments().putAll(newExchange.getMessage().getAttachments());
-                LOG.trace("Including: attachments");
-            }
         }
 
         // headers is by default often included
@@ -268,26 +255,6 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             onlyExclude &= pattern.startsWith("-");
         }
         // body is enabled if we only have exclude patterns
-        return onlyExclude;
-    }
-
-    private boolean isAttachmentsEnabled() {
-        // attachments is always enabled unless excluded
-        String[] parts = filter.split(",");
-
-        boolean onlyExclude = true;
-        for (String pattern : parts) {
-            if (pattern.startsWith("--")) {
-                continue;
-            }
-            if ("attachments".equals(pattern) || "+attachments".equals(pattern)) {
-                return true;
-            } else if ("-attachments".equals(pattern)) {
-                return false;
-            }
-            onlyExclude &= pattern.startsWith("-");
-        }
-        // attachments is enabled if we only have exclude patterns
         return onlyExclude;
     }
 

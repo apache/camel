@@ -149,7 +149,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             this.original = exchange;
             this.value = value;
             this.iterator = ObjectHelper.createIterator(value);
-            this.copy = copyExchangeNoAttachments(exchange, true);
+            this.copy = copyAndPrepareSubExchange(exchange, true);
             this.routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
         }
 
@@ -269,10 +269,8 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         return expression;
     }
     
-    private static Exchange copyExchangeNoAttachments(Exchange exchange, boolean preserveExchangeId) {
+    private static Exchange copyAndPrepareSubExchange(Exchange exchange, boolean preserveExchangeId) {
         Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
-        // we do not want attachments for the splitted sub-messages
-        answer.getIn().setAttachmentObjects(null);
         // we do not want to copy the message history for splitted sub-messages
         answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
         return answer;

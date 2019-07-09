@@ -100,11 +100,6 @@ public class JmsMessage extends DefaultMessage {
         if (that.hasHeaders()) {
             getHeaders().putAll(that.getHeaders());
         }
-
-        getAttachments().clear();
-        if (that.hasAttachments()) {
-            getAttachmentObjects().putAll(that.getAttachmentObjects());
-        }
     }
 
     public JmsBinding getBinding() {

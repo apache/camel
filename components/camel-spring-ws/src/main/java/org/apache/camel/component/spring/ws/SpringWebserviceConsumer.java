@@ -29,6 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.support.DefaultConsumer;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
@@ -122,9 +124,9 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         // create inbound message
         WebServiceMessage request = messageContext.getRequest();
         SpringWebserviceMessage inMessage = new SpringWebserviceMessage(exchange.getContext(), request);
-        extractSourceFromSoapHeader(inMessage.getHeaders(), request);
-        extractAttachmentsFromRequest(request, inMessage);
         exchange.setIn(inMessage);
+        extractSourceFromSoapHeader(inMessage.getHeaders(), request);
+        extractAttachmentsFromRequest(request, new DefaultAttachmentMessage(inMessage));
     }
 
     private void populateExchangeWithPropertiesFromMessageContext(MessageContext messageContext,
@@ -176,7 +178,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     }
 
     private void extractAttachmentsFromRequest(final WebServiceMessage request,
-                                               final SpringWebserviceMessage inMessage) {
+                                               final AttachmentMessage inMessage) {
         if (request instanceof MimeMessage) {
             Iterator<Attachment> attachmentsIterator = ((MimeMessage)request).getAttachments();
             while (attachmentsIterator.hasNext()) {

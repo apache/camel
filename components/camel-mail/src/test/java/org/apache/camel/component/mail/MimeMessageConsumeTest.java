@@ -36,6 +36,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -70,9 +71,9 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
         String text = exchange.getIn().getBody(String.class);
         assertEquals("mail body", body, text);
 
-        assertNotNull("attachments got lost", exchange.getIn().getAttachments());
-        for (String s : exchange.getIn().getAttachmentNames()) {
-            DataHandler dh = exchange.getIn().getAttachment(s);
+        assertNotNull("attachments got lost", exchange.getIn(AttachmentMessage.class).getAttachments());
+        for (String s : exchange.getIn(AttachmentMessage.class).getAttachmentNames()) {
+            DataHandler dh = exchange.getIn(AttachmentMessage.class).getAttachment(s);
             Object content = dh.getContent();
             assertNotNull("Content should not be empty", content);
             assertEquals("log4j2.properties", dh.getName());

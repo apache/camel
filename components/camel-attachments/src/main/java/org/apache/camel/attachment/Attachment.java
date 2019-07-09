@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.attachment;
 
 import java.util.Collection;
 import java.util.List;
 
 import javax.activation.DataHandler;
 
+import org.apache.camel.Message;
+
 /**
  * Represents an attachment as part of a {@link Message}.
  */
 public interface Attachment {
+
     /**
      * Return a DataHandler for the content within this attachment.
      *

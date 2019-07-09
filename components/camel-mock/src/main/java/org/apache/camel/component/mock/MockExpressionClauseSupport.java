@@ -147,13 +147,6 @@ public class MockExpressionClauseSupport<T> {
     }
 
     /**
-     * An expression of the inbound message attachments
-     */
-    public T attachments() {
-        return expression(ExpressionBuilder.attachmentObjectValuesExpression());
-    }
-
-    /**
      * An expression of the exchange pattern
      */
     public T exchangePattern() {

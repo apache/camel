@@ -41,7 +41,6 @@
         <cxf.xjc.jvmArgs/>
         <!-- dependency versions -->
         <abdera-version>1.1.3</abdera-version>
-        <javax-activation-version-range>[0,2)</javax-activation-version-range>
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.15.9</activemq-version>
         <activemq-artemis-version>2.9.0</activemq-artemis-version>
@@ -165,8 +164,8 @@
         <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
         <curator-version>2.12.0</curator-version>
         <cxf-version>3.3.2</cxf-version>
-        <cxf-version-range>[3.1,4.0)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.3.1</cxf-codegen-plugin-version>
+        <cxf-version-range>[3.3,4.0)</cxf-version-range>
+        <cxf-codegen-plugin-version>3.3.2</cxf-codegen-plugin-version>
         <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>3.2.0</cxf-xjc-utils-version>
         <deltaspike-version>1.9.0</deltaspike-version>
@@ -345,6 +344,8 @@
         <javax.el3-version>3.0.0</javax.el3-version>
         <javax.el-api-hibernate-validator-version>3.0.1-b04</javax.el-api-hibernate-validator-version>
         <javax.el-hibernate-validator-version>3.0.1-b10</javax.el-hibernate-validator-version>
+        <javax-activation-version-range>[0,2)</javax-activation-version-range>
+        <javax-activation-version>1.2.0</javax-activation-version>
         <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
         <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
         <javax-mail-version>1.6.1</javax-mail-version>
@@ -935,6 +936,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-atomix</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-attachments</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -6096,7 +6102,6 @@
             </activation>
             <properties>
                 <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
-                <camel.osgi.import.defaults>javax.activation;version="${javax-activation-version-range}"</camel.osgi.import.defaults>
             </properties>
             <build>
                 <pluginManagement>
@@ -6169,14 +6174,9 @@
                     <version>${jakarta-jaxb-version}</version>
                 </dependency>
                 <dependency>
-                    <groupId>com.sun.activation</groupId>
-                    <artifactId>javax.activation</artifactId>
-                    <version>1.2.0</version>
-                </dependency>
-                <dependency>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-                    <version>1.1.3</version>
+                    <version>${geronimo-ws-metadata-spec-version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.sun.xml.messaging.saaj</groupId>

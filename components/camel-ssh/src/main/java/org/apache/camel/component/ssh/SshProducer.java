@@ -73,8 +73,7 @@ public class SshProducer extends DefaultProducer {
             throw new CamelExchangeException("Cannot execute command: " + command, exchange, e);
         }
 
-        // propagate headers and attachments
+        // propagate headers
         exchange.getOut().getHeaders().putAll(in.getHeaders());
-        exchange.getOut().setAttachments(in.getAttachments());
     }
 }

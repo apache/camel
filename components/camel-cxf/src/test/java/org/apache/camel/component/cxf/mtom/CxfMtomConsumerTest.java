@@ -29,6 +29,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
@@ -53,7 +54,7 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                 from(MTOM_ENDPOINT_URI).process(new Processor() {
                     @SuppressWarnings("unchecked")
                     public void process(final Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
+                        AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
                         assertEquals("We should not get any attachements here.", 0, in.getAttachments().size());
                         assertEquals("Get a wrong Content-Type header", "application/xop+xml", in.getHeader("Content-Type"));
                         // Get the parameter list

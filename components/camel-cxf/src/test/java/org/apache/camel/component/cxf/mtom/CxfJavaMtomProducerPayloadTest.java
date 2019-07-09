@@ -22,6 +22,7 @@ import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.junit.Test;
 
 public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
@@ -50,7 +51,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         });
         
         // Make sure we don't put the attachement into out message
-        assertEquals("The attachement size should be 0 ", 0, exchange.getOut().getAttachments().size());
+        assertEquals("The attachement size should be 0 ", 0, exchange.getOut(AttachmentMessage.class).getAttachments().size());
         
         Object[] result = exchange.getOut().getBody(Object[].class);
         

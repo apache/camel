@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws.filter.impl;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
 import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.fest.assertions.Assertions;
@@ -70,8 +71,12 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
         exchange.getIn().getHeaders().clear();
         exchange.getOut().getHeaders().clear();
 
-        exchange.getIn().getAttachments().clear();
-        exchange.getOut().getAttachments().clear();
+        if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+            exchange.getIn(AttachmentMessage.class).getAttachments().clear();
+        }
+        if (exchange.getOut(AttachmentMessage.class).hasAttachments()) {
+            exchange.getOut(AttachmentMessage.class).getAttachments().clear();
+        }
 
         filter.filterProducer(exchange, message);
         filter.filterConsumer(exchange, message);
@@ -142,7 +147,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void producerWithAttachment() throws Exception {
-        exchange.getIn().addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getIn(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterProducer(exchange, message);
 
@@ -152,7 +157,7 @@ public class BasicMessageFilterTest extends ExchangeTestSupport {
 
     @Test
     public void consumerWithAttachment() throws Exception {
-        exchange.getOut().addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
+        exchange.getMessage(AttachmentMessage.class).addAttachment("testAttachment", new DataHandler(this.getClass().getResource("/sampleAttachment.txt")));
 
         filter.filterConsumer(exchange, message);
 

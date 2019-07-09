@@ -35,6 +35,7 @@ You may find how to do that in the examples.
 
 We have also modularized many of the core components and moved them out of `camel-core` to individual components:
 
+- camel-attachments
 - camel-bean
 - camel-browse
 - camel-controlbus
@@ -129,6 +130,16 @@ And the same for `<setProperty>`.
 ### javax.script
 
 The `camel-script` component has been removed and there is no support for javax.script, which is also deprecated in the JDK and to be removed from Java 11 onwards.
+
+### Attachments API on Message
+
+The attachments API (javax.activation) has been moved out of `org.apache.camel.message` into an extension `org.apache.camel.attachment.AttachmentMessage` from the `camel-attachments` JAR.
+
+To use this API you can get it via the `getMessage` method on `Exchange`:
+
+    AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
+    am.addAttachment("myAtt", new DataHandler(...));
+
 
 ### Mock component
 
