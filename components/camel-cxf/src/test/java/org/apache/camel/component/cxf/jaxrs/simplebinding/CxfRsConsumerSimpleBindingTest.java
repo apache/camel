@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
@@ -175,8 +176,8 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("abcd", exchange.getIn().getHeader("query"));
                         assertEquals("123", exchange.getIn().getHeader("id"));
-                        assertNotNull(exchange.getIn().getAttachment("part1"));
-                        assertNotNull(exchange.getIn().getAttachment("part2"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part1"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part2"));
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());
@@ -186,8 +187,8 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                 
                 from("direct:multipartPostWithoutParameters").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertNotNull(exchange.getIn().getAttachment("part1"));
-                        assertNotNull(exchange.getIn().getAttachment("part2"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part1"));
+                        assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part2"));
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());

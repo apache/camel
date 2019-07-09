@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.HttpEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
@@ -79,7 +80,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
 
                 Processor serviceProc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
+                        AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
                         // put the number of attachments in a response header
                         exchange.getOut().setHeader("numAttachments", in.getAttachments().size());
                         exchange.getOut().setBody(in.getHeader("body"));

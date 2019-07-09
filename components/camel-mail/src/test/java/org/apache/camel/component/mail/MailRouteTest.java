@@ -27,6 +27,7 @@ import javax.mail.MessagingException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -85,7 +86,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn().hasAttachments());
+        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments());
 
     }
 

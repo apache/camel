@@ -55,6 +55,7 @@
         <include>org.apache.camel:camel-atmosphere-websocket</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-atomix</include>
+        <include>org.apache.camel:camel-attachments</include>
         <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-aws-cw</include>
         <include>org.apache.camel:camel-aws-ddb</include>

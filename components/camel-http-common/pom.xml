@@ -35,17 +35,26 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
+            javax.activation.*;version="${javax-activation-version-range}",
             javax.servlet.*;version="${servlet-version-range}"
         </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
 
-        <!-- TODO: requires camel-core due camel.cloud is not in camel-support -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-cloud</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-attachments</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

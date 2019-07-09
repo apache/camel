@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.attachment;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
-import org.apache.camel.Attachment;
 import org.apache.camel.util.CollectionHelper;
 
 public class DefaultAttachment implements Attachment {

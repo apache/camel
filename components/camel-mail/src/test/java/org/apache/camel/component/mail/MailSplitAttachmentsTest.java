@@ -21,8 +21,8 @@ import javax.activation.FileDataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -50,37 +50,10 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
         exchange = endpoint.createExchange();
-        Message in = exchange.getIn();
+        AttachmentMessage in = exchange.getIn(AttachmentMessage.class);
         in.setBody("Hello World");
         in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
         in.addAttachment("log4j2.properties", new DataHandler(new FileDataSource("src/test/resources/log4j2.properties")));
-    }
-
-    @Test
-    public void testSplitAttachments() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMessageCount(2);
-
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-
-        mock.assertIsSatisfied();
-
-        Message first = mock.getReceivedExchanges().get(0).getIn();
-        Message second = mock.getReceivedExchanges().get(1).getIn();
-
-        assertEquals(1, first.getAttachments().size());
-        assertEquals(1, second.getAttachments().size());
-
-        String file1 = first.getAttachments().keySet().iterator().next();
-        String file2 = second.getAttachments().keySet().iterator().next();
-
-        boolean logo = file1.equals("logo.jpeg") || file2.equals("logo.jpeg");
-        boolean license = file1.equals("log4j2.properties") || file2.equals("log4j2.properties");
-
-        assertTrue("Should have logo.jpeg file attachment", logo);
-        assertTrue("Should have log4j2.properties file attachment", license);
     }
 
     @Test
@@ -88,17 +61,14 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(2);
 
-        // set the expression to extract the attachments as byte[]s
-        splitAttachmentsExpression.setExtractAttachments(true);
-
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
 
         mock.assertIsSatisfied();
 
-        Message first = mock.getReceivedExchanges().get(0).getIn();
-        Message second = mock.getReceivedExchanges().get(1).getIn();
+        AttachmentMessage first = mock.getReceivedExchanges().get(0).getIn(AttachmentMessage.class);
+        AttachmentMessage second = mock.getReceivedExchanges().get(1).getIn(AttachmentMessage.class);
 
         // check it's no longer an attachment, but is the message body
         assertEquals(0, first.getAttachments().size());
@@ -117,7 +87,7 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
-        splitAttachmentsExpression = new SplitAttachmentsExpression(false);
+        splitAttachmentsExpression = new SplitAttachmentsExpression();
 
         return new RouteBuilder() {
             @Override

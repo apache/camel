@@ -28,13 +28,14 @@ import javax.activation.DataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
-import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.attachment.Attachment;
+import org.apache.camel.attachment.AttachmentMessage;
+import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.camel.support.DefaultAttachment;
 import org.eclipse.jetty.util.MultiPartInputStreamParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,8 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                             attachment.addHeader(headerName, headerValue);
                         }
                     }
-                    message.addAttachmentObject(part.getName(), attachment);
+                    AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
+                    am.addAttachmentObject(part.getName(), attachment);
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot populate attachments", e);
@@ -82,12 +84,14 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request)request;
             jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
         }
-        
+
+        AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
+
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();
-            if (message.getAttachment(name) != null) {
-                DataHandler dh = message.getAttachment(name);
+            if (am.getAttachment(name) != null) {
+                DataHandler dh = am.getAttachment(name);
                 Object value = dh;
                 if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
                     value = request.getParameter(name);

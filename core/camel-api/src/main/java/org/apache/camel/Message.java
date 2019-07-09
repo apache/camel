@@ -17,10 +17,7 @@
 package org.apache.camel;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
-
-import javax.activation.DataHandler;
 
 import org.apache.camel.spi.HeadersMapFactory;
 
@@ -29,8 +26,7 @@ import org.apache.camel.spi.HeadersMapFactory;
  * href="http://camel.apache.org/message.html">Message</a> pattern and
  * represents an inbound or outbound message as part of an {@link Exchange}.
  * <p/>
- * See {@link org.apache.camel.support.DefaultMessage DefaultMessage} for how headers
- * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
+ * Headers is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
  * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  */
@@ -173,8 +169,7 @@ public interface Message {
     /**
      * Returns all of the headers associated with the message.
      * <p/>
-     * See {@link org.apache.camel.support.DefaultMessage DefaultMessage} for how headers
-     * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
+     * Headers is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
      * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
      * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
      * <p/>
@@ -302,93 +297,5 @@ public interface Message {
      * @param newBody the new body to use
      */
     void copyFromWithNewBody(Message message, Object newBody);
-
-    /**
-     * Copies the attachments of the other message into this message
-     *
-     * @param message the other message
-     */
-    void copyAttachments(Message message);
-
-    /**
-     * Returns the attachment specified by the id
-     *
-     * @param id the id under which the attachment is stored
-     * @return the data handler for this attachment or <tt>null</tt>
-     */
-    DataHandler getAttachment(String id);
-
-    /**
-     * Returns the attachment specified by the id
-     *
-     * @param id the id under which the attachment is stored
-     * @return the attachment or <tt>null</tt>
-     */
-    Attachment getAttachmentObject(String id);
-
-    /**
-     * Returns a set of attachment names of the message
-     *
-     * @return a set of attachment names
-     */
-    Set<String> getAttachmentNames();
-
-    /**
-     * Removes the attachment specified by the id
-     *
-     * @param id   the id of the attachment to remove
-     */
-    void removeAttachment(String id);
-
-    /**
-     * Adds an attachment to the message using the id
-     *
-     * @param id        the id to store the attachment under
-     * @param content   the data handler for the attachment
-     */
-    void addAttachment(String id, DataHandler content);
-
-    /**
-     * Adds an attachment to the message using the id
-     *
-     * @param id        the id to store the attachment under
-     * @param content   the attachment
-     */
-    void addAttachmentObject(String id, Attachment content);
-
-    /**
-     * Returns all attachments of the message
-     *
-     * @return the attachments in a map or <tt>null</tt>
-     */
-    Map<String, DataHandler> getAttachments();
-
-    /**
-     * Returns all attachments of the message
-     *
-     * @return the attachments in a map or <tt>null</tt>
-     */
-    Map<String, Attachment> getAttachmentObjects();
-
-    /**
-     * Set all the attachments associated with this message
-     *
-     * @param attachments the attachments
-     */
-    void setAttachments(Map<String, DataHandler> attachments);
-
-    /**
-     * Set all the attachments associated with this message
-     *
-     * @param attachments the attachments
-     */
-    void setAttachmentObjects(Map<String, Attachment> attachments);
-
-    /**
-     * Returns whether this message has attachments.
-     *
-     * @return <tt>true</tt> if this message has any attachments.
-     */
-    boolean hasAttachments();
 
 }

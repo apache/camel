@@ -293,13 +293,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * An expression of the inbound message attachments
-     */
-    public T attachments() {
-        return delegate.attachments();
-    }
-
-    /**
      * An expression of an exchange property of the given name
      */
     public T exchangeProperty(String name) {

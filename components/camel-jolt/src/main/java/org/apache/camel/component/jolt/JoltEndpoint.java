@@ -191,6 +191,5 @@ public class JoltEndpoint extends ResourceEndpoint {
             out.setBody(output);
         }
         out.setHeaders(exchange.getIn().getHeaders());
-        out.setAttachments(exchange.getIn().getAttachments());
     }
 }

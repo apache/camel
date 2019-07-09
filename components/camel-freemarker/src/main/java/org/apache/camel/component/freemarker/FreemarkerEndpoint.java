@@ -157,6 +157,5 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
         out.setHeaders(exchange.getIn().getHeaders());
-        out.setAttachments(exchange.getIn().getAttachments());
     }
 }

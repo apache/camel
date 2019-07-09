@@ -36,6 +36,7 @@
     <properties>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.atmosphere.websocket.*,
+            javax.activation.*;version="${javax-activation-version-range}",
             javax.servlet.*;version="${servlet-version-range}",
             org.atmosphere.*;version="${atmosphere-version-range}",
             org.apache.catalina;resolution:=optional,

@@ -39,6 +39,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.cxf.attachment.AttachmentDataSource;
@@ -86,10 +87,10 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
                 CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
-                exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 
+                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
-                exchange.getIn().addAttachment(MtomTestHelper.REQ_IMAGE_CID, 
+                exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
 
             }
@@ -102,11 +103,11 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         Assert.assertEquals(1, out.getBody().size());
         
 
-        DataHandler dr = exchange.getOut().getAttachment(MtomTestHelper.RESP_PHOTO_CID);
+        DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_PHOTO_CID);
         Assert.assertEquals("application/octet-stream", dr.getContentType());
         MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
    
-        dr = exchange.getOut().getAttachment(MtomTestHelper.RESP_IMAGE_CID);
+        dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_IMAGE_CID);
         Assert.assertEquals("image/jpeg", dr.getContentType());
         
         BufferedImage image = ImageIO.read(dr.getInputStream());
