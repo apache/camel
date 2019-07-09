@@ -17,15 +17,12 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.attachment.Attachment;
-import org.apache.camel.attachment.AttachmentMap;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
