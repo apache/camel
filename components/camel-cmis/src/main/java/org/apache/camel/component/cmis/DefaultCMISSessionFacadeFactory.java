@@ -19,7 +19,7 @@ package org.apache.camel.component.cmis;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 
 public class DefaultCMISSessionFacadeFactory implements CMISSessionFacadeFactory {
 
@@ -30,8 +30,8 @@ public class DefaultCMISSessionFacadeFactory implements CMISSessionFacadeFactory
         // must use a copy of the properties
         Map<String, Object> copy = new HashMap<>(endpoint.getProperties());
         // which we then set on the newly created facade
-        EndpointHelper.setReferenceProperties(endpoint.getCamelContext(), facade, copy);
-        EndpointHelper.setProperties(endpoint.getCamelContext(), facade, copy);
+        
+        PropertyBindingSupport.bindProperties(endpoint.getCamelContext(), facade, copy);
 
         return facade;
     }
