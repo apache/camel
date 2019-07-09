@@ -468,6 +468,7 @@
         <lz4-version>1.6.0</lz4-version>
         <!-- needed from tooling/archetypes -->
         <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
+        <jandex-maven-plugin-version>1.0.6</jandex-maven-plugin-version>
         <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.0.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
@@ -5640,6 +5641,19 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin-version}</version>
                 </plugin>
+                <plugin>
+                  <groupId>org.jboss.jandex</groupId>
+                  <artifactId>jandex-maven-plugin</artifactId>
+                  <version>${jandex-maven-plugin-version}</version>
+                  <executions>
+                      <execution>
+                          <id>make-index</id>
+                          <goals>
+                              <goal>jandex</goal>
+                          </goals>
+                      </execution>
+                  </executions>
+              </plugin>  
             </plugins>
         </pluginManagement>
         <plugins>
@@ -5748,6 +5762,10 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+              <groupId>org.jboss.jandex</groupId>
+              <artifactId>jandex-maven-plugin</artifactId>
+          </plugin>  
         </plugins>
     </build>
 
