@@ -319,17 +319,14 @@
         <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
         <javax-mail-version>1.6.1</javax-mail-version>
         <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
-        <javax.ws.rs-api-version>2.1.1</javax.ws.rs-api-version>
         <jaxb-bundle-version>2.3.1_1</jaxb-bundle-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
         <glassfish-jaxb-runtime-version>${jakarta-jaxb-version}</glassfish-jaxb-runtime-version>
-        <glassfish-jaxb-xjc-version>${jakarta-jaxb-version}</glassfish-jaxb-xjc-version>
         <jax-maven-plugin-version>0.1.6</jax-maven-plugin-version>
         <jaxb2-maven-plugin-version>2.4</jaxb2-maven-plugin-version>
         <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
         <jbpm-version>7.22.0.Final</jbpm-version>
-        <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
         <jboss-logging-version>3.3.2.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
@@ -373,26 +370,18 @@
         <johnzon-version>1.1.12</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <josql-bundle-version>1.5_5</josql-bundle-version>
-        <josql-version>1.5</josql-version>
         <!-- Upgrade to 1.7.26 causes stability issues. See CAMEL-10477 -->
         <jruby-version>1.7.18</jruby-version>
         <jsendnsca-version>2.1.1</jsendnsca-version>
         <jsmpp-version>2.3.7</jsmpp-version>
         <jsch-version>0.1.55</jsch-version>
         <jsch-bundle-version>0.1.55_1</jsch-bundle-version>
-        <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
-        <jsonlib-version>2.4</jsonlib-version>
-        <json4s-bundle-version>3.2.8_1</json4s-bundle-version>
-        <json-asm-version>1.0.2</json-asm-version>
         <json-accessors-smart-version>1.2</json-accessors-smart-version>
         <json-flattener-version>0.5.0</json-flattener-version>
         <json-path-version>2.4.0</json-path-version>
         <json-simple-version>1.1.1</json-simple-version>
-        <json-simple2-version>2.2.0</json-simple2-version>
         <json-smart-version>2.3</json-smart-version>
         <jsoup-version>1.11.3</jsoup-version>
-        <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
-        <jsr311-api-version>1.1.1</jsr311-api-version>
         <jt400-version>9.8</jt400-version>
         <jt400-bundle-version>9.8_1</jt400-bundle-version>
         <juel-bundle-version>2.1.3_1</juel-bundle-version>
