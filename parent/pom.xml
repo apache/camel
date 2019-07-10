@@ -263,9 +263,7 @@
         <hk2-version>2.5.0</hk2-version>
         <hk2-osgi-resource-version>1.0.1</hk2-osgi-resource-version>
         <hsqldb-version>2.5.0</hsqldb-version>
-        <htmlunit-version>2.24</htmlunit-version>
         <htmlunit-bundle-version>2.24_1</htmlunit-bundle-version>
-        <htmlunit-core-js-version>2.23</htmlunit-core-js-version>
         <htrace-version>3.1.0-incubating</htrace-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore4-version>4.4.11</httpcore4-version>
