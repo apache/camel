@@ -385,7 +385,6 @@
         <jt400-version>9.8</jt400-version>
         <jt400-bundle-version>9.8_1</jt400-bundle-version>
         <juel-bundle-version>2.1.3_1</juel-bundle-version>
-        <juel-version>2.1.3</juel-version>
         <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
         <junit-bundle-version>4.11_1</junit-bundle-version>
         <junit-toolbox-version>2.3</junit-toolbox-version>
@@ -415,7 +414,6 @@
         <log4j-version>1.2.17</log4j-version>
         <log4j2-version>2.11.2</log4j2-version>
         <logback-version>1.2.3</logback-version>
-        <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
         <lucene3-version>3.6.0</lucene3-version>
         <lucene-bundle-version>7.6.0_1</lucene-bundle-version>
         <!-- lucene aligned with elasticsearch version of lucene in use -->
