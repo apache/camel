@@ -47,6 +47,9 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
     @Test
     public void testDefaultConfig() throws Exception {
         Files.write(springTestFile.toPath(), "modification".getBytes(), StandardOpenOption.SYNC);
+        // Adding few millis to avoid fleaky tests
+        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
+        Thread.sleep(50);
         Files.write(springTestFile.toPath(), "modification 2".getBytes(), StandardOpenOption.SYNC);
         MockEndpoint mock = getMockEndpoint("mock:springTest");
         mock.setExpectedCount(2); // two MODIFY events
@@ -58,6 +61,9 @@ public class SpringFileWatcherTest extends CamelSpringTestSupport {
     @Test
     public void testCustomHasher() throws Exception {
         Files.write(springTestCustomHasherFile.toPath(), "first modification".getBytes(), StandardOpenOption.SYNC);
+        // Adding few millis to avoid fleaky tests
+        // The file hasher could sometimes evaluate these two changes as duplicate, as the second modification of file could be done before hashing is done
+        Thread.sleep(50);
         Files.write(springTestCustomHasherFile.toPath(), "second modification".getBytes(), StandardOpenOption.SYNC);
 
         MockEndpoint mock = getMockEndpoint("mock:springTestCustomHasher");

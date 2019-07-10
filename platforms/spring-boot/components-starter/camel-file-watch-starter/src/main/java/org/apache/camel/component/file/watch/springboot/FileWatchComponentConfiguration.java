@@ -38,6 +38,37 @@ public class FileWatchComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * The number of concurrent consumers. Increase this value, if your route is
+     * slow to prevent buffering in queue.
+     */
+    private Integer concurrentConsumers = 1;
+    /**
+     * Maximum size of queue between WatchService and consumer. Unbounded by
+     * default.
+     */
+    private Integer queueSize = 2147483647;
+    /**
+     * The number of threads polling WatchService. Increase this value, if you
+     * see OVERFLOW messages in log.
+     */
+    private Integer pollThreads = 1;
+    /**
+     * Reference to io.methvin.watcher.hashing.FileHasher. This prevents
+     * emitting duplicate events on some platforms. For working with large files
+     * and if you dont need detect multiple modifications per second per file,
+     * use #lastModifiedTimeFileHasher. You can also provide custom
+     * implementation in registry. The option is a
+     * io.methvin.watcher.hashing.FileHasher type.
+     */
+    private String fileHasher;
+    /**
+     * Enables or disables file hashing to detect duplicate events. If you
+     * disable this, you can get some events multiple times on some platforms
+     * and JDKs. Check java.nio.file.WatchService limitations for your target
+     * platform.
+     */
+    private Boolean useFileHashing = true;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -48,6 +79,46 @@ public class FileWatchComponentConfiguration
      * the newer property binding with additional capabilities
      */
     private Boolean basicPropertyBinding = false;
+
+    public Integer getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(Integer concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public Integer getQueueSize() {
+        return queueSize;
+    }
+
+    public void setQueueSize(Integer queueSize) {
+        this.queueSize = queueSize;
+    }
+
+    public Integer getPollThreads() {
+        return pollThreads;
+    }
+
+    public void setPollThreads(Integer pollThreads) {
+        this.pollThreads = pollThreads;
+    }
+
+    public String getFileHasher() {
+        return fileHasher;
+    }
+
+    public void setFileHasher(String fileHasher) {
+        this.fileHasher = fileHasher;
+    }
+
+    public Boolean getUseFileHashing() {
+        return useFileHashing;
+    }
+
+    public void setUseFileHashing(Boolean useFileHashing) {
+        this.useFileHashing = useFileHashing;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
