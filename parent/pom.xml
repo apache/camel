@@ -49,7 +49,6 @@
         <ant-bundle-version>1.7.0_6</ant-bundle-version>
         <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
-        <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
         <apacheds-version>2.0.0-M24</apacheds-version>
         <apache-drill-version>1.16.0</apache-drill-version>
         <apache-gora-version>0.8</apache-gora-version>
