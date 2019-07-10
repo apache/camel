@@ -273,7 +273,6 @@
         <hystrix-version>1.5.18</hystrix-version>
         <hystrix-bundle-version>1.5.18_1</hystrix-bundle-version>
         <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
-        <ibatis-version>2.3.4.726</ibatis-version>
         <ical4j-version>1.0.7</ical4j-version>
         <ignite-version>2.7.5</ignite-version>
         <infinispan-version>9.4.15.Final</infinispan-version>
@@ -291,7 +290,6 @@
         <ivy-version>2.4.0</ivy-version>
         <jackson-version>1.9.12</jackson-version>
         <jackson-spark-version>2.6.7</jackson-spark-version>
-        <jackson2-scala-version>2.6.1</jackson2-scala-version>
         <jackson2-version>2.9.9</jackson2-version>
         <jackrabbit-version>2.19.3</jackrabbit-version>
         <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
@@ -299,7 +297,6 @@
         <jasminb-jsonapi-version>0.9</jasminb-jsonapi-version>
         <jandex-version>2.1.1.Final</jandex-version>
         <jasn1-version>1.11.2</jasn1-version>
-        <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
         <jasypt-bundle-version>1.9.3_1</jasypt-bundle-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-apns-bundle-version>1.0.0.Beta6_1</java-apns-bundle-version>
@@ -312,7 +309,6 @@
         <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javapoet-version>1.11.1</javapoet-version>
-        <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
         <javassist-version>3.20.0-GA</javassist-version>
         <javax.el-api-version>2.2.5</javax.el-api-version>
         <javax.el-version>2.2.5</javax.el-version>
