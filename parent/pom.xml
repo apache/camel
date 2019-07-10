@@ -110,12 +110,9 @@
         <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
         <cassandra-version>3.7</cassandra-version>
         <cassandra-unit-version>3.1.3.2</cassandra-unit-version>
-        <castor-version>1.3.3</castor-version>
-        <castor-bundle-version>1.3.3_1</castor-bundle-version>
         <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
-        <cglib-bundle-version>3.2.12_1</cglib-bundle-version>
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.5.0</chunk-templates-version>
         <chunk-templates-bundle-version>3.5.0_1</chunk-templates-bundle-version>
