@@ -187,7 +187,6 @@
         <fabric8-maven-plugin-version>4.1.0</fabric8-maven-plugin-version>
         <facebook4j-core-version>2.4.13</facebook4j-core-version>
         <facebook4j-core-bundle-version>2.4.13_1</facebook4j-core-bundle-version>
-        <fastinfoset-version>1.2.13_1</fastinfoset-version>
         <fastjson-version>1.2.58</fastjson-version>
         <fastjson-bundle-version>1.2.58_1</fastjson-bundle-version>
         <felix-configadmin-version>1.8.8</felix-configadmin-version>
