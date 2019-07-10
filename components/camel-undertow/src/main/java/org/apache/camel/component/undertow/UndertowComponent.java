@@ -249,7 +249,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         if (!map.containsKey("undertowHttpBinding")) {
             // use the rest binding, if not using a custom http binding
-            endpoint.setUndertowHttpBinding(new RestUndertowHttpBinding());
+            endpoint.setUndertowHttpBinding(new RestUndertowHttpBinding(endpoint.isUseStreaming()));
         }
 
         // configure consumer properties

@@ -17,6 +17,8 @@
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Collection;
@@ -34,12 +36,14 @@ import io.undertow.websockets.core.WebSocketChannel;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,14 +152,28 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             doneUoW(camelExchange);
         }
 
+        sendResponse(httpExchange, camelExchange);
+    }
+
+    private void sendResponse(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException, NoTypeConversionAvailableException {
         Object body = getResponseBody(httpExchange, camelExchange);
-        TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
 
         if (body == null) {
             LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send("No response available");
+            return;
+        }
+
+        if (getEndpoint().isUseStreaming() && (body instanceof InputStream)) {
+            httpExchange.startBlocking();
+            try (InputStream input = (InputStream) body;
+                 OutputStream output = httpExchange.getOutputStream()) {
+                // flush on each write so that it won't cause OutOfMemoryError
+                IOHelper.copy(input, output, IOHelper.DEFAULT_BUFFER_SIZE, true);
+            }
         } else {
+            TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
             ByteBuffer bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }

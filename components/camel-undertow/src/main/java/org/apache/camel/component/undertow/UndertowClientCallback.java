@@ -55,11 +55,11 @@ import org.xnio.channels.StreamSinkChannel;
  * Undertow {@link ClientCallback} that will get notified when the HTTP
  * connection is ready or when the client failed to connect. It will also handle
  * writing the request and reading the response in
- * {@link #writeRequest(ClientExchange, ByteBuffer)} and
+ * {@link #writeRequest(ClientExchange)} and
  * {@link #setupResponseListener(ClientExchange)}. The main entry point is
  * {@link #completed(ClientConnection)} or {@link #failed(IOException)} in case
  * of errors, every error condition that should terminate Camel {@link Exchange}
- * should go to {@link #hasFailedWith(Exception)} and successful execution of
+ * should go to {@link #hasFailedWith(Throwable)} and successful execution of
  * the exchange should end with {@link #finish(Message)}. Any
  * {@link ClientCallback}s that are added here should extend
  * {@link ErrorHandlingClientCallback}, best way to do that is to use the
@@ -94,6 +94,12 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowClientCallback.class);
 
+    protected final UndertowEndpoint endpoint;
+
+    protected final Exchange exchange;
+
+    protected final ClientRequest request;
+
     private final ByteBuffer body;
 
     private final AsyncCallback callback;
@@ -104,12 +110,6 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
      */
     private final BlockingDeque<Closeable> closables = new LinkedBlockingDeque<>();
 
-    private final UndertowEndpoint endpoint;
-
-    private final Exchange exchange;
-
-    private final ClientRequest request;
-
     private final Boolean throwExceptionOnFailure;
 
     UndertowClientCallback(final Exchange exchange, final AsyncCallback callback, final UndertowEndpoint endpoint,
@@ -119,7 +119,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         this.endpoint = endpoint;
         this.request = request;
         this.body = body;
-        throwExceptionOnFailure = endpoint.getThrowExceptionOnFailure();
+        this.throwExceptionOnFailure = endpoint.getThrowExceptionOnFailure();
     }
 
     @Override
@@ -186,7 +186,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         finish(null);
     }
 
-    <T> ClientCallback<T> on(final Consumer<T> consumer) {
+    protected <T> ClientCallback<T> on(final Consumer<T> consumer) {
         return new ErrorHandlingClientCallback<>(consumer);
     }
 
@@ -196,7 +196,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         setupResponseListener(clientExchange);
 
         // write the request
-        writeRequest(clientExchange, body);
+        writeRequest(clientExchange);
     }
 
     void setupResponseListener(final ClientExchange clientExchange) {
@@ -266,7 +266,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         }
     }
 
-    void writeRequest(final ClientExchange clientExchange, final ByteBuffer body) {
+    protected void writeRequest(final ClientExchange clientExchange) {
         final StreamSinkChannel requestChannel = clientExchange.getRequestChannel();
         if (body != null) {
             try {

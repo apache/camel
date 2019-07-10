@@ -30,7 +30,10 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -246,6 +249,17 @@ public final class IOHelper {
         }
         output.flush();
         return total;
+    }
+
+    public static void transfer(ReadableByteChannel input, WritableByteChannel output) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(DEFAULT_BUFFER_SIZE);
+        while (input.read(buffer) >= 0) {
+            buffer.flip();
+            while (buffer.hasRemaining()) {
+                output.write(buffer);
+            }
+            buffer.clear();
+        }
     }
 
     /**
