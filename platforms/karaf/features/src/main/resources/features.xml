@@ -2285,6 +2285,7 @@
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-solr/${project.version}</bundle>
   </feature>
   <feature name='camel-soroush' version='${project.version}' start-level='50'>
