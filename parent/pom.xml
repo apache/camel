@@ -170,7 +170,6 @@
         <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
         <drools-version>7.22.0.Final</drools-version>
         <dropbox-version>3.1.1</dropbox-version>
-        <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
         <ehcache-version>2.10.6</ehcache-version>
