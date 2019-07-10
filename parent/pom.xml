@@ -310,8 +310,6 @@
         <javacrumbs-version>0.22</javacrumbs-version>
         <javapoet-version>1.11.1</javapoet-version>
         <javassist-version>3.20.0-GA</javassist-version>
-        <javax.el-api-version>2.2.5</javax.el-api-version>
-        <javax.el-version>2.2.5</javax.el-version>
         <javax.el3-version>3.0.0</javax.el3-version>
         <javax.el-api-hibernate-validator-version>3.0.1-b04</javax.el-api-hibernate-validator-version>
         <javax.el-hibernate-validator-version>3.0.1-b10</javax.el-hibernate-validator-version>
