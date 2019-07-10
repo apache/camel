@@ -580,9 +580,7 @@
         <spring-cloud-consul-version>2.1.1.RELEASE</spring-cloud-consul-version>
         <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
         <spring-cloud-zookeeper-version>2.0.0.RELEASE</spring-cloud-zookeeper-version>
-        <spring-data-commons-version>2.1.6.RELEASE</spring-data-commons-version>
         <spring-data-commons-bundle-version>2.1.6.RELEASE_1</spring-data-commons-bundle-version>
-        <spring-data-keyvalue-version>2.1.6.RELEASE</spring-data-keyvalue-version>
         <spring-data-keyvalue-bundle-version>2.1.6.RELEASE_1</spring-data-keyvalue-bundle-version>
         <spring-data-redis-version>2.1.6.RELEASE</spring-data-redis-version>
         <spring-data-redis-bundle-version>2.1.6.RELEASE_1</spring-data-redis-bundle-version>
