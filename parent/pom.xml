@@ -479,7 +479,6 @@
         <!-- should be in-sync with deltaspike -->
         <openwebbeans1-version>1.2.7</openwebbeans1-version>
         <openwebbeans-version>1.7.3</openwebbeans-version>
-        <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
         <okclient-version>3.11.0</okclient-version>
         <okclient-bundle-version>3.11.0_1</okclient-bundle-version>
         <olingo2-version>2.0.11</olingo2-version>
@@ -492,7 +491,6 @@
         <oncrpc-version>1.1.3</oncrpc-version>
         <openejb-version>4.7.5</openejb-version>
         <openjpa-version>2.4.3</openjpa-version>
-        <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
         <openstack4j-version>3.0.2</openstack4j-version>
         <openstack4j-guava-version>17.0</openstack4j-guava-version>
         <opentracing-version>0.33.0</opentracing-version>
@@ -531,17 +529,14 @@
         <rabbitmq-amqp-client-version>5.7.2</rabbitmq-amqp-client-version>
         <reactive-streams-version>1.0.2</reactive-streams-version>
         <reactor-version>3.2.10.RELEASE</reactor-version>
-        <reflections-version>0.9.11</reflections-version>
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
         <regexp-bundle-version>1.4_1</regexp-bundle-version>
         <rescu-version>2.0.2</rescu-version>
         <rest-assured-version>3.3.0</rest-assured-version>
         <restlet-version>2.3.12</restlet-version>
         <restlet-woodstox-version>4.3.0</restlet-woodstox-version>
-        <restlet-yaml-version>1.13</restlet-yaml-version>
         <revapi-java-version>0.19.1</revapi-java-version>
         <revapi-maven-plugin-version>0.11.1</revapi-maven-plugin-version>
-        <rhino-bundle-version>1.7.7.1_1</rhino-bundle-version>
         <rhino-version>1.7.7.1</rhino-version>
         <rhino-js-version>1.7R2</rhino-js-version>
         <ribbon-version>2.3.0</ribbon-version>
