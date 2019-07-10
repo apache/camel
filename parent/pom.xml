@@ -621,7 +621,6 @@
         <twilio-version>7.9.1</twilio-version>
         <twitter4j-bundle-version>4.0.7_1</twitter4j-bundle-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <uberfire-maven-support-version>1.3.0.Final</uberfire-maven-support-version>
         <undertow-version>1.4.26.Final</undertow-version>
         <univocity-parsers-version>2.8.2</univocity-parsers-version>
         <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
@@ -640,7 +639,6 @@
         <wiremock-version>2.23.2</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>5.2.1</woodstox-core-version>
-        <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
         <wsdl4j-bundle-version>1.6.3_1</wsdl4j-bundle-version>
         <wsdl4j-version>1.6.3</wsdl4j-version>
         <xalan-bundle-version>2.7.2_3</xalan-bundle-version>
@@ -661,10 +659,8 @@
         <xmlunit-version>2.6.2</xmlunit-version>
         <xpp3-bundle-version>1.1.4c_7</xpp3-bundle-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <xsdlib-version>2013.2</xsdlib-version>
         <xstream-bundle-version>1.4.11_1</xstream-bundle-version>
         <xstream-version>1.4.11</xstream-version>
-        <xom-version>1.2.5</xom-version>
         <zendesk-client-version>0.6.2</zendesk-client-version>
         <zipkin-reporter-version>2.8.3</zipkin-reporter-version>
         <zipkin-version>2.14.0</zipkin-version>
