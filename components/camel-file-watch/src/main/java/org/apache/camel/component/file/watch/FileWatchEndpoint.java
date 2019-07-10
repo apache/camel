@@ -43,7 +43,8 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
     private String path;
 
     @UriParam(label = "consumer",
-    description = "Coma separated list of events to watch. Allowed values are: CREATE, MODIFY, DELETE.",
+    enums = "CREATE,MODIFY,DELETE",
+    description = "Comma separated list of events to watch.",
     defaultValue = "CREATE,MODIFY,DELETE")
     private Set<FileEventEnum> events = new HashSet<>(Arrays.asList(FileEventEnum.values()));
 
@@ -56,12 +57,12 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
     @UriParam(label = "consumer",
     description = "The number of concurrent consumers. Increase this value, if your route is slow to prevent buffering in queue.",
     defaultValue = "1")
-    private int concurrentConsumers = 1;
+    private int concurrentConsumers;
 
     @UriParam(label = "consumer",
     description = "The number of threads polling WatchService. Increase this value, if you see OVERFLOW messages in log.",
     defaultValue = "1")
-    private int pollThreads = 1;
+    private int pollThreads;
 
     @UriParam(label = "consumer",
     description = "ANT style pattern to match files. The file is matched against path relative to endpoint path. "
@@ -71,7 +72,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
 
     @UriParam(label = "consumer", description = "Maximum size of queue between WatchService and consumer. Unbounded by default.",
     defaultValue = "" + Integer.MAX_VALUE)
-    private int queueSize = Integer.MAX_VALUE;
+    private int queueSize;
 
     @UriParam(label = "consumer",
     description = "Reference to io.methvin.watcher.hashing.FileHasher. "
@@ -79,24 +80,29 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
     + "For working with large files and if you dont need detect multiple modifications per second per file, "
     + "use #lastModifiedTimeFileHasher. You can also provide custom implementation in registry.",
     defaultValue = "#murmur3FFileHasher")
-    private FileHasher fileHasher = FileHasher.DEFAULT_FILE_HASHER;
+    private FileHasher fileHasher;
 
     @UriParam(label = "consumer",
     description = "Enables or disables file hashing to detect duplicate events. "
     + "If you disable this, you can get some events multiple times on some platforms and JDKs. "
     + "Check java.nio.file.WatchService limitations for your target platform.",
     defaultValue = "true")
-    private boolean useFileHashing = true;
+    private boolean useFileHashing;
 
     public FileWatchEndpoint() {
     }
 
     public FileWatchEndpoint(String uri, FileWatchComponent component) {
         super(uri, component);
+        setFileHasher(component.getFileHasher());
+        setConcurrentConsumers(component.getConcurrentConsumers());
+        setPollThreads(component.getPollThreads());
+        setQueueSize(component.getQueueSize());
+        setUseFileHashing(component.isUseFileHashing());
     }
 
     public FileWatchEndpoint(String uri, String remaining, FileWatchComponent component) {
-        super(uri, component);
+        this(uri, component);
         setPath(remaining);
     }
 

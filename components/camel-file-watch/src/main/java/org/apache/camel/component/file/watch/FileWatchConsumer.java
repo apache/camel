@@ -70,12 +70,12 @@ public class FileWatchConsumer extends DefaultConsumer {
             if (getEndpoint().isAutoCreate()) {
                 baseDirectory = Files.createDirectories(baseDirectory);
             } else {
-                throw new RuntimeCamelException("Path must exists when autoCreate = false");
+                throw new IllegalArgumentException("Path must exists when autoCreate = false");
             }
         }
 
         if (!Files.isDirectory(baseDirectory)) {
-            throw new RuntimeCamelException(String.format("Parameter path must be directory, %s given", baseDirectory.toString()));
+            throw new IllegalArgumentException(String.format("Parameter path must be directory, %s given", baseDirectory.toString()));
         }
 
         DirectoryWatcher.Builder watcherBuilder = DirectoryWatcher.builder()
