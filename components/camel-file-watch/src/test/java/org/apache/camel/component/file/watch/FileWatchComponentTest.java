@@ -115,8 +115,6 @@ public class FileWatchComponentTest extends FileWatchComponentTestBase {
         MockEndpoint mock = getMockEndpoint("mock:watchAll");
 
         Files.write(testFiles.get(0), "Hello".getBytes(), StandardOpenOption.SYNC);
-        //testFiles.get(0).toFile().renameTo(new File(testPath(), "hello.txt"));
-        //Assert.assertTrue(newFile.createNewFile());
 
         mock.setExpectedCount(1);
         mock.setResultWaitTime(1000);
