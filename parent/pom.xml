@@ -598,7 +598,6 @@
         <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
         <spymemcached-version>2.12.0</spymemcached-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
-        <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
         <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
         <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
         <squareup-retrofit2-bundle-version>2.5.0_2</squareup-retrofit2-bundle-version>
@@ -607,7 +606,6 @@
         <swagger-java-version>1.5.21</swagger-java-version>
         <swagger-java-parser-version>1.0.37</swagger-java-parser-version>
         <swagger-java-guava-version>20.0</swagger-java-guava-version>
-        <swagger-ui-version>2.2.10</swagger-ui-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
         <stax2v4-api-bundle-version>4.2</stax2v4-api-bundle-version>
