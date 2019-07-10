@@ -74,7 +74,6 @@
         <atmosphere-version-range>[2.5,3.0)</atmosphere-version-range>
         <atomix-version>1.0.8</atomix-version>
         <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
-        <atomix-copycat-version>1.2.8</atomix-copycat-version>
         <automaton-bundle-version>1.11-8_1</automaton-bundle-version>
         <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
         <avalon-version>4.3.1</avalon-version>
