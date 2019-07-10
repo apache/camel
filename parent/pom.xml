@@ -246,7 +246,6 @@
         <guice3-version>3.0</guice3-version>
         <guice-bundle-version>3.0_1</guice-bundle-version>
         <hadoop-bundle-version>1.2.1_1</hadoop-bundle-version>
-        <hadoop-version>1.2.1</hadoop-version>
         <hadoop2-bundle-version>2.7.2_1</hadoop2-bundle-version>
         <hadoop2-version>2.7.4</hadoop2-version>
         <hadoop2-protobuf-version>2.5.0</hadoop2-protobuf-version>
