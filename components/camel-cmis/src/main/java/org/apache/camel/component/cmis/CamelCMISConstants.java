@@ -19,9 +19,15 @@ package org.apache.camel.component.cmis;
 public interface CamelCMISConstants {
     String CMIS_DOCUMENT = "cmis:document";
     String CMIS_FOLDER = "cmis:folder";
+    String CMIS_ACTION = "cmis:action";
     String CMIS_FOLDER_PATH = "CamelCMISFolderPath";
+    String CMIS_OBJECT_ID = "ObjectId";
+    String CMIS_DESTIONATION_FOLDER_ID = "CamelCMISDestinationFolderId";
+    String CMIS_SOURCE_FOLDER_ID = "CamelCMISSourceFolderId";
+    String CMIS_DOCUMENT_PATH = "CamelCMISDocumentPath";
     String CAMEL_CMIS_RESULT_COUNT = "CamelCMISResultCount";
     String CAMEL_CMIS_RETRIEVE_CONTENT = "CamelCMISRetrieveContent";
     String CAMEL_CMIS_READ_SIZE = "CamelCMISReadSize";
     String CAMEL_CMIS_CONTENT_STREAM = "CamelCMISContent";
 }
+
