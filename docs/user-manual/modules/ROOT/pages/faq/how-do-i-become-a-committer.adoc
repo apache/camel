@@ -2,7 +2,7 @@
 === How can I become a committer
 
 First of all you need to get involved and
-xref:../../../../CONTRIBUTING.md[Contribute] via the mail list, forums, edit the
+https://github.com/apache/camel/blob/master/CONTRIBUTING.md[Contribute] via the mail list, forums, edit the
 documentation, work on the issue tracker and submit patches.
 
 Once you're contributing and your work is good, one of our

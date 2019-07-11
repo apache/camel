@@ -16,7 +16,7 @@ You will need to compile this example first:
 $ mvn compile
 ```
 
-### Run
+scala-dsl-supported-languages### Run
 
 To run the example, type:
 

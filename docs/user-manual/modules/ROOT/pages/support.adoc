@@ -110,7 +110,7 @@ We can help you much quicker if you try the following:
 * provide us with a JUnit test case that demonstrates your issue. e.g.
 if you think you've found a bug, can you create a test case to
 demonstrate the bug?
-* xref:../../../CONTRIBUTING.md[submit a patch] fixing the
+* https://github.com/apache/camel/blob/master/CONTRIBUTING.md[submit a patch] fixing the
 bug! (We also buy you beer when we meet you if you submit bug fixes
 :smile:)
 * for memory leak or performance related issues, if you can run a

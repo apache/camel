@@ -28,7 +28,7 @@ In this example we add our own xref:Processor-Processor.adoc[Processor]
 For further examples of this pattern in use you could look at one of the
 JUnit tests
 
-* xref:../../../test/java/org/apache/camel/processor/TransformTest.java?[TransformTest]
+* xref:../../../test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
 * xref:../../../test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
 
 === Using Spring XML

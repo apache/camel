@@ -88,7 +88,7 @@ injection annotations].
 ===== Camel Test Example
 
 Here is the Camel Test
-xref:../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/FilterTest.java[example]:
+xref:../../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/FilterTest.java[example]:
 
 [source,java]
 ----
@@ -103,7 +103,7 @@ overrides the `createRouteBuilder()` method.
 ===== CDI Test Example
 
 Here is the CDI Testing
-xref:../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
+xref:../../../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
 
 [source,java]
 ----
@@ -117,7 +117,7 @@ and the test classes that come with it.
 ===== Spring Test with XML Config Example
 
 Here is the Spring Testing
-xref:../../../components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
+xref:../../../../../components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
 using XML Config]:
 
 [source,java]
@@ -133,7 +133,7 @@ sending to an endpoint that is then reused in another test method).
 
 Also notice the use of `@ContextConfiguration` to indicate that by
 default we should look for the
-xref:../../../components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[`FilterTest-context.xml`
+xref:../../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[`FilterTest-context.xml`
 on the classpath] to configure the test case which looks like this:
 
 [source,xml]
@@ -145,7 +145,7 @@ include::../../../components/camel-spring/src/test/resources/org/apache/camel/sp
 ===== Spring Test with Java Config Example
 
 Here is the Spring Testing
-xref:../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
+xref:../../../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
 using Java Config]:
 
 [source,java]
@@ -171,7 +171,7 @@ register the RouteBuilder we create.
 
 Since *Camel 2.11.0* you can use the `CamelSpringJUnit4ClassRunner` with
 `CamelSpringDelegatingTestContextLoader` like
-xref:../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
+xref:../../../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
 using Java Config with `CamelSpringJUnit4ClassRunner`]:
 
 Since *Camel 2.18.0* `CamelSpringJUnit4ClassRunner` is deprecated. you can use the `CamelSpringRunner`
@@ -185,7 +185,7 @@ include::../../../components/camel-spring-javaconfig/src/test/java/org/apache/ca
 ===== Spring Test with XML Config and Declarative Configuration Example
 
 Here is a Camel test support enhanced xref:spring-testing.adoc[Spring
-Testing] xref:../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
+Testing] xref:../../../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
 using XML Config and pure Spring Test based configuration of the Camel
 Context]:
 
@@ -203,7 +203,7 @@ of annotations you can use in your tests.
 ===== Blueprint Test
 
 Here is the Blueprint Testing
-xref:../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
+xref:../../../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
 using XML Config]:
 
 [source,java]
@@ -213,7 +213,7 @@ include::../../../components/camel-test-blueprint/src/test/java/org/apache/camel
 
 Also notice the use of `getBlueprintDescriptors` to indicate that by
 default we should look for the
-xref:camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[`camelContext.xml`
+xref:../../../../../components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[`camelContext.xml`
 in the package] to configure the test case which looks like this:
 
 [source,xml]

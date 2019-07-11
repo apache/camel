@@ -3,7 +3,7 @@
 
 Camel recommends supporting the
 http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactional
-Client] from the xref:enterprise-integration-patterns.html[EIP patterns]
+Client] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 using spring transactions.
 
 image:http://www.enterpriseintegrationpatterns.com/img/TransactionalClientSolution.gif[image]
@@ -390,4 +390,4 @@ Camel to only do it for the current transaction and not globally.
 * xref:TransactionErrorHandler-TransactionErrorHandler.adoc[TransactionErrorHandler]
 * xref:ErrorHandler-ErrorHandler.adoc[Error Handler]
 * xref:jms-component.adoc[JMS]
-* xref:using-this-pattern.html[Using This Pattern]
+* xref:using-this-pattern.adoc[Using This Pattern]
