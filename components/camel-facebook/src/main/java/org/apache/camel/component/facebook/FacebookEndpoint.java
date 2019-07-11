@@ -37,6 +37,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
@@ -99,8 +100,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
             if (configuration == null) {
                 configuration = new FacebookEndpointConfiguration();
             }
-            EndpointHelper.setReferenceProperties(getCamelContext(), configuration, options);
-            EndpointHelper.setProperties(getCamelContext(), configuration, options);
+            PropertyBindingSupport.bindProperties(getCamelContext(), configuration, options);
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
