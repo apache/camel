@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.restlet;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
@@ -32,6 +33,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
 
     private static final Processor SET_ROUTE_ID_AS_BODY =
             exchange -> exchange.getIn().setBody(exchange.getFromRouteId());
+    private int port = AvailablePortFinder.getNextAvailable(6000);
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -46,8 +48,9 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
+
                 restConfiguration().component("restlet").host("localhost")
-                        .port(8088).bindingMode(RestBindingMode.auto);
+                        .port(port).bindingMode(RestBindingMode.auto);
 
                 rest("/app").get("/test1").id("test1").to("direct:setId")
                     .get("/test2").route().routeId("test2").to("direct:setId");
@@ -82,7 +85,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
     public void test() throws Exception {
         
         Assert.assertEquals("\"test1\"", template.requestBodyAndHeader(
-                "http4://localhost:8088/app/test1",
+                "http4://localhost:" + port + "/app/test1",
                 "",
                 Exchange.HTTP_METHOD,
                 HttpMethods.GET,
@@ -90,7 +93,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
         ));
 
         Assert.assertEquals("\"test2\"", template.requestBodyAndHeader(
-                "http4://localhost:8088/app/test2",
+                "http4://localhost:" + port + "/app/test2",
                 "",
                 Exchange.HTTP_METHOD,
                 HttpMethods.GET,
@@ -98,7 +101,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
         ));
 
         Assert.assertEquals("\"test3\"", template.requestBodyAndHeader(
-                "http4://localhost:8088/app/test3",
+                "http4://localhost:" + port + "/app/test3",
                 "",
                 Exchange.HTTP_METHOD,
                 HttpMethods.GET,
@@ -106,7 +109,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
         ));
 
         Assert.assertEquals("\"test4\"", template.requestBodyAndHeader(
-                "http4://localhost:8088/app/test4",
+                "http4://localhost:" + port + "/app/test4",
                 "",
                 Exchange.HTTP_METHOD,
                 HttpMethods.GET,
@@ -115,7 +118,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
 
 
         Assert.assertEquals("\"test5\"", template.requestBodyAndHeader(
-                "http4://localhost:8088/app/test5",
+                "http4://localhost:" + port +"/app/test5",
                 "",
                 Exchange.HTTP_METHOD,
                 HttpMethods.GET,
@@ -123,7 +126,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
         ));
 
         Assert.assertEquals("\"REST-TEST\"", template.requestBodyAndHeader(
-                "http4://localhost:8088/app/REST-TEST",
+                "http4://localhost:" + port + "/app/REST-TEST",
                 "",
                 Exchange.HTTP_METHOD,
                 HttpMethods.GET,
