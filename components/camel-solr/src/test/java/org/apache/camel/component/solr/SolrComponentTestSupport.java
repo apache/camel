@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -71,8 +72,10 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     protected QueryResponse executeSolrQuery(String query) throws SolrServerException, IOException {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
+        QueryRequest queryRequest = new QueryRequest(solrQuery);
+        queryRequest.setBasicAuthCredentials("solr", "SolrRocks");
         SolrClient solrServer = solrFixtures.getServer();
-        return solrServer.query("collection1", solrQuery);
+        return queryRequest.process(solrServer, "collection1");
     }
 
     @BeforeClass
