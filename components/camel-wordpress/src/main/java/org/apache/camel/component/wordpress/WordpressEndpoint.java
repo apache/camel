@@ -118,8 +118,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
             if (config == null) {
                 config = new WordpressComponentConfiguration();
             }
-            EndpointHelper.setReferenceProperties(getCamelContext(), config, options);
-            EndpointHelper.setProperties(getCamelContext(), config, options);
+            PropertyBindingSupport.bindProperties(getCamelContext(), config, options);
 
             if (config.getSearchCriteria() == null) {
                 final SearchCriteria searchCriteria = WordpressOperationType.valueOf(operation).getCriteriaType().newInstance();
