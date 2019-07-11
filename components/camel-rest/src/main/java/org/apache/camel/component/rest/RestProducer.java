@@ -37,8 +37,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.FileUtil;
@@ -377,8 +377,7 @@ public class RestProducer extends DefaultAsyncProducer {
             }
 
             // set reference properties first as they use # syntax that fools the regular properties setter
-            EndpointHelper.setReferenceProperties(context, dataFormat, copy);
-            EndpointHelper.setProperties(context, dataFormat, copy);
+            PropertyBindingSupport.bindProperties(context, dataFormat, copy);
         }
     }
 
