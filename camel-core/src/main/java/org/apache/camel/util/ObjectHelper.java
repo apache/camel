@@ -980,6 +980,8 @@ public final class ObjectHelper {
                     }
                 };
             }
+        } else if (value instanceof Map) {
+            return ((Map)value).entrySet();
         } else {
             return Collections.singletonList(value);
         }
