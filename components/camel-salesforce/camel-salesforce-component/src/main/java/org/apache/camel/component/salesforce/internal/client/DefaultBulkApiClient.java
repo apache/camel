@@ -428,6 +428,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
 
             // Disable XXE
             SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
             try {
                 spf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
                 spf.setFeature("http://xml.org/sax/features/external-general-entities", false);

@@ -27,9 +27,11 @@ import org.apache.camel.component.salesforce.api.dto.PlatformEvent;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.assertj.core.api.Assertions.entry;
 
+@Category(Standalone.class)
 public class PlatformEventsConsumerIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
