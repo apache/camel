@@ -47,6 +47,7 @@ type `DefaultCamelContext`.
 Note that this bean can be customized programmatically and other Camel
 context beans can be deployed in the application as well.
 
+[[CDI-Auto-detectingCamelroutes]]
 === Auto-detecting Camel routes
 
 Camel CDI automatically collects all the `RoutesBuilder` beans in the
