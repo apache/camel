@@ -23,6 +23,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -53,9 +54,7 @@ public class DataFormatComponent extends DefaultComponent {
             throw new IllegalArgumentException("Operation must be either marshal or unmarshal, was: " + operation);
         }
 
-        // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(getCamelContext(), df, parameters);
-        EndpointHelper.setProperties(getCamelContext(), df, parameters);
+        PropertyBindingSupport.bindProperties(getCamelContext(), df, parameters);
 
         DataFormatEndpoint endpoint = new DataFormatEndpoint(uri, this, df);
         endpoint.setOperation(operation);
