@@ -17,8 +17,11 @@
 package org.apache.camel.converter;
 
 import java.math.BigInteger;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,6 +48,14 @@ public class ObjectConverterTest extends Assert {
                 fail();
             }
         }
+
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("A", "AA");
+        map.put("B", "BB");
+        Iterator<?> it = ObjectConverter.iterable(map).iterator();
+        assertEquals(new SimpleEntry<>("A", "AA"), it.next());
+        assertEquals(new SimpleEntry<>("B", "BB"), it.next());
+        assertFalse(it.hasNext());
     }
 
     @Test
