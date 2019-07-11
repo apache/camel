@@ -29,12 +29,14 @@ import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * During integration tests setup, Salesforce has been configured to fire change
  * events for Account objects. This test merely uses some API calls to trigger
  * some change events, and then perform assertion on the received events.
  */
+@Category(Standalone.class)
 public class ChangeEventsConsumerIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final String ACCOUNT_NAME = "ChangeEventsConsumerIntegrationTest-TestAccount";
