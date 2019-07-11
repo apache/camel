@@ -14,20 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cmis;
+package org.apache.camel.component.cmis.exception;
 
-public interface CamelCMISConstants {
-    String CMIS_DOCUMENT = "cmis:document";
-    String CMIS_FOLDER = "cmis:folder";
-    String CMIS_ACTION = "cmis:action";
-    String CMIS_FOLDER_PATH = "CamelCMISFolderPath";
-    String CMIS_OBJECT_ID = "CamelCMISObjectId";
-    String CMIS_DESTIONATION_FOLDER_ID = "CamelCMISDestinationFolderId";
-    String CMIS_SOURCE_FOLDER_ID = "CamelCMISSourceFolderId";
-    String CMIS_DOCUMENT_PATH = "CamelCMISDocumentPath";
-    String CAMEL_CMIS_RESULT_COUNT = "CamelCMISResultCount";
-    String CAMEL_CMIS_RETRIEVE_CONTENT = "CamelCMISRetrieveContent";
-    String CAMEL_CMIS_READ_SIZE = "CamelCMISReadSize";
-    String CAMEL_CMIS_CONTENT_STREAM = "CamelCMISContent";
+public class CamelCmisException extends RuntimeException {
+
+    public CamelCmisException() {
+    }
+
+    public CamelCmisException(final String message) {
+        super(message);
+    }
+
+    public CamelCmisException(final Throwable cause) {
+        super(cause);
+    }
+
+    public CamelCmisException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public CamelCmisException(final String message, final Throwable cause,
+                              final boolean enableSuppression, final boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }
-

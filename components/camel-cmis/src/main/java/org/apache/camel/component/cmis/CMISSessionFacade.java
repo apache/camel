@@ -194,6 +194,10 @@ public class CMISSessionFacade {
         return session.getObjectByPath(path);
     }
 
+    public CmisObject getObjectById(String id) {
+        return this.session.getObject(id);
+    }
+
     public boolean isObjectTypeVersionable(String objectType) {
         if (CamelCMISConstants.CMIS_DOCUMENT.equals(getCMISTypeFor(objectType))) {
             ObjectType typeDefinition = session.getTypeDefinition(objectType);
