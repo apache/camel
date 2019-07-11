@@ -14,7 +14,7 @@ endif::[]
 
 The Micrometer component allows to collect various metrics directly
 from Camel routes. Supported metric types
-are xref:#MicrometerComponent-counter[counter], xref:#MicrometerComponent-distributionSummary[summary],
+are xref:#MicrometerComponent-counter[counter], xref:#MicrometerComponent-summary[summary],
 and xref:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
 simple way to measure the behaviour of an application. Configurable
 reporting backends (via Micrometer registries) enable different integration options for
@@ -307,7 +307,7 @@ from("direct:in")
 
 ----
 
-### [[MicrometerComponent-summary]]Distribution Summary
+=== [[MicrometerComponent-summary]]Distribution Summary
 
 [source]
 ----
@@ -375,7 +375,7 @@ from("direct:in")
 ----
 
 
-### [[MicrometerComponent-timer]]Timer
+=== [[MicrometerComponent-timer]]Timer
 
 [source]
 ----

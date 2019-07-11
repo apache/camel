@@ -1,9 +1,9 @@
 = Summary
 
-* xref:#overview.adoc[Overview]
-* xref:#documentation.adoc[Documentation]
-* xref:#community.adoc[Community]
-* xref:#developers.adoc[Developers]
+* <<Overview>>
+* <<Documentation>>
+* <<Community>>
+* <<Developers>>
 
 == Overview
 
@@ -16,7 +16,7 @@
 
 == Documentation
 
-* xref:#user-guide.adoc[User Guide]
+* <<User Guide>>
 * Manual
 * xref:books.adoc[Books]
 * Tutorials
@@ -25,8 +25,8 @@
 * xref:architecture.adoc[Architecture]
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 * xref:dsl.adoc[DSL]
-* xref:#components.adoc[Components]
-* xref:#data-formats.adoc[Data Formats]
+* <<Components>>
+* <<Data Formats>>
 * xref:languages.adoc[Languages]
 
 === User Guide
