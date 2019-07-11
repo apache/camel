@@ -3,7 +3,7 @@
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
-Delivery] from the xref:enterprise-integration-patterns.html[EIP
+Delivery] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using among others the following components:
 
 * xref:file2.adoc[File] for using file systems as a persistent store of

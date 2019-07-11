@@ -1,7 +1,7 @@
 [[pipeline-eip]]
 == Pipeline EIP
 
-Camel supports the xref:http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
+Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
 image:http://www.enterpriseintegrationpatterns.com/img/PipesAndFilters.gif[image]
 
