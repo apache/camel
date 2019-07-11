@@ -23,8 +23,9 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-
-
+import org.apache.solr.client.solrj.request.AbstractUpdateRequest;
+import org.apache.solr.client.solrj.request.AbstractUpdateRequest.ACTION;
+import org.apache.solr.client.solrj.request.UpdateRequest;
 
 public class SolrFixtures {
     static Logger log = Logger.getLogger(SolrFixtures.class);
@@ -50,13 +51,15 @@ public class SolrFixtures {
 
     String solrRouteUri() {
         if (serverType == TestServerType.USE_HTTPS) {
-            return "solrs://127.0.0.1:" + httpsPort + "/solr/collection1";
+            return "solrs://127.0.0.1:" + httpsPort + "/solr/collection1"
+                   + "?username=solr&password=SolrRocks";
         } else if (serverType == TestServerType.USE_CLOUD) {
             String zkAddrStr = cloudFixture.miniCluster.getZkServer().getZkAddress();
             return "solrCloud://localhost:" + httpsPort + "/solr?zkHost=" + zkAddrStr
-                   + "&collection=collection1";
+                   + "&collection=collection1&username=solr&password=SolrRocks";
         } else {
-            return "solr://localhost:" + port + "/solr/collection1";
+            return "solr://localhost:" + port + "/solr/collection1"
+                   + "?username=solr&password=SolrRocks";
         }
     }
 
@@ -99,18 +102,19 @@ public class SolrFixtures {
     }
 
     public static void clearIndex() throws SolrServerException, IOException {
+        UpdateRequest updateRequest = new UpdateRequest();
+        updateRequest.setBasicAuthCredentials("solr", "SolrRocks");
+        updateRequest.deleteByQuery("*:*");
+        updateRequest.setAction(ACTION.COMMIT, true, true);
         if (solrServer != null) {
             // Clear the Solr index.
-            solrServer.deleteByQuery("collection1", "*:*");
-            solrServer.commit("collection1");
+            updateRequest.process(solrServer, "collection1");
         }
         if (solrHttpsServer != null) {
-            solrHttpsServer.deleteByQuery("collection1", "*:*");
-            solrHttpsServer.commit("collection1");
+            updateRequest.process(solrHttpsServer, "collection1");
         }
         if (cloudFixture != null) {
-            cloudFixture.solrClient.deleteByQuery("*:*");
-            cloudFixture.solrClient.commit();
+            updateRequest.process(cloudFixture.solrClient);
         }
     }
 }
