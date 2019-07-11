@@ -31,7 +31,7 @@ import org.junit.Test;
 public class RestRestletRouterIdTest extends CamelTestSupport {
 
     private static final Processor SET_ROUTE_ID_AS_BODY =
-            exchange -> exchange.getIn().setBody(exchange.getFromRouteId());
+    exchange -> exchange.getIn().setBody(exchange.getFromRouteId());
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -72,9 +72,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
                         .to("direct:setId")
                         .endRest()
                 .to("direct:setId2");
-            }
-
-            ;
+            };
         };
     }
 
