@@ -68,6 +68,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.CastUtils;
@@ -1008,10 +1009,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         super.setCamelContext(c);
         if (this.properties != null) {
             try {
-                EndpointHelper.setReferenceProperties(getCamelContext(),
-                                             this,
-                                             this.properties);
-                EndpointHelper.setProperties(getCamelContext(),
+                PropertyBindingSupport.bindProperties(getCamelContext(),
                                              this,
                                              this.properties);
             } catch (Throwable e) {
@@ -1033,10 +1031,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
         if (getCamelContext() != null && this.properties != null) {
             try {
-                EndpointHelper.setReferenceProperties(getCamelContext(),
-                                             this,
-                                             this.properties);
-                EndpointHelper.setProperties(getCamelContext(),
+                PropertyBindingSupport.bindProperties(getCamelContext(),
                                              this,
                                              this.properties);
             } catch (Throwable e) {
