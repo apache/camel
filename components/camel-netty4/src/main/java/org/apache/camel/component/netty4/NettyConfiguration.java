@@ -37,6 +37,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -200,8 +201,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         addToHandlersList(decoders, referencedDecoders, ChannelHandler.class);
 
         // then set parameters with the help of the camel context type converters
-        EndpointHelper.setReferenceProperties(component.getCamelContext(), this, parameters);
-        EndpointHelper.setProperties(component.getCamelContext(), this, parameters);
+        PropertyBindingSupport.bindProperties(component.getCamelContext(), this, parameters);
 
         // additional netty options, we don't want to store an empty map, so set it as null if empty
         options = IntrospectionSupport.extractProperties(parameters, "option.");
