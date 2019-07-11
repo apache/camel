@@ -131,7 +131,7 @@ https://www.packtpub.com/application-development/mastering-apache-camel[Masterin
 Apache Camel] by https://twitter.com/jbonofre[Jean-Baptiste Onofré].
 Published by http://www.packtpub.com/[Packt publishing] in June 2015.
 
-xref:books/3151EN_Mastering_Apache_Camel.jpg?version=1&modificationDate=1453112264000&api=v2[image:books/3151EN_Mastering_Apache_Camel.jpg[image]]
+image:books/3151EN_Mastering_Apache_Camel.jpg[image]
 
 This book will provide you with the skills you need to efficiently
 create routes using Apache Camel.

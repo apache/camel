@@ -5,7 +5,7 @@ Here are a list of commonly asked questions and answers. If you have any
 questions which are not on this list, please talk to us on the
 xref:mailing-lists.adoc[Mailing Lists].
 
-We xref:../../../CONTRIBUTING.md[welcome contributions] and
+We https://github.com/apache/camel/blob/master/CONTRIBUTING.md[welcome contributions] and
 this entire website is in
 xref:faq/how-does-the-website-work.adoc[the GitHub repository you can send a pull request],
 so please join in and help us make the documentation better!

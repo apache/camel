@@ -7,12 +7,12 @@
 
 == Overview
 
-* xref:README.md[Introduction]
+* https://github.com/apache/camel/blob/master/README.md[Introduction]
 * xref:download.adoc[Download]
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
 * xref:faq.adoc[FAQ]
-* xref:notice.md[Legal Notice]
+* https://github.com/apache/camel/blob/master/docs/user-manual/en/notice.md[Legal Notice]
 
 == Documentation
 
@@ -20,14 +20,14 @@
 * Manual
 * xref:books.adoc[Books]
 * Tutorials
-* xref:#examples.adoc[Examples]
+* xref:examples.adoc[Examples]
 * Cookbook
-* xref:#architecture.adoc[Architecture]
+* xref:architecture.adoc[Architecture]
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
-* xref:#dsl.adoc[DSL]
+* xref:dsl.adoc[DSL]
 * xref:#components.adoc[Components]
 * xref:#data-formats.adoc[Data Formats]
-* xref:#languages.adoc[Languages]
+* xref:languages.adoc[Languages]
 
 === User Guide
 
@@ -557,7 +557,7 @@ camel routes without them knowing
 == Community
 
 * xref:support.adoc[Support]
-* xref:../../../CONTRIBUTING.md[Contributing]
+* https://github.com/apache/camel/blob/master/CONTRIBUTING.md[Contributing]
 * xref:mailing-lists.adoc[Mailing Lists]
 * Gitter / IRC Chat
 * xref:user-stories.adoc[User Stories]

@@ -461,8 +461,8 @@ public class CamelCdiTest {
 }
 ----
 
-You can find more information in <<cdi.adoc#CDI-Auto-detectingCamelroutes,auto-detecting Camel
-routes>>.
+You can find more information in xref:cdi.adoc#CDI-Auto-detectingCamelroutes[auto-detecting Camel
+routes].
 
 In case you prefer declaring the `RouteBuilder` bean in a separate class,
 for example to share it more easily across multiple test classes, you can use

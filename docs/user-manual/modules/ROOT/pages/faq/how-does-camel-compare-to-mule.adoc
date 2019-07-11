@@ -25,5 +25,5 @@ routing/mediation engines. The main differences are as follows:
 * Camel supports an implicit xref:../type-converter.adoc[Type Converter] in
   the core API to make it simpler to connect components together requiring
   different types of payload & headers
-* Camel uses the xref:../notice.md[Apache 2 License] rather than Mule's more restrictive
+* Camel uses the https://github.com/apache/camel/blob/master/docs/user-manual/en/notice.md[Apache 2 License] rather than Mule's more restrictive
   commercial license
