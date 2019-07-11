@@ -82,7 +82,7 @@ public class RestSwaggerComponentConfiguration
      * load swagger.json resource. Note that the host defined on the component
      * and endpoint of this Component should contain the scheme, hostname and
      * optionally the port in the URI syntax (i.e.
-     * \https://api.example.com:8080). Can be overridden in endpoint
+     * https://api.example.com:8080). Can be overridden in endpoint
      * configuration.
      */
     private URI specificationUri;
