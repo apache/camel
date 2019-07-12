@@ -246,7 +246,7 @@ INFO:Camel's OGNL support is for invoking methods only. You cannot access
 fields. Camel support accessing the length field of Java arrays.
 
 
-The xref:simple-language,Simple>> and <<simple-language.adoc[Bean] language now
+The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] language now
 supports a Camel OGNL notation for invoking beans in a chain like
 fashion. Suppose the Message IN body contains a POJO which has a `getAddress()`
 method.

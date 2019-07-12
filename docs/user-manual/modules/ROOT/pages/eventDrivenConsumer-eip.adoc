@@ -53,6 +53,6 @@ For more details see:
 If you would like to use this EIP Pattern then please read the
 xref:GettingStarted-GettingStarted.adoc[Getting Started], you may also find the
 xref:Architecture-Architecture.adoc[Architecture] useful particularly the description
-of xref:Endpoint-Endpoints,Endpoint>> and <<URIs-URIs.adoc[URIs]. Then you could
+of xref:Endpoint-Endpoints.adoc[Endpoint] and xref:URIs-URIs.adoc[URIs]. Then you could
 try out some of the xref:Examples-Examples.adoc[Examples] first before trying
 this pattern out.

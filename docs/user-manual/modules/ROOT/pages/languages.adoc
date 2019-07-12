@@ -28,7 +28,7 @@ The following is the list of currently supported languages:
 * xref:mvel-language.adoc[Mvel]
 * xref:ognl-language.adoc[OGNL]
 * xref:ref-language.adoc[Ref Language]
-* xref:exchangeproperty-language,ExchangeProperty>> / <<property-language.adoc[Property]
+* xref:exchangeproperty-language.adoc[ExchangeProperty] / xref:property-language.adoc[Property]
 * xref:scripting-languages-language.adoc[Scripting Languages] such as:
 ** xref:beanshell-language.adoc[BeanShell]
 ** xref:javascript-language.adoc[JavaScript]

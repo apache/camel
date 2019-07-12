@@ -39,7 +39,7 @@ The following data formats are currently supported:
 ** xref:csv-dataformat.adoc[CSV]
 ** xref:edi-dataformat.adoc[EDI]
 ** xref:flatpack-dataformat.adoc[Flatpack DataFormat]
-** uniVocity DataFormats xref:univocity-csv-dataformat,CSV>> / <<univocity-tsv-dataformat,TSV>> / <<univocity-fixed-dataformat.adoc[Fixed Length]
+** uniVocity DataFormats xref:univocity-csv-dataformat.adoc[CSV] / xref:univocity-tsv-dataformat.adoc[TSV] / xref:univocity-fixed-dataformat.adoc[Fixed Length]
 
 * Domain specific marshalling
 ** xref:hl7-dataformat.adoc[HL7 DataFormat]
@@ -81,7 +81,7 @@ And related is the following:
 
 If you receive a message from one of the Camel
 xref:component.adoc[Components] such as xref:file-component.adoc[File],
-xref:http-component,HTTP>> or <<jms-component.adoc[JMS] you often want to unmarshal
+xref:http-component.adoc[HTTP] or xref:jms-component.adoc[JMS] you often want to unmarshal
 the payload into some bean so that you can process it using some
 xref:bean-integration.adoc[Bean Integration] or perform
 xref:predicate.adoc[Predicate] evaluation and so forth. To do this use

@@ -12,7 +12,7 @@ implement this pattern using the underlying transport or protocols.
 image:http://www.enterpriseintegrationpatterns.com/img/EventMessageSolution.gif[image]
 
 The default behaviour of many xref:components.adoc[Components] is InOnly
-such as for xref:jms-component,JMS>>, <<jms-component.adoc[File] or
+such as for xref:jms-component.adoc[JMS], xref:jms-component.adoc[File] or
 xref:seda-component.adoc[SEDA]
 
 TIP: See the related xref:request-reply.adoc[Request Reply] message.

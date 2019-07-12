@@ -11,7 +11,7 @@ REST style with verbs such as get, post, delete etc.
 The Rest DSL is a facade that builds xref:rest-component.adoc[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
-as xref:restlet-component,Restlet>>, <<restlet-component.adoc[Spark-rest], and
+as xref:restlet-component.adoc[Restlet], xref:restlet-component.adoc[Spark-rest], and
 others that has native REST integration.
 
 === Components supporting Rest DSL

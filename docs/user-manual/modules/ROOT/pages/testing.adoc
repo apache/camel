@@ -237,7 +237,7 @@ correctly
 |xref:mock-component.adoc[Mock] |For testing routes and mediation rules using
 mocks and allowing assertions to be added to an endpoint
 
-|xref:test-component,Test>> |Creates a <<test-component.adoc[Mock] endpoint which
+|xref:test-component.adoc[Test] |Creates a xref:test-component.adoc[Mock] endpoint which
 expects to receive all the message bodies that could be polled from the
 given underlying endpoint
 |=======================================================================
@@ -266,7 +266,7 @@ a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[`java.util.concurrent.BlockingQueue`]
 which is good for testing asynchronous transports
 
-|xref:stub-component,Stub>> |Works like <<stub-component.adoc[SEDA] but does not
+|xref:stub-component.adoc[Stub] |Works like xref:stub-component.adoc[SEDA] but does not
 validate the endpoint URI, which makes stubbing much easier.
 |=======================================================================
 

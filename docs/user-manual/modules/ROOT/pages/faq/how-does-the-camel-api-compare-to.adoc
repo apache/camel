@@ -6,8 +6,8 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchan
 and
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message]
 map very closely to JBI in particular but also
-xref:cxf-component,CXF>>, <<http-component,HTTP>>, <<jms-component.adoc[JMS],
-xref:mail-component,Mail>>, <<xmpp-component.adoc[XMPP] and most other integration
+xref:cxf-component.adoc[CXF], xref:http-component.adoc[HTTP], xref:jms-component.adoc[JMS],
+xref:mail-component.adoc[Mail], xref:xmpp-component.adoc[XMPP] and most other integration
 abstractions. We want to prevent leaky abstractions, so the Camel API
 exposes the underlying APIs so that a xref:../processor.adoc[Processor] can
 make use of the underlying abstractions if they make sense.
