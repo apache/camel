@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.Callable;
 
@@ -612,8 +611,6 @@ public final class ObjectHelper {
                     };
                 };
             }
-        } else if (value instanceof Map) {
-            return ((Map)value).entrySet();
         } else {
             return Collections.singletonList(value);
         }
