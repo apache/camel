@@ -232,7 +232,7 @@ In this Spring DSL we have defined to use `iso-8859-1` as the encoding:
 
 *Available as of Camel 2.11*
 
-When marshalling using xref:jaxb-dataformat,JAXB>> or <<jaxb-dataformat.adoc[SOAP] then
+When marshalling using xref:jaxb-dataformat.adoc[JAXB] or xref:jaxb-dataformat.adoc[SOAP] then
 the JAXB implementation will automatic assign namespace prefixes, such
 as ns2, ns3, ns4 etc. To control this mapping, Camel allows you to refer
 to a map which contains the desired mapping.
@@ -254,7 +254,7 @@ namespace "http://www.mycompany.com/foo/2" is not using any prefix.
   </util:map>
 -----------------------------------------------------------------------
 
-To use this in xref:jaxb-dataformat,JAXB>> or <<jaxb-dataformat.adoc[SOAP] you refer to
+To use this in xref:jaxb-dataformat.adoc[JAXB] or xref:jaxb-dataformat.adoc[SOAP] you refer to
 this map, using the `namespacePrefixRef` attribute as shown below. Then
 Camel will lookup in the Registry a `java.util.Map`
 with the id "myMap", which was what we defined above.

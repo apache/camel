@@ -4,7 +4,7 @@
 *Available as of Camel version 1.0*
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component,Mock>>, <<mock-component.adoc[Test]
+notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.adoc[Test]
 and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
@@ -28,7 +28,7 @@ Expression to create an order testing function,
 * Messages arrive match some kind of Predicate such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
-xref:xpath-language,XPath>> or <<xpath-language.adoc[XQuery]
+xref:xpath-language.adoc[XPath] or xref:xpath-language.adoc[XQuery]
 Expression.
 
 [NOTE]
