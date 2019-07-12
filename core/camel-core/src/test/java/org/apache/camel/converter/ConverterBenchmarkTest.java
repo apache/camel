@@ -42,7 +42,7 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
 
-public class ConverterBenchmark {
+public class ConverterBenchmarkTest {
 
     @Ignore
     @Test

@@ -31,19 +31,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @SpringBootTest(
     classes = {
-        GroupConditionTestBase.TestConfiguration.class
+        GroupCondition3Test.TestConfiguration.class
     },
     properties = {
-        "test.group.enabled=false",
-        "test.group.my-class.enabled=true"
+        "test.group.enabled=true",
+        "test.group.my-class.enabled=false"
     }
 )
-public class GroupConditionTest1 extends GroupConditionTestBase {
+public class GroupCondition3Test extends GroupConditionTestBase {
     @Autowired
     ApplicationContext context;
 
     @Test
     public void testCondition() {
-        Assert.assertEquals(1, context.getBeansOfType(MyClass.class).size());
+        Assert.assertEquals(0, context.getBeansOfType(MyClass.class).size());
     }
 }

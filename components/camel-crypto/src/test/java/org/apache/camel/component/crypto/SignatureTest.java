@@ -45,7 +45,7 @@ import static org.apache.camel.component.crypto.DigitalSignatureConstants.KEYSTO
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY;
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT;
 
-public class SignatureTests extends CamelTestSupport {
+public class SignatureTest extends CamelTestSupport {
 
     private KeyPair keyPair;
     private String payload = "Dear Alice, Rest assured it's me, signed Bob";
@@ -63,6 +63,7 @@ public class SignatureTests extends CamelTestSupport {
         registry.bind("myPublicKey", cert.getPublicKey());
         registry.bind("myCert", cert);
         registry.bind("myPrivateKey", keystore.getKey("bob", "letmein".toCharArray()));
+        registry.bind("someRandom", new SecureRandom());
         return registry;
     }
 
@@ -401,7 +402,7 @@ public class SignatureTests extends CamelTestSupport {
 
     public static KeyStore loadKeystore() throws Exception {
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        InputStream in = SignatureTests.class.getResourceAsStream("/ks.keystore");
+        InputStream in = SignatureTest.class.getResourceAsStream("/ks.keystore");
         keystore.load(in, "letmein".toCharArray());
         return keystore;
     }

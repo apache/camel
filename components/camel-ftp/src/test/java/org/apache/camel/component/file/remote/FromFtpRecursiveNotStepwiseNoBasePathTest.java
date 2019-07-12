@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FromFtpRecursiveNotStepwiseNoBasePath extends FtpServerTestSupport {
+public class FromFtpRecursiveNotStepwiseNoBasePathTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false"

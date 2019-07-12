@@ -23,7 +23,7 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Test;
 
-public class ConsumerMultiThread extends SoroushBotTestSupport {
+public class ConsumerMultiThreadTest extends SoroushBotTestSupport {
 
     @Test
     public void supportForConcurrentThreadTest() throws InterruptedException {

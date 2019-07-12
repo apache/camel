@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class SplitterParallelRuntimeExceptionInHasNextOrNext extends ContextTestSupport {
+public class SplitterParallelRuntimeExceptionInHasNextOrNextTest extends ContextTestSupport {
 
     /**
      * Tests that only one aggregator thread is created if a RuntimeException in

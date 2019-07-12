@@ -26,7 +26,7 @@ import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.utils.CongestionException;
 import org.junit.Test;
 
-public class ConsumerExceptionHandledWithErrorHandler extends SoroushBotTestSupport {
+public class ConsumerExceptionHandledWithErrorHandlerTest extends SoroushBotTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
