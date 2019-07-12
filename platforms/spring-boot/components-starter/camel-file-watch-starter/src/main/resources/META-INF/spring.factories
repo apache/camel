@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-FileWatchComponentAutoConfiguration
+org.apache.camel.component.file.watch.springboot.FileWatchComponentAutoConfiguration
