@@ -16,7 +16,7 @@ Recipient List.
 If the message body is stream based, which means the input it receives
 is submitted to Camel as a stream. That means you will only be able to
 read the content of the stream *once*. So often when you use
-xref:xpath-language,XPath>> as <<xpath-language.adoc[Message Filter] or
+xref:xpath-language.adoc[XPath] as xref:xpath-language.adoc[Message Filter] or
 Content Based Router then you need to
 access the data multiple times, and you should use
 Stream Caching or convert the message body to

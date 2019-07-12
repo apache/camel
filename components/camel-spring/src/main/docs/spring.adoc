@@ -5,7 +5,7 @@ Apache Camel is designed to work nicely with the
 http://www.springframework.org/[Spring Framework] in a number of ways.
 
 * Camel uses Spring Transactions as the default transaction handling in
-components like xref:jms-component,JMS>> and <<jms-component.adoc[JPA]
+components like xref:jms-component.adoc[JMS] and xref:jms-component.adoc[JPA]
 * Camel works with Spring 2 XML processing with the
 Xml Configuration
 * Camel Spring XML Schema's is defined at xref:xml-reference.adoc[Xml
