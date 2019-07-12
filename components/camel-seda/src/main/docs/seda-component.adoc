@@ -17,7 +17,7 @@ applications), see the xref:vm-component.adoc[VM] component.
 This component does not implement any kind of persistence or recovery,
 if the VM terminates while messages are yet to be processed. If you need
 persistence, reliability or distributed SEDA, try using either
-xref:jms-component,JMS>> or <<jms-component.adoc[ActiveMQ].
+xref:jms-component.adoc[JMS] or xref:jms-component.adoc[ActiveMQ].
 
 TIP:*Synchronous*
 The xref:direct-component.adoc[Direct] component provides synchronous invocation
