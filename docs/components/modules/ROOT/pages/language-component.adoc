@@ -15,7 +15,7 @@ script is dynamic defined as well.
 This component is provided out of the box in `camel-core` and hence no
 additional JARs is needed. You only have to include additional Camel
 components if the language of choice mandates it, such as using
-xref:groovy-language,Groovy>> or <<groovy-language.adoc[JavaScript] languages.
+xref:groovy-language.adoc[Groovy] or xref:groovy-language.adoc[JavaScript] languages.
 
 === URI format
 
