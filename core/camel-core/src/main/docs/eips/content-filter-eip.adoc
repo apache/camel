@@ -15,8 +15,8 @@ content from the inbound message.
 image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
 
 A common way to filter messages is to use an
-xref:Expression-Expressions,Expression>> in the <<DSL-DSL.adoc[DSL] like
-xref:xquery-language,XQuery>>, <<sql-language.adoc[SQL] or one of the supported
+xref:Expression-Expressions.adoc[Expression] in the xref:DSL-DSL.adoc[DSL] like
+xref:xquery-language.adoc[XQuery], xref:sql-language.adoc[SQL] or one of the supported
 xref:ScriptingLanguages-ScriptingLanguages.adoc[Scripting Languages].
 
 === Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]
@@ -60,6 +60,6 @@ interested in:
 If you would like to use this EIP Pattern then please read the
 xref:GettingStarted-GettingStarted.adoc[Getting Started], you may also find the
 xref:Architecture-Architecture.adoc[Architecture] useful particularly the description
-of xref:Endpoint-Endpoints,Endpoint>> and <<URIs-URIs.adoc[URIs]. Then you could
+of xref:Endpoint-Endpoints.adoc[Endpoint] and xref:URIs-URIs.adoc[URIs]. Then you could
 try out some of the xref:Examples-Examples.adoc[Examples] first before trying
 this pattern out.

@@ -102,7 +102,7 @@ using the plus sign `+` such as shown below:
 ----
 
 In the example above the uri is a combination
-of xref:simple-language,Simple>> language and <<simple-language.adoc[XPath] where
+of xref:simple-language.adoc[Simple] language and xref:simple-language.adoc[XPath] where
 the first part is simple (simple is default language). And then the plus
 sign separate to another language, where we specify the language name
 followed by a colon
