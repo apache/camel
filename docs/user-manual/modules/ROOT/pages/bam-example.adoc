@@ -85,7 +85,7 @@ occurs in this example we just send it to the xref:log-component.adoc[Log]
 component to log out an error level message to commons-logging / log4j.
 You could change this to use some of the other
 Components such as ActiveMQ,
-xref:jms-component,JMS>>, <<jms-component,IRC>>, <<jms-component.adoc[Mail],
+xref:jms-component.adoc[JMS], xref:jms-component.adoc[IRC], xref:jms-component.adoc[Mail],
 xref:xmpp-component.adoc[XMPP] etc.
 
 [[BAMExample-Runningtheexample]]

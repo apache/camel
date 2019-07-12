@@ -191,7 +191,7 @@ In the above we can use the
 Parameter Binding Annotations
 to bind different parts of the Message to method
 parameters or use an Expression such as using
-xref:xpath-language,XPath>> or <<xpath-language.adoc[XQuery].
+xref:xpath-language.adoc[XPath] or xref:xpath-language.adoc[XQuery].
 
 The method can be invoked in a number of ways as described in the
 Bean Integration such as

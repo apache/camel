@@ -112,7 +112,7 @@ wish to use.
 
 |Scripting Languages such as
 BeanShell, JavaScript,
-xref:groovy-language,Groovy>>, <<groovy-language,PHP>>, <<groovy-language.adoc[Python]
+xref:groovy-language.adoc[Groovy], xref:groovy-language.adoc[PHP], xref:groovy-language.adoc[Python]
 and xref:ruby-language.adoc[Ruby] |http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/ScriptBuilder.html[org.apache.camel.builder.script.ScriptBuilder]
 
 |xref:sql-component.adoc[SQL] |http://camel.apache.org/maven/current/camel-josql/apidocs/org/apache/camel/builder/sql/SqlBuilder.html[org.apache.camel.builder.josql.SqlBuilder]
