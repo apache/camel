@@ -107,6 +107,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             pipeline.addLast("decoder-" + x, decoder);
         }
         pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
+        pipeline.addLast("streamer", new CustomChunkedWriteHandler());
 
         if (producer.getConfiguration().getRequestTimeout() > 0) {
             if (LOG.isTraceEnabled()) {
