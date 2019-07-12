@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.restlet;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
@@ -25,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.HttpMethods;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
@@ -116,7 +116,7 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
 
 
         Assert.assertEquals("\"test5\"", template.requestBodyAndHeader(
-                "http4://localhost:" + port +"/app/test5",
+                "http4://localhost:" + port + "/app/test5",
                 "",
                 Exchange.HTTP_METHOD,
                 HttpMethods.GET,
