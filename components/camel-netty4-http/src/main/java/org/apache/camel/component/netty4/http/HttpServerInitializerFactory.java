@@ -108,6 +108,7 @@ public class HttpServerInitializerFactory extends ServerInitializerFactory {
             pipeline.addLast("encoder-" + x, encoder);
         }
         pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
+        pipeline.addLast("streamer", new CustomChunkedWriteHandler());
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }

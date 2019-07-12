@@ -85,6 +85,7 @@ public class HttpServerSharedInitializerFactory extends HttpServerInitializerFac
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isChunked()) {
             pipeline.addLast("aggregator", new HttpObjectAggregator(configuration.getChunkedMaxContentLength()));
+            pipeline.addLast("streamer", new CustomChunkedWriteHandler());
         }
         if (configuration.isCompression()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
