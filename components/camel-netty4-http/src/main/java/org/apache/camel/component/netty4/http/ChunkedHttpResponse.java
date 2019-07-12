@@ -27,9 +27,6 @@ import io.netty.handler.stream.ChunkedStream;
 
 import java.io.InputStream;
 
-/**
- * @author <a href="mailto:zfeng@redhat.com">Zheng Feng</a>
- */
 public class ChunkedHttpResponse extends DefaultHttpResponse implements ChunkedInput<HttpContent> {
     private HttpChunkedInput input;
 
