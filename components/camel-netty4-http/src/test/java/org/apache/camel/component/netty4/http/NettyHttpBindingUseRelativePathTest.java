@@ -24,7 +24,7 @@ import org.apache.camel.component.http4.HttpMethods;
 import org.junit.Test;
 
 
-public class NettyHttpBindingUseRelativePath extends BaseNettyTest {
+public class NettyHttpBindingUseRelativePathTest extends BaseNettyTest {
 
     @Test
     public void testSendToNettyWithPath() throws Exception {

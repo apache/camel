@@ -17,14 +17,12 @@
 package org.apache.camel.component.soroushbot.component;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.soroushbot.IOUtils;
 import org.apache.camel.component.soroushbot.models.MinorType;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
@@ -34,11 +32,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ProducerDownloadFile extends SoroushBotTestSupport {
+public class ProducerUploadFileTest extends SoroushBotTestSupport {
 
     @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
-
 
     @Override
     @Before
@@ -52,20 +49,23 @@ public class ProducerDownloadFile extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/token")
+                from("direct:soroush").to("soroush://" + SoroushAction.uploadFile + "/token")
                         .process(exchange -> {
                             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
-                            body.setFile((InputStream) null);
-                            body.setThumbnail((InputStream) null);
+                            if (body.getFileUrl() == null) {
+                                throw new AssertionError("file url is null");
+                            }
+                            if (body.getThumbnailUrl() == null) {
+                                throw new AssertionError("thumb url is null");
+                            }
                         })
-                        .to("soroush://" + SoroushAction.downloadFile + "/token")
                         .to("mock:soroush");
             }
         };
     }
 
     @Test
-    public void checkDownloadFile() throws InterruptedException, IOException {
+    public void autoUploadTest() throws Exception {
         SoroushMessage body = new SoroushMessage();
         body.setType(MinorType.TEXT);
         body.setFrom("b1");
@@ -78,9 +78,12 @@ public class ProducerDownloadFile extends SoroushBotTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:soroush");
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
+        Assert.assertEquals("no message sent.", SoroushBotWS.getReceivedMessages().size(), 0);
         SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
-        Assert.assertEquals("download file successfully", new String(IOUtils.readFully(mockedMessage.getFile(), 1000, false)), fileContent);
-        Assert.assertEquals("download thumbnail successfully", new String(IOUtils.readFully(mockedMessage.getThumbnail(), 1000, false)), thumbContent);
+        Map<String, String> fileIdToContent = SoroushBotWS.getFileIdToContent();
+        Assert.assertEquals("file uploaded successfully", fileIdToContent.size(), 2);
+        Assert.assertEquals(fileIdToContent.get(mockedMessage.getFileUrl()), fileContent);
+        Assert.assertEquals(fileIdToContent.get(mockedMessage.getThumbnailUrl()), thumbContent);
     }
 
 }

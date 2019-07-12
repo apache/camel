@@ -21,9 +21,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class DisruptorReconfigureWithBlockingProducer extends CamelTestSupport {
+@Ignore("CAMEL-13629: Flaky test")
+public class DisruptorReconfigureWithBlockingProducerTest extends CamelTestSupport {
 
     @Test
     public void testDisruptorReconfigureWithBlockingProducer() throws Exception {

@@ -23,25 +23,22 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.junit.Test;
 
-public class ConsumerQueueCapacityPerThread extends SoroushBotTestSupport {
+public class ConsumerRetryOnConnectionFailureTest extends SoroushBotTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("soroush:" + SoroushAction.getMessage + "/150?queueCapacityPerThread=1&concurrentConsumers=2")
-                        .process(exchange -> {
-                            Thread.sleep(1000);
-                        }).to("mock:ConsumerQueueCapacityPerThread");
+                from("soroush://" + SoroushAction.getMessage + "/5 CLOSE?maxConnectionRetry=1")
+                        .to("mock:ConsumerRetryOnConnectionFailure");
             }
         };
     }
 
     @Test
-    public void checkOnly4ExchangeReceiveToTheEnd() throws InterruptedException {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:ConsumerQueueCapacityPerThread");
-        mockEndpoint.expectedMessageCount(6);
-        mockEndpoint.setAssertPeriod(4000);
+    public void checkIfConsumerReceive15message() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:ConsumerRetryOnConnectionFailure");
+        mockEndpoint.expectedMessageCount(15);
         mockEndpoint.assertIsSatisfied();
     }
 }

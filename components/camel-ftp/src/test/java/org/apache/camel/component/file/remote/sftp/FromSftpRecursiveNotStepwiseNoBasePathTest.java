@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FromSftpRecursiveNotStepwiseNoBasePath extends SftpServerTestSupport {
+public class FromSftpRecursiveNotStepwiseNoBasePathTest extends SftpServerTestSupport {
 
     protected String getSftpUrl() {
         return "sftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false"

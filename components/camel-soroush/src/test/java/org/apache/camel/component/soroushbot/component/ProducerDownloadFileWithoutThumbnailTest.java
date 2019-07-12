@@ -32,9 +32,11 @@ import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class ProducerDownloadFileWithoutThumbnail extends SoroushBotTestSupport {
+@Ignore("CAMEL-13629 failing test")
+public class ProducerDownloadFileWithoutThumbnailTest extends SoroushBotTestSupport {
 
     @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;

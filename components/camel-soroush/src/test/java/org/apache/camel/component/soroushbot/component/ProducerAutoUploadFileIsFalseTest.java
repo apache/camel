@@ -32,7 +32,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ProducerAutoUploadFile extends SoroushBotTestSupport {
+public class ProducerAutoUploadFileIsFalseTest extends SoroushBotTestSupport {
 
     @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
@@ -49,13 +49,13 @@ public class ProducerAutoUploadFile extends SoroushBotTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/token")
+                from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/token?autoUploadFile=false")
                         .process(exchange -> {
                             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
-                            if (body.getFileUrl() == null) {
+                            if (body.getFileUrl() != null) {
                                 throw new AssertionError("file url is null");
                             }
-                            if (body.getThumbnailUrl() == null) {
+                            if (body.getThumbnailUrl() != null) {
                                 throw new AssertionError("thumb url is null");
                             }
                         })
@@ -81,8 +81,8 @@ public class ProducerAutoUploadFile extends SoroushBotTestSupport {
         Assert.assertEquals("message sent successfully", SoroushBotWS.getReceivedMessages().get(0), body);
         SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
         Map<String, String> fileIdToContent = SoroushBotWS.getFileIdToContent();
-        Assert.assertEquals("file uploaded successfully", fileIdToContent.size(), 2);
-        Assert.assertEquals(fileIdToContent.get(mockedMessage.getFileUrl()), fileContent);
-        Assert.assertEquals(fileIdToContent.get(mockedMessage.getThumbnailUrl()), thumbContent);
+        Assert.assertEquals("file uploaded successfully", fileIdToContent.size(), 0);
+        Assert.assertEquals(mockedMessage.getFileUrl(), null);
+        Assert.assertEquals(mockedMessage.getThumbnailUrl(), null);
     }
 }
