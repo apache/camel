@@ -222,7 +222,7 @@ fileName="uniquefile-${bean:myguidgenerator.generateid}.txt"
 ----
 
 And of course all this can be combined in one expression where you can
-use the xref:file-language,File Language>>, <<file-language.adoc[Simple]
+use the xref:file-language.adoc[File Language], xref:file-language.adoc[Simple]
 and the xref:bean-component.adoc[Bean] language in one combined expression. This
 is pretty powerful for those common file path patterns.
 

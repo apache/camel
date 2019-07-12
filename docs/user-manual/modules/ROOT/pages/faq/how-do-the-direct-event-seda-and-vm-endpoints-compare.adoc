@@ -1,7 +1,7 @@
 [[Howdothedirecteventsedaandvmendpointscompare-Howdothedirecteventsedaandvmendpointscompare]]
 === How do the `direct`, `event`, `seda`, and `vm` endpoints compare?
 
-* xref:vm-component,VM>> and <<seda-component.adoc[SEDA] endpoints are basically the
+* xref:vm-component.adoc[VM] and xref:seda-component.adoc[SEDA] endpoints are basically the
 same; they both offer asychronous in memory SEDA queues; they differ in
 visibility -- endpoints are visible inside the same JVM or within the same
 CamelContext respectively.
@@ -11,4 +11,4 @@ consumer when sending.
 application events; so the consumer is invoked the same thread as Spring
 notifies events. Event differs in that the payload should be a Spring
 `ApplicationEvent` object whereas xref:direct-component.adoc[Direct],
-xref:seda-component,SEDA>> and <<vm-component.adoc[VM] can use any payload.
+xref:seda-component.adoc[SEDA] and xref:vm-component.adoc[VM] can use any payload.

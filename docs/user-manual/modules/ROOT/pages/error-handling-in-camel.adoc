@@ -176,7 +176,7 @@ just a ERROR logger.
 ====
 This applies to all kind of xref:component.adoc[Components] in Camel.
 The sample above only uses xref:bean-component.adoc[Bean] but it's the same for
-xref:file-component,File>>, <<mail-component.adoc[Mail],
+xref:file-component.adoc[File], xref:mail-component.adoc[Mail],
 xref:velocity-component.adoc[Velocity] or whatever component you use.
 ====
 
