@@ -237,7 +237,7 @@ bean completes, and thus the route is completed, the file consumer will
 perform the move operation and move the file to the `.done` sub-folder.
 
 The *move* and the *preMove* options are considered as a directory name
-(though if you use an expression such as xref:file-language,File Language>>, or <<simple-language.adoc[Simple] then the result of the expression
+(though if you use an expression such as xref:file-language.adoc[File Language], or xref:simple-language.adoc[Simple] then the result of the expression
 evaluation is the file name to be used - eg if you set
 
 [source]
@@ -323,7 +323,7 @@ The following headers are supported by this component:
 
 |`CamelFileName` |Specifies the name of the file to write (relative to the endpoint
 directory). This name can be a `String`; a `String` with a
-xref:file-language,File Language>> or <<simple-language.adoc[Simple]
+xref:file-language.adoc[File Language] or xref:simple-language.adoc[Simple]
 expression; or an Expression object. If it's
 `null` then Camel will auto-generate a filename based on the message
 unique ID.
