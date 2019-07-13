@@ -248,7 +248,26 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-schema</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                    <sources>
+                        <source>${project.build.directory}/schema-src</source>
+                    </sources>
+                    <createJavaDocAnnotations>false</createJavaDocAnnotations>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -474,82 +493,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>jdk8</id>
-            <activation>
-                <jdk>(,1.8]</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>jaxb2-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>generate-schema</id>
-                                <phase>generate-test-sources</phase>
-                                <goals>
-                                    <goal>schemagen</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/schema</outputDirectory>
-                            <sources>
-                                <source>${project.build.directory}/schema-src</source>
-                            </sources>
-                            <createJavaDocAnnotations>false</createJavaDocAnnotations>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>jdk9+-build</id>
-            <activation>
-                <jdk>[9,)</jdk>
-                <property>
-                    <name>!os.unsupported.schemagen</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <reuseForks>true</reuseForks>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <!--Workaround until https://github.com/mojohaus/jaxb2-maven-plugin/pull/126/ is resolved-->
-                        <groupId>com.github.davidmoten</groupId>
-                        <artifactId>jax-maven-plugin</artifactId>
-                        <version>${jax-maven-plugin-version}</version>
-                        <executions>
-                            <execution>
-                                <id>generate schema</id>
-                                <phase>generate-test-sources</phase>
-                                <goals>
-                                    <goal>schemagen</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <classpathScope>compile</classpathScope>
-                            <sources>
-                                <source>${project.build.directory}/schema-src</source>
-                            </sources>
-                            <arguments>
-                                <argument>-d</argument>
-                                <argument>${project.build.directory}/schema</argument>
-                                <argument>-episode</argument>
-                                <argument>${project.build.directory}/schema/META-INF/JAXB/episode_generate-schema.xjb</argument>
-                            </arguments>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

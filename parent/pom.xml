@@ -324,8 +324,7 @@
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
         <glassfish-jaxb-runtime-version>${jakarta-jaxb-version}</glassfish-jaxb-runtime-version>
-        <jax-maven-plugin-version>0.1.6</jax-maven-plugin-version>
-        <jaxb2-maven-plugin-version>2.4</jaxb2-maven-plugin-version>
+        <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
         <!-- Avoid upgrading to newer version for the moment: see https://issues.apache.org/jira/browse/CAMEL-13654 -->
         <jbpm-version>7.22.0.Final</jbpm-version>
         <jboss-logging-version>3.3.2.Final</jboss-logging-version>
