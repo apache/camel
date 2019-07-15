@@ -21,6 +21,9 @@ const map = require('map-stream')
 const path = require('path');
 const rename = require('gulp-rename');
 const sort = require('gulp-sort');
+const through2 = require('through2');
+const File = require('vinyl')
+const fs = require('fs');
 
 function deleteComponentSymlinks() {
     return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
@@ -123,10 +126,47 @@ function createUserManualNav() {
         .pipe(dest('user-manual/modules/ROOT/'))
 }
 
+const extractExamples = function(file, enc, next) {
+    const asciidoc = file.contents.toString();
+    const includes = /(?:include::\{examplesdir\}\/)([^[]+)/g;
+    let example;
+    let exampleFiles = new Set()
+    while (example = includes.exec(asciidoc)) {
+        let examplePath = path.resolve(path.join('..', example[1]));
+        exampleFiles.add(examplePath);
+    }
+
+    exampleFiles.forEach(examplePath => this.push(new File({
+        base: path.resolve('..'),
+        path: examplePath,
+        contents: fs.createReadStream(examplePath)
+    })));
+
+    return next();
+}
+
+function deleteExamples(){
+    return del(['user-manual/modules/ROOT/examples/', 'components/modules/ROOT/examples/']);
+}
+
+function createUserManualExamples() {
+    return src('user-manual/modules/ROOT/**/*.adoc')
+        .pipe(through2.obj(extractExamples))
+        .pipe(dest('user-manual/modules/ROOT/examples/'));
+}
+
+function createComponentExamples() {
+    return src('../components/{*,*/*}/src/main/docs/*.adoc')
+        .pipe(through2.obj(extractExamples))
+        .pipe(dest('components/modules/ROOT/examples/'));
+}
+
 const symlinks = parallel(series(deleteComponentSymlinks, createComponentSymlinks), series(deleteUserManualSymlinks, createUserManualSymlinks));
 const nav = parallel(createComponentNav, createUserManualNav);
+const examples = series(deleteExamples, createUserManualExamples, createComponentExamples);
 
 exports.symlinks = symlinks;
 exports.nav = nav;
-exports.default = series(symlinks, nav);
+exports.examples = examples;
+exports.default = series(symlinks, nav, examples);
 

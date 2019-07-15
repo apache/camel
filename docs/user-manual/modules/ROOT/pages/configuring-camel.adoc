@@ -51,7 +51,7 @@ injection.
 
 You can configure a component via Spring using the following mechanism:
 
-include::../../../components/camel-jms/src/test/resources/org/apache/camel/component/jms/jmsRouteUsingSpring.xml[]
+include::{examplesdir}/components/camel-jms/src/test/resources/org/apache/camel/component/jms/jmsRouteUsingSpring.xml[]
 
 Which allows you to configure a component using some name (activemq in the
 above example), then you can refer to the component using
