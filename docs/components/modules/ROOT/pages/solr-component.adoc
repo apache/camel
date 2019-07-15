@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+==== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,6 +85,8 @@ with the following path and query parameters:
 | *streamingThreadCount* (producer) | Set the number of threads for the StreamingUpdateSolrServer | 2 | int
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *password* (security) | Sets password for basic auth plugin enabled servers |  | String
+| *username* (security) | Sets username for basic auth plugin enabled servers |  | String
 | *collection* (solrCloud) | Set the collection name which the solrCloud server could use |  | String
 | *zkHost* (solrCloud) | Set the ZooKeeper host information which the solrCloud could use, such as zkhost=localhost:8123. |  | String
 |===
