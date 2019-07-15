@@ -266,7 +266,7 @@ Suppose you have the given route below:
 [source,java]
 .*Route*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=route]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=route]
 ----
 
 You can then use the `adviceWith` feature in Camel to mock all the
@@ -275,7 +275,7 @@ endpoints in a given route from your unit test, as shown below:
 [source,java]
 .*`adviceWith` mocking all endpoints*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e1]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e1]
 ----
 
 Notice that the mock endpoints is given the URI `mock:<endpoint>`, for
@@ -300,7 +300,7 @@ example to mock all `log` endpoints you do as shown:
 [source,java]
 .*`adviceWith` mocking only log endpoints using a pattern*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e2]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e2]
 ----
 
 The pattern supported can be a wildcard or a regular expression. See
@@ -330,7 +330,7 @@ instead.
 [source,java]
 .*`isMockEndpoints` using camel-test kit*
 ----
-include::../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
 ----
 
 
@@ -347,7 +347,7 @@ Suppose we have the route in the `camel-route.xml` file:
 [source,xml]
 .*camel-route.xml*
 ----
-include::../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
+include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
 ----
 
 Then we create a new XML file as follows, where we include the
@@ -358,7 +358,7 @@ Camel to mock all endpoints:
 [source,xml]
 .*test-camel-route.xml*
 ----
-include::../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
+include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
 ----
 
 Then in your unit test you load the new XML file
@@ -389,7 +389,7 @@ Kit]. The example below will skip sending to the two endpoints
 [source,java]
 .*adviceWith mock and skip sending to endpoints*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockMultipleEndpointsWithSkipTest.java[tags=e1]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockMultipleEndpointsWithSkipTest.java[tags=e1]
 ----
 
 The same example using the Test Kit
@@ -397,7 +397,7 @@ The same example using the Test Kit
 [source,java]
 .*isMockEndpointsAndSkip using camel-test kit*
 ----
-include::../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
 ----
 
 === Limiting the number of messages to keep

@@ -458,7 +458,7 @@ settings for both sessions.
 
 [source,xml]
 ----
-include::../../test/resources/org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml[tags=e1]
+include::{examplesdir}/components/camel-quickfix/src/test/resources/org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml[tags=e1]
 ----
 
 ### Exception handling

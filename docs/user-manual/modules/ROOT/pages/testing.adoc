@@ -88,11 +88,11 @@ injection annotations].
 ===== Camel Test Example
 
 Here is the Camel Test
-xref:../../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/FilterTest.java[example]:
+https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/FilterTest.java[example]:
 
 [source,java]
 ----
-include::../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/FilterTest.java[tags=example]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/FilterTest.java[tags=example]
 ----
 
 Notice how it derives from the Camel helper class `CamelTestSupport` but
@@ -103,11 +103,11 @@ overrides the `createRouteBuilder()` method.
 ===== CDI Test Example
 
 Here is the CDI Testing
-xref:../../../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
+https://github.com/apache/camel/blob/master/components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
 
 [source,java]
 ----
-include::../../../components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[tags=example]
+include::{examplesdir}/components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[tags=example]
 ----
 
 You can find more testing patterns illustrated in the `camel-example-cdi-test` example
@@ -117,12 +117,12 @@ and the test classes that come with it.
 ===== Spring Test with XML Config Example
 
 Here is the Spring Testing
-xref:../../../../../components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
+https://github.com/apache/camel/blob/master/components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
 using XML Config]:
 
 [source,java]
 ----
-include::../../../components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[tags=example]
+include::{examplesdir}/components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[tags=example]
 ----
 
 Notice that we use @`DirtiesContext` on the test methods to force
@@ -133,24 +133,24 @@ sending to an endpoint that is then reused in another test method).
 
 Also notice the use of `@ContextConfiguration` to indicate that by
 default we should look for the
-xref:../../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[`FilterTest-context.xml`
+https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[`FilterTest-context.xml`
 on the classpath] to configure the test case which looks like this:
 
 [source,xml]
 ----
-include::../../../components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[tags=example]
+include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml[tags=example]
 ----
 
 [[Testing-SpringTestwithJavaConfigExample]]
 ===== Spring Test with Java Config Example
 
 Here is the Spring Testing
-xref:../../../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
+https://github.com/apache/camel/blob/master/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
 using Java Config]:
 
 [source,java]
 ----
-include::../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[tags=example]
+include::{examplesdir}/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[tags=example]
 ----
 
 For more information see xref:spring-java-config.adoc[Spring Java
@@ -171,27 +171,27 @@ register the RouteBuilder we create.
 
 Since *Camel 2.11.0* you can use the `CamelSpringJUnit4ClassRunner` with
 `CamelSpringDelegatingTestContextLoader` like
-xref:../../../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
+https://github.com/apache/camel/blob/master/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[example
 using Java Config with `CamelSpringJUnit4ClassRunner`]:
 
 Since *Camel 2.18.0* `CamelSpringJUnit4ClassRunner` is deprecated. you can use the `CamelSpringRunner`
 
 [source,java]
 ----
-include::../../../components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[tags=example]
+include::{examplesdir}/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/test/CamelSpringDelegatingTestContextLoaderTest.java[tags=example]
 ----
 
 [[Testing-SpringTestwithXMLConfigandDeclarativeConfigurationExample]]
 ===== Spring Test with XML Config and Declarative Configuration Example
 
 Here is a Camel test support enhanced xref:spring-testing.adoc[Spring
-Testing] xref:../../../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
+Testing] https://github.com/apache/camel/blob/master/components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
 using XML Config and pure Spring Test based configuration of the Camel
 Context]:
 
 [source,java]
 ----
-include::../../../components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[tags=example]
+include::{examplesdir}/components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[tags=example]
 ----
 
 Notice how a custom test runner is used with the `@RunWith` annotation
@@ -203,22 +203,22 @@ of annotations you can use in your tests.
 ===== Blueprint Test
 
 Here is the Blueprint Testing
-xref:../../../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
+https://github.com/apache/camel/blob/master/components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
 using XML Config]:
 
 [source,java]
 ----
-include::../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[tags=example]
+include::{examplesdir}/components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[tags=example]
 ----
 
 Also notice the use of `getBlueprintDescriptors` to indicate that by
 default we should look for the
-xref:../../../../../components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[`camelContext.xml`
+https://github.com/apache/camel/blob/master/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[`camelContext.xml`
 in the package] to configure the test case which looks like this:
 
 [source,xml]
 ----
-include::../../../components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[tags=example]
+include::{examplesdir}/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml[tags=example]
 ----
 
 [[Testing-Testingendpoints]]
