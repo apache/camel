@@ -18,19 +18,18 @@ package org.apache.camel.dataformat.any23;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.apache.any23.Any23;
 import org.apache.any23.configuration.DefaultConfiguration;
 import org.apache.any23.configuration.ModifiableConfiguration;
 import org.apache.any23.source.DocumentSource;
 import org.apache.any23.source.StringDocumentSource;
-import org.apache.any23.writer.JSONLDWriter;
-import org.apache.any23.writer.NQuadsWriter;
-import org.apache.any23.writer.NTriplesWriter;
-import org.apache.any23.writer.RDFXMLWriter;
 import org.apache.any23.writer.TripleHandler;
-import org.apache.any23.writer.TurtleWriter;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.any23.utils.Any23Utils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
@@ -52,14 +51,11 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
   private static final Logger LOG = LoggerFactory.getLogger(Any23DataFormat.class);
 
   private Any23 any23;
-  private Any23OutputFormat format = Any23OutputFormat.RDFXML;
-  private ModifiableConfiguration conf;
-  private String[] extractorsList;
 
-  private String configurations;
-  private String extractors;
-  private String outputFormat;
-  private String documentIRI = "http://mock.foo/bar";
+  private Map<String, String> configurations;
+  private List<String> extractors;
+  private Any23OutputFormat outputFormat;
+  private String baseURI;
 
   @Override
   public String getDataFormatName() {
@@ -71,30 +67,8 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
    */
   public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
     final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, object);
-    DocumentSource source = new StringDocumentSource(payload, documentIRI);
-    TripleHandler handler;
-    switch (format) {
-      case NTRIPLES:
-        handler = new NTriplesWriter(outputStream);
-        break;
-      case TURTLE:
-        handler = new TurtleWriter(outputStream);
-        break;
-      case NQUADS:
-        handler = new NQuadsWriter(outputStream);
-        break;
-      case RDFXML:
-        handler = new RDFXMLWriter(outputStream);
-        break;
-      case JSONLD:
-        handler = new JSONLDWriter(outputStream);
-        break;
-      case MODEL:
-        handler = new NTriplesWriter(outputStream);
-        break;
-      default:
-        handler = new NTriplesWriter(outputStream);
-    }
+    DocumentSource source = new StringDocumentSource(payload, baseURI);
+    TripleHandler handler = Any23Utils.obtainHandler(outputFormat, outputStream);
     any23.extract(source, handler);
     handler.close();
   }
@@ -104,33 +78,38 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
    */
   public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
     //TODO
+    //Under construction
+    //Looking for libraries which could perform RDF -> HTML 
+    //Candidate: https://github.com/rhizomik/redefer-rdf2html
     return null;
   }
 
   @Override
   protected void doStart() throws Exception {
-    conf = DefaultConfiguration.copy();
-    if (configurations != null) {
-      String[] newConfigs = configurations.split(";");
-      for (String con : newConfigs) {
-        String[] vals = con.split("=");
-        conf.setProperty(vals[0], vals[0]);
+    ModifiableConfiguration conf = null;
+    String[] extrArray = null;
+    if (extractors != null && !extractors.isEmpty()) {
+      extrArray = new String[extractors.size()];
+      extrArray = extractors.toArray(extrArray);
+    }
+    if (configurations != null && !configurations.isEmpty()) {
+      conf = DefaultConfiguration.copy();
+      for (Entry<String, String> entry : configurations.entrySet()) {
+        conf.setProperty(entry.getKey(), entry.getValue());
       }
     }
-    if (extractors != null) {
-      extractorsList = extractors.split(";");
+    if (outputFormat == null) {
+      //Default output format
+      outputFormat = Any23OutputFormat.RDFXML;
     }
-    if (configurations == null && extractors == null) {
+    if (conf == null && extrArray == null) {
       any23 = new Any23();
-    } else if (configurations != null && extractors == null) {
+    } else if (conf != null && extrArray == null) {
       any23 = new Any23(conf);
-    } else if (configurations == null && extractors != null) {
-      any23 = new Any23(extractors);
-    } else if (configurations != null && extractors != null) {
-      any23 = new Any23(conf, extractors);
-    }
-    if (outputFormat != null) {
-      format = Any23OutputFormat.valueOf(outputFormat);
+    } else if (conf == null && extrArray != null) {
+      any23 = new Any23(extrArray);
+    } else if (conf != null && extrArray != null) {
+      any23 = new Any23(conf, extrArray);
     }
   }
 
@@ -147,52 +126,36 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
     this.any23 = any23;
   }
 
-  public Any23OutputFormat getFormat() {
-    return format;
-  }
-
-  public void setFormat(Any23OutputFormat format) {
-    this.format = format;
-  }
-
-  public ModifiableConfiguration getConf() {
-    return conf;
-  }
-
-  public void setConf(ModifiableConfiguration conf) {
-    this.conf = conf;
-  }
-
-  public String[] getExtractorsList() {
-    return extractorsList;
-  }
-
-  public void setExtractorsList(String[] extractorsList) {
-    this.extractorsList = extractorsList;
-  }
-
-  public String getConfigurations() {
+  public Map<String, String> getConfigurations() {
     return configurations;
   }
 
-  public void setConfigurations(String configurations) {
+  public void setConfigurations(Map<String, String> configurations) {
     this.configurations = configurations;
   }
 
-  public String getExtractors() {
+  public List<String> getExtractors() {
     return extractors;
   }
 
-  public void setExtractors(String extractors) {
+  public void setExtractors(List<String> extractors) {
     this.extractors = extractors;
   }
 
-  public String getOutputFormat() {
+  public Any23OutputFormat getOutputFormat() {
     return outputFormat;
   }
 
-  public void setOutputFormat(String outputFormat) {
+  public void setOutputFormat(Any23OutputFormat outputFormat) {
     this.outputFormat = outputFormat;
+  }
+
+  public String getBaseURI() {
+    return baseURI;
+  }
+
+  public void setBaseURI(String baseURI) {
+    this.baseURI = baseURI;
   }
 
 }
