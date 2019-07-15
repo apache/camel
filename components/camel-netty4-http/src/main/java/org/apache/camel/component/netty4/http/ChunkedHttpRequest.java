@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import java.io.InputStream;
+
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpRequest;
@@ -23,8 +25,6 @@ import io.netty.handler.codec.http.HttpChunkedInput;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.stream.ChunkedInput;
 import io.netty.handler.stream.ChunkedStream;
-
-import java.io.InputStream;
 
 public class ChunkedHttpRequest extends DefaultHttpRequest implements ChunkedInput<HttpContent> {
     private HttpChunkedInput input;
