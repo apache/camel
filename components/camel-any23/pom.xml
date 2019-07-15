@@ -79,5 +79,10 @@
       <artifactId>rdf4j-rio-rdfxml</artifactId>
       <version>3.0.0-M1</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.rdf4j</groupId>
+      <artifactId>rdf4j-rio-turtle</artifactId>
+      <version>3.0.0-M1</version>
+    </dependency>
   </dependencies>
 </project>

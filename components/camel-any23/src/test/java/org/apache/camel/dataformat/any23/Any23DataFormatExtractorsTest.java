@@ -18,11 +18,15 @@ package org.apache.camel.dataformat.any23;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.dataformat.Any23Type;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
@@ -30,10 +34,12 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.junit.Test;
 
-public class Any23DataFormatBasicTest extends CamelTestSupport {
+public class Any23DataFormatExtractorsTest extends CamelTestSupport {
+
+  private final String BASEURI = "http://mock.foo/bar";
 
   @Test
-  public void testMarshalToRDFXMLFromHTML() throws Exception {
+  public void test() throws Exception {
     MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
     template.sendBody("direct:start", contenhtml);
@@ -41,9 +47,10 @@ public class Any23DataFormatBasicTest extends CamelTestSupport {
     for (Exchange exchange : list) {
       Message in = exchange.getIn();
       String resultingRDF = in.getBody(String.class);
+      System.out.println(resultingRDF);
       InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
-      Model parse = Rio.parse(toInputStream, "http://mock.foo/bar", RDFFormat.RDFXML);
-      assertEquals(parse.size(), 28);
+      Model parse = Rio.parse(toInputStream, BASEURI, RDFFormat.TURTLE);
+      assertEquals(parse.size(), 1);
     }
   }
 
@@ -51,7 +58,11 @@ public class Any23DataFormatBasicTest extends CamelTestSupport {
   protected RouteBuilder createRouteBuilder() {
     return new RouteBuilder() {
       public void configure() {
-        from("direct:start").marshal().any23("http://mock.foo/bar").to("mock:result");
+        Map<String, String> conf = new HashMap();
+        conf.put("any23.extraction.metadata.nesting", "off");
+        List<String> extc = new ArrayList();
+        extc.add("html-head-title");
+        from("direct:start").marshal().any23(BASEURI, Any23Type.TURTLE, conf, extc).to("mock:result");
       }
     };
   }
