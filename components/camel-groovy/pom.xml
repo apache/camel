@@ -49,8 +49,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
-        <!-- must use groovy-all as otherwise may have weird class loading issues
-             when evaluating groovy expressions -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
