@@ -23,6 +23,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.util.RegistryBeanResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.BeanResolver;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
@@ -74,6 +75,7 @@ public class SpelExpression extends ExpressionSupport {
 
     private EvaluationContext createEvaluationContext(Exchange exchange) {
         StandardEvaluationContext evaluationContext = new StandardEvaluationContext(new RootObject(exchange));
+        evaluationContext.addPropertyAccessor(new MapAccessor());
         if (beanResolver != null) {
             evaluationContext.setBeanResolver(beanResolver);
         } else if (exchange.getContext() instanceof SpringCamelContext) {

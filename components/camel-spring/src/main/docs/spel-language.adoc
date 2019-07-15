@@ -124,7 +124,7 @@ Filter]:
 <route>
   <from uri="direct:foo"/>
   <filter>
-    <spel>#{request.headers['foo'] == 'bar'}</spel>
+    <spel>#{request.headers.foo == 'bar'}</spel>
     <to uri="direct:bar"/>
   </filter>
 </route>
@@ -135,7 +135,7 @@ And the equivalent in Java DSL:
 [source,java]
 ----
 from("direct:foo")
-    .filter().spel("#{request.headers['foo'] == 'bar'}")
+    .filter().spel("#{request.headers.foo == 'bar'}")
     .to("direct:bar");
 ----
 
