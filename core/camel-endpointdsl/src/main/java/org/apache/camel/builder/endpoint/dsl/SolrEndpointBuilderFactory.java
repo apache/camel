@@ -264,6 +264,28 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets password for basic auth plugin enabled servers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SolrEndpointBuilder password(String password) {
+            setProperty("password", password);
+            return this;
+        }
+        /**
+         * Sets username for basic auth plugin enabled servers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SolrEndpointBuilder username(String username) {
+            setProperty("username", username);
+            return this;
+        }
+        /**
          * Set the collection name which the solrCloud server could use.
          * 
          * The option is a: <code>java.lang.String</code> type.
