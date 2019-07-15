@@ -908,7 +908,7 @@ Number of Data Formats: 44 in 36 JAR artifacts (0 deprecated)
 |===
 | Data Format | Available From | Description
 
-| link:camel-any23/src/main/docs/any23-dataformat.adoc[Any23] (camel-any23) | 1.0 | Any23 data format is used for parsing data to RDF.
+| link:camel-any23/src/main/docs/any23-dataformat.adoc[Any23] (camel-any23) | 3.0 | Any23 data format is used for parsing data to RDF.
 
 | link:camel-asn1/src/main/docs/asn1-dataformat.adoc[ASN.1 File] (camel-asn1) | 2.20 | The ASN.1 data format is used for file transfer with telecommunications protocols.
 

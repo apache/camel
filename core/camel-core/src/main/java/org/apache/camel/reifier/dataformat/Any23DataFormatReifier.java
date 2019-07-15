@@ -29,12 +29,18 @@ public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
 
   @Override
   protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-//    if (definition.getDataObjectType() != null) {
-//      setProperty(camelContext, dataFormat, "dataObjectType", definition.getDataObjectType());
-//    }
-//    if (definition.getOmitXmlDeclaration() != null) {
-//      setProperty(camelContext, dataFormat, "omitXmlDeclaration", definition.getOmitXmlDeclaration());
-//    }
+    if (definition.getOutputFormat() != null) {
+      setProperty(camelContext, dataFormat, "outputFormat", definition.getOutputFormat());
+    }
+    if (definition.getConfigurations() != null) {
+      setProperty(camelContext, dataFormat, "configurations", definition.getConfigurations());
+    }
+    if (definition.getExtractors() != null) {
+      setProperty(camelContext, dataFormat, "extractors", definition.getExtractors());
+    }
+    if (definition.getBaseURI() != null) {
+      setProperty(camelContext, dataFormat, "baseURI", definition.getBaseURI());
+    }
   }
 
 }
