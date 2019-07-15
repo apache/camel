@@ -32,10 +32,10 @@ The Any23 dataformat supports 5 options, which are listed below.
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| outputFormat | MODEL | String | 
-| configurations |  | String | 
-| extractors |  | String | 
-| baseuri |  | String | 
+| outputFormat | MODEL | Any23Type | 
+| configurations |  | Map | 
+| extractors |  | List | 
+| baseURI |  | String | 
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
@@ -55,19 +55,18 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.dataformat.any23.baseuri* |  |  | String
+| *camel.dataformat.any23.base-u-r-i* |  |  | String
 | *camel.dataformat.any23.configurations* |  |  | String
 | *camel.dataformat.any23.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.any23.enabled* | Whether to enable auto configuration of the any23 data format. This is enabled by default. |  | Boolean
-| *camel.dataformat.any23.extractors* |  |  | String
-| *camel.dataformat.any23.output-format* |  | MODEL | String
+| *camel.dataformat.any23.extractors* |  |  | List
 |===
 // spring-boot-auto-configure options: END
 

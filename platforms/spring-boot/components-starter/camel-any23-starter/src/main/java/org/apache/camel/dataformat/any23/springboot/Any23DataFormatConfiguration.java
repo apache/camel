@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.any23.springboot;
 
+import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -36,10 +37,9 @@ public class Any23DataFormatConfiguration
      * enabled by default.
      */
     private Boolean enabled;
-    private String outputFormat = "MODEL";
     private String configurations;
-    private String extractors;
-    private String baseuri;
+    private List<String> extractors;
+    private String baseURI;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
@@ -47,14 +47,6 @@ public class Any23DataFormatConfiguration
      * application/json for data formats marshalling to JSon etc.
      */
     private Boolean contentTypeHeader = false;
-
-    public String getOutputFormat() {
-        return outputFormat;
-    }
-
-    public void setOutputFormat(String outputFormat) {
-        this.outputFormat = outputFormat;
-    }
 
     public String getConfigurations() {
         return configurations;
@@ -64,20 +56,20 @@ public class Any23DataFormatConfiguration
         this.configurations = configurations;
     }
 
-    public String getExtractors() {
+    public List<String> getExtractors() {
         return extractors;
     }
 
-    public void setExtractors(String extractors) {
+    public void setExtractors(List<String> extractors) {
         this.extractors = extractors;
     }
 
-    public String getBaseuri() {
-        return baseuri;
+    public String getBaseURI() {
+        return baseURI;
     }
 
-    public void setBaseuri(String baseuri) {
-        this.baseuri = baseuri;
+    public void setBaseURI(String baseURI) {
+        this.baseURI = baseURI;
     }
 
     public Boolean getContentTypeHeader() {
