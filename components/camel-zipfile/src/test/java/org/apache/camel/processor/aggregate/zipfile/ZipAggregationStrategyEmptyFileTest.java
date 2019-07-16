@@ -30,12 +30,14 @@ import org.junit.Test;
 public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
 
     private static final int EXPECTED_NO_FILES = 3;
+    private static final String TEST_DIR = "target/out_ZipAggregationStrategyEmptyFileTest";
+
 
     @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/foo");
-        deleteDirectory("target/out");
+        deleteDirectory(TEST_DIR);
         super.setUp();
     }
 
@@ -52,11 +54,9 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(500);
-
-        File[] files = new File("target/out").listFiles();
-        assertTrue(files != null);
-        assertTrue("Should be a file in target/out directory", files.length > 0);
+        File[] files = new File(TEST_DIR).listFiles();
+        assertNotNull(files);
+        assertTrue("Should be a file in " + TEST_DIR + " directory", files.length > 0);
 
         File resultFile = files[0];
 
@@ -64,7 +64,7 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
         try {
             int fileCount = 0;
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
-                fileCount = fileCount + 1;
+                fileCount++;
             }
             assertEquals("Zip file should contains " + ZipAggregationStrategyEmptyFileTest.EXPECTED_NO_FILES + " files", ZipAggregationStrategyEmptyFileTest.EXPECTED_NO_FILES, fileCount);
         } finally {
@@ -82,7 +82,7 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
                         .constant(true)
                         .completionSize(4)
                         .eagerCheckCompletion()
-                    .to("file:target/out")
+                    .to("file:" + TEST_DIR)
                     .to("mock:aggregateToZipEntry")
                     .log("Done processing zip file: ${header.CamelFileName}");
             }
