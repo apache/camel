@@ -277,7 +277,7 @@
         <ical4j-version>1.0.7</ical4j-version>
         <ignite-version>2.7.5</ignite-version>
         <infinispan-version>9.4.15.Final</infinispan-version>
-        <infinispan-spring-boot-version>2.1.6.Final</infinispan-spring-boot-version>
+        <infinispan-spring-boot-version>2.1.7.Final</infinispan-spring-boot-version>
         <influx-java-driver-version>2.15</influx-java-driver-version>
         <influx-java-driver-bundle-version>2.15_1</influx-java-driver-bundle-version>
         <influx-guava-version>20.0</influx-guava-version>
