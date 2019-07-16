@@ -65,7 +65,7 @@ public class CMISProducer extends DefaultProducer {
 
         CamelCMISActions action = exchange.getIn().getHeader(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.class);
 
-        Class[] paramMethod = null;
+        Class[] paramMethod = {Exchange.class};
         Method method = ReflectionHelper.findMethod(this.getClass(), action.getMethodName(), paramMethod);
         ObjectHelper.invokeMethod(method, this, exchange);
     }
