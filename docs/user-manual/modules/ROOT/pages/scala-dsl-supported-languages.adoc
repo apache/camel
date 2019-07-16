@@ -1,5 +1,4 @@
-Scala DSL - Supported languages
-===============================
+= Scala DSL - Supported languages
 
 Support for other languages inside the Scala DSL
 routes is delivered through traits. The
