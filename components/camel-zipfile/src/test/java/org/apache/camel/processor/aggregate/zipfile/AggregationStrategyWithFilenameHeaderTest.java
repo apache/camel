@@ -33,11 +33,12 @@ import org.junit.Test;
 public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {
 
     private static final List<String> FILE_NAMES = Arrays.asList("foo", "bar");
+    private static final String TEST_DIR = "target/out_AggregationStrategyWithFilenameHeaderTest";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/out");
+        deleteDirectory(TEST_DIR);
         super.setUp();
     }
 
@@ -51,11 +52,9 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
         template.sendBodyAndHeader("bar", Exchange.FILE_NAME, FILE_NAMES.get(1));
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(500);
-
-        File[] files = new File("target/out").listFiles();
-        assertTrue(files != null);
-        assertTrue("Should be a file in target/out directory", files.length > 0);
+        File[] files = new File(TEST_DIR).listFiles();
+        assertNotNull(files);
+        assertTrue("Should be a file in " + TEST_DIR + " directory", files.length > 0);
 
         File resultFile = files[0];
 
@@ -83,7 +82,7 @@ public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport 
                         .aggregate(new ZipAggregationStrategy(false, true))
                             .constant(true)
                             .completionTimeout(50)
-                            .to("file:target/out")
+                            .to("file:" + TEST_DIR)
                             .to("mock:aggregateToZipEntry")
                             .log("Done processing zip file: ${header.CamelFileName}");
             }
