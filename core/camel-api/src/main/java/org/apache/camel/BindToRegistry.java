@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used for binding a bean to the registry
+ * Used for binding a bean to the registry.
  *
  * If no name is specified then the bean will have its name auto computed based on the
  * class name, field name, or method name where the annotation is configured.
@@ -42,4 +42,9 @@ public @interface BindToRegistry {
      * Id of {@link CamelContext} to use
      */
     String context() default "";
+
+    /**
+     * Whether to perform bean post processing (dependency injection) on the bean
+     */
+    boolean beanPostProcess() default false;
 }
