@@ -172,8 +172,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT).getResult());
         } else if (operation == ElasticsearchOperation.DeleteIndex) {
-            DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
-            message.setBody(client.performRequest("Delete", deleteRequest.index()).getStatusLine().getStatusCode());
+            DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
+            message.setBody(restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT).isAcknowledged());
         } else if (operation == ElasticsearchOperation.Exists) {
             // ExistsRequest API is deprecated, using SearchRequest instead with size=0 and terminate_after=1
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
@@ -267,7 +267,7 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private RestClient createClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
-        builder.setMaxRetryTimeoutMillis(configuration.getMaxRetryTimeout());
+
         builder.setRequestConfigCallback(requestConfigBuilder ->
             requestConfigBuilder.setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
         if (configuration.getUser() != null && configuration.getPassword() != null) {

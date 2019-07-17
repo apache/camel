@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.junit.Test;
 
 public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
@@ -37,8 +38,9 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
 
-        int status = template.requestBody("direct:deleteIndex", "", Integer.class);
-        assertEquals("status should be 200", 200, status);
+        DeleteIndexRequest index = new DeleteIndexRequest("_all");
+        Boolean status = template.requestBody("direct:deleteIndex", index, Boolean.class);
+        assertEquals("status should be 200", true, status);
     }
 
     @Test

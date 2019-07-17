@@ -24,6 +24,7 @@ import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
 import org.apache.http.HttpHost;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -66,7 +67,7 @@ public class ElasticsearchRestComponentVerifierExtension extends DefaultComponen
             ElasticsearchConfiguration configuration = setProperties(new ElasticsearchConfiguration(), parameters);
             RestClientBuilder clientBuilder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
             RestHighLevelClient restHighLevelClient = new RestHighLevelClient(clientBuilder);
-            restHighLevelClient.ping();
+            restHighLevelClient.ping(RequestOptions.DEFAULT);
         } catch (IOException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
                 .detail("elasticsearch_rest_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
