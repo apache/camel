@@ -162,42 +162,38 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
      * @param bean the bean to be injected
      */
     protected void injectFields(final Object bean, final String beanName) {
-        ReflectionHelper.doWithFields(bean.getClass(), new ReflectionHelper.FieldCallback() {
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
-                if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
-                    injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
-                }
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+            if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
+                injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
+            }
 
-                BeanInject beanInject = field.getAnnotation(BeanInject.class);
-                if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
-                    injectFieldBean(field, beanInject.value(), bean, beanName);
-                }
+            BeanInject beanInject = field.getAnnotation(BeanInject.class);
+            if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
+                injectFieldBean(field, beanInject.value(), bean, beanName);
+            }
 
-                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-                if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
-                    @SuppressWarnings("deprecation")
-                    String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
-                    injectField(field, uri, endpointInject.property(), bean, beanName);
-                }
+            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+            if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
+                @SuppressWarnings("deprecation")
+                String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                injectField(field, uri, endpointInject.property(), bean, beanName);
+            }
 
-                Produce produce = field.getAnnotation(Produce.class);
-                if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
-                    @SuppressWarnings("deprecation")
-                    String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
-                    injectField(field, uri, produce.property(), bean, beanName, produce.binding());
-                }
+            Produce produce = field.getAnnotation(Produce.class);
+            if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
+                @SuppressWarnings("deprecation")
+                String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                injectField(field, uri, produce.property(), bean, beanName, produce.binding());
             }
         });
     }
 
     protected void injectBindToRegistryFields(final Object bean, final String beanName) {
-        ReflectionHelper.doWithFields(bean.getClass(), new ReflectionHelper.FieldCallback() {
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
-                if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
-                    bindToRegistry(field, bind.value(), bean, beanName, bind.beanPostProcess());
-                }
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
+            if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
+                bindToRegistry(field, bind.value(), bean, beanName, bind.beanPostProcess());
             }
         });
     }
@@ -226,11 +222,9 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     protected void injectMethods(final Object bean, final String beanName) {
-        ReflectionHelper.doWithMethods(bean.getClass(), new ReflectionHelper.MethodCallback() {
-            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-                setterInjection(method, bean, beanName);
-                getPostProcessorHelper().consumerInjection(method, bean, beanName);
-            }
+        ReflectionHelper.doWithMethods(bean.getClass(), method -> {
+            setterInjection(method, bean, beanName);
+            getPostProcessorHelper().consumerInjection(method, bean, beanName);
         });
     }
 
@@ -292,13 +286,11 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     protected void injectNestedClasses(final Object bean, final String beanName) {
-        ReflectionHelper.doWithClasses(bean.getClass(), new ReflectionHelper.ClassCallback() {
-            public void doWith(Class clazz) throws IllegalArgumentException, IllegalAccessException {
-                BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
-                if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
-                    // its a nested class so we dont have a bean instance for it
-                    bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());
-                }
+        ReflectionHelper.doWithClasses(bean.getClass(), clazz -> {
+            BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
+            if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
+                // its a nested class so we dont have a bean instance for it
+                bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());
             }
         });
     }
