@@ -1056,7 +1056,7 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 33 in 33 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1069,8 +1069,6 @@ Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
-
-| link:camel-google-mail/src/main/docs/google-mail.adoc[Google Mail] (camel-google-mail) |  | Camel Component for GoogleMail
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
@@ -1089,8 +1087,6 @@ Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 | link:camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc[Reactive Executor Vertx] (camel-reactive-executor-vertx) | 3.0 | Reactive Executor for camel-core using Vert X
 
 | link:camel-reactor/src/main/docs/reactor.adoc[Reactor] (camel-reactor) | 2.20 | Reactor based back-end for Camel's reactive streams component
-
-| link:camel-rest-swagger/src/main/docs/rest-swagger.adoc[Rest Swagger] (camel-rest-swagger) | 2.19 | Camel REST support using Swagger
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
