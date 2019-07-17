@@ -236,7 +236,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
             Files.createDirectories(dest.getParent());
-            Files.write(dest, buffer, StandardOpenOption.CREATE);
+            Files.write(dest, buffer, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 
