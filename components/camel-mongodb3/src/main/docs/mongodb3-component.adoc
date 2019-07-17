@@ -55,13 +55,14 @@ mongodb3:connectionBean?database=databaseName&collection=collectionName&operatio
 
 
 // component options: START
-The MongoDB component supports 2 options, which are listed below.
+The MongoDB component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *mongoConnection* (common) | Set the client used for connection |  | MongoClient
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 |===

@@ -21,6 +21,7 @@ import java.util.Properties;
 import com.mongodb.MongoClient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
@@ -53,7 +54,7 @@ public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
                 "mongodb3:myDb?mongoConnection=#myDbS&database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
                 MongoDbEndpoint.class);
         assertEquals("myDb", testEndpoint.getConnectionBean());
-        MongoClient myDbS = mongo = applicationContext.getBean("myDbS", MongoClient.class);
+        MongoClient myDbS = applicationContext.getBean("myDbS", MongoClient.class);
         assertEquals(myDbS, testEndpoint.getMongoConnection());
     }
 
@@ -62,6 +63,17 @@ public class MongoDbConnectionBeansTest extends AbstractMongoDbTest {
         MongoDbEndpoint testEndpoint = context.getEndpoint(
                 "mongodb3:anythingNotRelated?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true",
                 MongoDbEndpoint.class);
+    }
+
+    @Test
+    public void checkConnectionOnComponent() throws Exception {
+        MongoDbComponent component = context.getComponent("mongodb3", MongoDbComponent.class);
+        MongoClient myDbS = applicationContext.getBean("myDbS", MongoClient.class);
+        component.setMongoConnection(myDbS);
+        Endpoint endpoint = component.createEndpoint("mongodb3:justARouteName?database={{mongodb.testDb}}&collection="
+                + "{{mongodb.testCollection}}&operation=count&dynamicity=true");
+        assertIsInstanceOf(MongoDbEndpoint.class, endpoint);
+        assertEquals(myDbS, ((MongoDbEndpoint) endpoint).getMongoConnection());
     }
 
 }

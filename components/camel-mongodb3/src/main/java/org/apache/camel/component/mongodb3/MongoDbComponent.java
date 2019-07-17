@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.mongodb.MongoClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
@@ -38,6 +39,11 @@ public class MongoDbComponent extends DefaultComponent {
             MongoDbOperation.update,
             MongoDbOperation.remove));
 
+    /**
+     * A connection client provided externally
+     */
+    private MongoClient mongoConnection;
+
     public MongoDbComponent() {
         this(null);
     }
@@ -47,12 +53,30 @@ public class MongoDbComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         MongoDbEndpoint endpoint = new MongoDbEndpoint(uri, this);
         endpoint.setConnectionBean(remaining);
+        endpoint.setMongoConnection(mongoConnection);
         setProperties(endpoint, parameters);
 
         return endpoint;
+    }
+
+    /**
+     * Get the client used for connection
+     *
+     * @return the client using for connection to db
+     */
+    public MongoClient getMongoConnection() {
+        return mongoConnection;
+    }
+
+    /**
+     * Set the client used for connection
+     *
+     * @param mongoConnection
+     */
+    public void setMongoConnection(MongoClient mongoConnection) {
+        this.mongoConnection = mongoConnection;
     }
 
     @Override
