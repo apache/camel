@@ -38,7 +38,6 @@ there where no error handler at all. It has a limited set of features.
 * Dead Letter Channel which supports
 attempting to redeliver the message exchange a number of times before
 sending it to a dead letter endpoint
-* LoggingErrorHandler for just catching and logging exceptions
 * NoErrorHandler for no error handling
 
 [[ErrorHandler-Transacted]]
@@ -96,54 +95,6 @@ or also from *Camel 2.3.0 onwards*
   ...
 </camel:camelContext>
 --------------------------------------------------------------------------------------------------
-
-[[ErrorHandler-LoggingErrorHandler]]
-===== Logging Error Handler
-
-The logging error handler will log (by default at ERROR level) whenever
-an uncaught exception is thrown. The logging category, logger and level
-may all be defined in the builder.
-
-[source,java]
-----------------------------------------------------------------------------
-errorHandler(loggingErrorHandler("mylogger.name").level(LoggingLevel.INFO));
-----------------------------------------------------------------------------
-
-or in Spring DSL
-
-[source,xml]
---------------------------------------------------------------------------------------------------
-<bean id="loggingErrorHandler" class="org.apache.camel.builder.LoggingErrorHandler">
-  <property name="logName" value="mylogger.name"/>
-  <property name="level" value="DEBUG"/>
-</bean>
-
-<camelContext errorHandlerRef="loggingErrorHandler" xmlns="http://camel.apache.org/schema/spring">
-  ...
-</camelContext>
---------------------------------------------------------------------------------------------------
-
-or also from *Camel 2.3.0 onwards*
-
-[source,xml]
----------------------------------------------------------------------------------------------------------------
-<camel:errorHandler id="loggingErrorHandler" type="LoggingErrorHandler" logName="mylogger.name" level="DEBUG"/>
-
-<camel:camelContext errorHandlerRef="loggingErrorHandler">
-  ...
-</camel:camelContext>
----------------------------------------------------------------------------------------------------------------
-
-This would create an error handler which logs exceptions using the
-category mylogger.name and uses the level INFO for all log messages
-created.
-
-[source,java]
----------------------------------------------------------------------------------------------------------
-from("seda:a").errorHandler(loggingErrorHandler("mylogger.name").level(LoggingLevel.DEBUG)).to("seda:b");
----------------------------------------------------------------------------------------------------------
-
-Loggers may also be defined for specific routes.
 
 [[ErrorHandler-NoErrorHandler]]
 ===== No Error Handler
@@ -269,15 +220,13 @@ The error handler is scoped as either
 * global (within the RouteBuilder)
 * per route
 
-The following example shows how you can register a global error handler
-(in this case using the logging handler)
+The following example shows how you can register a global error handler:
 
 [source,java]
 ---------------------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-        // use logging error handler
-        errorHandler(loggingErrorHandler("com.mycompany.foo"));
+        errorHandler(deadLetterChannel("seda:error"));
 
         // here is our regular route
         from("seda:a").to("seda:b");
@@ -286,21 +235,20 @@ RouteBuilder builder = new RouteBuilder() {
 ---------------------------------------------------------------
 
 The following example shows how you can register a route specific error
-handler; the customized logging handler is only registered for the route
-from Endpoint *seda:a*
+handler
 
 [source,java]
 ---------------------------------------------------------------
 RouteBuilder builder = new RouteBuilder() {
     public void configure() {
-        // this route is using a nested logging error handler
+        // this route is using a nested error handler
         from("seda:a")
-            // here we configure the logging error handler
-            .errorHandler(loggingErrorHandler("com.mycompany.foo"))
+            // here we configure the error handler
+            .errorHandler(deadLetterChannel("seda:error"))
             // and we continue with the routing here
             .to("seda:b");
 
-        // this route will use the default error handler (DeadLetterChannel)
+        // this route will use the default error handler
         from("seda:b").to("seda:c");
     }
 };
