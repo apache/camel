@@ -22,6 +22,8 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.junit.Test;
 
 public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest {
@@ -42,8 +44,8 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
         indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
 
-        assertEquals("Cluster must be of three nodes", runner.getNodeSize(), 3);
-        assertEquals("Index id 1 must exists", true, client.get(new GetRequest("twitter", "tweet", "1")).isExists());
+        assertEquals("Cluster must be of one node", runner.getNodeSize(), 1);
+        assertEquals("Index id 1 must exists", true, client.get(new GetRequest("twitter").id("1"), RequestOptions.DEFAULT).isExists());
     }
 
     @Test
@@ -58,12 +60,13 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
         String indexId = template.requestBodyAndHeaders("direct:indexWithSniffer", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
 
-        assertEquals("Cluster must be of three nodes", runner.getNodeSize(), 3);
-        assertEquals("Index id 4 must exists", true, client.get(new GetRequest("facebook", "post", "4")).isExists());
+        assertEquals("Cluster must be of three nodes", runner.getNodeSize(), 1);
+        assertEquals("Index id 4 must exists", true, client.get(new GetRequest("facebook").id("4"), RequestOptions.DEFAULT).isExists());
 
         final BasicResponseHandler responseHandler = new BasicResponseHandler();
-        String body = responseHandler.handleEntity(restClient.performRequest("GET", "/_cluster/health?pretty").getEntity());
-        assertStringContains(body, "\"number_of_data_nodes\" : 3");
+        Request request = new Request("GET", "/_cluster/health?pretty");
+        String body = responseHandler.handleEntity(restClient.performRequest(request).getEntity());
+        assertStringContains(body, "\"number_of_data_nodes\" : 1");
     }
 
     @Override

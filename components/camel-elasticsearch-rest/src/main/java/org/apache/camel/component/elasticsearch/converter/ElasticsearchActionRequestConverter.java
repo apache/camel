@@ -25,6 +25,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
 import org.apache.camel.util.ObjectHelper;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -72,8 +73,6 @@ public final class ElasticsearchActionRequestConverter {
         return updateRequest
             .waitForActiveShards(exchange.getIn().getHeader(
                 ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
-            .parent(exchange.getIn().getHeader(
-                PARENT, String.class))
             .index(exchange.getIn().getHeader(
                 ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
             .type(exchange.getIn().getHeader(
@@ -103,8 +102,6 @@ public final class ElasticsearchActionRequestConverter {
         return indexRequest
             .waitForActiveShards(exchange.getIn().getHeader(
                 ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
-            .parent(exchange.getIn().getHeader(
-                PARENT, String.class))
             .index(exchange.getIn().getHeader(
                 ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
             .type(exchange.getIn().getHeader(
@@ -150,6 +147,21 @@ public final class ElasticsearchActionRequestConverter {
                     String.class)).id((String) document);
         } else {
             throw new IllegalArgumentException("Wrong body type. Only DeleteRequest or String is allowed as a type");
+        }
+    }
+    
+    @Converter
+    public static DeleteIndexRequest toDeleteIndexRequest(Object document, Exchange exchange) {
+        if (document instanceof DeleteIndexRequest) {
+            return (DeleteIndexRequest) document;
+        }
+        if (document instanceof String) {
+        	String index = exchange.getIn().getHeader(
+                    ElasticsearchConstants.PARAM_INDEX_NAME,
+                    String.class);
+            return new DeleteIndexRequest(index);
+        } else {
+            throw new IllegalArgumentException("Wrong body type. Only DeleteIndexRequest or String is allowed as a type");
         }
     }
 
