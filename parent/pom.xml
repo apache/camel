@@ -99,7 +99,7 @@
         <boon-version>0.34</boon-version>
         <bouncycastle-version>1.61</bouncycastle-version>
         <box-java-sdk-version>2.34.0</box-java-sdk-version>
-        <braintree-gateway-version>2.99.0</braintree-gateway-version>
+        <braintree-gateway-version>2.101.0</braintree-gateway-version>
         <brave-zipkin-version>5.6.7</brave-zipkin-version>
         <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.4</c3p0-version>
