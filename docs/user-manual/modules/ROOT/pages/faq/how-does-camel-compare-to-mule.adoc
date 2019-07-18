@@ -8,9 +8,9 @@ I guess from 30,000 feet they're kinda
 xref:why-the-name-camel.adoc[similar beasts]; they're both kinds of
 routing/mediation engines. The main differences are as follows:
 
-* Camel uses a Java xref:../dsl.adoc[Domain Specific Language] in addition
+* Camel uses a Java xref:dsl.adoc[Domain Specific Language] in addition
   to Spring XML for configuring the routing rules and providing
-  xref:../enterprise-integration-patterns.adoc[Enterprise Integration
+  xref:enterprise-integration-patterns.adoc[Enterprise Integration
   Patterns]
 * Camel's API is smaller & cleaner (IMHO) and is closely aligned with
   the APIs of JBI, xref:cxf-component.adoc[CXF] and
@@ -22,7 +22,7 @@ routing/mediation engines. The main differences are as follows:
   underlying transport information & behaviour if its required). See
   xref:how-does-the-camel-api-compare-to.adoc[How does the Camel API
   compare to]
-* Camel supports an implicit xref:../type-converter.adoc[Type Converter] in
+* Camel supports an implicit xref:type-converter.adoc[Type Converter] in
   the core API to make it simpler to connect components together requiring
   different types of payload & headers
 * Camel uses the https://github.com/apache/camel/blob/master/docs/user-manual/en/notice.md[Apache 2 License] rather than Mule's more restrictive

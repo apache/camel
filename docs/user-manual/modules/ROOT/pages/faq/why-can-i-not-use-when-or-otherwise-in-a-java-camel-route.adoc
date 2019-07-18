@@ -55,8 +55,8 @@ from("direct:start")
 
 But the code will still not compile. The reason is we have stretched how
 far we can take the good old Java language in terms of
-xref:../dsl.adoc[DSL]. In a more modern language such as
-xref:../scala-dsl.adoc[Scala] or xref:../groovy-dsl.adoc[Groovy] you would be able
+xref:dsl.adoc[DSL]. In a more modern language such as
+xref:scala-dsl.adoc[Scala] or xref:groovy-dsl.adoc[Groovy] you would be able
 to let it be stack based, so the `.end()` will pop the last type of the
 stack, and you would return back to the scope of the
 xref:contentBasedRouter-eip.adoc[Content Based Router]. However that's not
@@ -78,9 +78,9 @@ from("direct:start")
 ----
 
 You only need to use `.endChoice()` when using certain
-xref:../enterprise-integration-patterns.adoc[EIP]s which often have additional
+xref:enterprise-integration-patterns.adoc[EIP]s which often have additional
 methods to configure or as part of the
-xref:../enterprise-integration-patterns.adoc[EIP] itself. For example the
+xref:enterprise-integration-patterns.adoc[EIP] itself. For example the
 xref:split-eip.adoc[Splitter] EIP has a sub-route which denotes the
 routing of each splitted message. You would also have to use
 `.endChoice()` to indicate the end of the sub-route and to return back
@@ -93,6 +93,6 @@ to the xref:contentBasedRouter-eip.adoc[Content Based Router]. Note
 If there are still problems, then you can split your route into multiple
 routes, and link them together using the xref:direct-component.adoc[Direct]
 component.
-There can be some combinations of xref:../enterprise-integration-patterns.adoc[EIP]s
+There can be some combinations of xref:enterprise-integration-patterns.adoc[EIP]s
 that can hit limits in how far we can take the fluent builder DSL with
 generics you can do in Java programming language (1.7 and below).

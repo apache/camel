@@ -1,9 +1,9 @@
 [[HowdoIreusetheContextTestSupportclassinmyunittests-HowdoIreusetheContextTestSupportclassinmyunittests]]
 === How do I reuse the ContextTestSupport class in my unit tests?
 
-You might want to look at the various xref:../testing.adoc[Testing]
+You might want to look at the various xref:testing.adoc[Testing]
 options, in particular xref:test-component.adoc[Camel Test] and
-xref:../spring-testing.adoc[Spring Testing] to see if those are better,
+xref:spring-testing.adoc[Spring Testing] to see if those are better,
 more powerful options. We see `ContextTestSupport` as an older, less
 powerful option.
 

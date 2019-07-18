@@ -31,7 +31,7 @@ This snippet is not valid code. Read on.
 
 In this case, you must use an EIP (Enterprise Integration Pattern) that
 is capable of computing a dynamic URI using
-an xref:../expression.adoc[Expression], such as
+an xref:expression.adoc[Expression], such as
 the xref:recipientList-eip.adoc[Recipient List] EIP pattern.
 
 For example, rewriting the snippet above to use the
@@ -49,13 +49,13 @@ This snippet is valid code.
 .recipientList(simple("freemarker://templateHome/${body.templateName}.ftl"))
 ----
 
-Or you could use any other of Camel xref:../languages.adoc[Languages].
+Or you could use any other of Camel xref:languages.adoc[Languages].
 
 [NOTE]
 ====
 Notice that the xref:recipientList-eip.adoc[Recipient List] can send to
 multiple
-xref:../endpoint.adoc[Endpoints]
+xref:endpoint.adoc[Endpoints]
 if the expression returns either a `java.util.List`, array,
 `java.util.Iteratable` or a `String`. If the returned value is a
 `String` then you can specify multiple endpoints separated by comma. So

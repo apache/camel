@@ -1,8 +1,8 @@
 [[HowdoIrestartCamelContext-HowdoIrestartCamelContext]]
 === How do I restart CamelContext?
 
-A xref:../camelcontext.adoc[CamelContext] provides operations to control
-its lifecycle, see more at xref:../camelcontext.adoc[CamelContext].
+A xref:camelcontext.adoc[CamelContext] provides operations to control
+its lifecycle, see more at xref:camelcontext.adoc[CamelContext].
 
 NOTE: Obviously you can also restart a Camel application if its been
 deployed in a server. For example a WAR application can be restarted

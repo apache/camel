@@ -2,7 +2,7 @@
 === How should I invoke my POJOs or Spring Services?
 
 The various options are described in detail in
-xref:../bean-integration.adoc[Bean Integration], in particular the
+xref:bean-integration.adoc[Bean Integration], in particular the
 xref:bean-binding.adoc[Bean Binding] describes how we invoke a bean
 inside a route.
 
@@ -17,6 +17,6 @@ from("jms:someQueue").bean(MyBean.class, "someMethod");
 [[HowshouldIinvokemyPOJOsorSpringServices-SeeAlso]]
 ==== See Also
 
-* xref:../bean-integration.adoc[Bean Integration]
+* xref:bean-integration.adoc[Bean Integration]
 * xref:bean-binding.adoc[Bean Binding]
 * xref:pojo-consuming.adoc[POJO Consuming]

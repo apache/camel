@@ -65,7 +65,7 @@ http://jira.springframework.org/browse/SPR-4466[SPR-4466]
 ===== Bridge Spring and Camel property placeholders
 
 From Camel 2.10 onwards you can bridge Spring and Camel property
-placeholders, see xref:../using-propertyplaceholder.adoc[Using
+placeholders, see xref:using-propertyplaceholder.adoc[Using
 PropertyPlaceholder] for more details.
 
 Here is a trick that you can use to define the uri in a property file

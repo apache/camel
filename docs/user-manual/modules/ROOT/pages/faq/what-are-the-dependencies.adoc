@@ -58,7 +58,7 @@ From *Camel 2.9*: the Spring JARs are no longer required for using JMX.
 [[Whatarethedependencies-OtherComponents]]
 ==== Other Components
 
-All the other xref:../component.adoc[Components] have a range of 3rd party
+All the other xref:component.adoc[Components] have a range of 3rd party
 .jars they depend on. They are listed in the maven pom files which files
 they require.
 
