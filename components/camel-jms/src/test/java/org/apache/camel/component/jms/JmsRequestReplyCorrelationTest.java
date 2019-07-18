@@ -219,6 +219,34 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
         assertEquals("a", out.getOut().getHeader("JMSCorrelationID"));
     }
 
+    /**
+     * When the setting useMessageIdAsCorrelationid is true for the client and
+     * false for the server and a correlation id is set on the message then
+     * we expect the client to omit the correlation id on the JMS message to force
+     * the server to use the message id. But the correlation id should still be
+     * available on the client exchange message afterwards.
+     */
+    @Test
+    public void testRequestReplyCorrelationByMessageIdWithGivenCorrelationId() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+
+        Exchange out = template.send("jms2:queue:hello", ExchangePattern.InOut, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Message in = exchange.getIn();
+                in.setBody("Hello World");
+                in.setHeader("JMSCorrelationID", "a");
+            }
+        });
+
+        result.assertIsSatisfied();
+
+        assertNotNull(out);
+
+        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
+        assertEquals("a", out.getOut().getHeader("JMSCorrelationID"));
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -252,7 +280,7 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
                         assertNotNull(exchange.getIn().getHeader("JMSReplyTo"));
                     }
                 }).to("mock:result");
-                
+
                 from("jms:queue:helloDelay").delay().constant(2000).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody(REPLY_BODY);
