@@ -32,17 +32,17 @@ public class LuceneQueryProcessor implements Processor {
     private IndexSearcher indexSearcher;
     private LuceneSearcher searcher;
     private String searchPhrase;
-    private int maxNumberOfHits; 
+    private int maxNumberOfHits;
     private int totalHitsThreshold;
     private Version luceneVersion;
-    
+
     public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits, int totalHitsThreshold) {
         this.setAnalyzer(analyzer);
         this.setIndexDirectory(new File(indexDirectoryPath));
         this.setSearchPhrase(defaultSearchPhrase);
         this.setMaxNumberOfHits(maxNumberOfHits);
     }
-    
+
     public void process(Exchange exchange) throws Exception {
         Hits hits;
 
@@ -56,9 +56,9 @@ public class LuceneQueryProcessor implements Processor {
             hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, luceneVersion, isReturnLuceneDocs);
         } else {
             throw new IllegalArgumentException("SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
-        }            
-        
-        exchange.getIn().setBody(hits);        
+        }
+
+        exchange.getIn().setBody(hits);
     }
 
     public Analyzer getAnalyzer() {
@@ -100,20 +100,20 @@ public class LuceneQueryProcessor implements Processor {
     public void setMaxNumberOfHits(int maxNumberOfHits) {
         this.maxNumberOfHits = maxNumberOfHits;
     }
-    
+
     public void setLuceneVersion(Version luceneVersion) {
         this.luceneVersion = luceneVersion;
     }
-    
+
     public Version getLuceneVersion() {
         return luceneVersion;
     }
 
-	public int getTotalHitsThreshold() {
-		return totalHitsThreshold;
-	}
+    public int getTotalHitsThreshold() {
+        return totalHitsThreshold;
+    }
 
-	public void setTotalHitsThreshold(int totalHitsThreshold) {
-		this.totalHitsThreshold = totalHitsThreshold;
-	}
+    public void setTotalHitsThreshold(int totalHitsThreshold) {
+        this.totalHitsThreshold = totalHitsThreshold;
+    }
 }
