@@ -37,6 +37,7 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -489,6 +490,40 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (stopWatch != null) {
                 backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // we want debugger just before calling the processor
+            return Ordered.LOWEST;
+        }
+    }
+
+    /**
+     * Advice to execute when using custom debugger.
+     */
+    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+
+        private final Debugger debugger;
+        private final Processor target;
+        private final NamedNode definition;
+
+        public DebuggerAdvice(Debugger debugger, Processor target, NamedNode definition) {
+            this.debugger = debugger;
+            this.target = target;
+            this.definition = definition;
+        }
+
+        @Override
+        public StopWatch before(Exchange exchange) throws Exception {
+            StopWatch watch = new StopWatch();
+            debugger.beforeProcess(exchange, target, definition);
+            return watch;
+        }
+
+        @Override
+        public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
+            debugger.afterProcess(exchange, target, definition, stopWatch.taken());
         }
 
         @Override

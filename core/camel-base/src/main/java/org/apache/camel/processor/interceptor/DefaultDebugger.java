@@ -143,9 +143,9 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
             @Override
             public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 if (event instanceof ExchangeCreatedEvent) {
-                    exchange.getContext().getDebugger().startSingleStepExchange(exchange.getExchangeId(), this);
+                    startSingleStepExchange(exchange.getExchangeId(), this);
                 } else if (event instanceof ExchangeCompletedEvent) {
-                    exchange.getContext().getDebugger().stopSingleStepExchange(exchange.getExchangeId());
+                    stopSingleStepExchange(exchange.getExchangeId());
                 }
                 breakpoint.onEvent(exchange, event, definition);
             }

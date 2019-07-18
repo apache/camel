@@ -124,10 +124,6 @@ public final class BacklogDebugger extends ServiceSupport {
         return context.hasService(BacklogDebugger.class);
     }
 
-    public Debugger getDebugger() {
-        return debugger;
-    }
-
     public String getLoggingLevel() {
         return loggingLevel.name();
     }
