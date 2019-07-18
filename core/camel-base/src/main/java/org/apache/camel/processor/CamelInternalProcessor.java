@@ -248,7 +248,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Strategy to determine if we should continue processing the {@link Exchange}.
      */
-    protected boolean continueProcessing(Exchange exchange) {
+    private boolean continueProcessing(Exchange exchange) {
         Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
@@ -350,7 +350,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
          * @param policy the policy
          * @return <tt>true</tt> to run
          */
-        protected boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
+        boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
             if (policy instanceof StatefulService) {
                 StatefulService ss = (StatefulService) policy;
                 return ss.isRunAllowed();
@@ -395,9 +395,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         private static boolean isCamelStopping(CamelContext context) {
-            if (context instanceof StatefulService) {
-                StatefulService ss = (StatefulService) context;
-                return ss.isStopping() || ss.isStopped();
+            if (context != null) {
+                return context.isStopping() || context.isStopped();
             }
             return false;
         }
@@ -516,9 +515,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public StopWatch before(Exchange exchange) throws Exception {
-            StopWatch watch = new StopWatch();
             debugger.beforeProcess(exchange, target, definition);
-            return watch;
+            return new StopWatch();
         }
 
         @Override
