@@ -168,7 +168,6 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
@@ -186,7 +185,6 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
@@ -205,7 +203,6 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
@@ -225,7 +222,6 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
@@ -253,7 +249,6 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
@@ -327,14 +322,14 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
             @Override
             public void configure() {
                 from("direct:start").to("elasticsearch-rest://elasticsearch?operation=Index&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:index").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:get").to("elasticsearch-rest://elasticsearch?operation=GetById&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:multiget").to("elasticsearch-rest://elasticsearch?operation=MultiGet&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:delete").to("elasticsearch-rest://elasticsearch?operation=Delete&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:search").to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:index").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:get").to("elasticsearch-rest://elasticsearch?operation=GetById&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:multiget").to("elasticsearch-rest://elasticsearch?operation=MultiGet&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:delete").to("elasticsearch-rest://elasticsearch?operation=Delete&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:search").to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:search-1").to("elasticsearch-rest://elasticsearch?operation=Search&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:multiSearch").to("elasticsearch-rest://elasticsearch?operation=MultiSearch&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:update").to("elasticsearch-rest://elasticsearch?operation=Update&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:update").to("elasticsearch-rest://elasticsearch?operation=Update&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:exists").to("elasticsearch-rest://elasticsearch?operation=Exists&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
             }
         };

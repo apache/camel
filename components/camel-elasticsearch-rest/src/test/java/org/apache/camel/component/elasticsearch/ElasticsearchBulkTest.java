@@ -103,8 +103,8 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bulk_index").to("elasticsearch-rest://elasticsearch?operation=BulkIndex&indexName=twitter&indexType=tweet");
-                from("direct:bulk").to("elasticsearch-rest://elasticsearch?operation=Bulk&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:bulk_index").to("elasticsearch-rest://elasticsearch?operation=BulkIndex&indexName=twitter");
+                from("direct:bulk").to("elasticsearch-rest://elasticsearch?operation=Bulk&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
             }
         };
     }

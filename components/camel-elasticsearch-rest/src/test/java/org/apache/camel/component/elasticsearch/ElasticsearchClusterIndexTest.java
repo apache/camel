@@ -34,7 +34,6 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "1");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
@@ -54,7 +53,6 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "facebook");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "post");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "4");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithSniffer", map, headers, String.class);
@@ -75,9 +73,9 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
             @Override
             public void configure() {
                 from("direct:indexWithIpAndPort")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_FIRST_NODE_TRANSPORT_PORT);
+                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_FIRST_NODE_TRANSPORT_PORT);
                 from("direct:indexWithSniffer")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&indexType=tweet&enableSniffer=true&hostAddresses=localhost:" + ES_FIRST_NODE_TRANSPORT_PORT);
+                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true&hostAddresses=localhost:" + ES_FIRST_NODE_TRANSPORT_PORT);
             }
         };
     }

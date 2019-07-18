@@ -56,7 +56,6 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -68,7 +67,6 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.Index);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
@@ -82,9 +80,9 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:start").to("elasticsearch-rest://elasticsearch?hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:index").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:deleteIndex").to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
-                from("direct:indexWithReplication").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:index").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:deleteIndex").to("elasticsearch-rest://elasticsearch?operation=DeleteIndex&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:indexWithReplication").to("elasticsearch-rest://elasticsearch?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
             }
         };
     }

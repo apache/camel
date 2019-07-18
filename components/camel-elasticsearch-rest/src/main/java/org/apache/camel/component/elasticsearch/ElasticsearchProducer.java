@@ -139,13 +139,6 @@ public class ElasticsearchProducer extends DefaultProducer {
             configIndexName = true;
         }
 
-        boolean configIndexType = false;
-        String indexType = message.getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
-        if (indexType == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, configuration.getIndexType());
-            configIndexType = true;
-        }
-
         boolean configWaitForActiveShards = false;
         Integer waitForActiveShards = message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
         if (waitForActiveShards == null) {
@@ -223,10 +216,6 @@ public class ElasticsearchProducer extends DefaultProducer {
         // subsequent endpoint index/type with the first endpoint index/type.
         if (configIndexName) {
             message.removeHeader(ElasticsearchConstants.PARAM_INDEX_NAME);
-        }
-
-        if (configIndexType) {
-            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_TYPE);
         }
 
         if (configWaitForActiveShards) {

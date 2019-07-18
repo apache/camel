@@ -71,7 +71,6 @@ public final class ElasticsearchActionRequestConverter {
 
         return updateRequest.waitForActiveShards(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
             .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-            .type(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class))
             .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 
@@ -94,8 +93,7 @@ public final class ElasticsearchActionRequestConverter {
         }
 
         return indexRequest.waitForActiveShards(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
-            .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-            .type(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
+            .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
     }
 
     @Converter
@@ -114,7 +112,7 @@ public final class ElasticsearchActionRequestConverter {
             return (GetRequest)document;
         }
         return new GetRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-            .type(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class)).id((String)document);
+            .id((String)document);
     }
 
     @Converter
@@ -124,7 +122,7 @@ public final class ElasticsearchActionRequestConverter {
         }
         if (document instanceof String) {
             return new DeleteRequest().index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-                .type(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class)).id((String)document);
+                .id((String)document);
         } else {
             throw new IllegalArgumentException("Wrong body type. Only DeleteRequest or String is allowed as a type");
         }
@@ -153,12 +151,8 @@ public final class ElasticsearchActionRequestConverter {
         // Only setup the indexName and indexType if the message header has the
         // setting
         String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
-        String indexType = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
         if (ObjectHelper.isNotEmpty(indexName)) {
             searchRequest.indices(indexName);
-        }
-        if (ObjectHelper.isNotEmpty(indexType)) {
-            searchRequest.types(indexType);
         }
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();

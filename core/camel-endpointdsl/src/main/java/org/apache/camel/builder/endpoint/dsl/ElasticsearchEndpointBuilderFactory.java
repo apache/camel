@@ -133,17 +133,6 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The type of the index to act against.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         */
-        default ElasticsearchEndpointBuilder indexType(String indexType) {
-            setProperty("indexType", indexType);
-            return this;
-        }
-        /**
          * The time in ms before retry.
          * 
          * The option is a: <code>int</code> type.
