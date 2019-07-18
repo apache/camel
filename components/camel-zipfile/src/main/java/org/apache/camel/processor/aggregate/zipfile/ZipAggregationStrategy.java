@@ -205,13 +205,11 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     }
 
     private static void newZipFile(File zipFile) throws URISyntaxException, IOException {
-        if (zipFile.exists()) {
-            if (!zipFile.delete()) { // Delete, because ZipFileSystem needs to create file on its own (with correct END bytes in the file)
-                throw new IOException("Cannot delete file " + zipFile);
-            }
+        if (zipFile.exists() && !zipFile.delete()) { //Delete, because ZipFileSystem needs to create file on its own (with correct END bytes in the file)
+            throw new IOException("Cannot delete file " + zipFile);
         }
-        Map<String, String> env = new HashMap<>();
-        env.put("create", Boolean.TRUE.toString());
+        Map<String, Object> env = new HashMap<>();
+        env.put("create", Boolean.TRUE.toString()); //Intentionally String, it is implemented this way in ZipFileSystem
 
         try (FileSystem ignored = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             //noop, just open and close FileSystem to initialize correct headers in file
@@ -220,8 +218,8 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     private void addFileToZip(File zipFile, File file, String fileName) throws IOException, URISyntaxException {
         String entryName = fileName == null ? file.getName() : fileName;
-        Map<String, String> env = new HashMap<>();
-        env.put("useTempFile", Boolean.toString(this.useTempFile));
+        Map<String, Object> env = new HashMap<>();
+        env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
             Files.createDirectories(dest.getParent());
@@ -230,9 +228,9 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     }
 
     private void addEntryToZip(File zipFile, String entryName, byte[] buffer, String charset) throws IOException, URISyntaxException {
-        Map<String, String> env = new HashMap<>();
+        Map<String, Object> env = new HashMap<>();
         env.put("encoding", charset);
-        env.put("useTempFile", Boolean.toString(this.useTempFile));
+        env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
         try (FileSystem fs = FileSystems.newFileSystem(getZipURI(zipFile), env)) {
             Path dest = fs.getPath("/", entryName);
             Files.createDirectories(dest.getParent());
