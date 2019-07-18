@@ -25,8 +25,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -35,12 +33,11 @@ import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.spi.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -199,9 +196,16 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         // add debugger as well so we have both tracing and debugging out of the box
         if (routeContext.isDebugging()) {
-            BacklogDebugger debugger = getOrCreateBacklogDebugger();
-            camelContext.addService(debugger);
-            addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+            if (camelContext.getDebugger() != null) {
+                // use custom debugger
+                Debugger debugger = camelContext.getDebugger();
+                addAdvice(new DebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+            } else {
+                // use backlog debugger
+                BacklogDebugger debugger = getOrCreateBacklogDebugger();
+                camelContext.addService(debugger);
+                addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+            }
         }
 
         if (routeContext.isMessageHistory()) {

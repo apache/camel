@@ -78,7 +78,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
-import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -2457,12 +2456,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
         if (getDelayer() != null && getDelayer() > 0) {
             log.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), getName());
-        }
-
-        // register debugger
-        if (getDebugger() != null) {
-            log.info("Debugger: {} is enabled on CamelContext: {}", getDebugger(), getName());
-            addInterceptStrategy(new Debug(getDebugger()));
         }
 
         // start management strategy before lifecycles are started
