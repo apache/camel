@@ -743,6 +743,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * 
      * @return the prefix token or {@code null}
      */
+    @Deprecated
     String getPropertyPrefixToken();
     
     /**
@@ -751,6 +752,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * 
      * @return the suffix token or {@code null}
      */
+    @Deprecated
     String getPropertySuffixToken();
 
     /**

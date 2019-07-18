@@ -15,7 +15,7 @@ Where *key* is the key for the property to lookup
 === Options
 
 // component options: START
-The Properties component supports 14 options, which are listed below.
+The Properties component supports 12 options, which are listed below.
 
 
 
@@ -28,8 +28,6 @@ The Properties component supports 14 options, which are listed below.
 | *propertiesParser* (common) | To use a custom PropertiesParser |  | PropertiesParser
 | *defaultFallbackEnabled* (common) | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean
 | *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
-| *prefixToken* (advanced) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN). | {{ | String
-| *suffixToken* (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
 | *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
 | *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
 | *systemPropertiesMode* (common) | Sets the system property mode. The default mode (override) is to use system properties if present, and override any existing properties. | 2 | int

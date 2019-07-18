@@ -90,7 +90,10 @@ The Camel `Main` class has been moved out of `camel-core` into `camel-main` so y
 
 ### Properties component
 
+The `properties` component has configuring custom prefix and suffix tokens removed as if in use, they had potential issues with clashing with simple languages and elsewhere. The default tokens are now hardcoded and always in use.
+
 The `properties` component has some advanced options removed: `propertyPrefix`, `propertySuffix`, and `fallbackToUnaugmented`; these options was never really useable for end users anyway. The option `propertiesResolver` has also been removed as you should use `PropertiesSource` instead.
+
 
 ### Removed components
 

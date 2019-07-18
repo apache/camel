@@ -688,7 +688,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static ComponentMetadata getDataformatResolverReference(ParserContext context, String dataformat) {
         // we cannot resolve dataformat names using property placeholders at this point in time
-        if (dataformat.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+        if (dataformat.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
             return null;
         }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
@@ -722,7 +722,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static ComponentMetadata getLanguageResolverReference(ParserContext context, String language) {
         // we cannot resolve language names using property placeholders at this point in time
-        if (language.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+        if (language.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
             return null;
         }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
@@ -756,7 +756,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static ComponentMetadata getComponentResolverReference(ParserContext context, String component) {
         // we cannot resolve component names using property placeholders at this point in time
-        if (component.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+        if (component.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
             return null;
         }
         ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
@@ -1187,7 +1187,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         private void findUriComponent(String uri, Set<String> components) {
             // if the uri is a placeholder then skip it
-            if (uri == null || uri.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            if (uri == null || uri.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
                 return;
             }
 

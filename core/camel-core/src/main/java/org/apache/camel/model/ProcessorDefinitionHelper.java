@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -701,11 +702,8 @@ public final class ProcessorDefinitionHelper {
 
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;
-                        String prefixToken = camelContext.getPropertyPrefixToken();
-                        String suffixToken = camelContext.getPropertySuffixToken();
-                        if (prefixToken == null) {
-                            throw new IllegalArgumentException("Property with name [" + local + "] uses property placeholders; however, no properties component is configured.");
-                        }
+                        String prefixToken = PropertiesComponent.PREFIX_TOKEN;
+                        String suffixToken = PropertiesComponent.SUFFIX_TOKEN;
 
                         if (!s.startsWith(prefixToken)) {
                             s = prefixToken + s;

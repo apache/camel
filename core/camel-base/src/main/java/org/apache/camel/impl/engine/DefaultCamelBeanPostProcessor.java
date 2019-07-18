@@ -37,6 +37,7 @@ import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ReflectionHelper;
@@ -449,7 +450,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                             key = key + ":" + pi.defaultValue();
                         }
                         // need to force property lookup by having key enclosed in tokens
-                        key = camelContext.getPropertiesComponent().getPrefixToken() + key + camelContext.getPropertiesComponent().getSuffixToken();
+                        key = PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN;
                         try {
                             Object value = camelContext.resolvePropertyPlaceholders(key);
                             parameters[i] = camelContext.getTypeConverter().convertTo(type, value);
