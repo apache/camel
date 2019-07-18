@@ -35,8 +35,6 @@ public class ElasticsearchConfiguration {
     private ElasticsearchOperation operation;
     @UriParam
     private String indexName;
-    @UriParam
-    private String indexType;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
     @UriParam @Metadata(required = true)
@@ -93,17 +91,6 @@ public class ElasticsearchConfiguration {
 
     public void setIndexName(String indexName) {
         this.indexName = indexName;
-    }
-
-    /**
-     * The type of the index to act against
-     */
-    public String getIndexType() {
-        return indexType;
-    }
-
-    public void setIndexType(String indexType) {
-        this.indexType = indexType;
     }
 
     /**
