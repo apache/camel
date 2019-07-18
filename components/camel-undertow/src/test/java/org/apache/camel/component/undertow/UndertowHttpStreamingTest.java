@@ -48,8 +48,8 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
         mock.expectedBodiesReceived(expectedLength);
 
         Exchange response = template.send(
-                "undertow:http://localhost:{{port}}?useStreaming=true",
-                e -> produceStream(e));
+            "undertow:http://localhost:{{port}}?useStreaming=true",
+            e -> produceStream(e));
         consumeStream(response);
         long length = response.getIn().getBody(Long.class).longValue();
 
@@ -65,8 +65,8 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
         mock.expectedBodiesReceived(12);
 
         Exchange response = template.send(
-                "undertow:http://localhost:{{port}}?useStreaming=true",
-                e -> { e.getIn().setBody("Hello Camel!"); });
+            "undertow:http://localhost:{{port}}?useStreaming=true",
+            e -> e.getIn().setBody("Hello Camel!"));
         consumeStream(response);
         long length = response.getIn().getBody(Long.class).longValue();
 
