@@ -79,7 +79,7 @@ class MyCdiBean {
 ==== Using Guice
 
 You can also use Guice as the dependency injection
-framework. For example see the xref:../guice-jms-example.adoc[Guice JMS
+framework. For example see the xref:guice-jms-example.adoc[Guice JMS
 Example].
 
 [[HowdoIconfigureendpoints-UsingSpringXML]]
@@ -310,8 +310,8 @@ can have multiple options in one line, eg this is the same:
 [[HowdoIconfigureendpoints-SeeAlso]]
 ==== See Also
 
-* xref:../configuring-camel.adoc[How do I add a component?]
+* xref:configuring-camel.adoc[How do I add a component?]
 * xref:cdi-component.adoc[CDI]
-* xref:../spring.adoc[Spring]
-* xref:../uris.adoc[URIs]
-* xref:../using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]
+* xref:spring.adoc[Spring]
+* xref:uris.adoc[URIs]
+* xref:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

@@ -2,12 +2,12 @@
 === How does Camel work with ServiceMix?
 
 You can use Camel to do smart routing and implement the
-xref:../enterprise-integration-patterns.adoc[Enterprise Integration
+xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] inside of the JBI container, routing between existing JBI
 components together with communicating with any of the other Camel
-xref:../component.adoc[Components].
+xref:component.adoc[Components].
 
-To do this you take your Camel xref:../spring.adoc[Spring] configuration
+To do this you take your Camel xref:spring.adoc[Spring] configuration
 and turn it into a JBI Service Unit using the maven plugin or archetype.
 
 For more details see

@@ -11,7 +11,7 @@ XML.
 Because of this, you have to replace all & in your URIs by `+&amp;+` when
 using the Spring XML syntax to configure Camel routes.
 
-An example: this snippet of code in the xref:../dsl.adoc[DSL]...
+An example: this snippet of code in the xref:dsl.adoc[DSL]...
 
 [source,java]
 ----

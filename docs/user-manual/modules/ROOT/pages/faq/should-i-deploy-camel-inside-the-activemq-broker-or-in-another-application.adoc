@@ -2,7 +2,7 @@
 === Should I deploy Camel inside the ActiveMQ broker or in another application
 
 Whether you deploy the
-xref:../enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
 inside the ActiveMQ Broker or in a separate application
 depends on your requirements.
 

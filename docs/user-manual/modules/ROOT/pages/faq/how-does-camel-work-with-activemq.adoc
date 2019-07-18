@@ -2,7 +2,7 @@
 === How does Camel work with ActiveMQ?
 
 You can use Camel to do smart routing and implement the
-xref:../enterprise-integration-patterns.adoc[Enterprise Integration
+xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] inside:
 
 * the ActiveMQ message broker
@@ -11,8 +11,8 @@ Patterns] inside:
 So Camel can route messages to and from xref:mail-component.adoc[Mail],
 xref:file-component.adoc[File], xref:ftp-component.adoc[FTP], xref:jpa-component.adoc[JPA],
 xref:xmpp-component.adoc[XMPP] other xref:jms-component.adoc[JMS] providers and any of the
-other Camel xref:../component.adoc[Components] as well as implementating
-all of the xref:../enterprise-integration-patterns.adoc[Enterprise
+other Camel xref:component.adoc[Components] as well as implementating
+all of the xref:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] such as xref:content-based-router.adoc[Content
 Based Router] or xref:messageTranslator-eip.adoc[Message Translator].
 

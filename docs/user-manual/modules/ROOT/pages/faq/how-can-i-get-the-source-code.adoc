@@ -47,4 +47,4 @@ https://github.com/apache/camel/
 [[HowcanIgetthesourcecode-Buildingthecode]]
 ==== Building the code
 
-To then build the code see xref:../building.adoc[Building].
+To then build the code see xref:building.adoc[Building].

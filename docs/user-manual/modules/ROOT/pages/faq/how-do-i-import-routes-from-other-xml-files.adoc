@@ -3,7 +3,7 @@
 
 *Available as of Camel 2.3*
 
-When defining routes in Camel using xref:../xml-configuration.adoc[XML Configuration]
+When defining routes in Camel using xref:xml-configuration.adoc[XML Configuration]
 you may want to define some routes in other XML files.
 For example you may have many routes and it may help to maintain the
 application if some of the routes are in separate XML files. You may

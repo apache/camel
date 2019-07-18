@@ -2,28 +2,28 @@
 === Is it possible to start Camel as a standalone application, without embedding it in another application?
 
 Yes, Camel can run standalone or in any container. Running Standalone is
-as simple just to create a xref:../camelcontext.adoc[CamelContext], add
+as simple just to create a xref:camelcontext.adoc[CamelContext], add
 routes and start it. If you don't want to write your own Java main, you
-could use the one from xref:../spring.adoc[camel-spring]
+could use the one from xref:spring.adoc[camel-spring]
 (http://camel.apache.org/maven/current/camel-spring/apidocs/) also used
-by the xref:../camel-maven-plugin.adoc[Camel Maven Plugin].
+by the xref:camel-maven-plugin.adoc[Camel Maven Plugin].
 
 The starting guide is a good place to start: +
-xref:../getting-started.adoc[Getting Started]
+xref:getting-started.adoc[Getting Started]
 
 And the concrete walk through a plain old java main example: +
 xref:walk-through-an-example.adoc[Walk through an Example]
 
 The FAQ have some more details: +
-xref:../faq.adoc[FAQ]
+xref:faq.adoc[FAQ]
 
 And if you use Maven for your projects Camel has maven tools to boot up
 in standalone mode and quickly run you Camel application: +
-xref:../camel-maven-plugin.adoc[Camel Maven Plugin]
+xref:camel-maven-plugin.adoc[Camel Maven Plugin]
 
-And check this xref:../cookbook.adoc[Cookbook] example: +
+And check this xref:cookbook.adoc[Cookbook] example: +
 xref:running-camel-standalone-and-have-it-keep-running.adoc[Running
 Camel standalone and have it keep running]
 
-This is how you can run the xref:../examples.adoc[Examples] that is
+This is how you can run the xref:examples.adoc[Examples] that is
 included in the Camel distribution.
