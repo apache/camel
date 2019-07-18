@@ -100,15 +100,15 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
 
     protected final ClientRequest request;
 
-    private final ByteBuffer body;
-
-    private final AsyncCallback callback;
+    protected final AsyncCallback callback;
 
     /**
      * A queue of resources that will be closed when the exchange ends, add more
      * resources via {@link #deferClose(Closeable)}.
      */
-    private final BlockingDeque<Closeable> closables = new LinkedBlockingDeque<>();
+    protected final BlockingDeque<Closeable> closables = new LinkedBlockingDeque<>();
+
+    private final ByteBuffer body;
 
     private final Boolean throwExceptionOnFailure;
 
@@ -161,9 +161,13 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         }
     }
 
-    void finish(final Message result) {
-        for (final Closeable closeable : closables) {
-            IoUtils.safeClose(closeable);
+    protected void finish(final Message result) {
+        finish(result, true);
+    }
+
+    protected void finish(final Message result, boolean close) {
+        if (close) {
+            closables.forEach(IoUtils::safeClose);
         }
 
         if (result != null) {
