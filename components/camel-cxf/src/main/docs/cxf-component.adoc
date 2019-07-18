@@ -24,7 +24,7 @@ hosted in CXF.
 **** <<How to enable CXF's LoggingOutInterceptor in MESSAGE mode>>
 *** <<Description of relayHeaders option>>
 **** <<Available only in POJO mode>>
-**** <<Changes since Release 2.0>>
+**** Changes since Release 2.0
 ** <<Configure the CXF endpoints with Spring>>
 ** <<Configuring the CXF Endpoints with Apache Aries Blueprint>>
 ** <<How to make the camel-cxf component use log4j instead of java.util.logging>>
