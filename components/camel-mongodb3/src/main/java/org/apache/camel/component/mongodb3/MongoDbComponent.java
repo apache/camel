@@ -62,18 +62,19 @@ public class MongoDbComponent extends DefaultComponent {
     }
 
     /**
-     * Get the client used for connection
+     * Get the connection bean client used for connection.
      *
-     * @return the client using for connection to db
+     * @return the client used for connection to db
      */
     public MongoClient getMongoConnection() {
         return mongoConnection;
     }
 
     /**
-     * Set the client used for connection
+     * Set a client used for connection: all endpoints generated from the component
+     * will share this connection bean.
      *
-     * @param mongoConnection
+     * @param mongoConnection the connection bean used as client
      */
     public void setMongoConnection(MongoClient mongoConnection) {
         this.mongoConnection = mongoConnection;
