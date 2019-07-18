@@ -31,6 +31,10 @@ pipeline {
     tools {
         jdk JDK_NAME
     }
+   
+    environment {
+        MAVEN_OPTS  = ""
+    }
 
     options {
         buildDiscarder(
