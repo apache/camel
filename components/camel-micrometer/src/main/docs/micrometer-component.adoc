@@ -196,7 +196,7 @@ class MyBean extends RouteBuilder {
 Each meter has type and name. Supported types are
 xref:#MicrometerComponent-counter[counter],
 xref:#MicrometerComponent-summary[distribution summary] and
-xref:#MetricsComponent-timer[timer]. If no type is provided then a counter is used by default.
+timer. If no type is provided then a counter is used by default.
 
 The meter name is a string that is evaluated as `Simple` expression. In addition to using the `CamelMetricsName`
 header (see below), this allows to select the meter depending on exchange data.
