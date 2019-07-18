@@ -45,20 +45,6 @@ public interface PropertiesComponent extends Component, StaticService {
     String DEFAULT_CREATED = "PropertiesComponentDefaultCreated";
 
     /**
-     * The value of the prefix token used to identify properties to replace.
-     * Is default {@link #PREFIX_TOKEN}
-     */
-    @Deprecated
-    String getPrefixToken();
-
-    /**
-     * The value of the suffix token used to identify properties to replace.
-     * Is default {@link #SUFFIX_TOKEN}
-     */
-    @Deprecated
-    String getSuffixToken();
-
-    /**
      * Parses the input text and resolve all property placeholders from within the text.
      *
      * @param uri  input text

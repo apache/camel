@@ -1637,28 +1637,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return answer;
     }
 
-    @Deprecated
-    public String getPropertyPrefixToken() {
-        PropertiesComponent pc = getPropertiesComponent(false);
-
-        if (pc != null) {
-            return pc.getPrefixToken();
-        } else {
-            return null;
-        }
-    }
-
-    @Deprecated
-    public String getPropertySuffixToken() {
-        PropertiesComponent pc = getPropertiesComponent(false);
-
-        if (pc != null) {
-            return pc.getSuffixToken();
-        } else {
-            return null;
-        }
-    }
-
     public String resolvePropertyPlaceholders(String text) {
         // While it is more efficient to only do the lookup if we are sure we
         // need the component,
