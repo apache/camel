@@ -39,6 +39,10 @@ pipeline {
         jdk JDK_NAME
     }
 
+    environment {
+        MAVEN_SKIP_RC = true
+    }
+
     options {
         buildDiscarder(
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
