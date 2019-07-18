@@ -12,7 +12,7 @@ The MEP defines the messaging style used such as one-way
 which means you have IN and optionally OUT messages. This closely maps
 to other APIs such as WS, WSDL, REST, JBI and the likes.
 
-The xref:../exchange.adoc[Exchange] API provides two methods to get a
+The xref:exchange.adoc[Exchange] API provides two methods to get a
 message, either `getIn` or `getOut`.
 Obviously the `getIn` gets the IN message, and the `getOut` gets the OUT
 message.
@@ -40,7 +40,7 @@ instead.
 [[UsinggetInorgetOutmethodsonExchange-UsinggetInorgetOutmethodsonExchange]]
 ==== Using getIn or getOut methods on Exchange
 
-Now suppose you want to use a Camel xref:../processor.adoc[Processor] to
+Now suppose you want to use a Camel xref:processor.adoc[Processor] to
 adjust a message. This can be done as follows:
 
 [source,java]
@@ -53,7 +53,7 @@ public void process(Exchange exchange) throws Exception {
 ----
 
 This seems intuitive and is what you would expect is the _right_
-approach to change a message from a xref:../processor.adoc[Processor].
+approach to change a message from a xref:processor.adoc[Processor].
 However there is an big issue -- the `getOut` method will create a new
 xref:message-eip.adoc[Message], which means any other information
 from the IN message will not be propagated; which means you will lose
@@ -113,19 +113,19 @@ And therefore it's often easier just to adjust the IN message directly.
 ====
 
 Changing the IN message directly is possible in Camel as it doesn't
-mind. Camel will detect that the xref:../exchange.adoc[Exchange] has no OUT
+mind. Camel will detect that the xref:exchange.adoc[Exchange] has no OUT
 message and therefore use the IN message instead.
 
 [[UsinggetInorgetOutmethodsonExchange-AboutMessageExchangePatternandgetOut]]
 ==== About Message Exchange Pattern and getOut
 
-If the xref:../exchange.adoc[Exchange] is using `InOnly` as the MEP, then
-you may think that the xref:../exchange.adoc[Exchange] has no OUT
+If the xref:exchange.adoc[Exchange] is using `InOnly` as the MEP, then
+you may think that the xref:exchange.adoc[Exchange] has no OUT
 message. But you can still invoke the `getOut` method on
-xref:../exchange.adoc[Exchange]; Camel will not barf.
+xref:exchange.adoc[Exchange]; Camel will not barf.
 
 So the example code above is possible for any kind of MEP. The MEP is
-_just_ a flag on the xref:../exchange.adoc[Exchange] which the Consumer and
+_just_ a flag on the xref:exchange.adoc[Exchange] which the Consumer and
 Producer adhere to.
-You can change the MEP on the xref:../exchange.adoc[Exchange] using the
+You can change the MEP on the xref:exchange.adoc[Exchange] using the
 `setPattern` method. And likewise there is DSL to change it as well.

@@ -1,7 +1,7 @@
 [[Exception-javax.naming.NoInitialContextException-Exceptionjavax.naming.NoInitialContextException]]
 === Exception: `javax.naming.NoInitialContextException`
 
-If you try to use Camel without xref:../spring.adoc[Spring] using code
+If you try to use Camel without xref:spring.adoc[Spring] using code
 something like this:
 
 [source,java]
@@ -24,7 +24,7 @@ You might get an exception like this:
 ----
 
 This is because if you are not using Spring then the default
-xref:../registry.adoc[Registry] implementation uses xref:../jndi.adoc[JNDI].
+xref:registry.adoc[Registry] implementation uses xref:jndi.adoc[JNDI].
 
 A simple workaround for this is to specify a JNDI provider. An easy fix
 is to create a file called `jndi.properties` on the classpath and give

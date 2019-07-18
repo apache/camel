@@ -6,13 +6,13 @@ https://github.com/apache/camel/blob/master/CONTRIBUTING.md[Contribute] via the 
 documentation, work on the issue tracker and submit patches.
 
 Once you're contributing and your work is good, one of our
-xref:../team.adoc[Team] may invite you to be a committer (after we've
+xref:team.adoc[Team] may invite you to be a committer (after we've
 called a vote). When that happens, if you accept, the following process
 kicks into place...
 
 Note that becoming a committer is not just about submitting some
 patches; its also about helping out on the development and user
-xref:../mailing-lists.adoc[Discussion Forums],
+xref:mailing-lists.adoc[Discussion Forums],
 helping with documentation and the issue tracker.
 
 [[HowdoIbecomeacommitter-Becomingacommittersteps]]
@@ -34,7 +34,7 @@ to have your account created; we'll also need to know
 [[HowdoIbecomeacommitter-GettingstartedatApache]]
 ==== Getting started at Apache
 
-Firstly add yourself to the xref:../team.adoc[Team] page
+Firstly add yourself to the xref:team.adoc[Team] page
 
 Now go read the instructions on the
 http://www.apache.org/dev/new-committers-guide.html[new committers guide].

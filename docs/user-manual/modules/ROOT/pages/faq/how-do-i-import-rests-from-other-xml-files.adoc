@@ -3,7 +3,7 @@
 
 *Available as of Camel 2.14*
 
-When defining rests in Camel using xref:../xml-configuration.adoc[Xml
+When defining rests in Camel using xref:xml-configuration.adoc[Xml
 Configuration] you may want to define some rests in other XML files. For
 example you may have many rest services and it may help to maintain the
 application if some of the rests are in separate XML files. You may also

@@ -9,7 +9,7 @@ map very closely to JBI in particular but also
 xref:cxf-component.adoc[CXF], xref:http-component.adoc[HTTP], xref:jms-component.adoc[JMS],
 xref:mail-component.adoc[Mail], xref:xmpp-component.adoc[XMPP] and most other integration
 abstractions. We want to prevent leaky abstractions, so the Camel API
-exposes the underlying APIs so that a xref:../processor.adoc[Processor] can
+exposes the underlying APIs so that a xref:processor.adoc[Processor] can
 make use of the underlying abstractions if they make sense.
 
 For example:
@@ -38,6 +38,6 @@ has access to the underlying JMS Message objects
 You can probably see a pattern forming now :smile:
 
 For many routing and mediation components and
-xref:../processor.adoc[Processor] objects, you maybe don't care about the
+xref:processor.adoc[Processor] objects, you maybe don't care about the
 underlying transport and can instead stick to the abstract Camel API.
 But if you need to, the real transport APIs are there for you.

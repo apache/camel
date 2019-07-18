@@ -27,6 +27,6 @@ camel-spring on another JDK (preferably a Sun JDK).
 
 Ruby scripting on IBM's JDK works for Camel 2.0 and onward. For earlier
 versions you'll need to use one of the other
-xref:../scripting-languages.adoc[Scripting Languages]. See
+xref:scripting-languages.adoc[Scripting Languages]. See
 https://issues.apache.org/activemq/browse/CAMEL-1030[CAMEL-1030] for
 more details.

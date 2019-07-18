@@ -20,13 +20,13 @@ middleware with EIP and http://servicemix.apache.org/[Apache ServiceMix]
 the ESB based around OSGi and JBI at Apache - both of which are
 http://www.nabble.com/Apache-f90.html[very popular too].
 * Camel is designed from the ground up around
-xref:../enterprise-integration-patterns.adoc[Enterprise Integration
+xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] -- having an EIP pattern language implemented in
-xref:../dsl.adoc[Java], xref:../spring.adoc[Spring XML],
-xref:../scala-dsl.adoc[Scala] and xref:../groovy-dsl.adoc[Groovy] as well as
-xref:../visualisation.adoc[EIP Visualisations].
+xref:dsl.adoc[Java], xref:spring.adoc[Spring XML],
+xref:scala-dsl.adoc[Scala] and xref:groovy-dsl.adoc[Groovy] as well as
+xref:visualisation.adoc[EIP Visualisations].
 * Camel is designed to work with pretty much all kinds of
-xref:../transport.adoc[transport] as well as working with any
-xref:../data-format.adoc[Data Format]. When we first looked at Synapse it
+xref:transport.adoc[transport] as well as working with any
+xref:data-format.adoc[Data Format]. When we first looked at Synapse it
 was based around Axis 2 and WS-* though apparently thats no longer the
 case.

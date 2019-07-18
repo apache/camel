@@ -4,7 +4,7 @@
 There could be several reasons why the xref:file-component.adoc[File] consumer is
 not picking up files. For example it may not run at all, or it cannot
 acquire a read lock on the file.
-xref:../faq.adoc#logging-questions[Check the logs] for any exceptions or other
+xref:faq.adoc#logging-questions[Check the logs] for any exceptions or other
 informative messages. You can
 xref:how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
 `org.apache.camel.component.file` to see more detail.
@@ -14,16 +14,16 @@ xref:how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
 
 Well, this is really a
 http://en.wikipedia.org/wiki/Chicken_or_the_egg["chicken or the egg"]
-question. The Camel xref:../error-handling-in-camel.adoc[error handler]
+question. The Camel xref:error-handling-in-camel.adoc[error handler]
 (e.g., in the routes) only applies when a message is being routed by the
 routing engine.
 Before this happens, a consumer must successfully receive a message,
-create a Camel xref:../exchange.adoc[Exchange], populate the
-xref:../exchange.adoc[Exchange] with message details (e.g., body and
-headers), and then pass the xref:../exchange.adoc[Exchange] to the routing
+create a Camel xref:exchange.adoc[Exchange], populate the
+xref:exchange.adoc[Exchange] with message details (e.g., body and
+headers), and then pass the xref:exchange.adoc[Exchange] to the routing
 engine. Only at this point can the routing error handler deal with
 exceptions occurring. Before this point, any error handling is really
-xref:../component.adoc[component]-specific.
+xref:component.adoc[component]-specific.
 
 [NOTE]
 ====

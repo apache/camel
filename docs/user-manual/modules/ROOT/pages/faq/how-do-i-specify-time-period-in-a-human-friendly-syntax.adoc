@@ -3,7 +3,7 @@
 
 *Available as of Camel 2.3*
 
-Some of the Camel xref:../component.adoc[components] offers options to
+Some of the Camel xref:component.adoc[components] offers options to
 specify a time period, which must be entered in milli second as unit.
 This may be unfriendly to read as a human when the value is large such
 as 45min = 2700000 millis.

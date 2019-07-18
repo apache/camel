@@ -2,12 +2,12 @@
 === Why did you choose the name Camel?
 
 * it stands for Concise Application Message Exchange Language (i.e. the
-Java xref:../dsl.adoc[DSL] for routing)
+Java xref:dsl.adoc[DSL] for routing)
 * a Camel can carry http://www.fao.org/sd/EGdirect/EGan0006.htm[4 times
 the load] of other beasts of burden
 * a Camel can travel for great distances without water; similarly a
 Camel does not require bucket loads of XML as you can use a pure Java
-xref:../dsl.adoc[DSL]
+xref:dsl.adoc[DSL]
 * some members of the team used to love Camel cigarettes!
 * it's short, simple and easy to remember name
 * very fast, even when the going gets tough!
