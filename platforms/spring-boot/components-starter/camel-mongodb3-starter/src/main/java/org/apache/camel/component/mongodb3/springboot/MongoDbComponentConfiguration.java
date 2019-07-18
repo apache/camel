@@ -37,6 +37,12 @@ public class MongoDbComponentConfiguration
      */
     private Boolean enabled;
     /**
+     * Set a client used for connection: all endpoints generated from the
+     * component will share this connection bean. The option is a
+     * com.mongodb.MongoClient type.
+     */
+    private String mongoConnection;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -47,6 +53,14 @@ public class MongoDbComponentConfiguration
      * the newer property binding with additional capabilities
      */
     private Boolean basicPropertyBinding = false;
+
+    public String getMongoConnection() {
+        return mongoConnection;
+    }
+
+    public void setMongoConnection(String mongoConnection) {
+        this.mongoConnection = mongoConnection;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
