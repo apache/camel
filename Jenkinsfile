@@ -33,7 +33,7 @@ pipeline {
     }
    
     environment {
-        MAVEN_OPTS  = ""
+        MAVEN_SKIP_RC = true
     }
 
     options {
