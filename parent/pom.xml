@@ -415,10 +415,10 @@
         <log4j2-version>2.11.2</log4j2-version>
         <logback-version>1.2.3</logback-version>
         <lucene3-version>3.6.0</lucene3-version>
-        <lucene-bundle-version>7.6.0_1</lucene-bundle-version>
+        <lucene-bundle-version>8.1.1_1</lucene-bundle-version>
         <!-- lucene aligned with elasticsearch version of lucene in use -->
-        <lucene-version>7.6.0</lucene-version>
-        <lucene-version-range>[7,8)</lucene-version-range>
+        <lucene-version>8.1.1</lucene-version>
+        <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
         <lightcouch-bundle-version>0.2.0_1</lightcouch-bundle-version>
         <lz4-version>1.6.0</lz4-version>
