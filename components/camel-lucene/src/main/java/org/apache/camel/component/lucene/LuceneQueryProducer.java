@@ -30,6 +30,7 @@ public class LuceneQueryProducer extends DefaultProducer {
     Analyzer analyzer;
     File indexDirectory;
     int maxNumberOfHits;
+    int totalHitsThreshold;
     
     public LuceneQueryProducer(Endpoint endpoint, LuceneConfiguration config) throws Exception {
         super(endpoint);
@@ -60,7 +61,7 @@ public class LuceneQueryProducer extends DefaultProducer {
 
         if (phrase != null) {
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits, config.getLuceneVersion(), isReturnLuceneDocs);
+            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, config.getLuceneVersion(), isReturnLuceneDocs);
         } else {
             throw new IllegalArgumentException("SearchPhrase for LucenePhraseQuerySearcher not set. Set the Header value: QUERY");
         }            

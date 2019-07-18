@@ -33,9 +33,10 @@ public class LuceneQueryProcessor implements Processor {
     private LuceneSearcher searcher;
     private String searchPhrase;
     private int maxNumberOfHits; 
+    private int totalHitsThreshold;
     private Version luceneVersion;
     
-    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits) {
+    public LuceneQueryProcessor(String indexDirectoryPath, Analyzer analyzer, String defaultSearchPhrase, int maxNumberOfHits, int totalHitsThreshold) {
         this.setAnalyzer(analyzer);
         this.setIndexDirectory(new File(indexDirectoryPath));
         this.setSearchPhrase(defaultSearchPhrase);
@@ -52,7 +53,7 @@ public class LuceneQueryProcessor implements Processor {
         if (phrase != null) {
             searcher = new LuceneSearcher();
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits, luceneVersion, isReturnLuceneDocs);
+            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, luceneVersion, isReturnLuceneDocs);
         } else {
             throw new IllegalArgumentException("SearchPhrase for LuceneQueryProcessor not set. Set the Header value: QUERY");
         }            
@@ -107,5 +108,12 @@ public class LuceneQueryProcessor implements Processor {
     public Version getLuceneVersion() {
         return luceneVersion;
     }
-        
+
+	public int getTotalHitsThreshold() {
+		return totalHitsThreshold;
+	}
+
+	public void setTotalHitsThreshold(int totalHitsThreshold) {
+		this.totalHitsThreshold = totalHitsThreshold;
+	}
 }
