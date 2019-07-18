@@ -28,12 +28,22 @@ import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.xnio.IoUtils;
 import org.xnio.channels.StreamSinkChannel;
 
 class UndertowStreamingClientCallback extends UndertowClientCallback {
 
     private InputStream bodyStream;
+
+    UndertowStreamingClientCallback(Exchange exchange, AsyncCallback callback,
+                                    UndertowEndpoint endpoint, ClientRequest request,
+                                    ByteBuffer body) {
+        super(exchange, callback, endpoint, request, body);
+        this.bodyStream = null;
+    }
 
     UndertowStreamingClientCallback(Exchange exchange, AsyncCallback callback,
                                     UndertowEndpoint endpoint, ClientRequest request,
@@ -43,13 +53,23 @@ class UndertowStreamingClientCallback extends UndertowClientCallback {
     }
 
     @Override
-    public void completed(ClientConnection connection) {
-        // no connection closing registered as streaming continues downstream
-        connection.sendRequest(request, on(this::performClientExchange));
+    protected void finish(Message result) {
+        boolean close = true;
+        if (result != null && result.getBody() instanceof InputStream) {
+            // no connection closing as streaming continues downstream
+            close = false;
+        }
+        finish(result, close);
     }
 
     @Override
     protected void writeRequest(ClientExchange clientExchange) {
+        if (bodyStream == null) {
+            super.writeRequest(clientExchange);
+            return;
+        }
+
+        // send request stream
         StreamSinkChannel requestChannel = clientExchange.getRequestChannel();
         try (ReadableByteChannel source = Channels.newChannel(bodyStream)) {
             IOHelper.transfer(source, requestChannel);
