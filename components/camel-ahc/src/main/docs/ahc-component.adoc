@@ -421,7 +421,7 @@ from("direct:start")
 Using the JSSE Configuration Utility
 
 The AHC component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
+through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how
