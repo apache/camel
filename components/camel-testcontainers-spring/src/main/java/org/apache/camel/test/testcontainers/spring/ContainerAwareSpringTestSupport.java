@@ -26,8 +26,10 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.camel.test.testcontainers.ContainerPropertiesFunction;
 import org.apache.camel.test.testcontainers.Containers;
+import org.junit.Assume;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.utility.DockerMachineClient;
 
 public abstract class ContainerAwareSpringTestSupport extends CamelSpringTestSupport {
     private List<GenericContainer<?>> containers = new CopyOnWriteArrayList<>();
@@ -38,6 +40,7 @@ public abstract class ContainerAwareSpringTestSupport extends CamelSpringTestSup
 
     @Override
     protected void setupResources() throws Exception {
+        Assume.assumeTrue("Skipping test because docker not installed", DockerMachineClient.instance().isInstalled());
         super.setupResources();
 
         containers.clear();
