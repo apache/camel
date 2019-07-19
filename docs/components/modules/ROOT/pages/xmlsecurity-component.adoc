@@ -8,7 +8,7 @@ signatures as described in the W3C standard
 http://www.w3.org/TR/xmldsig-core/[XML Signature Syntax and Processing]
 or as described in the successor
 http://www.w3.org/TR/xmldsig-core1/[version 1.1]. For XML Encryption
-support, please refer to the XML Security xref:data-format.adoc[Data
+support, please refer to the XML Security xref:manual::data-format.adoc[Data
 Format].
 
 You can find an introduction to XML signature
