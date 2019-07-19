@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.component.cmis.exception.CamelCmisException;
 import org.apache.camel.component.cmis.exception.CamelCmisObjectNotFoundException;
 import org.apache.camel.component.cmis.exception.CamelCmisUnauthorizedException;
 import org.apache.camel.support.DefaultProducer;
@@ -195,7 +196,7 @@ public class CMISProducer extends DefaultProducer {
                 document.move(sourceFolder, targetFolder);
                 log.info("Moved document from " + sourceFolder.getName() + " to " + targetFolder.getName());
             } catch (Exception e) {
-                log.error("Cannot move document to folder " + targetFolder.getName() + " : " + e.getMessage());
+                throw new CamelCmisException("Cannot move document to folder " + targetFolder.getName() + " : " + e.getMessage(), e);
             }
         } else {
             log.error("Document is null, cannot move!");
