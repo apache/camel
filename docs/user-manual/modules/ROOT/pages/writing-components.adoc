@@ -130,7 +130,7 @@ DefaultComponent:
 protected abstract Endpoint<E> createEndpoint(String uri, String remaining, Map parameters)
 ----
 
-The code is an example from the xref:seda-component.adoc[SEDA] component that removes the size
+The code is an example from the xref:components::seda-component.adoc[SEDA] component that removes the size
 parameter:
 
 [source,java]

@@ -8,9 +8,9 @@ Patterns] inside:
 * the ActiveMQ message broker
 * the ActiveMQ JMS client
 
-So Camel can route messages to and from xref:mail-component.adoc[Mail],
-xref:file-component.adoc[File], xref:ftp-component.adoc[FTP], xref:jpa-component.adoc[JPA],
-xref:xmpp-component.adoc[XMPP] other xref:jms-component.adoc[JMS] providers and any of the
+So Camel can route messages to and from xref:components::mail-component.adoc[Mail],
+xref:components::file-component.adoc[File], xref:components::ftp-component.adoc[FTP], xref:components::jpa-component.adoc[JPA],
+xref:components::xmpp-component.adoc[XMPP] other xref:components::jms-component.adoc[JMS] providers and any of the
 other Camel xref:component.adoc[Components] as well as implementating
 all of the xref:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] such as xref:content-based-router.adoc[Content

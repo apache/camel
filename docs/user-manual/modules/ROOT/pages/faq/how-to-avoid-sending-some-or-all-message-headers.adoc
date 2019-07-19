@@ -2,7 +2,7 @@
 === How to avoid sending some or all message headers?
 
 When I send a message to a Camel endpoint such as the
-xref:mail-component.adoc[Mail] component, then the mail include some message
+xref:components::mail-component.adoc[Mail] component, then the mail include some message
 headers I do not want. How can I avoid this?
 
 [[Howtoavoidsendingsomeorallmessageheaders-UseremoveHeadersintheroute]]

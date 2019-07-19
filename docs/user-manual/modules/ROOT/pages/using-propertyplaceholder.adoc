@@ -27,7 +27,7 @@ following:
 * Lookup of beans in the xref:registry.adoc[Registry]
 * Additional supported in Spring XML (see below in examples)
 * Using Blueprint `PropertyPlaceholder` with Camel
-xref:properties-component.adoc[Properties] component
+xref:components::properties-component.adoc[Properties] component
 * Using `@PropertyInject` to inject a property in a POJO
 * *Camel 2.14.1* Using default value if a property does not exists
 * *Camel 2.14.1* Include out of the box functions, to lookup property
@@ -1208,4 +1208,4 @@ pc.addFunction(new MyBeerFunction());
 [[UsingPropertyPlaceholder-SeeAlso]]
 ==== See Also
 
-* xref:properties-component.adoc[Properties] component
+* xref:components::properties-component.adoc[Properties] component

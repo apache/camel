@@ -229,12 +229,12 @@ Camel provides a number of endpoints which can make testing easier.
 [width="100%",cols="1,3",options="header",]
 |=======================================================================
 |Name |Description
-|xref:dataset-component.adoc[DataSet] |For load & soak testing this endpoint
+|xref:components::dataset-component.adoc[DataSet] |For load & soak testing this endpoint
 provides a way to create huge numbers of messages for sending to
 Components and asserting that they are consumed
 correctly
 
-|xref:mock-component.adoc[Mock] |For testing routes and mediation rules using
+|xref:components::mock-component.adoc[Mock] |For testing routes and mediation rules using
 mocks and allowing assertions to be added to an endpoint
 
 |xref:test-component.adoc[Test] |Creates a xref:test-component.adoc[Mock] endpoint which
@@ -242,7 +242,7 @@ expects to receive all the message bodies that could be polled from the
 given underlying endpoint
 |=======================================================================
 
-The main endpoint is the xref:mock-component.adoc[Mock] endpoint which allows
+The main endpoint is the xref:components::mock-component.adoc[Mock] endpoint which allows
 expectations to be added to different endpoints; you can then run your
 tests and assert that your expectations are met at the end.
 
@@ -257,16 +257,16 @@ endpoints can be useful:
 [width="100%",cols="1,3",options="header",]
 |=======================================================================
 |Name |Description
-|xref:direct-component.adoc[Direct] |Direct invocation of the consumer from the
+|xref:components::direct-component.adoc[Direct] |Direct invocation of the consumer from the
 producer so that single threaded (non-SEDA) in VM invocation is
 performed which can be useful to mock out physical transports
 
-|xref:seda-component.adoc[SEDA] |Delivers messages asynchronously to consumers via
+|xref:components::seda-component.adoc[SEDA] |Delivers messages asynchronously to consumers via
 a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[`java.util.concurrent.BlockingQueue`]
 which is good for testing asynchronous transports
 
-|xref:stub-component.adoc[Stub] |Works like xref:stub-component.adoc[SEDA] but does not
+|xref:components::stub-component.adoc[Stub] |Works like xref:components::stub-component.adoc[SEDA] but does not
 validate the endpoint URI, which makes stubbing much easier.
 |=======================================================================
 
@@ -274,7 +274,7 @@ validate the endpoint URI, which makes stubbing much easier.
 ==== Testing existing routes
 
 Camel provides some features to aid during testing of existing routes
-where you cannot or will not use xref:mock-component.adoc[Mock] etc. For example
+where you cannot or will not use xref:components::mock-component.adoc[Mock] etc. For example
 you may have a production ready route which you want to test with some
 3rd party API which sends messages into this route.
 

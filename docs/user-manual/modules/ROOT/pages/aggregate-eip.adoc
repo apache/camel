@@ -187,7 +187,7 @@ consumer etc)
 The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
-xref:leveldb.adoc[LevelDB], or xref:sql-component.adoc[SQL Component] components.
+xref:components::leveldb.adoc[LevelDB], or xref:components::sql-component.adoc[SQL Component] components.
 
 === Using TimeoutAwareAggregationStrategy
 

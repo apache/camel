@@ -8,7 +8,7 @@ Now for the longer answer...
 ==== Spring
 
 In particular we've gone out of our way to make Camel work great with
-xref:spring.adoc[Spring] and to reuse all of Spring 2.x's power. For
+xref:components::spring.adoc[Spring] and to reuse all of Spring 2.x's power. For
 example:
 
 * the CamelContext, Components and Endpoints and their dependent beans
@@ -34,7 +34,7 @@ Spring is clearly the leading IoC container; though there are some
 others such as Guice, OSGi, Pico, HiveMind & Plexus so we have made the
 IoC pluggable in Camel.
 For example camel-core has no dependencies on anything other than
-commons-logging; camel-spring contains all the xref:spring.adoc[Spring]
+commons-logging; camel-spring contains all the xref:components::spring.adoc[Spring]
 integration, etc.
 
 We hope to have closer integration to other IoC containers, particularly

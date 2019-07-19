@@ -105,7 +105,7 @@ And here is an example to specify endpoint ref in XML DSL:
 
 Note that the Endpoint Validator just forwards the message to the specified endpoint. In above example,
 camel forwards the message to the `validator:` endpoint, which actually is a
-xref:validator-component.adoc[Validation Component]. You can also use any other validation component like
+xref:components::validator-component.adoc[Validation Component]. You can also use any other validation component like
 Bean Validation Component.
 
 [[Validator-Custom]]
