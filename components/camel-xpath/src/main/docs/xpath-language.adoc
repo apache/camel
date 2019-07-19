@@ -5,7 +5,7 @@
 
 Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
 Expression or Predicate to be
-used in the DSL or xref:xml-configuration.adoc[Xml
+used in the DSL or xref:manual::xml-configuration.adoc[Xml
 Configuration]. For example you could use XPath to create an
 Predicate in a xref:message-filter.adoc[Message
 Filter] or as an Expression for a
@@ -127,7 +127,7 @@ exchange:
 |function:properties |key for property |String |To lookup a property using the
 xref:properties-component.adoc[Properties] component (property placeholders).
 
-|function:simple |simple expression |Object |To evaluate a xref:simple-language.adoc[Simple] expression.
+|function:simple |simple expression |Object |To evaluate a xref:manual::simple-language.adoc[Simple] expression.
 |===
 
 CAUTION: `function:properties` and `function:simple` is not supported

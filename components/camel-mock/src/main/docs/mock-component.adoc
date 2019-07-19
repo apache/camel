@@ -8,7 +8,7 @@ notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.a
 and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 

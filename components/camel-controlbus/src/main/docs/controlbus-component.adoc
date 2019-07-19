@@ -185,7 +185,7 @@ String xml = template.requestBody("controlbus:route?action=stats", null, String.
 
 === Using Simple language
 
-You can use the xref:simple-language.adoc[Simple] language with the control bus,
+You can use the xref:manual::simple-language.adoc[Simple] language with the control bus,
 for example to stop a specific route, you can send a message to the
 `"controlbus:language:simple"` endpoint containing the following
 message:
@@ -206,7 +206,7 @@ String status = template.requestBody("controlbus:language:simple", "${camelConte
 It's easier to use the `route` command to control lifecycle of
 routes. The `language` command allows you to execute a language script
 that has stronger powers such as xref:groovy-language.adoc[Groovy] or to some
-extend the xref:simple-language.adoc[Simple] language.
+extend the xref:manual::simple-language.adoc[Simple] language.
 
 For example to shutdown Camel itself you can do:
 

@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.15*
 
-This xref:data-format.adoc[Data
+This xref:manual::data-format.adoc[Data
 Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
 for reading and writing 3 kinds of tabular data text files:
 
