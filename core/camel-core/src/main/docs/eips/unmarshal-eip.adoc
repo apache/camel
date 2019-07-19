@@ -28,7 +28,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 ----
 
-The above uses a named DataFormat of _jaxb_ which is configured with a number of Java package names. You can if you prefer use a named reference to a data format which can then be defined in your https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry] such as via your xref:spring.adoc[Spring] XML file.
+The above uses a named DataFormat of _jaxb_ which is configured with a number of Java package names. You can if you prefer use a named reference to a data format which can then be defined in your https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry] such as via your xref:components::spring.adoc[Spring] XML file.
 
 You can also use the DSL itself to define the data format as you use it.
 For example the following uses Java serialization to unmarshal a binary
