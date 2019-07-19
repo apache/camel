@@ -15,7 +15,7 @@ to deploy something.
 databases and bridging them to queues or topics then its usually more
 efficient to host in the broker; as there's less contention and there's
 no network communication between the EIP rules and the message broker as
-its all in the same JVM (so you can use the xref:vm-component.adoc[VM Transport]
+its all in the same JVM (so you can use the xref:components::vm-component.adoc[VM Transport]
 to avoid network overhead.
 
 [[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-AdvantagesofdeployingEIPinsideaseparateapplication]]

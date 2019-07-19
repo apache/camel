@@ -110,5 +110,5 @@ You would need to enable this using the JMX API.
 * xref:tracer-example.adoc[Tracer Example]
 * xref:debugger.adoc[Debugger]
 * xref:delay-interceptor.adoc[Delay Interceptor]
-* xref:log-component.adoc[Log]
+* xref:components::log-component.adoc[Log]
 

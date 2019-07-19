@@ -16,7 +16,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
 
 A common way to filter messages is to use an
 xref:Expression-Expressions.adoc[Expression] in the xref:DSL-DSL.adoc[DSL] like
-xref:xquery-language.adoc[XQuery], xref:sql-language.adoc[SQL] or one of the supported
+xref:components::xquery-language.adoc[XQuery], xref:sql-language.adoc[SQL] or one of the supported
 xref:ScriptingLanguages-ScriptingLanguages.adoc[Scripting Languages].
 
 === Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]

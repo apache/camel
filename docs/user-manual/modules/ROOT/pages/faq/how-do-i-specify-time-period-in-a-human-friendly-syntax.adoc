@@ -22,7 +22,7 @@ You can use the following short syntax, which is most common to use:
 |s |second
 |============
 
-So for example the xref:timer-component.adoc[Timer] endpoint can be configured as
+So for example the xref:components::timer-component.adoc[Timer] endpoint can be configured as
 follows:
 
 [source,java]

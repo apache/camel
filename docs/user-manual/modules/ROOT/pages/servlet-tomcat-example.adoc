@@ -17,14 +17,14 @@ mvn package
 [[ServletTomcatExample-About]]
 ==== About
 
-This example demonstrates how you can use xref:servlet-component.adoc[Servlet] to expose
+This example demonstrates how you can use xref:components::servlet-component.adoc[Servlet] to expose
 a http service in a Camel route.
 
 [[ServletTomcatExample-Implementation]]
 ==== Implementation
 
 In the `web.xml` file in the `src/main/webapp/WEB-INF` folder the `CamelServlet`
-is defined. This is mandatory to do when using the xref:servlet-component.adoc[Servlet]
+is defined. This is mandatory to do when using the xref:components::servlet-component.adoc[Servlet]
 component.
 
 [source,xml]
@@ -117,5 +117,5 @@ http://localhost:8080/camel-example-servlet-tomcat/camel/hello URL.
 ==== See Also
 
 * xref:examples.adoc[Examples]
-*  xref:servlet-component.adoc[Servlet]
+*  xref:components::servlet-component.adoc[Servlet]
 *  xref:http-component.adoc[HTTP]

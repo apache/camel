@@ -17,7 +17,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[ima
 You can transform a message using Camel's
 xref:bean-integration.adoc[Bean Integration] to call any method on a
 bean in your xref:Registry-Registry.adoc[Registry] such as your
-xref:spring.adoc[Spring] XML configuration file as follows
+xref:components::spring.adoc[Spring] XML configuration file as follows
 
 [source,java]
 ----
@@ -54,7 +54,7 @@ invoke a bean
 
 You can also use xref:templating.adoc[Templating] to consume a message
 from one destination, transform it with something like
-xref:velocity-component.adoc[Velocity] or xref:velocity-component.adoc[XQuery] and then send
+xref:components::velocity-component.adoc[Velocity] or xref:components::velocity-component.adoc[XQuery] and then send
 it on to another destination. For example using InOnly (one way
 messaging)
 

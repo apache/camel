@@ -61,7 +61,7 @@ ERROR level :star:
 A dead letter queue is like a black hole, it will consume the
 xref:exchange.adoc[Exchange] and the xref:exchange.adoc[Exchange]
 routing is ended with no indication that it failed. +
-This works great in the xref:jms-component.adoc[JMS] Messaging world where we
+This works great in the xref:components::jms-component.adoc[JMS] Messaging world where we
 don't want a bad message to cause endless retries and causing the system
 to exhaust. The message is said to be poison and thus we want to move it
 to a dead letter queue so the system can continue to operate and work
@@ -175,9 +175,9 @@ just a ERROR logger.
 [NOTE]
 ====
 This applies to all kind of xref:component.adoc[Components] in Camel.
-The sample above only uses xref:bean-component.adoc[Bean] but it's the same for
-xref:file-component.adoc[File], xref:mail-component.adoc[Mail],
-xref:velocity-component.adoc[Velocity] or whatever component you use.
+The sample above only uses xref:components::bean-component.adoc[Bean] but it's the same for
+xref:components::file-component.adoc[File], xref:components::mail-component.adoc[Mail],
+xref:components::velocity-component.adoc[Velocity] or whatever component you use.
 ====
 
 [[ErrorhandlinginCamel-Transactional]]

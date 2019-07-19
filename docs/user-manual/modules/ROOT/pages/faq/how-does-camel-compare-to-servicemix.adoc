@@ -18,13 +18,13 @@ xref:how-does-camel-compare-to-servicemix-eip.adoc[ServiceMix EIP
 component].
 
 To work with Camel and ServiceMix you take your Camel
-xref:spring.adoc[Spring] configuration and turn it into a JBI Service
+xref:components::spring.adoc[Spring] configuration and turn it into a JBI Service
 Unit using the maven plugin or archetype. For more details see
 http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
 Camel plugin].
 
 So you could start out using Camel routing inside your application via
-xref:dsl.adoc[Java] or xref:spring.adoc[Spring]; then later on if you
+xref:dsl.adoc[Java] or xref:components::spring.adoc[Spring]; then later on if you
 choose to you could wrap up your routing and mediation rules as a JBI
 deployment unit and drop it into your ServiceMix ESB. This provides a
 nice agile approach to integration; start small & simple on an endpoint

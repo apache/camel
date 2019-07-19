@@ -91,7 +91,7 @@ to the xref:contentBasedRouter-eip.adoc[Content Based Router]. Note
 ==== Still problems
 
 If there are still problems, then you can split your route into multiple
-routes, and link them together using the xref:direct-component.adoc[Direct]
+routes, and link them together using the xref:components::direct-component.adoc[Direct]
 component.
 There can be some combinations of xref:enterprise-integration-patterns.adoc[EIP]s
 that can hit limits in how far we can take the fluent builder DSL with

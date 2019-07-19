@@ -11,7 +11,7 @@ this pattern using the underlying transport or protocols.
 
 image:http://www.enterpriseintegrationpatterns.com/img/RequestReply.gif[image]
 
-For example when using xref:jms-component.adoc[JMS] with InOut the component will
+For example when using xref:components::jms-component.adoc[JMS] with InOut the component will
 by default perform these actions
 
 * create by default a temporary inbound queue
@@ -27,7 +27,7 @@ TIP: *Related* See the related Event Message message
 [[RequestReply-ExplicitlyspecifyingInOut]]
 === Explicitly specifying InOut
 
-When consuming messages from xref:jms-component.adoc[JMS] a Request-Reply is
+When consuming messages from xref:components::jms-component.adoc[JMS] a Request-Reply is
 indicated by the presence of the *JMSReplyTo* header.
 
 You can explicitly force an endpoint to be in Request Reply mode by

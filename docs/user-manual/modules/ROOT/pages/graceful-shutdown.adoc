@@ -159,7 +159,7 @@ For example in the route below we have two routes, where route 1 is
 dependent upon route 2. At shutdown we want route 1 to complete all its
 current messages and we also want the 2nd route to do this as well. So
 we can mark both routes to `Defer` but since route 1 is a
-xref:seda-component.adoc[SEDA] based route its `Defer` by default (it uses
+xref:components::seda-component.adoc[SEDA] based route its `Defer` by default (it uses
 `ShutdownAware`).
 
 A Java DSL based example to defer shutting down the 2nd
@@ -410,7 +410,7 @@ The interface `org.apache.camel.spi.ShutdownAware` is an optional
 interface consumers can implement to have fine grained control during
 shutdown. The `ShutdownStrategy` must be able to deal with consumers
 which implement this interface. This interface was introduced to cater
-for in memory consumers such as xref:seda-component.adoc[SEDA] which potentially
+for in memory consumers such as xref:components::seda-component.adoc[SEDA] which potentially
 have a number of pending messages on its internal in memory queues. What
 this allows is to let it control the shutdown process to let it complete
 its pending messages.

@@ -90,7 +90,7 @@ from("activemq:queue:special").noAutoStartup().to("file://backup");
 *Available as of Camel 2.9*
 
 To startup based on a boolean, String or
-xref:properties-component.adoc[Property], do one of the following:
+xref:components::properties-component.adoc[Property], do one of the following:
 
 [source,java]
 ----

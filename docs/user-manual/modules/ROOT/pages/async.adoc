@@ -628,8 +628,8 @@ transaction.
 * Request Only
 * http://davsclaus.blogspot.com/2009/05/on-road-to-camel-20-concurrency-with.html[Blog
 entry on using async for concurrent file processing]
-* xref:seda-component.adoc[SEDA]
-* xref:direct-component.adoc[Direct]
+* xref:components::seda-component.adoc[SEDA]
+* xref:components::direct-component.adoc[Direct]
 * To Async for non blocking
 Request Reply
 

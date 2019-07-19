@@ -98,5 +98,5 @@ You would need to enable this using the JMX API.
 
 * BacklogTracer
 * xref:debugger.adoc[Debugger]
-* xref:log-component.adoc[Log]
+* xref:components::log-component.adoc[Log]
 

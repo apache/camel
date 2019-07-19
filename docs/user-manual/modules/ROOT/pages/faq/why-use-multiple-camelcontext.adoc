@@ -12,5 +12,5 @@ other Camel applications.
 
 If you want the endpoints or producers in different camel contexts to
 communicate with another, there are a number of solutions. You can use
-the ServiceMix NMR, or you can use xref:jms-component.adoc[JMS], or
-you can use Camel's xref:vm-component.adoc[VM] transport.
+the ServiceMix NMR, or you can use xref:components::jms-component.adoc[JMS], or
+you can use Camel's xref:components::vm-component.adoc[VM] transport.

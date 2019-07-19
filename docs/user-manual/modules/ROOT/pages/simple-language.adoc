@@ -8,17 +8,17 @@ created, but has since grown more powerful. It is primarily intended for
 being a really small and simple language for evaluating
 Expressions and Predicates
 without requiring any new dependencies or knowledge of
-xref:xpath-language.adoc[XPath]; so it is ideal for testing in camel-core. The
+xref:components::xpath-language.adoc[XPath]; so it is ideal for testing in camel-core. The
 idea was to cover 95% of the common use cases when you need a little bit
 of expression based script in your Camel routes.
 
 However for much more complex use cases you are generally recommended to
 choose a more expressive and powerful language such as:
 
-* xref:groovy-language.adoc[Groovy]
-* xref:spel-language.adoc[SpEL]
-* xref:mvel-component.adoc[MVEL]
-* xref:ognl-language.adoc[OGNL]
+* xref:components::groovy-language.adoc[Groovy]
+* xref:components::spel-language.adoc[SpEL]
+* xref:components::mvel-component.adoc[MVEL]
+* xref:components::ognl-language.adoc[OGNL]
 
 The simple language uses `${body`} placeholders for complex expressions
 where the expression contains constant literals. The $\{ } placeholders
@@ -188,9 +188,9 @@ Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h
 
 |date-with-timezone:_command:timezone:pattern_ |String |Date formatting using `java.text.SimpleDataFormat` timezones and patterns.
 
-|bean:_bean expression_ |Object |Invoking a bean expression using the xref:bean-component.adoc[Bean] language.
+|bean:_bean expression_ |Object |Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language.
 Specifying a method name you must use dot as separator. We also support
-the ?method=methodname syntax that is used by the xref:bean-component.adoc[Bean]
+the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean]
 component.
 
 |`properties:key:default` |String |Lookup a property with the given key. If the key does
@@ -755,7 +755,7 @@ from("direct:order")
 ----
 
 We can use the `?method=methodname` option that we are familiar with the
-xref:bean-component.adoc[Bean] component itself:
+xref:components::bean-component.adoc[Bean] component itself:
 
 [source,java]
 ----

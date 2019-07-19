@@ -288,7 +288,7 @@ and via non-messaging techniques?
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
 |image:http://www.eaipatterns.com/img/ControlBusIcon.gif[image]
-|xref:controlbus-component.adoc[ControlBus] |How can we effectively administer a
+|xref:components::controlbus-component.adoc[ControlBus] |How can we effectively administer a
 messaging system that is distributed across multiple platforms and a
 wide geographic area?
 

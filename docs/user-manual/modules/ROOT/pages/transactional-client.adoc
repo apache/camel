@@ -8,7 +8,7 @@ using spring transactions.
 
 image:http://www.enterpriseintegrationpatterns.com/img/TransactionalClientSolution.gif[image]
 
-Transaction Oriented Endpoints like xref:jms-component.adoc[JMS] support using a
+Transaction Oriented Endpoints like xref:components::jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
@@ -389,5 +389,5 @@ Camel to only do it for the current transaction and not globally.
 * xref:ErrorhandlinginCamel-ErrorhandlinginCamel.adoc[Error handling in Camel]
 * xref:TransactionErrorHandler-TransactionErrorHandler.adoc[TransactionErrorHandler]
 * xref:ErrorHandler-ErrorHandler.adoc[Error Handler]
-* xref:jms-component.adoc[JMS]
+* xref:components::jms-component.adoc[JMS]
 * xref:using-this-pattern.adoc[Using This Pattern]

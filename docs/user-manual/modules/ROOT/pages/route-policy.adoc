@@ -220,7 +220,7 @@ example using this in practice with
 the *`ThrottlingInflightRoutePolicy`*
 * xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] for information
 on policy based scheduling capability for camel routes
-* xref:metrics-component.adoc[MetricsRoutePolicyFactory] for information
+* xref:components::metrics-component.adoc[MetricsRoutePolicyFactory] for information
 on a policy using the metrics component to expose route statistics using
 the metrics library.
 * xref:architecture.adoc[Architecture]

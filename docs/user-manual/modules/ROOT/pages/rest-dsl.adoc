@@ -8,10 +8,10 @@ REST style with verbs such as get, post, delete etc.
 
 === How it works
 
-The Rest DSL is a facade that builds xref:rest-component.adoc[Rest] endpoints as
+The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
 using Camel REST components such
-as xref:restlet-component.adoc[Restlet], xref:restlet-component.adoc[Spark-rest], and
+as xref:components::restlet-component.adoc[Restlet], xref:components::restlet-component.adoc[Spark-rest], and
 others that has native REST integration.
 
 === Components supporting Rest DSL
@@ -19,20 +19,20 @@ others that has native REST integration.
 The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
-* xref:rest-component.adoc[came-rest] *required* contains the base rest component needed by Rest DSL
+* xref:components::rest-component.adoc[came-rest] *required* contains the base rest component needed by Rest DSL
 * xref:netty-http-component.adoc[camel-netty-http] (also
 supports Swagger Java)
-* xref:netty4-http-component.adoc[camel-netty4-http] (also
+* xref:components::netty4-http-component.adoc[camel-netty4-http] (also
 supports Swagger Java)
-* xref:jetty-component.adoc[camel-jetty] (also
+* xref:components::jetty-component.adoc[camel-jetty] (also
 supports Swagger Java)
-* xref:restlet-component.adoc[camel-restlet] (also
+* xref:components::restlet-component.adoc[camel-restlet] (also
 supports Swagger Java)
-* xref:servlet-component.adoc[camel-servlet] (also
+* xref:components::servlet-component.adoc[camel-servlet] (also
 supports Swagger Java)
-* xref:spark-rest-component.adoc[camel-spark-rest] (also
+* xref:components::spark-rest-component.adoc[camel-spark-rest] (also
 supports Swagger Java from Camel 2.17 onwards)
-* xref:undertow-component.adoc[camel-undertow] (also
+* xref:components::undertow-component.adoc[camel-undertow] (also
 supports Swagger Java from Camel 2.17 onwards)
 
 === Rest DSL with Java
@@ -181,7 +181,7 @@ only. The example above can be defined as:
 
 The Rest DSL supports the new .toD <toD> as dynamic
 to in the rest-dsl. For example to do a request/reply
-over xref:jms-component.adoc[JMS] where the queue name is dynamic defined
+over xref:components::jms-component.adoc[JMS] where the queue name is dynamic defined
 
 [source,java]
 ----

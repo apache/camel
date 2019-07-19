@@ -63,7 +63,7 @@ reattach the exception on the xref:exchange.adoc[Exchange].
 ==== Using try .. catch .. finally in Java DSL
 
 In the route below we have all keywords in action. As the code is based
-on a unit test we route using xref:mock-component.adoc[Mock].
+on a unit test we route using xref:components::mock-component.adoc[Mock].
 
 https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/TryProcessorMultipleExceptionTest.java[TryProcessorMultipleExceptionTest.java]
 
@@ -100,7 +100,7 @@ to indicate the end there.
 We show the three sample samples using Spring DSL instead.
 
 In the route below we have all keywords in action. As the code is based
-on a unit test we route using xref:mock-component.adoc[Mock].
+on a unit test we route using xref:components::mock-component.adoc[Mock].
 
 https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorMultipleExceptionTest.xml[SpringTryProcessorMultipleExceptionTest.xml]
 
