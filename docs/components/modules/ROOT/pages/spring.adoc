@@ -8,7 +8,7 @@ http://www.springframework.org/[Spring Framework] in a number of ways.
 components like xref:jms-component.adoc[JMS] and xref:jms-component.adoc[JPA]
 * Camel works with Spring 2 XML processing with the
 Xml Configuration
-* Camel Spring XML Schema's is defined at xref:xml-reference.adoc[Xml
+* Camel Spring XML Schema's is defined at xref:manual::xml-reference.adoc[Xml
 Reference]
 * Camel supports a powerful version of xref:spring-remoting.adoc[Spring
 Remoting] which can use powerful routing between the client and server
@@ -24,7 +24,7 @@ instances or the CamelContext instance itself
 and auto-expose Spring beans as components and endpoints.
 * Allows you to reuse the Spring Testing
 framework to simplify your unit and integration testing using
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
 xref:test-component.adoc[Test] endpoints
 Camel supports Spring Boot using the `camel-spring-boot` component.
@@ -228,7 +228,7 @@ above in the `<packageScan>` documentation.
 
 *Available as of Camel 2.3*
 
-When defining routes in Camel using xref:xml-configuration.adoc[Xml
+When defining routes in Camel using xref:manual::xml-configuration.adoc[Xml
 Configuration] you may want to define some routes in other XML files.
 For example you may have many routes and it may help to maintain the
 application if some of the routes are in separate XML files. You may
@@ -349,7 +349,7 @@ If you want to be injected with the CamelContext
 in your POJO just implement the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContextAware.html[CamelContextAware
 interface]; then when Spring creates your POJO the CamelContext will be
-injected into your POJO. Also see the xref:bean-integration.adoc[Bean
+injected into your POJO. Also see the xref:manual::bean-integration.adoc[Bean
 Integration] for further injections.
 
 === Integration Testing

@@ -283,7 +283,7 @@ Jetty component will copy the HTTP request parameter, `one` to the
 exchange's `in.header`. We can then use the `simple` language to route
 exchanges that contain this header to a specific endpoint and all others
 to another. If we used a language more powerful than
-xref:simple-language.adoc[Simple] (such as xref:el-language.adoc[EL] or
+xref:manual::simple-language.adoc[Simple] (such as xref:el-language.adoc[EL] or
 xref:ognl-language.adoc[OGNL]) we could also test for the parameter value and do
 routing based on the header value as well.
 
@@ -326,7 +326,7 @@ public void process(Exchange exchange) throws Exception {
 Using the JSSE Configuration Utility
 
 The Jetty component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
+through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
 Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
 endpoint and component levels.  The following examples demonstrate how

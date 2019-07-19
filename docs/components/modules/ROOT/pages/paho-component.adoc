@@ -173,7 +173,7 @@ byte[] payload = "message".getBytes();
 producerTemplate.sendBody("paho:topic", payload);
 ----
 
-But of course Camel build-in xref:type-converter.adoc[type conversion
+But of course Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
 example below Camel automatically converts binary payload into `String`
 (and conversely):
