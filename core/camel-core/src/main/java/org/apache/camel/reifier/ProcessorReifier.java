@@ -161,7 +161,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         map.put(ServiceCallDefinition.class, ServiceCallReifier::new);
         map.put(SetBodyDefinition.class, SetBodyReifier::new);
         map.put(SetExchangePatternDefinition.class, SetExchangePatternReifier::new);
-        map.put(SetFaultBodyDefinition.class, SetFaultBodyReifier::new);
         map.put(SetHeaderDefinition.class, SetHeaderReifier::new);
         map.put(SetPropertyDefinition.class, SetPropertyReifier::new);
         map.put(SortDefinition.class, SortReifier::new);

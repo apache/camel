@@ -50,22 +50,6 @@ public class EnricherTest extends ContextTestSupport {
     }
 
     @Test
-    public void testEnrichFaultInOnly() throws InterruptedException {
-        mock.expectedMessageCount(0);
-        Exchange exchange = template.send("direct:enricher-test-3", new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("test");
-            }
-        });
-        mock.assertIsSatisfied();
-        assertEquals("test", exchange.getIn().getBody());
-        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
-        assertEquals("failed", exchange.getOut().getBody());
-        assertEquals("direct://enricher-fault-resource", exchange.getProperty(Exchange.TO_ENDPOINT));
-        assertNull(exchange.getException());
-    }
-
-    @Test
     public void testEnrichErrorInOnly() throws InterruptedException {
         mock.expectedMessageCount(0);
         Exchange exchange = template.send("direct:enricher-test-4", new Processor() {
@@ -100,19 +84,6 @@ public class EnricherTest extends ContextTestSupport {
         assertEquals("bar", exchange.getIn().getHeader("foo"));
         assertEquals("test:blah", exchange.getIn().getBody());
         assertTrue(exchange.hasOut());
-        assertNull(exchange.getException());
-    }
-
-    @Test
-    public void testEnrichFaultInOut() throws InterruptedException {
-        Exchange exchange = template.send("direct:enricher-test-7", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("test");
-            }
-        });
-        assertEquals("test", exchange.getIn().getBody());
-        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
-        assertEquals("failed", exchange.getOut().getBody());
         assertNull(exchange.getException());
     }
 
@@ -164,9 +135,8 @@ public class EnricherTest extends ContextTestSupport {
                 // -------------------------------------------------------------
 
                 from("direct:enricher-constant-resource").transform().constant("blah");
-                
-                from("direct:enricher-fault-resource").errorHandler(noErrorHandler()).process(new FailureProcessor(false));
-                from("direct:enricher-error-resource").errorHandler(noErrorHandler()).process(new FailureProcessor(true));
+
+                from("direct:enricher-error-resource").errorHandler(noErrorHandler()).process(new FailureProcessor());
             }
         };
     }

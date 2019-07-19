@@ -76,25 +76,6 @@ public class PipelineTest extends ContextTestSupport {
         assertEquals(3, exchange.getOut().getHeader("copy-counter"));        
     }
 
-    /**
-     * Disabled for now until we figure out fault processing in the pipeline.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testFaultStopsPipeline() throws Exception {
-        Exchange exchange = template.request("direct:c", new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Fault Message");
-            }
-        });
-        
-        // Check the fault..
-        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
-        assertEquals("Fault Message", exchange.getOut().getBody());
-        assertEquals(2, exchange.getOut().getHeader("copy-counter"));        
-    }
-
     @Test
     public void testOnlyProperties() {
         Exchange exchange = template.request("direct:b", new Processor() {

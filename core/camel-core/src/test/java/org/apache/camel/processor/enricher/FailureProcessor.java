@@ -19,26 +19,10 @@ package org.apache.camel.processor.enricher;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-@Deprecated
 public class FailureProcessor implements Processor {
 
-    private boolean error;
-    
-    public FailureProcessor() {
-        this(false);
-    }
-    
-    public FailureProcessor(boolean error) {
-        this.error = error;
-    }
-    
     public void process(Exchange exchange) throws Exception {
-        if (error) {
-            throw new RuntimeException("failed");
-        } else {
-            exchange.getOut().setFault(true);
-            exchange.getOut().setBody("failed");
-        }
+        throw new RuntimeException("failed");
     }
 
 }
