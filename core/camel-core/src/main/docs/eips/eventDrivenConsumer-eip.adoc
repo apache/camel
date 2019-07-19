@@ -22,7 +22,7 @@ when a xref:message-eip.adoc[Message] is available for processing.
 The following demonstrates a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
 defined in the Camel xref:Registry-Registry.adoc[Registry] which is
-invoked when an event occurs from a xref:jms-component.adoc[JMS] queue.
+invoked when an event occurs from a xref:components::jms-component.adoc[JMS] queue.
 
 *Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]*
 
