@@ -344,16 +344,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         this.ignoreMissingLocation = ignoreMissingLocation;
     }
 
-    @ManagedAttribute(description = "Prefix token")
-    public String getPrefixToken() {
-        return PREFIX_TOKEN;
-    }
-
-    @ManagedAttribute(description = "Suffix token")
-    public String getSuffixToken() {
-        return SUFFIX_TOKEN;
-    }
-
     public Properties getInitialProperties() {
         return initialProperties;
     }
