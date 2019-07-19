@@ -692,7 +692,7 @@ the documentation.
 
 Normally, when using xref:jms-component.adoc[JMS] as the transport, it only
 transfers the body and headers as the payload. If you want to use
-xref:jms-component.adoc[JMS] with a xref:dead-letter-channel.adoc[Dead Letter
+xref:jms-component.adoc[JMS] with a xref:manual::dead-letter-channel.adoc[Dead Letter
 Channel], using a JMS queue as the Dead Letter Queue, then normally the
 caused Exception is not stored in the JMS message. You can, however, use
 the `transferExchange` option on the JMS dead letter queue to instruct

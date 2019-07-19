@@ -8,7 +8,7 @@ to an endpoint which executes a script by any of the supported
 Languages in Camel. +
  By having a component to execute language scripts, it allows more
 dynamic routing capabilities. For example by using the
-Routing Slip or xref:dynamic-router.adoc[Dynamic
+Routing Slip or xref:manual::dynamic-router.adoc[Dynamic
 Router] EIPs you can send messages to `language` endpoints where the
 script is dynamic defined as well.
 
@@ -132,7 +132,7 @@ script configured on the endpoint.
 
 === Examples
 
-For example you can use the xref:simple-language.adoc[Simple] language to
+For example you can use the xref:manual::simple-language.adoc[Simple] language to
 Message Translator a message:
 
 In case you want to convert the message body type you can do this as

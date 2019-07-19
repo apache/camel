@@ -390,9 +390,9 @@ ProducerTemplate for example:
 template.sendBody("{{cool.start}}", "Hello World");
 ----
 
-=== Example with xref:simple-language.adoc[Simple] language
+=== Example with xref:manual::simple-language.adoc[Simple] language
 
-The xref:simple-language.adoc[Simple] language now also support using property
+The xref:manual::simple-language.adoc[Simple] language now also support using property
 placeholders, for example in the route below:
 
 [source,java]
@@ -655,7 +655,7 @@ placeholder notation with `{{` and `}}`.
 === Clashing Spring property placeholders with Camels Simple language
 
 Take notice when using Spring bridging placeholder then the spring `${ }`
-syntax clashes with the xref:simple-language.adoc[Simple] in Camel, and therefore
+syntax clashes with the xref:manual::simple-language.adoc[Simple] in Camel, and therefore
 take care. For example:
 
 [source,xml]
@@ -666,7 +666,7 @@ take care. For example:
 ----
 
 clashes with Spring property placeholders, and you should use `$simple{ }`
-to indicate using the xref:simple-language.adoc[Simple] language in Camel.
+to indicate using the xref:manual::simple-language.adoc[Simple] language in Camel.
 
 [source,xml]
 ----
