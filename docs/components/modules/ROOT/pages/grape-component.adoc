@@ -132,7 +132,7 @@ By default Camel Grape component operates on the String payloads:
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2");
 ------------------------------------------------------------------------------------------------
 
-But of course Camel build-in xref:type-converter.adoc[type conversion
+But of course Camel build-in xref:manual::type-converter.adoc[type conversion
 API] can perform the automatic data type transformations for you. In the
 example below Camel automatically converts binary payload into the
 String:

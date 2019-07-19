@@ -213,7 +213,7 @@ The component supports 34 options, which are listed below.
 The most basic way to way to sign and verify an exchange is with a
 KeyPair as follows.
 
-The same can be achieved with the xref:spring-xml-extensions.adoc[Spring
+The same can be achieved with the xref:manual::spring-xml-extensions.adoc[Spring
 XML Extensions] using references to keys
 
 #### KeyStores and Aliases.
