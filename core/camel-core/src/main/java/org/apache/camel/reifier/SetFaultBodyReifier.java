@@ -22,6 +22,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetFaultBodyDefinition;
 import org.apache.camel.spi.RouteContext;
 
+@Deprecated
 public class SetFaultBodyReifier extends ExpressionReifier<SetFaultBodyDefinition> {
 
     SetFaultBodyReifier(ProcessorDefinition<?> definition) {

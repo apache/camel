@@ -247,24 +247,6 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
                      sourceIn.getClass(), destIn.getClass());
     }
 
-    @Test
-    public void testFaultSafeCopy() {
-        testFaultCopy();
-    }
-
-    private void testFaultCopy() {
-        DefaultExchange sourceExchange = new DefaultExchange(context);
-        MyMessage source = new MyMessage(context);
-        source.setFault(true);
-        sourceExchange.setIn(source);
-        sourceExchange.setOut(source);
-        Exchange destExchange = sourceExchange.copy();
-        assertEquals("Fault property was not copied to IN message",
-                sourceExchange.getIn().isFault(), destExchange.getIn().isFault());
-        assertEquals("Fault property was not copied to OUT message",
-                sourceExchange.getOut().isFault(), destExchange.getOut().isFault());
-    }
-
     public static class MyMessage extends DefaultMessage {
         public MyMessage(CamelContext camelContext) {
             super(camelContext);

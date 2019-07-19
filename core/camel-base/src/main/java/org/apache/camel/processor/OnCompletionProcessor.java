@@ -261,12 +261,6 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             // must remove exception otherwise onFailure routing will fail as well
             // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
             copy.setException(null);
-            // must clear fault otherwise onFailure routing will fail as well
-            if (copy.hasOut()) {
-                copy.getOut().setFault(false);
-            } else {
-                copy.getIn().setFault(false);
-            }
 
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
@@ -284,12 +278,6 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 doProcess(processor, copy);
                 // restore exception after processing
                 copy.setException(original);
-                // restore fault after processing
-                if (copy.hasOut()) {
-                    copy.getOut().setFault(originalFault);
-                } else {
-                    copy.getIn().setFault(originalFault);
-                }
             }
         }
 

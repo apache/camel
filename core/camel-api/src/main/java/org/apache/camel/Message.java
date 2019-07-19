@@ -58,6 +58,7 @@ public interface Message {
      *
      * @return <tt>true</tt> if this is a fault message, <tt>false</tt> for regular messages.
      */
+    @Deprecated
     boolean isFault();
 
     /**
@@ -65,6 +66,7 @@ public interface Message {
      *
      * @param fault the fault flag
      */
+    @Deprecated
     void setFault(boolean fault);
 
     /**

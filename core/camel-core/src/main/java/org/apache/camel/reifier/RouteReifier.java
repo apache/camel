@@ -40,7 +40,6 @@ import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.ContractAdvice;
-import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -241,21 +240,6 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 routeContext.setStreamCaching(isStreamCache);
                 if (isStreamCache) {
                     log.debug("StreamCaching is enabled on route: {}", definition.getId());
-                }
-            }
-        }
-
-        // configure handle fault
-        if (definition.getHandleFault() != null) {
-            Boolean isHandleFault = CamelContextHelper.parseBoolean(camelContext, definition.getHandleFault());
-            if (isHandleFault != null) {
-                routeContext.setHandleFault(isHandleFault);
-                if (isHandleFault) {
-                    log.debug("HandleFault is enabled on route: {}", definition.getId());
-                    // only add a new handle fault if not already a global configured on camel context
-                    if (HandleFault.getHandleFault(camelContext) == null) {
-                        definition.addInterceptStrategy(new HandleFault());
-                    }
                 }
             }
         }

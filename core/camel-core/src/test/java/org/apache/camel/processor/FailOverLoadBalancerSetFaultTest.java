@@ -56,8 +56,6 @@ public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 // mutate the message
                                 exchange.getOut().setBody("Hi Camel");
-                                // and then set fault directly on OUT for example as camel-cxf would do
-                                exchange.getOut().setFault(true);
                                 exchange.setException(new IOException("Forced exception for test"));
                             }
                         });

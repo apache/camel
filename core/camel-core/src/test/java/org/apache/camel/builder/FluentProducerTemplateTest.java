@@ -436,12 +436,6 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                 from("direct:out")
                     .process(exchange -> exchange.getOut().setBody("Bye Bye World"))
                     .to("mock:result");
-                from("direct:fault")
-                    .process(exchange -> {
-                        exchange.getOut().setFault(true);
-                        exchange.getOut().setBody("Faulty World");
-                    })
-                    .to("mock:result");
 
                 from("direct:exception")
                     .process(exchange -> {

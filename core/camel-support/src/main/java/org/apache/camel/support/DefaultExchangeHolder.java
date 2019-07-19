@@ -70,8 +70,6 @@ public class DefaultExchangeHolder implements Serializable {
     private String exchangeId;
     private Object inBody;
     private Object outBody;
-    private Boolean inFaultFlag = Boolean.FALSE;
-    private Boolean outFaultFlag = Boolean.FALSE;
     private Map<String, Object> inHeaders;
     private Map<String, Object> outHeaders;
     private Map<String, Object> properties;
@@ -110,10 +108,7 @@ public class DefaultExchangeHolder implements Serializable {
         payload.safeSetInHeaders(exchange, false);
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
-            payload.outFaultFlag = exchange.getOut().isFault();
             payload.safeSetOutHeaders(exchange, false);
-        } else {
-            payload.inFaultFlag = exchange.getIn().isFault();
         }
         if (includeProperties) {
             payload.safeSetProperties(exchange, false);
@@ -147,10 +142,7 @@ public class DefaultExchangeHolder implements Serializable {
         payload.safeSetInHeaders(exchange, allowSerializedHeaders);
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
-            payload.outFaultFlag = exchange.getOut().isFault();
             payload.safeSetOutHeaders(exchange, allowSerializedHeaders);
-        } else {
-            payload.inFaultFlag = exchange.getIn().isFault();
         }
         if (includeProperties) {
             payload.safeSetProperties(exchange, allowSerializedHeaders);
@@ -175,16 +167,10 @@ public class DefaultExchangeHolder implements Serializable {
         if (payload.inHeaders != null) {
             exchange.getIn().setHeaders(payload.inHeaders);
         }
-        if (payload.inFaultFlag != null) {
-            exchange.getIn().setFault(payload.inFaultFlag);
-        }
         if (payload.outBody != null) {
             exchange.getOut().setBody(payload.outBody);
             if (payload.outHeaders != null) {
                 exchange.getOut().setHeaders(payload.outHeaders);
-            }
-            if (payload.outFaultFlag != null) {
-                exchange.getOut().setFault(payload.outFaultFlag);
             }
         }
         if (payload.properties != null) {

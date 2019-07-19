@@ -488,8 +488,6 @@ public interface Exchange {
      *
      * @return true if this exchange failed due to either an exception or fault
      * @see Exchange#getException()
-     * @see Message#setFault(boolean)
-     * @see Message#isFault()
      */
     boolean isFailed();
 

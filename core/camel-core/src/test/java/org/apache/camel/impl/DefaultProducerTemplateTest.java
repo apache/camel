@@ -274,14 +274,6 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                     }
                 }).to("mock:result");
 
-                from("direct:fault").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setFault(true);
-                        exchange.getOut().setBody("Faulty World");
-                    }
-                }).to("mock:result");
-
                 from("direct:exception").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {

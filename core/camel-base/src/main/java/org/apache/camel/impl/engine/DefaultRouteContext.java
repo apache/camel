@@ -335,19 +335,6 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
-    public void setHandleFault(Boolean handleFault) {
-        this.handleFault = handleFault;
-    }
-
-    public Boolean isHandleFault() {
-        if (handleFault != null) {
-            return handleFault;
-        } else {
-            // fallback to the option from camel context
-            return getCamelContext().isHandleFault();
-        }
-    }
-
     public void setDelayer(Long delay) {
         this.delay = delay;
     }

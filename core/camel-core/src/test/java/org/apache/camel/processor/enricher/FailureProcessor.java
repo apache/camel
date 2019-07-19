@@ -19,6 +19,7 @@ package org.apache.camel.processor.enricher;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
+@Deprecated
 public class FailureProcessor implements Processor {
 
     private boolean error;

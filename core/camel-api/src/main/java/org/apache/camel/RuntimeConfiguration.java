@@ -107,20 +107,6 @@ public interface RuntimeConfiguration {
     Boolean isLogExhaustedMessageBody();
 
     /**
-     * Sets whether fault handling is enabled or not (default is disabled).
-     *
-     * @param handleFault whether to enable fault handling.
-     */
-    void setHandleFault(Boolean handleFault);
-
-    /**
-     * Returns whether fault handling enabled
-     *
-     * @return <tt>true</tt> if fault handling is enabled
-     */
-    Boolean isHandleFault();
-
-    /**
      * Sets a delay value in millis that a message is delayed at every step it takes in the route path,
      * slowing the process down to better observe what is occurring
      * <p/>

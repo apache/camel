@@ -77,7 +77,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -199,11 +198,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (backlogTracer != null) {
             LOG.info("Using custom BacklogTracer: {}", backlogTracer);
             getContext().addService(backlogTracer);
-        }
-        HandleFault handleFault = getBeanForType(HandleFault.class);
-        if (handleFault != null) {
-            LOG.info("Using custom HandleFault: {}", handleFault);
-            getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(handleFault);
         }
         InflightRepository inflightRepository = getBeanForType(InflightRepository.class);
         if (inflightRepository != null) {
@@ -751,8 +745,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getDelayer();
 
-    public abstract String getHandleFault();
-
     public abstract String getAutoStartup();
 
     public abstract String getUseMDCLogging();
@@ -846,9 +838,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getDelayer() != null) {
             context.setDelayer(CamelContextHelper.parseLong(context, getDelayer()));
-        }
-        if (getHandleFault() != null) {
-            context.setHandleFault(CamelContextHelper.parseBoolean(context, getHandleFault()));
         }
         if (getErrorHandlerRef() != null) {
             context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(new ErrorHandlerBuilderRef(getErrorHandlerRef()));
