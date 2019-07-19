@@ -80,7 +80,7 @@ public class CMISTestSupport extends CamelTestSupport {
         Folder rootFolder = session.getRootFolder();
         ItemIterable<CmisObject> children = rootFolder.getChildren();
         for (CmisObject cmisObject : children) {
-            if ("cmis:folder".equals(cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID))) {
+            if (CamelCMISConstants.CMIS_FOLDER.equals(cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID))) {
                 List<String> notDeltedIdList = ((Folder)cmisObject)
                         .deleteTree(true, UnfileObject.DELETE, true);
                 if (notDeltedIdList != null && notDeltedIdList.size() > 0) {
@@ -129,12 +129,12 @@ public class CMISTestSupport extends CamelTestSupport {
 
     protected Folder createChildFolderWithName(Folder parent, String childName) {
         Map<String, String> newFolderProps = new HashMap<>();
-        newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
+        newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         newFolderProps.put(PropertyIds.NAME, childName);
         return parent.createFolder(newFolderProps);
     }
 
-    protected void createTextDocument(Folder newFolder, String content, String fileName)
+    protected Document createTextDocument(Folder newFolder, String content, String fileName)
         throws UnsupportedEncodingException {
         byte[] buf = content.getBytes("UTF-8");
         ByteArrayInputStream input = new ByteArrayInputStream(buf);
@@ -142,9 +142,9 @@ public class CMISTestSupport extends CamelTestSupport {
                 .createContentStream(fileName, buf.length, "text/plain; charset=UTF-8", input);
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
+        properties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         properties.put(PropertyIds.NAME, fileName);
-        newFolder.createDocument(properties, contentStream, VersioningState.NONE);
+        return newFolder.createDocument(properties, contentStream, VersioningState.NONE);
     }
 
     @BeforeClass

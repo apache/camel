@@ -16,24 +16,24 @@
  */
 package org.apache.camel.component.cmis.exception;
 
-public class CmisObjectNotFoundException extends CmisException {
+public class CamelCmisObjectNotFoundException extends CamelCmisException {
 
-    public CmisObjectNotFoundException() {
+    public CamelCmisObjectNotFoundException() {
     }
 
-    public CmisObjectNotFoundException(final String message) {
+    public CamelCmisObjectNotFoundException(final String message) {
         super(message);
     }
 
-    public CmisObjectNotFoundException(final Throwable cause) {
+    public CamelCmisObjectNotFoundException(final Throwable cause) {
         super(cause);
     }
 
-    public CmisObjectNotFoundException(final String message, final Throwable cause) {
+    public CamelCmisObjectNotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public CmisObjectNotFoundException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
+    public CamelCmisObjectNotFoundException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
