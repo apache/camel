@@ -124,7 +124,7 @@ Questions on using Apache Camel
 ==== Logging Questions
 
 Questions on logging output from Camel to a console, using the
-xref:log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j etc
+xref:components::log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j etc
 
 * xref:faq/how-do-i-enable-debug-logging.adoc[How do I enable debug logging?]
 * xref:faq/how-do-i-use-java-14-logging.adoc[How do I use Java 1.4 logging?]
@@ -150,7 +150,7 @@ Questions on using specific components
 [[FAQ-JMSQuestions]]
 ===== JMS Questions
 
-Questions on using the xref:jms-component.adoc[JMS] endpoints in Camel
+Questions on using the xref:components::jms-component.adoc[JMS] endpoints in Camel
 
 * xref:faq/why-does-my-jms-route-only-consume-one-message-at-once.adoc[Why does my JMS route only consume one message at once?]
 

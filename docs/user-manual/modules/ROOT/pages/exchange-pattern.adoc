@@ -17,7 +17,7 @@ the Message Exchange indicating if a message
 exchange is a one way Event Message (InOnly) or
 a Request Reply message exchange (InOut).
 
-For example to override the default pattern on a xref:jms-component.adoc[JMS]
+For example to override the default pattern on a xref:components::jms-component.adoc[JMS]
 endpoint you could use this URI
 
 [source,java]

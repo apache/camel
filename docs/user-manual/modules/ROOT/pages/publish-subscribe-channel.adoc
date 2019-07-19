@@ -7,13 +7,13 @@ Subscribe Channel] from the
 xref:enterprise-integration-patterns.adoc[EIP patterns] using for
 example the following components:
 
-* xref:jms-component.adoc[JMS] for working with JMS Topics for high performance,
+* xref:components::jms-component.adoc[JMS] for working with JMS Topics for high performance,
 clustering and load balancing
-* xref:xmpp-component.adoc[XMPP] when using rooms for group communication
-* xref:seda-component.adoc[SEDA] for working with SEDA in the same
+* xref:components::xmpp-component.adoc[XMPP] when using rooms for group communication
+* xref:components::seda-component.adoc[SEDA] for working with SEDA in the same
 xref:camelcontext.adoc[CamelContext] which can work in pub-sub, but
 allowing multiple consumers.
-* xref:vm-component.adoc[VM] as SEDA but for intra-JVM.
+* xref:components::vm-component.adoc[VM] as SEDA but for intra-JVM.
 
 image:http://www.enterpriseintegrationpatterns.com/img/PublishSubscribeSolution.gif[image]
 

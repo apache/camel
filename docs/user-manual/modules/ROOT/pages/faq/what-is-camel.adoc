@@ -6,7 +6,7 @@ Patterns].
 
 Camel empowers you to define routing and mediation rules in a variety of
 domain-specific languages, including a Java-based xref:dsl.adoc[Fluent
-API], xref:spring.adoc[Spring] or
+API], xref:components::spring.adoc[Spring] or
 xref:using-osgi-blueprint-with-camel.adoc[Blueprint]
 xref:xml-configuration.adoc[XML Configuration] files, and a
 xref:scala-dsl.adoc[Scala DSL]. This means you get smart completion of
@@ -14,8 +14,8 @@ routing rules in your IDE, whether in a Java, Scala or XML editor.
 
 Apache Camel uses xref:uris.adoc[URIs] to work directly with any kind of
 xref:transport.adoc[Transport] or messaging model such as
-xref:components::http4-component.adoc[HTTP], xref:activemq.adoc[ActiveMQ], xref:jms-component.adoc[JMS],
-JBI, SCA, xref:components::mina2-component.adoc[MINA] or xref:cxf-component.adoc[CXF], as
+xref:components::http4-component.adoc[HTTP], xref:activemq.adoc[ActiveMQ], xref:components::jms-component.adoc[JMS],
+JBI, SCA, xref:components::mina2-component.adoc[MINA] or xref:components::cxf-component.adoc[CXF], as
 well as pluggable xref:component.adoc[Components] and
 xref:data-format.adoc[Data Format] options. Apache Camel is a small
 library with minimal xref:what-are-the-dependencies.adoc[dependencies]
@@ -27,7 +27,7 @@ out-of-box.
 
 Apache Camel provides support for xref:bean-binding.adoc[Bean Binding]
 and seamless integration with popular frameworks such as
-xref:cdi-component.adoc[CDI], xref:spring.adoc[Spring],
+xref:cdi-component.adoc[CDI], xref:components::spring.adoc[Spring],
 xref:using-osgi-blueprint-with-camel.adoc[Blueprint] and
 xref:guice.adoc[Guice]. Camel also has extensive support for
 xref:testing.adoc[unit testing] your routes.

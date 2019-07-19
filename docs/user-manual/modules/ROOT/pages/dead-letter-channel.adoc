@@ -323,7 +323,7 @@ failed.
 
 These information is kept on the Exchange even if the message
 was successfully processed by a given endpoint, and then later fails for
-example in a local xref:bean-component.adoc[Bean] processing instead. So beware
+example in a local xref:components::bean-component.adoc[Bean] processing instead. So beware
 that this is a hint that helps pinpoint errors.
 
 [source,java]

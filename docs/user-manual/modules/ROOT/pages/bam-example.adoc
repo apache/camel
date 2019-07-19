@@ -76,17 +76,17 @@ the Camel Components
 correlate together the purchase order and invoice messages which can be
 any Expression via any of the
 Languages Supported. In this case we are
-using xref:xpath-language.adoc[XPath].
+using xref:components::xpath-language.adoc[XPath].
 
 Then the final line of code defines the temporal rules to use; namely
 that it is considered to be an error if an invoice is not received
 within 2 seconds of a purchase order being received. When a failure
-occurs in this example we just send it to the xref:log-component.adoc[Log]
+occurs in this example we just send it to the xref:components::log-component.adoc[Log]
 component to log out an error level message to commons-logging / log4j.
 You could change this to use some of the other
 Components such as ActiveMQ,
-xref:jms-component.adoc[JMS], xref:jms-component.adoc[IRC], xref:jms-component.adoc[Mail],
-xref:xmpp-component.adoc[XMPP] etc.
+xref:components::jms-component.adoc[JMS], xref:components::jms-component.adoc[IRC], xref:components::jms-component.adoc[Mail],
+xref:components::xmpp-component.adoc[XMPP] etc.
 
 [[BAMExample-Runningtheexample]]
 ==== Running the example

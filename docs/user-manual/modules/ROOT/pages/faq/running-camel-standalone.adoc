@@ -4,7 +4,7 @@
 Yes, Camel can run standalone or in any container. Running Standalone is
 as simple just to create a xref:camelcontext.adoc[CamelContext], add
 routes and start it. If you don't want to write your own Java main, you
-could use the one from xref:spring.adoc[camel-spring]
+could use the one from xref:components::spring.adoc[camel-spring]
 (http://camel.apache.org/maven/current/camel-spring/apidocs/) also used
 by the xref:camel-maven-plugin.adoc[Camel Maven Plugin].
 

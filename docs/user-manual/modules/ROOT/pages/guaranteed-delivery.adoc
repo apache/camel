@@ -8,13 +8,13 @@ patterns] using among others the following components:
 
 * xref:file2.adoc[File] for using file systems as a persistent store of
 messages
-* xref:jms-component.adoc[JMS] when using persistent delivery (the default) for
+* xref:components::jms-component.adoc[JMS] when using persistent delivery (the default) for
 working with JMS Queues and Topics for high performance, clustering and
 load balancing
-* xref:jpa-component.adoc[JPA] for using a database as a persistence layer, or use
-any of the many other database component such as xref:sql-component.adoc[SQL],
-xref:jdbc-component.adoc[JDBC],
-xref:mybatis-component.adoc[MyBatis],
+* xref:components::jpa-component.adoc[JPA] for using a database as a persistence layer, or use
+any of the many other database component such as xref:components::sql-component.adoc[SQL],
+xref:components::jdbc-component.adoc[JDBC],
+xref:components::mybatis-component.adoc[MyBatis],
 xref:hibernate.adoc[Hibernate]
 * xref:hawtdb.adoc[HawtDB] for a lightweight key-value persistent store
 
@@ -25,7 +25,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/GuaranteedMessagingSoluti
 
 The following example demonstrates illustrates the use
 of http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
-Delivery] within the xref:jms-component.adoc[JMS] component. By default, a message
+Delivery] within the xref:components::jms-component.adoc[JMS] component. By default, a message
 is not considered successfully delivered until the recipient has
 persisted the message locally guaranteeing its receipt in the event the
 destination becomes unavailable.

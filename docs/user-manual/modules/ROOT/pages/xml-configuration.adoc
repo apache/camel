@@ -6,13 +6,13 @@ completion and functionality while being the most expressive. However if
 you wish to put your routing rules in XML you can via the Camel XML
 language.
 
-Camel XML uses xref:spring.adoc[Spring] 2 namespaces; so that you can
+Camel XML uses xref:components::spring.adoc[Spring] 2 namespaces; so that you can
 configure your routing rules within your 
-xref:spring.adoc[Spring XML configuration file]; you can also use
+xref:components::spring.adoc[Spring XML configuration file]; you can also use
 xref:faq/how-do-i-configure-endpoints.adoc[Java code to configure components and endpoints].
 
 For examples on how to use Camel XML, see the
-xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] or refer to the xref:spring.adoc[Spring Support].
+xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] or refer to the xref:components::spring.adoc[Spring Support].
 
 [[XMLConfiguration-SeeAlso]]
 === See Also

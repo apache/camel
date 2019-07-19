@@ -30,7 +30,7 @@ Camel XML. For example at the time of writing this is *NOT* supported
 
 However you can use the `<endpoint/>` element to define endpoints which
 does support the property resolving which you can then refer to by name,
-using the xref:ref-component.adoc[Ref] component as shown below (notice the `ref:`
+using the xref:components::ref-component.adoc[Ref] component as shown below (notice the `ref:`
 in the URI):
 
 *SUPPORTED*
@@ -72,6 +72,6 @@ Here is a trick that you can use to define the uri in a property file
 using Spring injection and Camel endpoint:
 http://cmoulliard.blogspot.com/2009/05/trick-to-pass-uri-declared-in-property.html.
 
-From Camel 2.3 onwards there is a xref:properties-component.adoc[Properties]
+From Camel 2.3 onwards there is a xref:components::properties-component.adoc[Properties]
 component build in Camel core which allows you to use properties in the
 same way as Spring property placeholders, and even more.

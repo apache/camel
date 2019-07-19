@@ -13,20 +13,20 @@ of custom transport layer security (TLS) settings on Camel components.
 The following Camel components directly support the use of this
 configuration utility:
 
-* xref:http4-component.adoc[HTTP4]
-* xref:jetty-component.adoc[Jetty]
-* xref:ahc-component.adoc[AHC]
+* xref:components::http4-component.adoc[HTTP4]
+* xref:components::jetty-component.adoc[Jetty]
+* xref:components::ahc-component.adoc[AHC]
 * xref:netty-component.adoc[Netty]
-* xref:cometd-component.adoc[Cometd]
+* xref:components::cometd-component.adoc[Cometd]
 * FTP2
-* xref:irc-component.adoc[IRC]
-* xref:mail-component.adoc[Mail]
+* xref:components::irc-component.adoc[IRC]
+* xref:components::mail-component.adoc[Mail]
 * MINA 2
 
 The following Camel components indirectly support the use of this
 configuration utility:
 
-* xref:cxf-component.adoc[CXF]
+* xref:components::cxf-component.adoc[CXF]
 * xref:http-component.adoc[HTTP]
 
 [[CamelConfigurationUtilities-Configuration]]

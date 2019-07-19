@@ -113,7 +113,7 @@ particular route.
 
 So lets start with the logging example. We want to log all the
 *incoming* requests so we use `interceptFrom` to route to the
-xref:log-component.adoc[Log] component. As `proceed` is default then the
+xref:components::log-component.adoc[Log] component. As `proceed` is default then the
 Exchange will continue its route, and thus it will
 continue to `mock:first`.
 

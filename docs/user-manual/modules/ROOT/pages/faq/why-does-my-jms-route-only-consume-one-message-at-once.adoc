@@ -1,7 +1,7 @@
 [[WhydoesmyJMSrouteonlyconsumeonemessageatonce-WhydoesmyJMSrouteonlyconsumeonemessageatonce]]
 === Why does my JMS route only consume one message at once?
 
-The default xref:jms-component.adoc[JMS] endpoint configuration defines
+The default xref:components::jms-component.adoc[JMS] endpoint configuration defines
 *concurrentConsumers* to be 1 so only 1 message is processed
 concurrently at any point in time. To change this to make things more
 concurrent, just configure this value; either at the JMS component level
@@ -18,4 +18,4 @@ from("activemq:SomeQueue?concurrentConsumers=25").
 [[WhydoesmyJMSrouteonlyconsumeonemessageatonce-SeeAlso]]
 ==== See Also
 
-* xref:jms-component.adoc[JMS] for more configuration details
+* xref:components::jms-component.adoc[JMS] for more configuration details

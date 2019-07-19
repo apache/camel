@@ -6,8 +6,8 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchan
 and
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message]
 map very closely to JBI in particular but also
-xref:cxf-component.adoc[CXF], xref:http-component.adoc[HTTP], xref:jms-component.adoc[JMS],
-xref:mail-component.adoc[Mail], xref:xmpp-component.adoc[XMPP] and most other integration
+xref:components::cxf-component.adoc[CXF], xref:http-component.adoc[HTTP], xref:components::jms-component.adoc[JMS],
+xref:components::mail-component.adoc[Mail], xref:components::xmpp-component.adoc[XMPP] and most other integration
 abstractions. We want to prevent leaky abstractions, so the Camel API
 exposes the underlying APIs so that a xref:processor.adoc[Processor] can
 make use of the underlying abstractions if they make sense.
@@ -17,7 +17,7 @@ For example:
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
 |Component |Inbound exchange exposes
-|xref:cxf-component.adoc[CXF] |Each Inbound
+|xref:components::cxf-component.adoc[CXF] |Each Inbound
 http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfExchange.html[CxfExchange]
 has access to the underlying Exchange and Message from CXF
 
@@ -30,7 +30,7 @@ http://camel.apache.org/maven/current/camel-jbi/apidocs/org/apache/camel/compone
 has access to the underlying JBI MessageExchange and NormalizedMessage
 objects
 
-|xref:jms-component.adoc[JMS] |Each inbound
+|xref:components::jms-component.adoc[JMS] |Each inbound
 http://camel.apache.org/maven/current/camel-jms/apidocs/org/apache/camel/component/jms/JmsExchange.html[JmsExchange]
 has access to the underlying JMS Message objects
 |=======================================================================

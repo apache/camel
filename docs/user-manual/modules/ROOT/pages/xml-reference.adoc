@@ -1402,7 +1402,7 @@ available.
 [[XMLReference-UsingtheXSDsinconfigurationfiles]]
 ==== Using the XSDs in configuration files
 
-When you are using xref:spring.adoc[Spring]'s 2.5 XML handling to parse
+When you are using xref:components::spring.adoc[Spring]'s 2.5 XML handling to parse
 the XML then you need to refer to the XSD locations in your XML
 document.
 

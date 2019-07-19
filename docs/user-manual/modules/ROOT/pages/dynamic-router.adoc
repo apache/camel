@@ -60,7 +60,7 @@ from("direct:start")
     .dynamicRouter(method(DynamicRouterTest.class, "slip"));
 ----
 
-Which will leverage a xref:bean-component.adoc[Bean] to compute the slip
+Which will leverage a xref:components::bean-component.adoc[Bean] to compute the slip
 _on-the-fly_, which could be implemented as follows:
 
 [source,java]
@@ -191,12 +191,12 @@ In the above we can use the
 Parameter Binding Annotations
 to bind different parts of the Message to method
 parameters or use an Expression such as using
-xref:xpath-language.adoc[XPath] or xref:xpath-language.adoc[XQuery].
+xref:components::xpath-language.adoc[XPath] or xref:components::xpath-language.adoc[XQuery].
 
 The method can be invoked in a number of ways as described in the
 Bean Integration such as
 
 * POJO Producing
 * Spring Remoting
-* xref:bean-component.adoc[Bean] component
+* xref:components::bean-component.adoc[Bean] component
 

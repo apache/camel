@@ -6,7 +6,7 @@ integration work. The Spring Framework offers a number of features that
 makes it easy to test while using Spring for Inversion of Control which
 works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
 
-We can use Spring for IoC and the Camel xref:mock-component.adoc[Mock] and
+We can use Spring for IoC and the Camel xref:components::mock-component.adoc[Mock] and
 xref:test-component.adoc[Test] endpoints to create sophisticated integration/unit
 tests that are easy to run and debug inside your IDE.  There are three
 supported approaches for testing with Spring in Camel.
@@ -323,7 +323,7 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
 
 If you wish to programmatically add any new assertions to your test you
 can easily do so with the following. Notice how we use @EndpointInject
-to inject a Camel endpoint into our code then the xref:mock-component.adoc[Mock]
+to inject a Camel endpoint into our code then the xref:components::mock-component.adoc[Mock]
 API to add an expectation on a specific message.
 
 [source,java]
@@ -349,7 +349,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
 [[SpringTesting-Furtherprocessingthereceivedmessages]]
 ==== Further processing the received messages
 
-Sometimes once a xref:mock-component.adoc[Mock] endpoint has received some
+Sometimes once a xref:components::mock-component.adoc[Mock] endpoint has received some
 messages you want to then process them further to add further assertions
 that your test case worked as you expect.
 
@@ -388,7 +388,7 @@ It might be that the
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] you have defined in either Spring XML or
 using the Java DSL do all of the sending and receiving
-and you might just work with the xref:mock-component.adoc[Mock] endpoints as
+and you might just work with the xref:components::mock-component.adoc[Mock] endpoints as
 described above. However sometimes in a test case its useful to
 explicitly send or receive messages directly.
 
@@ -428,6 +428,6 @@ example test case using Mock and Spring] along with its
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[Spring
 XML]
 * Bean Integration
-* xref:mock-component.adoc[Mock] endpoint
+* xref:components::mock-component.adoc[Mock] endpoint
 * xref:test-component.adoc[Test] endpoint
 

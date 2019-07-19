@@ -8,9 +8,9 @@ which are pending or have been sent on it.
 
 Some example implementations include
 
-* xref:jms-component.adoc[JMS] for queues only (as of 1.3.0)
+* xref:components::jms-component.adoc[JMS] for queues only (as of 1.3.0)
 * List
-* xref:mock-component.adoc[Mock]
-* xref:seda-component.adoc[Seda]
-* xref:vm-component.adoc[VM]
+* xref:components::mock-component.adoc[Mock]
+* xref:components::seda-component.adoc[Seda]
+* xref:components::vm-component.adoc[VM]
 

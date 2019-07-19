@@ -64,8 +64,8 @@ to use the annotations for routing and messaging.
 [[BeanIntegration-BeanComponent]]
 ==== Bean Component
 
-The xref:bean-component.adoc[Bean] component allows one to invoke a particular
-method. Alternately the xref:bean-component.adoc[Bean] component supports the
+The xref:components::bean-component.adoc[Bean] component allows one to invoke a particular
+method. Alternately the xref:components::bean-component.adoc[Bean] component supports the
 creation of a proxy via
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/bean/ProxyHelper.html[ProxyHelper]
 to a Java interface; which the implementation just sends a message
@@ -90,7 +90,7 @@ headers and so forth.
 *Bean binding*
 
 Whenever Camel invokes a bean method via one of the above methods
-(xref:bean-component.adoc[Bean] component, xref:spring-remoting.adoc[Spring
+(xref:components::bean-component.adoc[Bean] component, xref:spring-remoting.adoc[Spring
 Remoting] or POJO Consuming) then the
 *Bean Binding* mechanism is used to figure out
 what method to use (if it is not explicit) and how to bind the

@@ -22,7 +22,7 @@ http://www.nabble.com/Apache-f90.html[very popular too].
 * Camel is designed from the ground up around
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] -- having an EIP pattern language implemented in
-xref:dsl.adoc[Java], xref:spring.adoc[Spring XML],
+xref:dsl.adoc[Java], xref:components::spring.adoc[Spring XML],
 xref:scala-dsl.adoc[Scala] and xref:groovy-dsl.adoc[Groovy] as well as
 xref:visualisation.adoc[EIP Visualisations].
 * Camel is designed to work with pretty much all kinds of

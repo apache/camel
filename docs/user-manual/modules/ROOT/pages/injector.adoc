@@ -17,7 +17,7 @@ Endpoint in your Spring XML file; or let Camel find
 the defaults then use the Injector to create and inject any of its
 dependencies.
 
-As an example; consider the xref:jms-component.adoc[JMS] component. Rather than
+As an example; consider the xref:components::jms-component.adoc[JMS] component. Rather than
 explicitly configuring the JMS component in Spring XML you can just
 provide a ConnectionFactory in your Spring XML which the Injector will
 use to properly configure the JmsComponent when it is instantiated.

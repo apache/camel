@@ -42,7 +42,7 @@ filename.
 All the file tokens use the same expression name as the method on the
 `java.io.File` object, for instance `file:absolute` refers to the
 `java.io.File.getAbsolute()` method. Notice that not all expressions are
-supported by the current Exchange. For instance the xref:ftp-component.adoc[FTP]
+supported by the current Exchange. For instance the xref:components::ftp-component.adoc[FTP]
 component supports some of the options, where as the
 File component supports all of them.
 
@@ -223,7 +223,7 @@ fileName="uniquefile-${bean:myguidgenerator.generateid}.txt"
 
 And of course all this can be combined in one expression where you can
 use the xref:file-language.adoc[File Language], xref:file-language.adoc[Simple]
-and the xref:bean-component.adoc[Bean] language in one combined expression. This
+and the xref:components::bean-component.adoc[Bean] language in one combined expression. This
 is pretty powerful for those common file path patterns.
 
 === Using Spring PropertyPlaceholderConfigurer together with the File component

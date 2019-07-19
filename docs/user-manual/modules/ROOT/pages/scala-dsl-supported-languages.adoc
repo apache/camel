@@ -10,7 +10,7 @@ You can use any of the supported Camel Languages in
 the Scala DSL; see below for a couple of examples:
 
 [[ScalaDSL-Supportedlanguages-Using]]
-Using xref:xpath-language.adoc[XPath]
+Using xref:components::xpath-language.adoc[XPath]
 
 With the XPath trait, you have an additional method available on an
 `Exchange` to do XPath queries against the message. Just look at this
