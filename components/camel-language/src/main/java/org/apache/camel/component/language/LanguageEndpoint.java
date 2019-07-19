@@ -69,6 +69,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private boolean binary;
     @UriParam
     private boolean cacheScript;
+    @UriParam(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache;
 
     public LanguageEndpoint() {
         // enable cache by default
