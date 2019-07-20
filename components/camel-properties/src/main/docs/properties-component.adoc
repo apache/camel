@@ -157,7 +157,7 @@ property component.
 
 === Syntax
 
-The syntax to use Camel's property placeholder is to use `{{key}}` for
+The syntax to use Camel's property placeholder is to use `{\{key\}}` for
 example `{{file.uri}}` where `file.uri` is the property key.
 
 You can use property placeholders in parts of the endpoint URI's which
