@@ -1,7 +1,7 @@
 [[HowdoIuseSpringPropertyPlaceholderwithCamelXML-HowdoIuseSpringPropertyPlaceholderwithCamelXML]]
 === How do I use Spring Property Placeholder with Camel XML
 
-We do *NOT* yet support the `${something}` notation inside arbitrary
+We do *NOT* yet support the `$\{something\}` notation inside arbitrary
 Camel XML. For example at the time of writing this is *NOT* supported
 (due Spring limitations).
 

@@ -188,7 +188,7 @@ documentation for more details.
 </camelContext>
 ----
 
-And the Camel route now refers to the placeholder using the `{{key}}`
+And the Camel route now refers to the placeholder using the `{\{key\}}`
 notation:
 
 [source,java]
