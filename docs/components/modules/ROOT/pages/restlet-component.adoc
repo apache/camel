@@ -113,7 +113,7 @@ with the following path and query parameters:
 | *protocol* | *Required* The protocol to use which is http or https |  | String
 | *host* | *Required* The hostname of the restlet service |  | String
 | *port* | *Required* The port number of the restlet service | 80 | int
-| *uriPattern* | The resource pattern such as /customer/{id} |  | String
+| *uriPattern* | The resource pattern such as /customer/\{id\} |  | String
 |===
 
 

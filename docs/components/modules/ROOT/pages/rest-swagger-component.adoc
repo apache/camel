@@ -79,7 +79,7 @@ to message headers you can specify REST operation's parameters as
 endpoint parameters, these will be constant for all subsequent
 invocations so it makes sense to use this feature only for parameters
 that are indeed constant for all invocations -- for example API version
-in path such as `/api/{version}/users/{id}`. 
+in path such as `/api/\{version\}/users/\{id\}`. 
 
 ### Options
 

@@ -146,7 +146,7 @@ thread.
 The default pattern is for:
 
 * *Camel 2.9.x or older:*
-`Camel (${camelId}) thread #${counter} - ${name`}
+`Camel (${camelId}) thread #${counter} - ${name}`
 * *Camel 2.10 onwards:* `Camel (#camelId#) thread ##counter# - #name#`
 
 Notice we renamed the tokens from Camel 2.10 onwards to not clash with

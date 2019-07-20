@@ -60,7 +60,7 @@ Examples:
 --------------------------------------------------------
 where
 
- * parameters in form \${name} are extracted from message headers and formed the translated query
+ * parameters in form $\{name\} are extracted from message headers and formed the translated query
  * parameters in form @name are extracted from body or message headers and sent to Google Bigquery
 
 You can externalize your SQL queries to files in the classpath or file system as shown:

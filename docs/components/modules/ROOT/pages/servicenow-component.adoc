@@ -295,18 +295,18 @@ The component supports 58 options, which are listed below.
 |===
 | CamelServiceNowResource | CamelServiceNowAction | Method | API URI
 1.5+<.^|TABLE
-| RETRIEVE | GET | /api/now/v1/table/{table_name}/{sys_id}
-| CREATE | POST | /api/now/v1/table/{table_name}
-| MODIFY | PUT | /api/now/v1/table/{table_name}/{sys_id}
-| DELETE | DELETE | /api/now/v1/table/{table_name}/{sys_id}
-| UPDATE | PATCH | /api/now/v1/table/{table_name}/{sys_id}
+| RETRIEVE | GET | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| CREATE | POST | /api/now/v1/table/\{table_name\}
+| MODIFY | PUT | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| DELETE | DELETE | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| UPDATE | PATCH | /api/now/v1/table/\{table_name\}/\{sys_id\}
 
 | AGGREGATE
-| RETRIEVE | GET | /api/now/v1/stats/{table_name}
+| RETRIEVE | GET | /api/now/v1/stats/\{table_name\}
 
 1.2+<.^|IMPORT
-| RETRIEVE | GET | /api/now/import/{table_name}/{sys_id}
-| CREATE | POST | /api/now/import/{table_name}
+| RETRIEVE | GET | /api/now/import/\{table_name\}/\{sys_id\}
+| CREATE | POST | /api/now/import/\{table_name\}
 |===
 
 NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API Documentation]
@@ -317,24 +317,24 @@ NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji RE
 |===
 | CamelServiceNowResource | CamelServiceNowAction | CamelServiceNowActionSubject | Method | API URI
 1.5+<.^|TABLE
-| RETRIEVE | | GET | /api/now/v1/table/{table_name}/{sys_id}
-| CREATE | | POST | /api/now/v1/table/{table_name}
-| MODIFY | | PUT | /api/now/v1/table/{table_name}/{sys_id}
-| DELETE | | DELETE | /api/now/v1/table/{table_name}/{sys_id}
-| UPDATE | | PATCH | /api/now/v1/table/{table_name}/{sys_id}
+| RETRIEVE | | GET | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| CREATE | | POST | /api/now/v1/table/\{table_name\}
+| MODIFY | | PUT | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| DELETE | | DELETE | /api/now/v1/table/\{table_name\}/\{sys_id\}
+| UPDATE | | PATCH | /api/now/v1/table/\{table_name\}/\{sys_id\}
 
 | AGGREGATE
-| RETRIEVE | | GET | /api/now/v1/stats/{table_name}
+| RETRIEVE | | GET | /api/now/v1/stats/\{table_name\}
 
 1.2+<.^|IMPORT
-| RETRIEVE | | GET | /api/now/import/{table_name}/{sys_id}
-| CREATE | | POST | /api/now/import/{table_name}
+| RETRIEVE | | GET | /api/now/import/\{table_name\}/\{sys_id\}
+| CREATE | | POST | /api/now/import/\{table_name\}
 
 1.4+<.^|ATTACHMENT
-| RETRIEVE | | GET | /api/now/api/now/attachment/{sys_id}
-| CONTENT | | GET | /api/now/attachment/{sys_id}/file
+| RETRIEVE | | GET | /api/now/api/now/attachment/\{sys_id\}
+| CONTENT | | GET | /api/now/attachment/\{sys_id\}/file
 | UPLOAD | | POST | /api/now/api/now/attachment/file
-| DELETE | | DELETE | /api/now/attachment/{sys_id}
+| DELETE | | DELETE | /api/now/attachment/\{sys_id\}
 
 | SCORECARDS
 | RETRIEVE | PERFORMANCE_ANALYTICS | GET | /api/now/pa/scorecards
@@ -344,26 +344,26 @@ NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji RE
 | CREATE | IDENTIFY_RECONCILE | POST | /api/now/identifyreconcile
 
 1.2+<.^|SERVICE_CATALOG
-| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/{sys_id}
-| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/{sys_id}/categories
+| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/\{sys_id\}
+| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/\{sys_id\}/categories
 
 1.5+<.^|SERVICE_CATALOG_ITEMS
-| RETRIEVE | | GET | /sn_sc/servicecatalog/items/{sys_id}
-| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/{sys_id}/submit_guide
-| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/{sys_id}/checkout_guide
-| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/{sys_id}/add_to_cart
-| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/{sys_id}/submit_producer
+| RETRIEVE | | GET | /sn_sc/servicecatalog/items/\{sys_id\}
+| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id\}/submit_guide
+| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/\{sys_id\}/checkout_guide
+| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/\{sys_id\}/add_to_cart
+| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/\{sys_id\}/submit_producer
 
 1.6+<.^|SERVICE_CATALOG_CARTS
 | RETRIEVE | | GET | /sn_sc/servicecatalog/cart
-| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/{user_id}
+| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/\{user_id\}
 | RETRIEVE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/checkout
-| UPDATE | | POST | /sn_sc/servicecatalog/cart/{cart_item_id}
+| UPDATE | | POST | /sn_sc/servicecatalog/cart/\{cart_item_id\}
 | UPDATE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/submit_order
-| DELETE | | DELETE | /sn_sc/servicecatalog/cart/{sys_id}/empty
+| DELETE | | DELETE | /sn_sc/servicecatalog/cart/\{sys_id\}/empty
 
 | SERVICE_CATALOG_CATEGORIES
-| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/{sys_id}
+| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/\{sys_id\}
 
 |===
 
