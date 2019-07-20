@@ -183,7 +183,7 @@ from("rest:get:hello:/french/{me}")
 
 You can use the rest component to call REST services like any other Camel component.
 
-For example to call a REST service on using `hello/{me}` you can do
+For example to call a REST service on using `hello/\{me\}` you can do
 
 [source,java]
 ----
@@ -191,7 +191,7 @@ from("direct:start")
   .to("rest:get:hello/{me}");
 ----
 
-And then the dynamic value `{me}` is mapped to Camel message with the same name.
+And then the dynamic value `\{me\}` is mapped to Camel message with the same name.
 So to call this REST service you can send an empty message body and a header as shown:
 
 [source,java]

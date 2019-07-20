@@ -238,7 +238,7 @@ The _.log()_ at the beginning and at the end of the route is always called, but 
 
 ## KeyExpression
 
-By default the policy uses the received Exchange body as _key_, so the default expression is like _simple("${body})_.
+By default the policy uses the received Exchange body as _key_, so the default expression is like _simple("$\{body\})_.
  We can set a different Camel Expression as _keyExpression_ which will be evaluated to determine the key.
  For example if we try to find an _order_ by an _orderId_ which is in the message headers,
  set _header("orderId")_ (or _simple("${header.orderId})_ as _keyExpression_.
