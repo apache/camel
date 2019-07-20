@@ -246,7 +246,7 @@ The following patterns is supported:
 * `\#symbolicName#` = the OSGi symbolic name (only for OSGi environments)
 * `\#version#` = the OSGi bundle version (only for OSGi environments)
 * `${env:key}` = the environment variable with the key
-* `${key}` = the JVM system property with the key
+* `$\{key\}` = the JVM system property with the key
 
 A couple of examples:
 
