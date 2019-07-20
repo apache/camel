@@ -77,7 +77,6 @@ import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetExchangePatternDefinition;
-import org.apache.camel.model.SetFaultBodyDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SortDefinition;

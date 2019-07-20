@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -94,10 +96,14 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfCustomizedExceptionContext.xml");
     }
     
-    public static class SOAPFaultFactory {
-        public SoapFault getSoapFault() {
-            return SOAP_FAULT;
+    public static class SOAPFaultProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            exchange.getMessage().setFault(true);
+            exchange.getMessage().setBody(SOAP_FAULT);
         }
     }
+
 
 }

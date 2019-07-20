@@ -110,7 +110,13 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                     .to(serviceURI);
                 // END SNIPPET: onException
                 // START SNIPPET: ThrowFault
-                from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
+                from(routerEndpointURI).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getMessage().setFault(true);
+                        exchange.getMessage().setBody(SOAP_FAULT);
+                    }
+                });
                 // END SNIPPET: ThrowFault
             }
         };
