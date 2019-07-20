@@ -64,7 +64,6 @@ public class DefaultRouteContext implements RouteContext {
     private Boolean logMask;
     private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
-    private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
     private List<RoutePolicy> routePolicyList = new ArrayList<>();
