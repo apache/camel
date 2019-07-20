@@ -40,7 +40,7 @@ property component
 ==== Format
 
 The value of a Camel property can be obtained by specifying its key name
-within a property placeholder, using the following format: `{{key}}`
+within a property placeholder, using the following format: `{\{key\}}`
 
 For example:
 ....
