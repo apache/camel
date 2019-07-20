@@ -54,22 +54,6 @@ public interface Message {
     Exchange getExchange();
 
     /**
-     * Returns true if this message represents a fault
-     *
-     * @return <tt>true</tt> if this is a fault message, <tt>false</tt> for regular messages.
-     */
-    @Deprecated
-    boolean isFault();
-
-    /**
-     * Sets the fault flag on this message
-     *
-     * @param fault the fault flag
-     */
-    @Deprecated
-    void setFault(boolean fault);
-
-    /**
      * Accesses a specific header
      *
      * @param name  name of header

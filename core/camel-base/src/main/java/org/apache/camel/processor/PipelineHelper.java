@@ -45,17 +45,6 @@ public final class PipelineHelper {
         if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {
             // We need to write a warning message when the exception and fault message be set at the same time
             Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            if (msg.isFault() && exchange.getException() != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Message exchange has failed: " + message + " for exchange: ").append(exchange);
-                sb.append(" Warning: Both fault and exception exists on the exchange, its best practice to only set one of them.");
-                sb.append(" Exception: ").append(exchange.getException());
-                sb.append(" Fault: ").append(msg);
-                if (exceptionHandled) {
-                    sb.append(" Handled by the error handler.");
-                }
-                log.warn(sb.toString());
-            }
             // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
@@ -66,9 +55,6 @@ public final class PipelineHelper {
                 }
                 if (exchange.getException() != null) {
                     sb.append(" Exception: ").append(exchange.getException());
-                }
-                if (msg.isFault()) {
-                    sb.append(" Fault: ").append(msg);
                 }
                 if (exceptionHandled) {
                     sb.append(" Handled by the error handler.");

@@ -510,14 +510,7 @@ public class JmsBinding {
     }
 
     protected Message createJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, CamelContext context) throws JMSException {
-        Message answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, context);
-
-        // special for transferFault
-        boolean isFault = camelMessage.isFault();
-        if (answer != null && isFault && endpoint != null && endpoint.isTransferFault()) {
-            answer.setBooleanProperty(JmsConstants.JMS_TRANSFER_FAULT, true);
-        }
-        return answer;
+        return createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, context);
     }
 
     protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
