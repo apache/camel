@@ -89,9 +89,8 @@ The other one is `pollEnrich`
 `enrich` uses a Producer to obtain the additional data. It is usually used for Request Reply messaging, for instance to invoke an external web service.
 
 Both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange.
-====
 
-A little enrich example using Java:
+==== A little enrich example using Java:
 
 [source,java]
 ----
