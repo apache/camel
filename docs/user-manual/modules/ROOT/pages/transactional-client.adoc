@@ -13,7 +13,7 @@ transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
 
-===== Configuration of Redelivery
+=== Configuration of Redelivery
 
 The redelivery in transacted mode is *not* handled by Camel but by the
 backing system (the transaction manager). In such cases you should
@@ -285,7 +285,7 @@ route as transacted using the *transacted* tag.
     <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionalClientTest$MyProcessor"/>
 ----
 
-===== Transaction error handler
+==== Transaction error handler
 
 When a route is marked as transacted using *transacted* Camel will
 automatic use the

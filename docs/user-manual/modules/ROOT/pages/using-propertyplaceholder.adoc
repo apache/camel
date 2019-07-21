@@ -15,7 +15,7 @@ xref:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
 I use Spring Property Placeholder with Camel XML].
 
 [[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders]]
-===== Bridging Spring and Camel Property Placeholders
+==== Bridging Spring and Camel Property Placeholders
 
 From *Camel 2.10*: Spring's property placeholder can be bridged with
 Camel's. See below for more details.
@@ -874,7 +874,7 @@ destination=mock:result
 ----
 
 
-[[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders]]
+[[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders-1]]
 ==== Bridging Spring and Camel Property Placeholders
 
 *Available as of Camel 2.10*

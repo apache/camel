@@ -88,7 +88,7 @@ again in case it has been suspended.
 |`logger` |`ThrottlingInflightRoutePolicy` |The logger category.
 |===
 
-[[RoutePolicy-ThrottlingInflightRoutePolicy]]
+[[RoutePolicy-ThrottlingInflightRoutePolicy-ComparedToTheThrottlerEIP]]
 ====  ThrottlingInflightRoutePolicy compared to the Throttler EIP
 
 The *`ThrottlingInflightRoutePolicy`* compared to

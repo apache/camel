@@ -24,7 +24,7 @@ This means you can monitor your Camel applications and gather statistics at 4-ti
 *** processor(s) level
 
 
-==== JMX Management
+=== JMX Management
 
 Each Step EIP is registered in JMX under the `type=steps` tree, which allows to monitor
 all the steps in the CamelContext. Its also possible to dump statistics in XML format

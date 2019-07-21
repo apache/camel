@@ -15,9 +15,9 @@ When creating predicates (expressions that evaluate to `true` or
 `false`), you can combine several predicates -- regardless of the
 language they are built with -- by using the `PredicateBuilder` class.
 For more information, see xref:predicate.adoc[Compound Predicates].
-====
 
-The following is the list of currently supported languages:
+
+==== The following is the list of currently supported languages:
 
 * xref:bean-language.adoc[Bean Language] for using Java for expressions
 * xref:constant-language.adoc[Constant]
