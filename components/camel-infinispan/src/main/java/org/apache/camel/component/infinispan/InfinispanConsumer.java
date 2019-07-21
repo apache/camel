@@ -41,11 +41,11 @@ public class InfinispanConsumer extends DefaultConsumer {
     private BasicCache<Object, Object> cache;
     private ContinuousQuery<Object, Object> continuousQuery;
 
-    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, InfinispanConfiguration configuration) {
+    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, InfinispanManager manager, InfinispanConfiguration configuration) {
         super(endpoint, processor);
         this.cacheName = cacheName;
         this.configuration = configuration;
-        this.manager = new InfinispanManager(endpoint.getCamelContext(), configuration);
+        this.manager = manager;
     }
 
     public void processEvent(String eventType, boolean isPre, String cacheName, Object key) {
@@ -137,7 +137,7 @@ public class InfinispanConsumer extends DefaultConsumer {
         public void resultJoining(Object key, Object value) {
             processEvent(InfinispanConstants.CACHE_ENTRY_JOINING, false, cacheName, key, value);
         }
-        
+
         @Override
         public void resultUpdated(Object key, Object value) {
             processEvent(InfinispanConstants.CACHE_ENTRY_UPDATED, false, cacheName, key, value);
