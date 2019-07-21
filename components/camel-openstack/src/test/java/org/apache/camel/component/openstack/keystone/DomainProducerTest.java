@@ -152,13 +152,6 @@ public class DomainProducerTest extends KeystoneProducerTestSupport {
 
         verify(domainService).delete(domainIdCaptor.capture());
         assertEquals(networkID, domainIdCaptor.getValue());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(domainService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.getExchange().isFailed());
-        assertTrue(msg.getExchange().getException().getMessage().contains(failureMessage));
     }
 
     private void assertEqualsDomain(Domain old, Domain newDomain) {

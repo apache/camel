@@ -89,7 +89,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 125 options, which are listed below.
+The component supports 124 options, which are listed below.
 
 
 
@@ -151,7 +151,6 @@ The component supports 125 options, which are listed below.
 | *camel.springboot.duration-max-seconds* | To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
 | *camel.springboot.endpoint-runtime-statistics-enabled* | Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints). The default value is false. | false | Boolean
 | *camel.springboot.file-configurations* | Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You must use either file: or classpath: as prefix to load from file system or classpath. Then you can specify a pattern to load from sub directories and a name pattern such as file:/var/app/secret/*.properties |  | String
-| *camel.springboot.handle-fault* | Sets whether fault handling is enabled or not. Default is false. | false | Boolean
 | *camel.springboot.include-non-singletons* | Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances. By default only singleton beans is included in the context scan. | false | Boolean
 | *camel.springboot.java-routes-exclude-pattern* | Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42; To exclude all routes form a specific package use: com/mycompany/bar/&#42; To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42; And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42; |  | String
 | *camel.springboot.java-routes-include-pattern* | Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;/Foo* To include all routes form a specific package use: com/mycompany/foo/&#42; To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42; And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42; |  | String

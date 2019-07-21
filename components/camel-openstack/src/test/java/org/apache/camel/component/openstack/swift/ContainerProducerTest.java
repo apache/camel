@@ -152,19 +152,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
     }
 
     @Test
-    public void deleteObjectFailTest() throws Exception {
-        final String failMessage = "fail";
-        when(containerService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failMessage, 401));
-        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
-        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-
-        producer.process(exchange);
-
-        assertTrue(msg.getExchange().isFailed());
-        assertTrue(msg.getExchange().getException().getMessage().contains(failMessage));
-    }
-
-    @Test
     public void createUpdateMetadataTest() throws Exception {
         final Map<String, String> md = new HashMap<>();
         md.put("key", "val");

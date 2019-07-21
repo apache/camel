@@ -114,22 +114,6 @@ public class VolumeProducerTest extends CinderProducerTestSupport {
     }
 
     @Test
-    public void updateVolumeFailTest() throws Exception {
-        final String faultMessage = "fault";
-        when(volumeService.update(anyString(), anyString(), anyString())).thenReturn(ActionResponse.actionFailed(faultMessage, 401));
-
-        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
-        final String id = "id";
-        msg.setHeader(OpenstackConstants.ID, id);
-        msg.setBody(createTestVolume());
-
-        producer.process(exchange);
-
-        assertTrue(msg.getExchange().isFailed());
-        assertTrue(msg.getExchange().getException().getMessage().contains(faultMessage));
-    }
-
-    @Test
     public void getVolumeTest() throws Exception {
         when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET);
         msg.setHeader(OpenstackConstants.ID, "anyID");

@@ -132,13 +132,6 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
 
         verify(subnetService).delete(subnetIdCaptor.capture());
         assertEquals(subnetID, subnetIdCaptor.getValue());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(subnetService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.getExchange().isFailed());
-        assertTrue(msg.getExchange().getException().getMessage().contains(failureMessage));
     }
 
     private Subnet createSubnet() {

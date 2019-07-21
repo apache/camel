@@ -153,13 +153,6 @@ public class GroupProducerTest extends KeystoneProducerTestSupport {
 
         verify(groupService).delete(groupIdCaptor.capture());
         assertEquals(networkID, groupIdCaptor.getValue());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(groupService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.getExchange().isFailed());
-        assertTrue(msg.getExchange().getException().getMessage().contains(failureMessage));
     }
 
     private void assertEqualsGroup(Group old, Group newGroup) {
