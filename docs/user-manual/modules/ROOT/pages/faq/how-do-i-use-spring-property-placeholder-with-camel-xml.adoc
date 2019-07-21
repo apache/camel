@@ -62,7 +62,7 @@ Camel does not yet fully support property placeholders as there is a
 limitation in Spring. See JIRA
 http://jira.springframework.org/browse/SPR-4466[SPR-4466]
 
-===== Bridge Spring and Camel property placeholders
+==== Bridge Spring and Camel property placeholders
 
 From Camel 2.10 onwards you can bridge Spring and Camel property
 placeholders, see xref:using-propertyplaceholder.adoc[Using

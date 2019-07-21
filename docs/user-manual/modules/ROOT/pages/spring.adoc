@@ -53,7 +53,7 @@ So the XML file looks like this:
     ">
 --------------------------------------------------------------------------------------------------------------
 
-===== Using `camel:` Namespace
+==== Using `camel:` Namespace
 Or you can refer to the camel XSD in the XML declaration:
 ....
 xmlns:camel="http://camel.apache.org/schema/spring"
@@ -83,7 +83,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
   </camel:camelContext>
 --------------------------------------------------------------------------------------------------------------
 
-===== Advanced Configuration Using Spring
+==== Advanced Configuration Using Spring
 See more details at Advanced configuration of CamelContext using Spring
 
 === Using Java Code
@@ -111,7 +111,7 @@ Will ignore already instantiated classes
 
 The *`<package>`* and *`<packageScan>`* will skip any classes which has already been created by Spring etc. So if you define a route builder as a spring bean tag then that class will be skipped. You can include those beans using *`<routeBuilder ref="theBeanId"/>`* or the *`<contextScan>`* feature.
 
-===== Using `<packageScan>`
+==== Using `<packageScan>`
 
 In Camel 2.0 this has been extended to allow selective inclusion and exclusion of discovered route classes using Ant like path matching. In spring this is specified by adding a *`<packageScan/>`* tag. The tag must contain one or more *`package`* elements (similar to *`1.x`*), and optionally one or more *`includes`* or *`excludes`* elements specifying patterns to be applied to the fully qualified names of the discovered classes. e.g.,
 
@@ -146,7 +146,7 @@ For example:
 *`org.simple.IncludedRoute`*, *`org.simple.Excluded`* but _not_ match
 *`org.simple.PrecludedRoute`*.
 
-===== Using `contextScan`
+==== Using `contextScan`
 
 *Available as of Camel 2.4*
 
@@ -180,7 +180,7 @@ You can also use the ANT style for inclusion and exclusion, as mentioned above i
 
 how do i import routes from other xml files
 
-===== Test Time Exclusion.
+==== Test Time Exclusion.
 At test time it is often desirable to be able to selectively exclude matching routes from being initialized that are not applicable or useful to the test scenario. For instance you might a spring context file *`routes-context.xml`* and three Route builders **`RouteA`, **`RouteB` and *`RouteC`* in the *`org.example.routes`* package. The *`packageScan`* definition would discover all three of these routes and initialize them.
 
 Say *`RouteC`* is not applicable to our test scenario and generates a lot of noise during test. It would be nice to be able to exclude this route from this specific test. The *`SpringTestSupport`* class has been modified to allow this. It provides two methods (*`excludedRoute`* and *`excludedRoutes`*) that may be overridden to exclude a single class or an array of classes.
