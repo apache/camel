@@ -83,7 +83,7 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
         final String flavorId = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
         StringHelper.notEmpty(flavorId, "FlavorID");
         final ActionResponse response = os.compute().flavors().delete(flavorId);
-        checkFailure(response, msg, "Delete flavor");
+        checkFailure(response, exchange, "Delete flavor");
     }
 
     private org.openstack4j.model.compute.Flavor messageToFlavor(Message message) {

@@ -162,14 +162,13 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
         verify(routerService).delete(routerIdCaptor.capture());
         assertEquals(routerID, routerIdCaptor.getValue());
-        assertFalse(msg.isFault());
 
         //in case of failure
         final String failureMessage = "fail";
         when(routerService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
         producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
+        assertTrue(msg.getExchange().isFailed());
+        assertTrue(msg.getExchange().getException().getMessage().contains(failureMessage));
     }
 
     @Test

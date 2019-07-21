@@ -91,8 +91,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         verify(containerService).create(containerNameCaptor.capture(), optionsCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertNull(optionsCaptor.getValue());
-
-        assertFalse(msg.isFault());
     }
 
     @Test
@@ -107,7 +105,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         verify(containerService).create(containerNameCaptor.capture(), optionsCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertEquals(options, optionsCaptor.getValue());
-        assertFalse(msg.isFault());
     }
 
     @Test
@@ -152,8 +149,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
 
         verify(containerService).delete(containerNameCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
-
-        assertFalse(msg.isFault());
     }
 
     @Test
@@ -165,8 +160,8 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
 
         producer.process(exchange);
 
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failMessage));
+        assertTrue(msg.getExchange().isFailed());
+        assertTrue(msg.getExchange().getException().getMessage().contains(failMessage));
     }
 
     @Test

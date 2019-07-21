@@ -327,12 +327,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
         private void checkFailure(org.apache.camel.Exchange camelExchange, Exchange cxfExchange) throws Fault {
             final Throwable t;
             if (camelExchange.isFailed()) {
-                org.apache.camel.Message camelMsg = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
-                if (camelMsg.isFault()) {
-                    t = camelMsg.getBody(Throwable.class);
-                } else {
-                    t = camelExchange.getException();
-                }
+                t = camelExchange.getException();
                 cxfExchange.getInMessage().put(FaultMode.class, FaultMode.UNCHECKED_APPLICATION_FAULT);
                 if (t instanceof Fault) {
                     cxfExchange.getInMessage().put(FaultMode.class, FaultMode.CHECKED_APPLICATION_FAULT);

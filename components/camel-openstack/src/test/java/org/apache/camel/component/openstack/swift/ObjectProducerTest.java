@@ -41,7 +41,6 @@ import org.openstack4j.model.storage.object.SwiftObject;
 import org.openstack4j.model.storage.object.options.ObjectLocation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -145,10 +144,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
         verify(objectService).delete(containerNameCaptor.capture(), objectNameCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
-
-        assertFalse(msg.isFault());
     }
-
 
     @Test
     public void deleteObjectFailTest() throws Exception {
@@ -160,8 +156,8 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
 
         producer.process(exchange);
 
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failMessage));
+        assertTrue(msg.getExchange().isFailed());
+        assertTrue(msg.getExchange().getException().getMessage().contains(failMessage));
     }
 
     @Test

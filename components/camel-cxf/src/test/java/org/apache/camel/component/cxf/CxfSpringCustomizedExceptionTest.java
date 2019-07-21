@@ -100,7 +100,6 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getMessage().setFault(true);
             exchange.getMessage().setBody(SOAP_FAULT);
         }
     }

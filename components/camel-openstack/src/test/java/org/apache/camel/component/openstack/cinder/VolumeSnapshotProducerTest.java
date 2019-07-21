@@ -108,7 +108,6 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
         assertEquals(id, idCaptor.getValue());
         assertEquals(name, nameCaptor.getValue());
         assertEquals(desc, descCaptor.getValue());
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
     }
 
@@ -133,7 +132,6 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
         verify(snapshotService).delete(captor.capture());
         assertEquals(id, captor.getValue());
-        assertFalse(msg.isFault());
     }
 
     private void assertEqualsVolumeSnapshots(VolumeSnapshot old, VolumeSnapshot newVolumeSn) {

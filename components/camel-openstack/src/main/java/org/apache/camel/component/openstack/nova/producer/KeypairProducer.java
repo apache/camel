@@ -84,7 +84,7 @@ public class KeypairProducer extends AbstractOpenstackProducer {
         final String keypairName = msg.getHeader(OpenstackConstants.NAME, String.class);
         StringHelper.notEmpty(keypairName, "Keypair name");
         final ActionResponse response = os.compute().keypairs().delete(keypairName);
-        checkFailure(response, msg, "Delete keypair " + keypairName);
+        checkFailure(response, exchange, "Delete keypair " + keypairName);
     }
 
 }

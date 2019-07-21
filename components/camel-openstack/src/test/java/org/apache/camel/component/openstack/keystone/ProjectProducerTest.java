@@ -155,14 +155,13 @@ public class ProjectProducerTest extends KeystoneProducerTestSupport {
 
         verify(projectService).delete(projectIdCaptor.capture());
         assertEquals(networkID, projectIdCaptor.getValue());
-        assertFalse(msg.isFault());
 
         //in case of failure
         final String failureMessage = "fail";
         when(projectService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
         producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
+        assertTrue(msg.getExchange().isFailed());
+        assertTrue(msg.getExchange().getException().getMessage().contains(failureMessage));
     }
 
     private void assertEqualsProject(Project old, Project newProject) {

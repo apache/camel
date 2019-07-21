@@ -93,7 +93,7 @@ public class TransactedTopicProducerTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
                                     log.info("We failed.  Should roll back.");
-                                    exchange.getOut().setFault(true);
+                                    throw new IllegalArgumentException("Forced error");
                                 } else {
                                     log.info("We passed.  Should commit.");
                                 }

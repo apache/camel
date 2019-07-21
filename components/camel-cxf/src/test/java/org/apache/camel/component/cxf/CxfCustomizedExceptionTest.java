@@ -101,7 +101,6 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 SoapFault fault =
                                     exchange.getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                                exchange.getOut().setFault(true);
                                 exchange.getOut().setBody(fault);
                             }
                             
@@ -113,7 +112,6 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                 from(routerEndpointURI).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getMessage().setFault(true);
                         exchange.getMessage().setBody(SOAP_FAULT);
                     }
                 });

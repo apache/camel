@@ -164,7 +164,6 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         verify(flavorService).delete(flavorIdCaptor.capture());
         assertEquals(id, flavorIdCaptor.getValue());
 
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
     }
 
@@ -180,8 +179,8 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         verify(flavorService).delete(flavorIdCaptor.capture());
         assertEquals(id, flavorIdCaptor.getValue());
 
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failReason));
+        assertTrue(msg.getExchange().isFailed());
+        assertTrue(msg.getExchange().getException().getMessage().contains(failReason));
     }
 
     private Flavor createTestFlavor() {

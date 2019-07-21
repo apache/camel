@@ -110,7 +110,6 @@ public class VolumeProducerTest extends CinderProducerTestSupport {
         assertEquals(id, idCaptor.getValue());
         assertEquals(name, nameCaptor.getValue());
         assertEquals(desc, descCaptor.getValue());
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
     }
 
@@ -126,8 +125,8 @@ public class VolumeProducerTest extends CinderProducerTestSupport {
 
         producer.process(exchange);
 
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(faultMessage));
+        assertTrue(msg.getExchange().isFailed());
+        assertTrue(msg.getExchange().getException().getMessage().contains(faultMessage));
     }
 
     @Test
@@ -150,8 +149,6 @@ public class VolumeProducerTest extends CinderProducerTestSupport {
 
         verify(volumeService).delete(captor.capture());
         assertEquals(id, captor.getValue());
-
-        assertFalse(msg.isFault());
     }
 
     private void assertEqualVolumes(Volume old, Volume newVolume) {
