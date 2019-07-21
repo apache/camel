@@ -48,13 +48,6 @@ public class DefaultMessage extends MessageSupport {
         setCamelContext(camelContext);
     }
 
-    public boolean isFault() {
-        return false;
-    }
-
-    public void setFault(boolean fault) {
-    }
-
     public Object getHeader(String name) {
         if (hasHeaders()) {
             return getHeaders().get(name);
