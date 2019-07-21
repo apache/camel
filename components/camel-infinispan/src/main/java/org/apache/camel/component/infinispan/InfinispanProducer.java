@@ -33,24 +33,12 @@ public class InfinispanProducer extends HeaderSelectorProducer {
     private final InfinispanConfiguration configuration;
     private final InfinispanManager manager;
 
-    public InfinispanProducer(InfinispanEndpoint endpoint, String cacheName, InfinispanConfiguration configuration) {
+    public InfinispanProducer(InfinispanEndpoint endpoint, String cacheName, InfinispanManager manager, InfinispanConfiguration configuration) {
         super(endpoint, InfinispanConstants.OPERATION, () -> configuration.getOperationOrDefault().name(), false);
 
         this.cacheName = cacheName;
         this.configuration = configuration;
-        this.manager = new InfinispanManager(endpoint.getCamelContext(), configuration);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        manager.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        manager.stop();
-        super.doStop();
+        this.manager = manager;
     }
 
     // ************************************
@@ -216,7 +204,7 @@ public class InfinispanProducer extends HeaderSelectorProducer {
 
         setResult(message, result);
     }
-    
+
     @InvokeOnHeader("GETORDEFAULT")
     void onGetOrDefault(Message message) {
         final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
@@ -362,7 +350,7 @@ public class InfinispanProducer extends HeaderSelectorProducer {
         }
 
     }
-   
+
     @InvokeOnHeader("SIZE")
     void onSize(Message message) {
         final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
@@ -406,7 +394,7 @@ public class InfinispanProducer extends HeaderSelectorProducer {
 
         setResult(message, result);
     }
-    
+
     @InvokeOnHeader("COMPUTE")
     void onCompute(Message message) {
         final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
@@ -414,7 +402,7 @@ public class InfinispanProducer extends HeaderSelectorProducer {
         final Object result = cache.compute(key, configuration.getRemappingFunction());
         setResult(message, result);
     }
-    
+
     @InvokeOnHeader("COMPUTEASYNC")
     void onComputeAsync(Message message) {
         final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);

@@ -34,24 +34,38 @@ public class InfinispanEndpoint extends DefaultEndpoint {
     @UriPath(description = "The cache to use")
     @Metadata(required = true)
     private final String cacheName;
-
     @UriParam
     private final InfinispanConfiguration configuration;
+
+    private final InfinispanManager manager;
 
     public InfinispanEndpoint(String uri, String cacheName, InfinispanComponent component, InfinispanConfiguration configuration) {
         super(uri, component);
         this.cacheName = cacheName;
         this.configuration = configuration;
+        this.manager = new InfinispanManager(component.getCamelContext(), configuration);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        manager.start();
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        manager.stop();
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new InfinispanProducer(this, cacheName, configuration);
+        return new InfinispanProducer(this, cacheName, manager, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new InfinispanConsumer(this, processor, cacheName, configuration);
+        return new InfinispanConsumer(this, processor, cacheName, manager, configuration);
     }
 
     public String getCacheName() {
