@@ -6,7 +6,7 @@ classpath. The exception detail message will tell you what the missing
 component is. You can solve the issue by adding the required JAR files
 to the classpath.
 
-===== Example:
+==== Example:
 
 If you try to use the definition below without having `camel-jetty.jar` on
 the classpath, you'll run into this exception:

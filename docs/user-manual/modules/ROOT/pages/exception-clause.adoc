@@ -332,7 +332,7 @@ using a producer template from Exchange.
 
 *Available as of Camel 1.5*
 
-===== Continued
+==== Continued
 
 See also the section xref:ExceptionClause-HandleandContinueExceptions.adoc[Handle and continue exceptions] below.
 

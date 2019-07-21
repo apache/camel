@@ -1,4 +1,4 @@
-[[HTTP-SessionHandling-SessionScope]]
+[[HTTP-SessionHandling]]
 === HTTP Session Handling
 
 *Available as of Camel 2.19*

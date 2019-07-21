@@ -18,7 +18,7 @@ Notice this document is based on how it works in Camel 2.0. In Camel 1.x
 this feature isn't as powerful and it uses a slight different keyword
 names.
 
-===== Camel error handling is disabled
+==== Camel error handling is disabled
 
 When using `doTry .. doCatch .. doFinally` then the regular Camel
 xref:error-handler.adoc[Error Handler] does not apply. That means any

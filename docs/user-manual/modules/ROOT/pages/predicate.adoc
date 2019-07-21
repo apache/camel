@@ -105,7 +105,7 @@ based on logical operators and comparison operators:
 
 Additionally, with `PredicateBuilder` you can create Regular Expressions
 and use them as predicates, applying them to the result of an
-expression, e.g. `PredicateBuilder.regex(header("foo"), "\d{4}")`
+expression, e.g. `PredicateBuilder.regex(header("foo"), "\d\{4\}")`
 applies the regular expression to the header = foo.
 
 Combining different Expression Languages is also possible, e.g.:
