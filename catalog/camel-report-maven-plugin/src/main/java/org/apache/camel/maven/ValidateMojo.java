@@ -385,7 +385,7 @@ public class ValidateMojo extends AbstractExecMojo {
                 getLog().warn(sb.toString());
             } else if (showAll) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Endpoint validation passsed at: ");
+                sb.append("Endpoint validation passed at: ");
                 if (detail.getClassName() != null && detail.getLineNumber() != null) {
                     // this is from java code
                     sb.append(detail.getClassName());
