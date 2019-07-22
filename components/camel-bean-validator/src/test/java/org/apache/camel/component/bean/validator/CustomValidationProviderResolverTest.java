@@ -23,6 +23,7 @@ import static java.util.Arrays.asList;
 import javax.validation.ValidationProviderResolver;
 import javax.validation.spi.ValidationProvider;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -38,6 +39,7 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
 
     // Routing fixtures
 
+	@BindToRegistry("myValidationProviderResolver")
     ValidationProviderResolver validationProviderResolver = mock(ValidationProviderResolver.class);
 
     @Override
@@ -56,13 +58,6 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
                     to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myValidationProviderResolver", validationProviderResolver);
-        return registry;
     }
 
     // Tests
