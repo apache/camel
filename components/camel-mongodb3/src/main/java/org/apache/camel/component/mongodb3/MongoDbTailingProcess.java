@@ -114,7 +114,7 @@ public class MongoDbTailingProcess implements Runnable {
             if (keepRunning) {
                 cursor.close();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
+                    LOG.debug("Regenerating cursor with lastVal: {}, waiting {} ms first", tailTracking.lastVal, cursorRegenerationDelay);
                 }
 
                 if (cursorRegenerationDelayEnabled) {
@@ -178,12 +178,19 @@ public class MongoDbTailingProcess implements Runnable {
             if (keepRunning) {
                 LOG.debug("Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
             }
+        } catch (IllegalStateException e) {
+            // this is happening when the consumer is stopped or the mongo interrupted (ie, junit ending test)
+            // as we cannot resume, we shutdown the thread gracefully
+            LOG.info("Cursor was closed, likely the consumer was stopped and closed the cursor on purpose.", e);
+            if (cursor != null) {
+                cursor.close();
+            }
+            keepRunning = false;
+        } finally {
+            // the loop finished, persist the lastValue just in case we are shutting down
+            // TODO: perhaps add a functionality to persist every N records
+            tailTracking.persistToStore();
         }
-
-        // the loop finished, persist the lastValue just in case we are shutting
-        // down
-        // TODO: perhaps add a functionality to persist every N records
-        tailTracking.persistToStore();
     }
 
     // no arguments, will ask DB what the last updated Id was (checking
@@ -196,9 +203,8 @@ public class MongoDbTailingProcess implements Runnable {
         if (lastVal == null) {
             answer = dbCol.find().cursorType(CursorType.TailableAwait).iterator();
         } else {
-            try (MongoCursor<Document> iterator = dbCol.find(gt(tailTracking.getIncreasingFieldName(), lastVal)).cursorType(CursorType.TailableAwait).iterator();) {
-                answer = iterator;
-            }
+            MongoCursor<Document> iterator = dbCol.find(gt(tailTracking.getIncreasingFieldName(), lastVal)).cursorType(CursorType.TailableAwait).iterator();
+            answer = iterator;
         }
         return answer;
     }
