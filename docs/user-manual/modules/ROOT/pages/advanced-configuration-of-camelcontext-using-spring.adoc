@@ -1,0 +1,237 @@
+= Advanced configuration of CamelContext using Spring
+
+When using Spring the CamelContext can be pre configured based on
+defined beans in spring XML.
+This page documentes these features. Most of these features
+requires *Camel 2.0*.
+
+== What can be configured
+
+The following functions can be configured:
+
+* xref:pluggable-class-resolvers.adoc[Class resolvers]
+* xref:lifecycle.adoc[Lifecycle factories]
+* xref:registry.adoc[Registry for lookup]
+* xref:debugger.adoc[Debugger], xref:tracer.adoc[Tracer],
+xref:delay-interceptor.adoc[Delay] and
+xref:uuidgenerator.adoc[UuidGenerator]
+* xref:intercept.adoc[Intercept]
+* xref:graceful-shutdown.adoc[Graceful Shutdown]
+* xref:stream-caching.adoc[Stream caching]
+* Logging
+
+Camel will configure these functions by doing a lookup in the Spring
+bean registry to find beans of the given type 
+When Camel finds and uses any of these it logs at `INFO` level.
+
+The following list all requires at most 1 beans defined. If there are
+more than 1 bean of this type, then Camel will *not* use it.
+
+[width="100%",cols="34%,33%,33%",options="header",]
+|=======================================================================
+|Type |Number of beans |Description
+|PackageScanClassResolver |0..1 |To use a 3rd party package scan
+resolver. More details at xref:pluggable-class-resolvers.adoc[Pluggable
+Class Resolvers].
+
+|ClassResolver |0..1 |To use a 3rd party class resolver. More details at
+xref:pluggable-class-resolvers.adoc[Pluggable Class Resolvers].
+
+|FactoryFinderResolver |0..1 |To use a 3rd party factory finder.
+
+|Registry |0..1 |To use a 3rd party bean registry. By default Camel will
+use Spring ApplicationContext as registry.
+
+|Debugger |0..1 |To use a xref:debugger.adoc[Debugger] usually for
+tooling.
+
+|Tracer |0..1 |To use a 3rd party xref:tracer.adoc[Tracer].
+
+|TraceFormatter |0..1 |To use a bean that has the tracing options
+configured.
+
+|HandleFault |0..1 |To use a 3rd part fault handler to handle FAULT
+messages.
+
+|Delayer |0..1 |To use a 3rd part xref:delay-eip.adoc[Delayer].
+
+|ManagementStrategy |0..1 |*Camel 2.1:* To use a 3rd part strategy for
+xref:jmx.adoc[management], for example JMX management.
+
+|ManagementNamingStrategy |0..1 |*Camel 2.6:* To use a 3rd part strategy
+for naming MBeans for xref:jmx.adoc[management].
+
+|NodeIdFactory |0..1 |*Camel 2.10:* To use a 3rd part node id factory.
+
+|EventFactory |0..1 |*Camel 2.1:* To use a 3rd part event factory.
+
+|EventNotifier |0..1 |*Camel 2.1:* To use a 3rd part event notifier. In
+Camel 2.2 onwards you can have multiple notifiers, see next table.
+
+|InflightRepository |0..1 |*Camel 2.1:* To use a 3rd part inflight
+repository.
+
+|ShutdownStrategy |0..1 |*Camel 2.2:* To use a 3rd part shutdown
+strategy.
+
+|ExecutorServiceStrategy |0..1 |*Camel 2.3 - 2.8.x:* To use a 3rd part
+executor service strategy. More details at
+xref:threading-model.adoc[Threading Model].
+
+|ExecutorServiceManager |0..1 |*Camel 2.9:* To use a 3rd part executor
+service manager. More details at xref:threading-model.adoc[Threading
+Model].
+
+|ThreadPoolFactory |0..1 |*Camel 2.9:* To use a 3rd part thread pool
+factory. More details at xref:threading-model.adoc[Threading Model].
+
+|ProcessorFactory |0..1 |*Camel 2.4:* To use a 3rd part processor
+factory.
+
+|UuidGenerator |0..1 |*Camel 2.5:* To use a 3rd part
+xref:uuidgenerator.adoc[UuidGenerator].
+
+|StreamCachingStrategy |0..1 |*Camel 2.12:* To use a 3rd part
+xref:stream-caching.adoc[Stream caching] strategy.
+
+|UnitOfWorkFactory |0..1 |*Camel 2.12.3/2.13:* To use 3rd part
+`UnitOfWork` implementations created by the factory.
+
+|RuntimeEndpointRegistry |0..1 |*Camel 2.13.1:* To use a 3rd party
+RuntimeEndpointRegistry implementation.
+
+|Logger |0..1 |*Camel 2.12.4/2.13.1:* To use provided org.slf4j.Logger
+for xref:components::log-component.adoc[Log] component and xref:log-eip.adoc[log() EIP].
+
+|AsyncProcessorAwaitManager |0..1 |*Camel 2.15:* To use a 3rd part async
+process await manager.
+
+|ModelJAXBContextFactory |0..1 |*Camel 2.15.2:* To use a 3rd party model
+JAXB ContextFactory
+
+|MessageHistoryFactory |0..1 |*Camel 2.17:* To use a 3rd party
+MessageHistoryFactory implementation.
+|=======================================================================
+
+And the following options have support for any number of beans defined.
+
+[width="100%",cols="34%,33%,33%",options="header",]
+|=======================================================================
+|Type |Number of beans |Description
+|InterceptStrategy |0..n |To use your own xref:intercept.adoc[Intercept]
+that intercepts every processing steps in all routes in the
+xref:camelcontext.adoc[CamelContext]. For instance you can use this to
+do an AOP like performance timer interceptor.
+
+|LifecycleStrategy |0..n |*Camel 2.1:* To use 3rd party lifecycle
+strategies. By default Camel uses a JMX aware that does JMX
+instrumentation.
+
+|EventNotifier |0..n |*Camel 2.2:* To use 3rd part event notifiers.
+
+|RoutePolicyFactory |0..n |*Camel 2.14:* To use a 3rd party route policy
+factory to create a route policy for every route.
+|=======================================================================
+
+Camel will log at `INFO` level if it pickup and uses a custom bean using
+`org.apache.camel.spring.CamelContextFactoryBean` as name.
+
+[[AdvancedconfigurationofCamelContextusingSpring-Usingcontainerwideinterceptors]]
+== Using container wide interceptors
+
+Imagine that you have multiple xref:camelcontext.adoc[CamelContext] and
+you want to configure that they all use the same container wide
+interceptor. How do we do that? Well we can leverage the fact that Camel
+can auto detect and use custom interceptors. So what we simply do is to
+define our interceptor in the spring xml file. The sample below does
+this and also define 2 camel contexts. The sample is based on unit
+test.Error rendering macro 'code': Invalid value specified for parameter
+'java.lang.NullPointerException'
+
+[source,xml]
+----
+<!-- here we define a spring bean that is our container wide interceptor
+     its important to notice that the class ContainerWideInterceptor implements
+     org.apache.camel.spi.InterceptStrategy that allows us to plugin our interceptors
+     Camel will at startup automatic look for any beans in spring registry that is an
+     instance of org.apache.camel.spi.InterceptStrategy and add it as interceptor
+     to all its routes. Using this we are capable of defining container wide interceptors
+     that gets used in all camel contests we define with spring -->
+<bean id="myInterceptor" class="org.apache.camel.spring.interceptor.ContainerWideInterceptor"/>
+
+<!-- here we have the 1st CamelContext -->
+<camelContext id="camel1" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:one"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+
+<!-- and there we have the 2nd CamelContext -->
+<camelContext id="camel2" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:two"/>
+        <to uri="log:two"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
+
+Okay lets build our interceptor to simply count the number of
+interceptions. This is quite easy as we can just implement this logic in
+our implementation directly as the code below illustrates:Error
+rendering macro 'code': Invalid value specified for parameter
+'java.lang.NullPointerException'
+
+[source,java]
+----
+public class ContainerWideInterceptor implements InterceptStrategy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ContainerWideInterceptor.class);
+    private static int count;
+
+    public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
+                                                 final Processor target, final Processor nextTarget) throws Exception {
+
+        // as this is based on an unit test we are a bit lazy and just create an inlined processor
+        // where we implement our interception logic.
+        return new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                // we just count number of interceptions
+                count++;
+                LOG.info("I am the container wide interceptor. Intercepted total count: " + count);
+                // its important that we delegate to the real target so we let target process the exchange
+                target.process(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "ContainerWideInterceptor[" + target + "]";
+            }
+        };
+    }
+
+    public int getCount() {
+        return count;
+    }
+}
+----
+
+When Camel boots up it logs at `INFO` level the container wide
+interceptors it have found:
+
+[source,syntaxhighlighter-pre]
+----
+INFO  CamelContextFactoryBean        - Using custom intercept strategy with id: myInterceptor and implementation:org.apache.camel.spring.interceptor.ContainerWideInterceptor@b84c44
+----
+
+*Notice:* If we have more than 1 container wide interceptor, we can just
+define them as spring bean. Camel will find and use them.
+
+[[AdvancedconfigurationofCamelContextusingSpring-SeeAlso]]
+== See Also
+
+* xref:spring.adoc[Spring]
+* xref:creating-a-new-spring-based-camel-route.adoc[Creating a new
+Spring based Camel Route]
+* xref:xml-reference.adoc[Xml Reference]

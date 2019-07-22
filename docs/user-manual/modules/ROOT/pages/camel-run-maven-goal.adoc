@@ -1,0 +1,188 @@
+= camel:run
+
+The *camel:run* goal of the xref:camel-maven-plugin.adoc[Camel Maven
+Plugin] is used to run your Camel xref:spring.adoc[Spring]
+configurations in a forked JVM from Maven.
+
+[source,shell]
+----
+cd examples/camel-example-spring
+mvn camel:run
+----
+
+This makes it very easy to spin up and test your routing rules without
+having to write a main(…) method; it also lets you create multiple jars
+to host different sets of routing rules and easily test them
+independently.
+
+How this works is that the plugin will compile the source code in the
+maven project, then boot up a Spring ApplicationContext using the XML
+confiuration files on the classpath at
+
+[source,syntaxhighlighter-pre]
+----
+META-INF/spring/*.xml
+----
+
+If you want to boot up your Camel routes a little faster, you could try
+the xref:camel-embedded-maven-goal.adoc[camel:embedded] instead.
+
+== Running OSGi Blueprint
+
+From *Camel 2.10* onwards the `camel:run` plugin also supports running a
+xref:using-osgi-blueprint-with-camel.adoc[Blueprint] application, and by
+default it scans for OSGi blueprint files in
+
+[source,syntaxhighlighter-pre]
+----
+OSGI-INF/blueprint/*.xml
+----
+
+You would need to configure the camel:run plugin to use blueprint, by
+setting useBlueprint to true as shown below
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <useBlueprint>true</useBlueprint>
+  </configuration>
+</plugin>    
+----
+
+This allows you to boot up any Blueprint services you wish - whether
+they are Camel-related, or any other Blueprint.
+
+From *Camel 2.17* onwards the camel:run goal is able to auto detect if
+camel-blueprint is on the classpath or there is blueprint XML files in
+the project, and therefore you no longer have to configure the
+useBlueprint option.
+
+[NOTE]
+====
+ **Using limited Blueprint container**
+
+We use the https://code.google.com/p/pojosr/[PojoSR project] as the
+blueprint container. This project is not a full fledged blueprint
+container. For that you can use http://karaf.apache.org/[Apache Karaf]
+or http://servicemix.apache.org/[Apache ServiceMix].
+
+In *Camel 2.15.3* and later, we use
+https://github.com/apache/felix/tree/trunk/connect[Felix Connect]
+instead. PojoSR https://issues.apache.org/jira/browse/FELIX-4445[was
+donated] to ASF and is now maintained under Felix project.
+
+====
+
+You can use the `applicationContextUri` configuration to specify an
+explicit blueprint XML file, such as:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <useBlueprint>true</useBlueprint>
+    <applicationContextUri>myBlueprint.xml</applicationContextUri>
+    <!-- ConfigAdmin options which have been added since Camel 2.12.0 -->
+    <configAdminPid>test</configAdminPid>
+    <configAdminFileName>/user/test/etc/test.cfg</configAdminFileName>
+  </configuration>
+</plugin>    
+----
+
+The `applicationContextUri` will currently load the file from the
+classpath, so in the example above the myBlueprint.xml file must be in
+the root of the classpath.
+The `configAdminPid` is the pid name which will be used as the pid name
+for configuration admin service when loading the persistence properties
+file.
+The `configAdminFileName` is the file name which will be used to load
+the configuration admin service properties file.
+
+== Running CDI
+
+From *Camel 2.11* onwards the `camel:run` plugin also supports running a
+xref:components::cdi.adoc[CDI] application
+
+You would need to configure the camel:run plugin to use CDI, by setting
+useCDI to true as shown below
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <useCDI>true</useCDI>
+  </configuration>
+</plugin>    
+----
+
+This allows you to boot up any CDI services you wish - whether they are
+Camel-related, or any other CDI enabled services.
+
+You should add the CDI container of your choice (e.g. Weld or
+OpenWebBeans) to the dependencies of the camel-maven-plugin such as
+https://github.com/apache/camel/tree/master/examples/camel-example-cdi/[in
+this example].
+
+From *Camel 2.17* onwards the camel:run goal is able to auto detect if
+camel-cdi in on the classpath, and therefore you no longer have to
+configure the useCDI option.
+
+From the source of Camel you can run a CDI example via
+
+[source,shell]
+----
+cd examples/camel-example-cdi
+mvn compile camel:run
+----
+
+== Logging the classpath
+
+From *Camel 2.10* onwards you can configure whether the classpath should
+be logged when `camel:run` executes. In older releases the classpath is
+always logged.
+This can be verbose and noisy, so from Camel 2.10 onwards, the classpath
+is not logged anymore. You can enable this in the configuration using:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <logClasspath>true</logClasspath>
+  </configuration>
+</plugin>    
+----
+
+== Using live reload of XML files
+
+From *Camel 2.19* onwards you can configure the plugin to scan for XML
+file changes and trigger a reload of the Camel routes which are
+contained in those XML files.
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-maven-plugin</artifactId>
+  <configuration>
+    <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
+  </configuration>
+</plugin>
+----
+
+Then the plugin watches this directory. This allows you to edit the
+source code from your editor and save the file, and have the running
+Camel application pickup those changes.
+
+Notice its only changes of Camel routes, eg `<routes>`, or
+`<route>` which is supported. You cannot change Spring or OSGi Blueprint
+`<bean>` elements.
+

@@ -1,0 +1,171 @@
+== Contributing to Apache Camel
+
+There are many ways you can help make Camel a better piece of software - please dive in and help!
+
+* Try surf the documentation - if somethings confusing or not clear, let us know.
+* Download the code & try it out and see what you think.
+* Browse the source code. Got an itch to scratch, want to tune some operation or add some feature?
+* Want to do some hacking on Camel? Try surfing the our https://issues.apache.org/jira/browse/CAMEL[issue tracker] for open issues or features that need to be implemented, take ownership of an issue and try fix it.
+* If you are a new Camel rider and would like to help us, you can also find https://issues.apache.org/jira/secure/IssueNavigator.jspa?mode=hide&requestId=12316782[some easy to resolve issues.]
+* Leave a comment on the issue to let us know you are working on it and add yourself as a watcher to get informed about all modifications.
+
+== Table of Contents
+
+* <<getting-in-touch,Getting in touch>>
+* <<improving-the-documentation,Improving the documentation>>
+* <<if-you-find-a-bug-or-problem,If you find a bug or problem>>
+* <<working-on-the-code,Working on the code>>
+* <<running-checkstyle,Running checkstyle>>
+* <<checking-karaf-and-spring-boot-integration-tests,Checking Karaf and Spring Boot Integration Tests>>
+* <<apache-camel-committers-should-work-on-the—asf-git-repo,Apache Camel committers should work on the ASF git repo>>
+* <<creating-patches,Creating patches>>
+* <<pull-request-at-github,Pull request at Github>>
+* <<manual-patch-files,Manual patch files>>
+* <<submitting-patches,Submitting patches>>
+* <<using-the-issue-tracker,Using the issue tracker>>
+* <<becoming-a-committer,Becoming a committer>>
+* <<more-resources,More resources>>
+
+== Getting in touch
+
+There are various ways of communicating with the Camel community.
+
+* Join us on the http://camel.apache.org/discussion-forums.html[Discussion Forums] and take part in any conversations
+* Pop by on http://camel.apache.org/irc-room.html[IRC] and say hi
+* Add some comments to the http://camel.apache.org/navigation.html[wiki]
+
+== Improving the documentation
+
+Documentation is massively important to help users make the most of Apache Camel and its probably the area that needs the most help!
+So if you are interested in helping the documentation effort; whether its just to fix a page here or there, correct a link or even write a tutorial or improve what documentation is already there please do dive in and help!
+We moved the documentation into the code (AsciiDoc). We are not using the wiki system anymore.
+
+To edit the documentation:
+
+* It's easy as opening a Pull Request
+* You'll find on each component under src/main/docs an .adoc file
+ ** This file contains a static part and a dynamically generated part: the former can be edited directly in the .adoc file, while the latter needs your intervention on the javadoc
+ ** Once you modify the javadoc, you'll need to rebuild the component and the .adoc will be automatically updated
+ ** Create a commit and raise a Pull Request
+* If you want to add more documentation check for .adoc in codebase
+
+For more information see https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-does-the-website-work.adoc[How does the website work] or https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-do-i-edit-the-website.adoc[How do I edit the website for more details].
+
+== If you find a bug or problem
+
+Please raise a new issue in our https://issues.apache.org/jira/browse/CAMEL[issue tracker]
+If you can create a JUnit test case then your issue is more likely to be resolved quicker.
+e.g. take a look at some of the existing https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/[unit tests cases]
+Then we can add your issue to Subversion and then we'll know when its really fixed and we can ensure that the problem stays fixed in future releases.
+
+== Working on the code
+
+We recommend to work on the code from https://github.com/apache/camel/[github].
+
+ git clone https://github.com/apache/camel.git
+ cd camel
+
+Build the project (fast build).
+
+ mvn clean install -Pfastinstall
+
+If you intend to work on the code and provide patches and other work you want to submit to the Apache Camel project, then you can fork the project on github and work on your own fork. The custom work you do should be done on branches you create, which can then be committed and pushed upstream, and then submitted to Apache Camel as PRs (pull requests). You can find many resources online how to work on github projects and how to submit work to these projects.
+
+== Running checkstyle
+
+Apache Camel source code is using a coding style/format which can be checked whether is complying using the checkstyle plugin.
+To enable source style checking with checkstyle, build Camel with the -Psourcecheck parameter
+
+ mvn clean install -Psourcecheck
+
+Please remember to run this check on your code changes before submitting a patch or github PR. You do not need to run this against the entire project, but for example in the modules you work on. Lets say you do some code changes in the camel-ftp component, then you can run the check from within this directory:
+
+ cd camel-ftp
+ mvn clean install -Psourcecheck
+
+== Checking Karaf and Spring Boot Integration Tests
+
+Apache Camel source code has a set of Integration Test for Karaf and Spring Boot platform.
+If your contribution modifies dependencies of a specific component, you can check the behavior on these two platforms in this way:
+
+ cd tests/camel-itest-karaf
+ mvn clean test -Dtest=Camel<component_name>Test
+
+And for Spring Boot:
+
+ cd tests/camel-itest-spring-boot
+ mvn clean test -Dtest=Camel<component_name>Test
+
+== Apache Camel committers should work on the ASF git repo
+
+If you are an Apache Camel committer then clone the ASF git repo at
+
+ git clone https://gitbox.apache.org/repos/asf/camel.git
+ cd camel
+
+or
+
+ git clone https://github.com/apache/camel.git
+ cd camel
+
+Build the project (without testing).
+
+ mvn clean install -Dtest=false
+
+PS: You might need to build multiple times (if you get a build error) because sometimes maven fails to download all the files.
+Then import the projects into your workspace.
+
+== Creating patches
+
+We recommend you create patches as github PRs which is much easier for us to accept and work with. You do this as any other github project, where you can fork the project, and create a branch where you work on the code, and then commit and push that code to your fork. Then navigate to the Apache Camel github webpage, and you will see that github in the top of the page has a wizard to send your recent work as a PR (pull request).
+
+== Pull request at Github
+
+There is also a Git repository at Github which you could fork. Then you submit patches as any other github project - eg work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code  to the ASF codebase. After the code has been included into the ASF codebase, you need to close the pull request because we can't do that...
+
+When providing code patches then please include the Camel JIRA ticket number in the commit messages.
+We favor using the syntax:
+
+ CAMEL-9999: Some message goes here
+
+== Manual patch files
+
+We gladly accept patches if you can find ways to improve, tune or fix Camel in some way.
+
+We recommend using github PRs instead of manual patch files. Especially for bigger patches.
+
+Most IDEs can create nice patches now very easily. e.g. in Eclipse just right click on a file/directory and select Team \-> Create Patch. Then just save the patch as a file and then submit it. (You may have to click on Team \-> Share... first to enable the Subversion options).
+If you're a command line person try the following to create the patch
+
+ diff -u Main.java.orig Main.java >> patchfile.txt
+
+or
+
+ git diff --no-prefix > patchfile.txt
+
+== Submitting patches
+
+The easiest way to submit a patch is to
+
+* https://issues.apache.org/jira/browse/CAMEL[create a new JIRA issue] (you will need to register),
+* attach the patch or tarball as an attachment (if you create a patch file, but we recommend using github PRs)
+* *tick the Patch Attached* button on the issue
+We prefer patches has unit tests as well and that these unit tests have proper assertions as well, so remember to replace your system.out or logging with an assertion instead!
+
+== Using the issue tracker
+
+Before you can raise an issue in the https://issues.apache.org/jira/browse/CAMEL[issue tracker] you need to register with it. This is quick & painless.
+
+== Becoming a committer
+
+Once you've got involved as above, we may well invite you to be a committer. See http://camel.apache.org/how-do-i-become-a-committer.html[How do I become a committer] for more details.
+
+The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the http://activemq.apache.org/becoming-a-committer.html[Committer Guide]
+
+== More resources
+
+Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
+
+* https://gitbox.apache.org/repos/asf/camel.git: Apache Camel GitBox repository
+* http://wiki.apache.org/general/GitAtApache: Some basic notes about git@asf
+* http://git.apache.org/: List of git-mirrors at ASF
