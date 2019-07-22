@@ -50,6 +50,7 @@
         <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
         <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
         <apacheds-version>2.0.0-M24</apacheds-version>
+        <apache-any23-version>2.3</apache-any23-version>
         <apache-drill-version>1.16.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
         <apache-mime4j-version>0.8.3</apache-mime4j-version>
@@ -528,6 +529,7 @@
         <quartz-version>2.3.1</quartz-version>
         <quickfixj-version>2.1.1</quickfixj-version>
         <rabbitmq-amqp-client-version>5.7.3</rabbitmq-amqp-client-version>
+        <rdf4j-version>3.0.0-M1</rdf4j-version>
         <reactive-streams-version>1.0.2</reactive-streams-version>
         <reactor-version>3.2.11.RELEASE</reactor-version>
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
@@ -4891,6 +4893,20 @@
                 <groupId>org.ccil.cowan.tagsoup</groupId>
                 <artifactId>tagsoup</artifactId>
                 <version>${tagsoup-version}</version>
+            </dependency>
+            
+            <!-- optional Any23 -->
+            <dependency>
+                <groupId>org.apache.any23</groupId>
+                <artifactId>apache-any23-core</artifactId>
+                <version>${apache-any23-version}</version>
+            </dependency>
+            
+            <!-- optional RDF4J -->
+            <dependency>
+                <groupId>org.eclipse.rdf4j</groupId>
+                <artifactId>rdf4j-runtime</artifactId>
+                <version>${rdf4j-version}</version>
             </dependency>
 
             <!-- optional Axiom -->

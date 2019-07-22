@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class Any23DataFormat extends DataFormatDefinition {
 
   @XmlAttribute
-  @Metadata(defaultValue = "RDFXML")
+  @Metadata(defaultValue = "RDF4JMODEL")
   private Any23Type outputFormat;
   @XmlElement
   private Map<String, String> configurations;

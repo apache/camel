@@ -25,6 +25,8 @@ import org.apache.any23.writer.RDFXMLWriter;
 import org.apache.any23.writer.TripleHandler;
 import org.apache.any23.writer.TurtleWriter;
 import org.apache.camel.dataformat.any23.Any23OutputFormat;
+import org.apache.camel.dataformat.any23.writer.RDF4JModelWriter;
+import org.eclipse.rdf4j.model.impl.LinkedHashModel;
 
 public class Any23Utils {
 
@@ -48,6 +50,9 @@ public class Any23Utils {
         break;
       case RDFJSON:
         handler = new JSONWriter(outputStream);
+        break;
+      case RDF4JMODEL:
+        handler = new RDF4JModelWriter(new LinkedHashModel());
         break;
       default:
         throw new AssertionError(format.name());

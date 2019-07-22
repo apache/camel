@@ -54,7 +54,7 @@ public class Any23DataFormatOutputFormatTest extends CamelTestSupport {
   protected RouteBuilder createRouteBuilder() {
     return new RouteBuilder() {
       public void configure() {
-        from("direct:start").marshal().any23(BASEURI, Any23Type.TURTLE).to("mock:result");
+        from("direct:start").unmarshal().any23(BASEURI, Any23Type.TURTLE).to("mock:result");
       }
     };
   }
