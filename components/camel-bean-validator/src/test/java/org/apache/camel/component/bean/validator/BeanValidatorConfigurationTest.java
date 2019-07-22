@@ -26,7 +26,6 @@ import javax.validation.Path.Node;
 import javax.validation.TraversableResolver;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
