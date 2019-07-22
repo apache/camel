@@ -47,6 +47,7 @@
 * xref:base64-dataformat.adoc[Base64 DataFormat]
 * xref:bean-validator-component.adoc[Bean Validator Component]
 * xref:bean-component.adoc[Bean Component]
+* xref:bean-language.adoc[Bean method Language]
 * xref:class-component.adoc[Class Component]
 * xref:beanio-dataformat.adoc[BeanIO DataFormat]
 * xref:beanstalk-component.adoc[Beanstalk Component]

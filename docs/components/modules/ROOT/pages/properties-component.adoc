@@ -132,7 +132,7 @@ This works much like you would do if using Spring's
 `<property-placeholder>` tag. However Spring have a limitation which
 prevents 3rd party frameworks to leverage Spring property placeholders
 to the fullest. See more at
-xref:how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
+xref:manual::faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
 I use Spring Property Placeholder with Camel XML].
 
 [TIP]
@@ -829,7 +829,7 @@ export $FOO_SERVICE_PORT=8888
 
 For example if the FOO service a remote HTTP service, then we can refer
 to the service in the Camel endpoint uri, and use
-the xref:http-component.adoc[HTTP] component to make the HTTP call:
+the xref:http4-component.adoc[HTTP] component to make the HTTP call:
 
 [source,xml]
 ----

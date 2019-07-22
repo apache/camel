@@ -17,7 +17,7 @@ How Do I Make It Transactional?
 [[HowDoIMakeMyJMSEndpointTransactional-Answer]]
 ==== Answer:
 
-There are examples in the xref:transactionalClient-eip.adoc[Transactional Client]
+There are examples in the xref:transactional-client.adoc[Transactional Client]
 and it is described in the _Enabling Transacted Consumption_
 section of xref:components::jms-component.adoc[JMS]. To make a session transactional
 set `transacted=true` flag on the JMS endpoint and configure
@@ -27,5 +27,5 @@ xref:endpoint.adoc[Endpoint].
 [[HowDoIMakeMyJMSEndpointTransactional-SeeAlso]]
 ==== See Also
 
-* xref:transactionalClient-eip.adoc[Transactional Client]
+* xref:transactional-client.adoc[Transactional Client]
 * xref:components::jms-component.adoc[JMS]

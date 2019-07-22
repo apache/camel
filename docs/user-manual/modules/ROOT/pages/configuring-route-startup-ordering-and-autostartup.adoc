@@ -268,4 +268,4 @@ See also xref:graceful-shutdown.adoc[Graceful Shutdown].
 
 * xref:configuring-camel.adoc[Configuring Camel]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
-* xref:user-guide.adoc[User Guide]
+* xref:index.adoc[User Guide]

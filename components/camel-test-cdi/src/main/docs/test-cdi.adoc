@@ -17,7 +17,7 @@ Camel:
 [width="100%",cols="1,1,4",options="header",]
 |=======================================================================
 |Name |Testing Frameworks Supported |Description
-|xref:CDITesting-CamelCDITest.adoc[Camel CDI Test] a|
+|<<CDITesting-CamelCDITest>>[Camel CDI Test] a|
 * JUnit 4
 
  a|
@@ -26,7 +26,7 @@ that bootstraps a test environment using CDI so that you don't have to
 be familiar with any CDI testing frameworks and can concentrate on the
 testing logic of your Camel CDI applications.
 
-|xref:CDITesting-Arquillian.adoc[Arquillian] a|
+|<<CDITesting-Arquillian>>[Arquillian] a|
 * JUnit 4
 * TestNG 5
 
@@ -43,7 +43,7 @@ descriptors]. The benefit is that you have a very fine-grained control
 over the application configuration that you want to test. The downside
 is more code and more complex _classpath_ / class loading structure.
 
-|xref:CDITesting-PAXExam.adoc[PAX Exam] a|
+|<<CDITesting-PAXExam>>[PAX Exam] a|
 * JUnit 4
 * TestNG 6
 

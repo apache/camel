@@ -32,7 +32,7 @@ xref:xpath-language.adoc[XPath] or xref:xpath-language.adoc[XQuery]
 Expression.
 
 [NOTE]
-There is also the xref:test-component.adoc[Test endpoint] which is a
+There is also the xref:test.adoc[Test endpoint] which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets

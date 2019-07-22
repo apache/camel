@@ -88,7 +88,7 @@ refactor it into a separate class.
 
 There is a base class called
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/ProcessorEndpoint.html[ProcessorEndpoint]
-which supports the full xref:Endpoint-Endpoints.adoc[Endpoint] semantics given a
+which supports the full xref:endpoint.adoc[Endpoint] semantics given a
 Processor instance.
 
 So you just need to create a https://github.com/apache/camel/tree/master/components[Component] class by

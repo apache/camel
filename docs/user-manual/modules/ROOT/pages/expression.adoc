@@ -68,24 +68,18 @@ public interface Predicate {
 
 The following languages are supported out of the box
 
-* xref:bean-language.adoc[Bean Language] for using Java for expressions
+* xref:components::bean-language.adoc[Bean Language] for using Java for expressions
 * xref:constant-language.adoc[Constant]
-* the unified xref:el-language.adoc[EL] from JSP and JSF
 * xref:header-language.adoc[Header]
 * xref:components::jsonpath-language.adoc[JSonPath]
-* xref:jxpath-language.adoc[JXPath]
 * xref:components::mvel-component.adoc[Mvel]
 * xref:components::ognl-language.adoc[OGNL]
 * xref:ref-language.adoc[Ref Language]
-* ExchangeProperty
-/ Property
+* ExchangeProperty / Property
 * Scripting Languages such as
 ** BeanShell
 ** JavaScript
 ** xref:components::groovy-language.adoc[Groovy]
-** xref:python-language.adoc[Python]
-** xref:php-language.adoc[PHP]
-** xref:ruby-language.adoc[Ruby]
 * xref:simple-language.adoc[Simple]
 ** xref:file-language.adoc[File Language]
 * xref:components::spel-language.adoc[Spring Expression Language]
@@ -96,7 +90,7 @@ The following languages are supported out of the box
 * https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages is also supported used as
-xref:annotation-based-expression-language.adoc[Annotation Based
+xref:parameter-binding-annotations.adoc[Annotation Based
 Expression Language].
 
 [[Expression-UsingExpressionsinyourIDE]]
@@ -112,14 +106,13 @@ wish to use.
 
 |Scripting Languages such as
 BeanShell, JavaScript,
-xref:components::groovy-language.adoc[Groovy], xref:components::groovy-language.adoc[PHP], xref:components::groovy-language.adoc[Python]
-and xref:ruby-language.adoc[Ruby] |http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/ScriptBuilder.html[org.apache.camel.builder.script.ScriptBuilder]
+xref:components::groovy-language.adoc[Groovy] |
 
-|xref:components::sql-component.adoc[SQL] |http://camel.apache.org/maven/current/camel-josql/apidocs/org/apache/camel/builder/sql/SqlBuilder.html[org.apache.camel.builder.josql.SqlBuilder]
+|xref:components::sql-component.adoc[SQL] |
 
-|xref:components::xpath-language.adoc[XPath] |http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builder/xml/XPathBuilder.html[org.apache.camel.builder.xml.XPathBuilder]
+|xref:components::xpath-language.adoc[XPath] |https://github.com/apache/camel/blob/master/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
 
-|xref:components::xquery-component.adoc[XQuery] |http://camel.apache.org/maven/current/camel-saxon/apidocs/org/apache/camel/builder/saxon/XQueryBuilder.html[org.apache.camel.builder.saxon.XQueryBuilder]
+|xref:components::xquery-component.adoc[XQuery] |https://github.com/apache/camel/blob/master/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
 |=======================================================================
 
 [[Expression-SeeAlso]]

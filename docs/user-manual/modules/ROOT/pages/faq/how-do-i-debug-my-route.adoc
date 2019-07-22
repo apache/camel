@@ -2,7 +2,7 @@
 === How do I debug my route?
 
 If you've created a route and its not doing what you think it is you
-could try using one of these features from xref:download.adoc[version 1.4 onwards]:
+could try using one of these features from version 1.4 onwards:
 
 * xref:tracer.adoc[Tracer] to trace in commons-logging / log4j each step
 that Camel takes

@@ -51,9 +51,9 @@ All transformers have following common options to specify which data type is sup
 
 | scheme | Type of data model like `xml` or `json`. For example if `xml` is specified, the transformer is applied for all java -&gt; xml and xml -&gt; java transformation.
  
-| fromType | xref:Transformer-DataTypeFormat.adoc[Data type] to transform from.
+| fromType | xref:transformer.adoc[Data type] to transform from.
  
-| toType | xref:Transformer-DataTypeFormat.adoc[Data type] to transform to.
+| toType | xref:transformer.adoc[Data type] to transform to.
 |===
 
 

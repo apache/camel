@@ -6,7 +6,7 @@ How can I log the processing of a xref:message.adoc[Message]?
 Camel provides many ways to log the fact that you are processing a message. Here are just a few examples:
 * You can use the xref:components::log-component.adoc[Log] component which logs the Message content.
 * You can use the xref:tracer.adoc[Tracer] which trace logs message flow.
-* You can also use a xref:processor.adoc[Processor] or xref:bean.adoc[Bean] and log from Java code.
+* You can also use a xref:processor.adoc[Processor] or xref:bean-binding.adoc[Bean] and log from Java code.
 * You can use the log DSL.
 
 === Options

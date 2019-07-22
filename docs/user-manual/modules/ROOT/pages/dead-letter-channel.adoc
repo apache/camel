@@ -67,13 +67,11 @@ forwarded to the dead letter queue.
 [[deadLetterChannel-AboutmovingExchangetodeadletterqueueandusinghandled]]
 === About moving Exchange to dead letter queue and using handled
 
-*Handled* on xref:deadLetterChannel-eip.adoc[Dead Letter Channel]
-
 When all attempts of redelivery have failed the
 xref:exchange.adoc[Exchange] is moved to the dead letter queue (the dead
 letter endpoint). The exchange is then complete and from the client
 point of view it was processed. As such the
-xref:deadLetterChannel-eip.adoc[Dead Letter Channel] have handled the
+xref:dead-letter-channel.adoc[Dead Letter Channel] have handled the
 xref:exchange.adoc[Exchange].
 
 For instance configuring the dead letter channel as:
@@ -103,7 +101,7 @@ And in XML:
 </bean>
 ----
 
-The xref:deadLetterChannel-eip.adoc[Dead Letter Channel] above will clear
+The xref:dead-letter-channel.adoc[Dead Letter Channel] above will clear
 the caused exception (`setException(null)`), by moving the caused
 exception to a property on the xref:exchange.adoc[Exchange], with the
 key `Exchange.EXCEPTION_CAUGHT`. Then the xref:exchange.adoc[Exchange]
@@ -131,7 +129,7 @@ The route listen for JMS messages and validates, transforms and handle
 it. During this the xref:exchange.adoc[Exchange] payload is
 transformed/modified. So in case something goes wrong and we want to
 move the message to another JMS destination, then we can configure our
-xref:deadLetterChannel-eip.adoc[Dead Letter Channel] with the
+xref:dead-letter-channel.adoc[Dead Letter Channel] with the
 *useOriginalMessage* option. But when we move the
 xref:exchange.adoc[Exchange] to this destination we do not know in which
 state the message is in. Did the error happen in before the
@@ -154,7 +152,7 @@ original we received.
 [[deadLetterChannel-OnRedelivery]]
 === OnRedelivery
 
-When xref:deadLetterChannel-eip.adoc[Dead Letter Channel] is doing
+When xref:dead-letter-channel.adoc[Dead Letter Channel] is doing
 redeliver its possible to configure a xref:processor.adoc[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
@@ -164,7 +162,7 @@ TIP: *onException and onRedeliver*
 We also support for per xref:exception-clause.adoc[*onException*] to set
 a *onRedeliver*. That means you can do special on redelivery for
 different exceptions, as opposed to onRedelivery set on
-xref:deadLetterChannel-eip.adoc[Dead Letter Channel] can be viewed as a
+xref:dead-letter-channel.adoc[Dead Letter Channel] can be viewed as a
 global scope.
 
 
@@ -303,7 +301,7 @@ So if it exists its the *last* endpoint which Camel send the Exchange
 to.
 
 When for example processing the xref:exchange.adoc[Exchange] at a given
-xref:Endpoint-Endpoints.adoc[Endpoint] and the message is to be moved into the
+xref:endpoint.adoc[Endpoint] and the message is to be moved into the
 dead letter queue, then Camel also decorates the Exchange with another
 property that contains that *last* endpoint:
 
@@ -318,7 +316,7 @@ The `Exchange.FAILURE_ENDPOINT` have the constant value
 This allows for example you to fetch this information in your dead
 letter queue and use that for error reporting. +
  This is useable if the Camel route is a bit dynamic such as the dynamic
-xref:recipient-list.adoc[Recipient List] so you know which endpoints
+xref:recipientList-eip.adoc[Recipient List] so you know which endpoints
 failed.
 
 These information is kept on the Exchange even if the message
@@ -384,7 +382,7 @@ The onPrepare is also available using the default error handler.
 *Available as of Camel 2.10.4/2.11*
 
 When Camel error handler handles an error such as
-xref:deadLetterChannel-eip.adoc[Dead Letter Channel] or using
+xref:dead-letter-channel.adoc[Dead Letter Channel] or using
 xref:exception-clause.adoc[Exception Clause] with handled=true, then
 Camel will decorate +
  the xref:exchange.adoc[Exchange] with the route id where the error
@@ -444,13 +442,13 @@ We support directly in xref:dead-letter-channel.adoc[Dead Letter
 Channel] to set a xref:processor.adoc[Processor] that is executed
 *before* each redelivery attempt.
 
-When xref:deadLetterChannel-eip.adoc[Dead Letter Channel] is doing
+When xref:dead-letter-channel.adoc[Dead Letter Channel] is doing
 redeliver its possible to configure a xref:processor.adoc[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
 redelivered.
 
-Here we configure the xref:deadLetterChannel-eip.adoc[Dead Letter Channel]
+Here we configure the xref:dead-letter-channel.adoc[Dead Letter Channel]
 to use our processor `MyRedeliveryProcessor` to be executed before each
 redelivery.
 
@@ -472,10 +470,10 @@ also http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-s
 ==== Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-xref:GettingStarted-GettingStarted.adoc[Getting Started], you may also find the
-xref:Architecture-Architecture.adoc[Architecture] useful particularly the description
-of xref:Endpoint-Endpoints.adoc[Endpoint] and xref:uris.adoc[URIs]. Then you could
-try out some of the xref:Examples-Examples.adoc[Examples] first before trying
+xref:getting-started.adoc[Getting Started], you may also find the
+xref:architecture.adoc[Architecture] useful particularly the description
+of xref:endpoint.adoc[Endpoint] and xref:uris.adoc[URIs]. Then you could
+try out some of the xref:examples.adoc[Examples] first before trying
 this pattern out.
 
 * xref:error-handler.adoc[Error Handler]

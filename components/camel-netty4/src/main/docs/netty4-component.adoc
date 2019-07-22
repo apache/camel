@@ -798,5 +798,5 @@ under the `camel-example-netty-custom-correlation` directory.
 
 === See Also
 
-* xref:netty-http-component.adoc[Netty HTTP]
+* xref:netty4-http-component.adoc[Netty HTTP]
 * xref:mina2-component.adoc[MINA]

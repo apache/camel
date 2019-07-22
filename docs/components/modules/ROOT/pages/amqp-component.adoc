@@ -30,7 +30,7 @@ amqp:[queue:|topic:]destinationName[?options]
 ### AMQP Options
 
 You can specify all of the various configuration options of the
-xref:../../../../camel-jms/src/main/docs/readme.adoc[JMS] component after the destination name.
+xref:jms-component.adoc[JMS] component after the destination name.
 
 
 

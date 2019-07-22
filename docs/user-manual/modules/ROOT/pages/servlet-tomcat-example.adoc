@@ -62,7 +62,7 @@ component.
 </web-app>
 ----
 
-The route is a simple xref:contentBasedRouter-eip.adoc[Content Based Router] defined
+The route is a simple xref:content-based-router-eip.adoc[Content Based Router] defined
 in the DSL XML as shown:
 
 [source,xml]
@@ -118,4 +118,4 @@ http://localhost:8080/camel-example-servlet-tomcat/camel/hello URL.
 
 * xref:examples.adoc[Examples]
 *  xref:components::servlet-component.adoc[Servlet]
-*  xref:http-component.adoc[HTTP]
+*  xref:components::http4-component.adoc[HTTP]

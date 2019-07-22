@@ -6,7 +6,7 @@ not picking up files. For example it may not run at all, or it cannot
 acquire a read lock on the file.
 xref:faq.adoc#FAQ-LoggingQuestions[Check the logs] for any exceptions or other
 informative messages. You can
-xref:how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
+xref:faq/how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
 `org.apache.camel.component.file` to see more detail.
 
 [[WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler-HowtouseCamelsroutingerrorhandlerswiththefileconsumer]]

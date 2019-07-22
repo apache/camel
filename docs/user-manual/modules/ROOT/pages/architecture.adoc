@@ -32,7 +32,7 @@ Expression or Predicate to
 make a truly powerful DSL which is extensible to the most suitable
 language depending on your needs. Many of the Languages 
 are also supported as
-xref:annotation-based-expression-language.adoc[Annotation Based Expression Language].
+xref:parameter-binding-annotations.adoc[Annotation Based Expression Language].
 
 [[Architecture-Diagram]]
 ==== Diagram

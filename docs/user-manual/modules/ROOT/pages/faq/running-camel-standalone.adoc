@@ -21,9 +21,5 @@ And if you use Maven for your projects Camel has maven tools to boot up
 in standalone mode and quickly run you Camel application: +
 xref:camel-maven-plugin.adoc[Camel Maven Plugin]
 
-And check this xref:cookbook.adoc[Cookbook] example: +
-xref:running-camel-standalone-and-have-it-keep-running.adoc[Running
-Camel standalone and have it keep running]
-
 This is how you can run the xref:examples.adoc[Examples] that is
 included in the Camel distribution.

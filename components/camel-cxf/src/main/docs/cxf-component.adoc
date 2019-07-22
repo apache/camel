@@ -3,13 +3,6 @@
 
 *Available as of Camel version 1.0*
 
-NOTE: When using Apache CXF as a consumer, the xref:cxf-bean-component.adoc[CXF Bean
-Component] allows you to factor out how message payloads are received
-from their processing as a RESTful or SOAP web service. This has the
-potential of using a multitude of transports to consume web services.
-The bean component's configuration is also simpler and provides the
-fastest method to implement web services using Camel and CXF.
-
 TIP: When using CXF in streaming modes (see DataFormat option), then also
 read about Stream caching.
 
@@ -21,7 +14,7 @@ hosted in CXF.
 ** <<URI format>>
 ** <<Options>>
 *** <<Descriptions of the dataformats>>
-**** <<How to enable CXF's LoggingOutInterceptor in MESSAGE mode>>
+**** <<cxf-loggingout-interceptor-in-message-mode,How to enable CXF's LoggingOutInterceptor in MESSAGE mode>>
 *** <<Description of relayHeaders option>>
 **** <<Available only in POJO mode>>
 **** Changes since Release 2.0
@@ -37,7 +30,7 @@ hosted in CXF.
 ** <<How to get and set SOAP headers in PAYLOAD mode>>
 ** <<SOAP headers are not available in MESSAGE mode>>
 ** <<How to throw a SOAP Fault from Camel>>
-** <<How to propagate a camel-cxf endpoint's request and response context>>
+** <<propagate-request-response-context,How to propagate a camel-cxf endpoint's request and response context>>
 ** <<Attachment Support>>
 ** <<Streaming Support in PAYLOAD mode>>
 ** <<Using the generic CXF Dispatch mode>>
@@ -152,7 +145,7 @@ with the following path and query parameters:
 | *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
 | *continuationTimeout* (advanced) | This option is used to set the CXF continuation timeout which could be used in CxfConsumer by default when the CXF server is using Jetty or Servlet transport. | 30000 | long
 | *cxfBinding* (advanced) | To use a custom CxfBinding to control the binding between Camel Message and CXF Message. |  | CxfBinding
-| *cxfEndpointConfigurer* (advanced) | This option could apply the implementation of org.apache.camel.component.cxf.CxfEndpointConfigurer which supports to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by implementing configure{\ServerClient\} method of CxfEndpointConfigurer. |  | CxfEndpointConfigurer
+| *cxfEndpointConfigurer* (advanced) | This option could apply the implementation of org.apache.camel.component.cxf.CxfEndpointConfigurer which supports to configure the CXF endpoint in programmatic way. User can configure the CXF server and client by implementing configure{ServerClient} method of CxfEndpointConfigurer. |  | CxfEndpointConfigurer
 | *defaultBus* (advanced) | Will set the default bus when CXF endpoint create a bus by itself | false | boolean
 | *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *mergeProtocolHeaders* (advanced) | Whether to merge protocol headers. If enabled then propagating headers between Camel and CXF becomes more consistent and similar. For more details see CAMEL-6393. | false | boolean
@@ -246,6 +239,7 @@ exchange property, `CamelCXFDataFormat`. The exchange key constant is
 defined in
 `org.apache.camel.component.cxf.common.message.CxfConstants.DATA_FORMAT_PROPERTY`.
 
+[#cxf-loggingout-interceptor-in-message-mode]
 ==== How to enable CXF's LoggingOutInterceptor in MESSAGE mode
 
 CXF's `LoggingOutInterceptor` outputs outbound message that goes on the
@@ -773,6 +767,7 @@ code in the message header.
 Same for using POJO data format. You can set the SOAPFault on the out
 body and also indicate it's a fault by calling Message.setFault(true):
 
+[#propagate-request-response-context]
 === How to propagate a camel-cxf endpoint's request and response context
 
 https://github.com/apache/cxf/blob/master/core/src/main/java/org/apache/cxf/endpoint/Client.java[CXF

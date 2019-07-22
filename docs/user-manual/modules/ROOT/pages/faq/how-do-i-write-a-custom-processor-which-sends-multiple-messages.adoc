@@ -2,7 +2,7 @@
 === How do I write a custom Processor which sends multiple messages?
 
 You could use a xref:split-eip.adoc[Splitter] or use multiple
-xref:messageTranslator-eip.adoc[Message Translator] instances in your
+xref:message-translator.adoc[Message Translator] instances in your
 route.
 
 Or you could write a custom processor which is injected with a

@@ -13,7 +13,7 @@ The following example shows how to route a request from an input
 *seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
 the evaluation of various xref:predicate.adoc[Predicate] expressions
 
-=== Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]
+=== Using the xref:fluent-builders.adoc[Fluent Builders]
 
 [source,java]
 ----
@@ -36,12 +36,12 @@ RouteBuilder builder = new RouteBuilder() {
 [TIP]
 ====
 See
-xref:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
+xref:faq/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
 can I not use when or otherwise in a Java Camel route] if you have
 problems with the Java DSL, accepting using `when` or `otherwise`.
 ====
 
-=== Using the xref:SpringXMLExtensions-SpringXMLExtensions.adoc[Spring XML Extensions]
+=== Using the xref:spring-xml-extensions.adoc[Spring XML Extensions]
 
 [source,java]
 ----
@@ -72,8 +72,8 @@ https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/
 === Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-xref:GettingStarted-GettingStarted.adoc[Getting Started]. You may also find the
-xref:Architecture-Architecture.adoc[Architecture] useful particularly the description
-of xref:Endpoint-Endpoints.adoc[Endpoint] and xref:uris.adoc[URIs]. Then you could
-try out some of the xref:Examples-Examples.adoc[Examples] first before trying
+xref:getting-started.adoc[Getting Started]. You may also find the
+xref:architecture.adoc[Architecture] useful particularly the description
+of xref:endpoint.adoc[Endpoint] and xref:uris.adoc[URIs]. Then you could
+try out some of the xref:examples.adoc[Examples] first before trying
 this pattern out.

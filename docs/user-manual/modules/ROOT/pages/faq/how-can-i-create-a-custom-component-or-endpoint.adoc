@@ -10,4 +10,4 @@ easy to do! :smile:
 
 * xref:writing-components.adoc[Writing Components]
 * xref:configuring-camel.adoc[How do I add a component?]
-* xref:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]

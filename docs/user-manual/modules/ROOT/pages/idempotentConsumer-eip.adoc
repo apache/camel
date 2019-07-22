@@ -7,7 +7,7 @@ Consumer] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] is used to filter out duplicate messages.
 
 The Idempotent Consumer essentially acts like a
-xref:message-filter.adoc[Message Filter] to filter out duplicates.
+xref:filter-eip.adoc[Message Filter] to filter out duplicates.
 
 Camel will add the message id eagerly to the repository to detect
 duplication also for Exchanges currently in progress. 
@@ -17,13 +17,13 @@ the Exchange failed, otherwise it stays there.
 Camel provides the following Idempotent Consumer implementations:
 
 * MemoryIdempotentRepository
-* xref:file2.adoc[FileIdempotentRepository]
-* xref:hazelcast-component.adoc[HazelcastIdempotentRepository]
+* xref:components::file-component.adoc[FileIdempotentRepository]
+* xref:components::hazelcast.adoc[HazelcastIdempotentRepository]
 * xref:components::sql-component.adoc[JdbcMessageIdRepository]
 * xref:components::jpa-component.adoc[JpaMessageIdRepository]
 * xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]
 * xref:components::jcache-component.adoc[JCacheIdempotentRepository]
-* xref:components::spring.adoc[SpringCacheIdempotentRepository]
+* xref:spring.adoc[SpringCacheIdempotentRepository]
 * xref:components::ehcache-component.adoc[EhcacheIdempotentRepository]
 * xref:components::kafka-component.adoc[KafkaIdempotentRepository]
 

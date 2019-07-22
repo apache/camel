@@ -76,7 +76,7 @@ And the example in XML:
 Stop is a bit different than a message filter as it will filter out all
 messages and end the route entirely (filter only applies to its child
 processor). Stop is convenient to use in a
-xref:content-based-router.adoc[Content Based Router] when you for
+xref:content-based-router-eip.adoc[Content Based Router] when you for
 example need to stop further processing in one of the predicates.
 
 In the example below we do not want to route messages any further that
@@ -87,16 +87,16 @@ the when predicate by using the `.stop()`.
 
 *Available as of Camel 2.5*
 
-The xref:message-filter.adoc[Message Filter] EIP will add a property on
+The xref:filter-eip.adoc[Message Filter] EIP will add a property on
 the xref:exchange.adoc[Exchange] that states if it was filtered or not.
 
 The property has the key `Exchange.FILTER_MATCHED`, which has the String
 value of `CamelFilterMatched`. Its value is a boolean indicating `true`
 or `false`. If the value is `true` then the xref:exchange.adoc[Exchange]
 was routed in the filter block. This property will be visible within the
-xref:message-filter.adoc[Message Filter] block who's
+xref:filter-eip.adoc[Message Filter] block who's
 xref:predicate.adoc[Predicate] matches (value set to `true`), and to the
-steps immediately following the xref:message-filter.adoc[Message Filter]
+steps immediately following the xref:filter-eip.adoc[Message Filter]
 with the value set based on the results of the last
-xref:message-filter.adoc[Message Filter] xref:predicate.adoc[Predicate]
+xref:filter-eip.adoc[Message Filter] xref:predicate.adoc[Predicate]
 evaluated.

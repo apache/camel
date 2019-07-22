@@ -110,7 +110,7 @@ from("activemq:queue:foo").policy(notsupported)
 === OSGi Blueprint
 
 If you are using
-xref:UsingOSGiblueprintwithCamel-UsingOSGiblueprintwithCamel.adoc[OSGi Blueprint]
+xref:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint]
 then you most likely have to explicit declare a policy and
 refer to the policy from the transacted in the route.
 
@@ -289,12 +289,12 @@ route as transacted using the *transacted* tag.
 
 When a route is marked as transacted using *transacted* Camel will
 automatic use the
-xref:TransactionErrorHandler-TransactionErrorHandler.adoc[TransactionErrorHandler]
-as xref:ErrorHandler-ErrorHandler.adoc[Error Handler].
+xref:transactionerrorhandler.adoc[TransactionErrorHandler]
+as xref:error-handler.adoc[Error Handler].
 It supports basically the same feature set as the
-xref:DefaultErrorHandler-DefaultErrorHandler.adoc[DefaultErrorHandler],
+xref:defaulterrorhandler.adoc[DefaultErrorHandler],
 so you can for instance use
-xref:ExceptionClause-ExceptionClause.adoc[Exception Clause]
+xref:exception-clause.adoc[Exception Clause]
 as well.
 
 [[TransactionalClient-IntegrationTestingwithSpring]]
@@ -386,8 +386,8 @@ Camel to only do it for the current transaction and not globally.
 [[TransactionalClient-SeeAlso]]
 === See Also
 
-* xref:ErrorhandlinginCamel-ErrorhandlinginCamel.adoc[Error handling in Camel]
-* xref:TransactionErrorHandler-TransactionErrorHandler.adoc[TransactionErrorHandler]
-* xref:ErrorHandler-ErrorHandler.adoc[Error Handler]
+* xref:error-handling-in-camel.adoc[Error handling in Camel]
+* xref:transactionerrorhandler.adoc[TransactionErrorHandler]
+* xref:error-handler.adoc[Error Handler]
 * xref:components::jms-component.adoc[JMS]
 * xref:using-this-pattern.adoc[Using This Pattern]

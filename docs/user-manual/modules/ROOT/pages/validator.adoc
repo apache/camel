@@ -45,7 +45,7 @@ All validators have following common options to specify which data type is suppo
 |===
 | Name | Description
 
-| type | xref:Validator-DataTypeFormat.adoc[Data type] to validate.
+| type | xref:validator.adoc#Validator-DataTypeFormat[Data type] to validate.
 |===
 
 

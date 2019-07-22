@@ -20,7 +20,7 @@ and delay in between.
 
 But you can also plugin your own implementation and determine what to do
 using the `pollStrategy` option which has more documentation
-xref:pollingConsumer-eip.adoc[Polling Consumer].
+xref:polling-consumer.adoc[Polling Consumer].
 Notice that the option `pollStrategy` applies for all consumers which is
 a `ScheduledPollConsumer` consumer. The page lists those.
 
@@ -28,4 +28,4 @@ a `ScheduledPollConsumer` consumer. The page lists those.
 ==== See also
 
 * xref:components::ftp-component.adoc[FTP]
-* xref:pollingConsumer-eip.adoc[Polling Consumer]
+* xref:polling-consumer.adoc[Polling Consumer]

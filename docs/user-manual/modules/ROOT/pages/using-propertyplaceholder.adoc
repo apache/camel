@@ -250,7 +250,7 @@ option both inside the Spring as well as the Blueprint XML.
 For example in OSGi you may want to expose a service which returns the
 properties as a `java.util.Properties` object.
 
-Then you could setup the xref:properties.adoc[Properties] component as
+Then you could setup the xref:components::properties-component.adoc[Properties] component as
 follows:
 
 [source,xml]
@@ -491,7 +491,7 @@ placeholder namespace.
 In the example below we use the `prop` prefix for the namespace
 `\http://camel.apache.org/schema/placeholder` by which we can use the
 `prop` prefix in the attributes in the XML DSLs. Notice how we use
-that in the xref:multicast.adoc[Multicast] to indicate that the option
+that in the xref:multicast-eip.adoc[Multicast] to indicate that the option
 `stopOnException` should be the value of the placeholder with the key
 `stop`.
 
@@ -965,7 +965,7 @@ with `ignoreUnresolvablePlaceholders` option to `true`.
 *Available as of Camel 2.10*
 
 When xref:testing.adoc[Testing] with Camel and using the
-xref:properties.adoc[Properties] component, you may want to be able to
+xref:components::properties-component.adoc[Properties] component, you may want to be able to
 provide the properties to be used from directly within the unit test
 source code. This is now possible from Camel 2.10, as the Camel test
 kits, e.g., `CamelTestSupport` class offers the following methods
@@ -1053,7 +1053,7 @@ private int timeout;
 
 *Available as of Camel 2.14.1*
 
-The xref:properties.adoc[Properties] component includes the following
+The xref:components::properties-component.adoc[Properties] component includes the following
 functions out of the box
 
 * `env` - A function to lookup the property from OS environment
@@ -1115,7 +1115,7 @@ export $FOO_SERVICE_HOST=myserver export $FOO_SERVICE_PORT=8888
 
 For example if the `FOO` service a remote HTTP service, then we can
 refer to the service in the Camel endpoint URI, and use
-the xref:http.adoc[HTTP] component to make the HTTP call:
+the xref:components::http4-component.adoc[HTTP] component to make the HTTP call:
 
 [source,xml]
 ----
@@ -1145,7 +1145,7 @@ example to call a service on localhost, maybe for unit testing etc:
 
 *Available as of Camel 2.14.1*
 
-The xref:properties.adoc[Properties] component allow to plugin 3rd party
+The xref:components::properties-component.adoc[Properties] component allow to plugin 3rd party
 functions which can be used during parsing of the property placeholders.
 These functions are then able to do custom logic to resolve the
 placeholders, such as looking up in databases, do custom computations,

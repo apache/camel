@@ -133,7 +133,7 @@ xref:components::log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j et
 [[FAQ-CamelEndpointQuestions]]
 ==== Camel Endpoint Questions
 
-Questions on using the various Camel xref:components.adoc[Components]
+Questions on using the various Camel xref:xref:components::index.adoc[Components]
 and xref:endpoint.adoc[Endpoint] implementations
 
 * xref:faq/how-do-i-invoke-camel-routes-from-jbi.adoc[How do I invoke Camel routes from JBI?]

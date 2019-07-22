@@ -15,7 +15,7 @@ We can use Spring for IoC and the Camel http://camel.apache.org/mock.html[Mock] 
 [width="100%",cols="1,1,4,1",options="header",]
 |=======================================================================
 |Name |Testing Frameworks Supported |Description |Required Camel Test Dependencies
-|xref:SpringTesting-CamelSpringTestSupport.adoc[CamelSpringTestSupport] a|
+|<<SpringTesting-CamelSpringTestSupport>>[CamelSpringTestSupport] a|
 * JUnit 3.x (deprecated)
 * JUnit 4.x
 * TestNG
@@ -34,7 +34,7 @@ a|
 * JUnit 4.x - camel-test-spring
 * TestNG - camel-test-ng
 
-|xref:SpringTesting-PlainSpringTest.adoc[Plain Spring Test] a|
+|<<SpringTesting-PlainSpringTest>>[Plain Spring Test] a|
 * JUnit 3.x
 * JUnit 4.x
 * TestNG
@@ -59,7 +59,7 @@ a|
 * JUnit 4.x - None
 * TestNG - None
 
-|xref:SpringTesting-CamelEnhancedSpringTest.adoc[Camel Enhanced Spring Test] a|
+|<<SpringTesting-CamelEnhancedSpringTest>>[Camel Enhanced Spring Test] a|
 * JUnit 4.x
 * TestNG
 

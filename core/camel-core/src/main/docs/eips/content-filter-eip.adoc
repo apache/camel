@@ -4,32 +4,32 @@
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content
 Filter] from the
-xref:EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns.adoc[EIP patterns]
+xref:enterprise-integration-patterns.adoc[EIP patterns]
 using one of the following mechanisms in the routing logic to transform
 content from the inbound message.
 
-* xref:messageTranslator-eip.adoc[Message Translator]
-* invoking a xref:BeanIntegration-BeanIntegration.adoc[Java bean]
-* xref:Processor-Processor.adoc[Processor] object
+* xref:message-translator.adoc[Message Translator]
+* invoking a xref:bean-integration.adoc[Java bean]
+* xref:processor.adoc[Processor] object
 
 image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
 
 A common way to filter messages is to use an
-xref:Expression-Expressions.adoc[Expression] in the xref:DSL-DSL.adoc[DSL] like
-xref:components::xquery-language.adoc[XQuery], xref:sql-language.adoc[SQL] or one of the supported
-xref:ScriptingLanguages-ScriptingLanguages.adoc[Scripting Languages].
+xref:expression.adoc[Expression] in the xref:dsl.adoc[DSL] like
+xref:components::xquery-language.adoc[XQuery] or one of the supported
+xref:scripting-languages.adoc[Scripting Languages].
 
-=== Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]
+=== Using the xref:fluent-builders.adoc[Fluent Builders]
 
-Here is a simple example using the xref:DSL-DSL.adoc[DSL] directly
+Here is a simple example using the xref:dsl.adoc[DSL] directly
 
-In this example we add our own xref:Processor-Processor.adoc[Processor]
+In this example we add our own xref:processor.adoc[Processor]
 
 For further examples of this pattern in use you could look at one of the
 JUnit tests
 
-* xref:../../../test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
-* xref:../../../test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
+* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformTest.java[TransformTest]
+* https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
 
 === Using Spring XML
 
@@ -58,8 +58,8 @@ interested in:
 === Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-xref:GettingStarted-GettingStarted.adoc[Getting Started], you may also find the
-xref:Architecture-Architecture.adoc[Architecture] useful particularly the description
-of xref:Endpoint-Endpoints.adoc[Endpoint] and xref:URIs-URIs.adoc[URIs]. Then you could
-try out some of the xref:Examples-Examples.adoc[Examples] first before trying
+xref:getting-started.adoc[Getting Started], you may also find the
+xref:architecture.adoc[Architecture] useful particularly the description
+of xref:endpoint.adoc[Endpoint] and xref:uris.adoc[URIs]. Then you could
+try out some of the xref:examples.adoc[Examples] first before trying
 this pattern out.

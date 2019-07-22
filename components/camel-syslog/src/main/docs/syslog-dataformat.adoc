@@ -14,7 +14,7 @@ SyslogMessage model objects.
 * Type Converter from/to SyslogMessage and
 String
 * Integration with the xref:mina2-component.adoc[camel-mina] component.
-* Integration with the xref:netty-component.adoc[camel-netty] component.
+* Integration with the xref:netty4-component.adoc[camel-netty] component.
 * Encoder and decoder for
 the xref:netty4-component.adoc[Netty4 Component] component.
 * Support for RFC5424 also.

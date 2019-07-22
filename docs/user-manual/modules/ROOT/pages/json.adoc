@@ -17,13 +17,6 @@ Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
 XStream library.
 
-
-*Direct, bi-directional JSON <=> XML conversions*
-
-As of Camel 2.10, Camel supports direct, bi-directional JSON <=> XML
-conversions via the xref:xmljson-dataformat.adoc[camel-xmljson] data format, which
-is documented separately.
-
 [[JSON-UsingJSONdataformatwiththeXStreamlibrary]]
 ==== Using JSON data format with the XStream library
 

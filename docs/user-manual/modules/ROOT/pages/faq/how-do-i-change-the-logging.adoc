@@ -13,7 +13,7 @@ a nutshell:
 * Create a `log4j.properties` file specifying desired logging
 configuration (The Camel distribution has example `log4j.properties` files
 you can use -- see for example in the
-xref:../../../../examples/camel-example-bam/src/main/resources[/examples/camel-example-bam/src/main/resources] folder.)
+https://github.com/apache/camel/blob/master/examples/camel-example-as2/src/main/resources/[/examples/camel-example-as2/src/main/resources] folder.)
 * Place the `log4j.properties` file in the folder where the compiled
 `.class` files are located (typically the `classes` folder) -- this will
 place the properties file on the classpath, where it needs to be at

@@ -47,7 +47,7 @@ that Camel thinks the file is not locked by another process and start
 consuming it. Therefore you have to do you own investigation what suites
 your environment. To help with this Camel provides different `readLock`
 options and `doneFileName` option that you can use. See also the section
-xref:File2-Consumingfilesfromfolderswhereothersdropfilesdirectly.adoc[Consuming files from folders where others drop files directly].
+<<File2-Consumingfilesfromfolderswhereothersdropfilesdirectly, Consuming files from folders where others drop files directly>>.
 ====
 
 === URI Options

@@ -17,8 +17,7 @@ To use a Groovy expression use the following Java code
 ---------------------------------------
 
 For example you could use the *groovy* function to create an
-Predicate in a xref:message-filter.adoc[Message
-Filter] or as an Expression for a
+Predicate in a xref:manual::filter-eip.adoc[Message Filter] or as an Expression for a
 Recipient List
 
 ### Groovy Options

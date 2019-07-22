@@ -43,7 +43,7 @@ shown:
 ==== Alternative solutions
 
 Camel provides another feature for managing routes at runtime which is
-xref:routepolicy.adoc[RoutePolicy].
+xref:route-policy.adoc[RoutePolicy].
 
 And xref:camelcontext.adoc[CamelContext] also provides API for
 suspend/resume of routes, and shutdown as well.
@@ -64,7 +64,7 @@ it stop/start routes.
 [[HowcanIstoparoutefromaroute-SeeAlso]]
 ==== See Also
 
-* xref:routepolicy.adoc[RoutePolicy]
+* xref:route-policy.adoc[RoutePolicy]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
 * xref:lifecycle.adoc[Lifecycle]
 * xref:components::controlbus-component.adoc[ControlBus]

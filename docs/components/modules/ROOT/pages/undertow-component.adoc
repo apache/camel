@@ -154,7 +154,7 @@ The component supports 11 options, which are listed below.
 
 === Message Headers
 
-Camel uses the same message headers as the xref:http-component.adoc[HTTP]
+Camel uses the same message headers as the xref:http4-component.adoc[HTTP]
 component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
 the chunked encoding on the camel-undertow consumer.
 
@@ -225,7 +225,7 @@ If you need to expose an Undertow endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
 To listen across an entire URI prefix, see
-xref:../../../../../docs/user-manual/en/faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
+xref:manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the

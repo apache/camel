@@ -16,10 +16,10 @@ patterns.
 
 The EIP icons library is available as a Visio stencil file adapted to
 render the icons with the Camel color : sand. Download it
-xref:enterprise-integration-patterns.data/Hohpe_EIP_camel_20150622.zip?version=1&modificationDate=1435069070000&api=v2[here]
+link:{attachmentsdir}/Hohpe_EIP_camel_20150622.zip[here]
 for your presentation, functional and technical analysis documents. The
 original EIP stencil is also available in
-xref:enterprise-integration-patterns.data/Hohpe_EIP_camel_OpenOffice.zip?version=1&modificationDate=1245056975000&api=v2[OpenOffice
+link:{attachmentsdir}/Hohpe_EIP_camel_OpenOffice.zip[OpenOffice
 3.x Draw] (thanks to Marco Garbelini) ,
 http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft
 Visio], or http://www.graffletopia.com/stencils/137[Omnigraffle].

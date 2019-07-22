@@ -227,7 +227,7 @@ The component supports 35 options, which are listed below.
 
 === Message Headers
 
-Camel uses the same message headers as the xref:http-component.adoc[HTTP]
+Camel uses the same message headers as the xref:http4-component.adoc[HTTP]
 component. 
 It also uses (Exchange.HTTP_CHUNKED,CamelHttpChunked)
 header to turn on or turn off the chuched encoding on the camel-jetty
@@ -262,7 +262,7 @@ If you need to expose a Jetty endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
 To listen across an entire URI prefix, see
-xref:../../../../../docs/user-manual/en/faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
+xref:manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
@@ -283,9 +283,9 @@ Jetty component will copy the HTTP request parameter, `one` to the
 exchange's `in.header`. We can then use the `simple` language to route
 exchanges that contain this header to a specific endpoint and all others
 to another. If we used a language more powerful than
-xref:manual::simple-language.adoc[Simple] (such as xref:el-language.adoc[EL] or
-xref:ognl-language.adoc[OGNL]) we could also test for the parameter value and do
-routing based on the header value as well.
+xref:manual::simple-language.adoc[Simple] (such as xref:ognl-language.adoc[OGNL])
+we could also test for the parameter value and do routing based on the
+header value as well.
 
 === Session Support
 

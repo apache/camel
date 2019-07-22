@@ -285,7 +285,7 @@ With Spring XML:
 === Dynamic stylesheets
 
 To provide a dynamic stylesheet at runtime you can define a dynamic URI.
-See xref:how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
+See xref:manual::faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
 to()] for more information.
 
 === Accessing warnings, errors and fatalErrors from XSLT ErrorListener

@@ -26,7 +26,7 @@ If you have a route such as:
 from("activemq:queue:foo").to("seda:foo", "seda:bar");
 ----
 
-It is by default a xref:pipesandFilters-eip.adoc[pipeline] in Camel (that is
+It is by default a xref:pipeline-eip.adoc[pipeline] in Camel (that is
 the opposite to xref:multicast-eip.adoc[Multicast]). In the above example
 using pipes and filters then the result from seda:foo is sent to
 seda:bar, ie. its not the *same* message sent to multiple destinations,

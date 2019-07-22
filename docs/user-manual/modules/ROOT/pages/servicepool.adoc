@@ -13,14 +13,14 @@ The default producer service pool is
 default in Camel for pooling Producer.
 
 The need for pooling Producer is only apparent in some
-xref:components.adoc[Components] in Camel to support thread safe
+xref:xref:components::index.adoc[Components] in Camel to support thread safe
 producers and support concurrency. And using pooling we can improve
 performance as we do not have the overhead of creating, starting and
 stopping the Producer at each invocation. So where is it needed then?
 Well these components uses pooled producers:
 
-* xref:ftp2-component.adoc[FTP]
-* xref:mina-component.adoc[Mina]
+* xref:components::ftp-component.adoc[FTP]
+* xref:components::mina2-component.adoc[Mina]
 
 [[ServicePool-Usage]]
 ==== Usage

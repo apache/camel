@@ -16,8 +16,8 @@ image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[ima
 
 You can transform a message using Camel's
 xref:bean-integration.adoc[Bean Integration] to call any method on a
-bean in your xref:Registry-Registry.adoc[Registry] such as your
-xref:components::spring.adoc[Spring] XML configuration file as follows
+bean in your xref:registry.adoc[Registry] such as your
+xref:spring.adoc[Spring] XML configuration file as follows
 
 [source,java]
 ----
@@ -36,7 +36,7 @@ the transformation
 
 or you can use the DSL to explicitly configure the transformation
 
-You can also use xref:SpringXMLExtensions-SpringXMLExtensions.adoc[Spring XML Extensions]
+You can also use xref:spring-xml-extensions.adoc[Spring XML Extensions]
 to do a transformation. Basically any xref:expression.adoc[Expression]
 language can be substituted inside the transform element as shown below
 
@@ -66,7 +66,7 @@ from("activemq:My.Queue")
 ----
 
 If you want to use InOut (request-reply) semantics to process requests
-on the *My.Queue* queue on xref:activemq.adoc[ActiveMQ] with a template
+on the *My.Queue* queue on xref:components::activemq-component.adoc[ActiveMQ] with a template
 generated response, then sending responses back to the JMSReplyTo
 Destination you could use this.
 
