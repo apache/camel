@@ -226,6 +226,11 @@
         <version>1.1.3</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.any23</groupId>
+        <artifactId>apache-any23-core</artifactId>
+        <version>2.3</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro</artifactId>
         <version>1.8.2</version>
@@ -3759,6 +3764,11 @@
             <artifactId>stax-api</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.rdf4j</groupId>
+        <artifactId>rdf4j-runtime</artifactId>
+        <version>3.0.0-M1</version>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>

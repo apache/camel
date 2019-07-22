@@ -28,6 +28,11 @@ public class Any23DataFormatReifier extends DataFormatReifier<Any23DataFormat> {
   }
 
   @Override
+  protected DataFormat doCreateDataFormat(CamelContext camelContext) {
+    return super.doCreateDataFormat(camelContext);
+  }
+
+  @Override
   protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
     if (definition.getOutputFormat() != null) {
       setProperty(camelContext, dataFormat, "outputFormat", definition.getOutputFormat());
