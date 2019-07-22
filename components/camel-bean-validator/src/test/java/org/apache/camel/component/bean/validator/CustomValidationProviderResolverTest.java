@@ -38,7 +38,7 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
 
     // Routing fixtures
 
-	@BindToRegistry("myValidationProviderResolver")
+    @BindToRegistry("myValidationProviderResolver")
     ValidationProviderResolver validationProviderResolver = mock(ValidationProviderResolver.class);
 
     @Override
@@ -53,8 +53,7 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test").
-                    to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
+                from("direct:test").to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
     }
