@@ -1,0 +1,14 @@
+= camel:embedded
+
+The *camel:embedded* goal of the xref:camel-maven-plugin.adoc[Camel
+Maven Plugin] is used to run your Camel xref:spring.adoc[Spring]
+configurations in the same JVM as Maven, so it should startup a bit
+faster than xref:camel-run-maven-goal.adoc[camel:run]. Though sometimes
+we all get the odd classpath issue; so sometimes forking a new JVM can
+work around any strange Maven classpath issues.
+
+[source,xml]
+----
+cd examples/camel-example-spring
+mvn camel:embedded
+----

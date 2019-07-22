@@ -1,0 +1,8 @@
+= Using This Pattern
+
+If you would like to use this EIP Pattern then please read the
+xref:getting-started.adoc[Getting Started], you may also find the
+xref:architecture.adoc[Architecture] useful particularly the description
+of xref:endpoint.adoc[Endpoint] and xref:uris.adoc[URIs]. Then you could
+try out some of the xref:examples.adoc[Examples] first before trying
+this pattern out.
