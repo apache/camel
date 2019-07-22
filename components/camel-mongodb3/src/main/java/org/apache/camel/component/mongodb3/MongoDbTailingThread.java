@@ -83,11 +83,10 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
         if (lastVal == null) {
             answer = dbCol.find().cursorType(CursorType.TailableAwait).iterator();
         } else {
-            try (MongoCursor<Document> iterator = dbCol.find(gt(tailTracking.getIncreasingFieldName(), lastVal))
+            MongoCursor<Document> iterator = dbCol.find(gt(tailTracking.getIncreasingFieldName(), lastVal))
                     .cursorType(CursorType.TailableAwait)
-                    .iterator()) {
-                answer = iterator;
-            }
+                    .iterator();
+            answer = iterator;
         }
         return answer;
     }
@@ -95,7 +94,7 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
     @Override
     protected void regeneratingCursor() {
         if (log.isDebugEnabled()) {
-            log.debug("Regenerating cursor with lastVal: {}, waiting {}ms first", tailTracking.lastVal, cursorRegenerationDelay);
+            log.debug("Regenerating cursor with lastVal: {}, waiting {} ms first", tailTracking.lastVal, cursorRegenerationDelay);
         }
     }
 
@@ -129,18 +128,17 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
                 log.debug("Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
             }
         } catch (IllegalStateException e) {
-            // cursor.hasNext() opens socket and waiting for data
-            // it throws exception when cursor is closed in another thread
-            // there is no way to stop hasNext() before closing cursor
-            if (keepRunning) {
-                throw e;
-            } else {
-                log.debug("Cursor closed exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
+            // this is happening when the consumer is stopped or the mongo interrupted (ie, junit ending test)
+            // as we cannot resume, we shutdown the thread gracefully
+            log.info("Cursor was closed, likely the consumer was stopped and closed the cursor on purpose.", e);
+            if (cursor != null) {
+                cursor.close();
             }
+            keepRunning = false;
+        } finally {
+            // the loop finished, persist the lastValue just in case we are shutting down
+            // TODO: perhaps add a functionality to persist every N records
+            tailTracking.persistToStore();
         }
-
-        // the loop finished, persist the lastValue just in case we are shutting down
-        // TODO: perhaps add a functionality to persist every N records
-        tailTracking.persistToStore();
     }
 }
