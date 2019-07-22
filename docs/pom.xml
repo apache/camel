@@ -61,28 +61,37 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>yarn install</id>
+                        <id>yarn-install</id>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
                             <executable>${project.basedir}/node/node</executable>
-                            <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js install --no-progress --force
-                                --non-interactive --frozen-lockfile
-                            </commandlineArgs>
+                            <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js install --no-progress --force --non-interactive --frozen-lockfile</commandlineArgs>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>yarn gulp</id>
+                        <id>yarn-gulp</id>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
                             <executable>${project.basedir}/node/node</executable>
-                            <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js --non-interactive gulp
-                            </commandlineArgs>
+                            <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js --non-interactive gulp</commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>antora-xref-check</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <executable>${project.basedir}/node/node</executable>
+                            <commandlineArgs>${project.basedir}/node/yarn/dist/bin/yarn.js --non-interactive antora --generator @antora/xref-validator site.yml</commandlineArgs>
+                            <skip>${fastinstall}</skip>
                         </configuration>
                     </execution>
                 </executions>
