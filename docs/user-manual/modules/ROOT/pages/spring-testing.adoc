@@ -7,7 +7,7 @@ makes it easy to test while using Spring for Inversion of Control which
 works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
 
 We can use Spring for IoC and the Camel xref:components::mock-component.adoc[Mock] and
-xref:test-component.adoc[Test] endpoints to create sophisticated integration/unit
+xref:components::test.adoc[Test] endpoints to create sophisticated integration/unit
 tests that are easy to run and debug inside your IDE.  There are three
 supported approaches for testing with Spring in Camel.
 
@@ -429,5 +429,5 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/re
 XML]
 * Bean Integration
 * xref:components::mock-component.adoc[Mock] endpoint
-* xref:test-component.adoc[Test] endpoint
+* xref:components::test.adoc[Test] endpoint
 

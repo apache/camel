@@ -31,7 +31,7 @@ See first example in https://github.com/apache/camel/blob/master/camel-core/src/
 For more details see:
 
 * https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/toD-eip.adoc[ToD EIP]
-* xref:recipient-list.adoc[Recipient List]
+* xref:recipientList-eip.adoc[Recipient List]
 * xref:message.adoc[Message]
-* xref:wire-tap.adoc[Wire Tap] 
+* xref:wireTap-eip.adoc[Wire Tap] 
 

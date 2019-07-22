@@ -145,11 +145,3 @@ public class MyModule extends CamelModuleWithMatchingRoutes {
 }
 ----
 
-[[Guice-SeeAlso]]
-==== See Also
-
-* There are a number of xref:examples.adoc[Examples] you can look at to
-see Guice and Camel being used such as xref:guice-jms-example.adoc[Guice
-JMS Example]
-* xref:guice-maven-plugin.adoc[Guice Maven Plugin] for running your
-Guice based routes via Maven

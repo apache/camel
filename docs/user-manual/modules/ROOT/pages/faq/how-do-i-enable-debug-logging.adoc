@@ -13,7 +13,7 @@ logging via, among others:
 * https://docs.oracle.com/javase/8/docs/api/java/util/logging/package-summary.html[JDK Util Logging logging]
 
 To enable debug logging we recommend you
-xref:how-do-i-use-log4j.adoc[use log4j for logging] then make sure your
+xref:faq/how-do-i-use-log4j.adoc[use log4j for logging] then make sure your
 log4j.properties file enables DEBUG level logging for the
 `org.apache.camel` package.
 

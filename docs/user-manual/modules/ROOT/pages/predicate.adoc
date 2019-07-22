@@ -6,7 +6,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Predic
 which can be used to integrate a dynamic predicate into
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] such as when using the xref:filter-eip.adoc[Message Filter]
-or xref:contentBasedRouter-eip.adoc[Content Based Router].
+or xref:content-based-router-eip.adoc[Content Based Router].
 
 A Predicate is being evaluated to a boolean value so the result is
 either `true` or `false`. This makes xref:predicate.adoc[Predicate] so
@@ -152,42 +152,34 @@ Camel supports extensible Predicates using multiple
 xref:languages.adoc[Languages]; the following languages are supported
 out of the box
 
-* xref:bean-language.adoc[Bean Language] for using Java for expressions
-* xref:constant.adoc[Constant]
-* the unified xref:el.adoc[EL] from JSP and JSF
-* xref:header.adoc[Header]
-* xref:jsonpath.adoc[JSonPath]
-* xref:jxpath.adoc[JXPath]
-* xref:mvel.adoc[Mvel]
-* xref:ognl.adoc[OGNL]
+* xref:components::bean-language.adoc[Bean Language] for using Java for expressions
+* xref:constant-language.adoc[Constant]
+* xref:header-language.adoc[Header]
+* xref:components::jsonpath-language.adoc[JSonPath]
+* xref:components::mvel-language.adoc[Mvel]
+* xref:components::ognl-language.adoc[OGNL]
 * xref:ref-language.adoc[Ref Language]
-* xref:exchangeproperty.adoc[ExchangeProperty] / xref:property.adoc[Property]
+* xref:exchangeProperty-language.adoc[ExchangeProperty]
 * xref:scripting-languages.adoc[Scripting Languages] such as
-** xref:beanshell.adoc[BeanShell]
-** xref:javascript.adoc[JavaScript]
-** xref:groovy.adoc[Groovy]
-** xref:python.adoc[Python]
-** xref:php.adoc[PHP]
-** xref:ruby.adoc[Ruby]
-* xref:simple.adoc[Simple]
+** xref:components::groovy-language.adoc[Groovy]
+* xref:simple-language.adoc[Simple]
 ** xref:file-language.adoc[File Language]
-* xref:spel.adoc[Spring Expression Language]
-* xref:sql.adoc[SQL]
-* xref:tokenizer.adoc[Tokenizer]
-* xref:xpath.adoc[XPath]
-* xref:xquery.adoc[XQuery]
+* xref:components::spel-language.adoc[Spring Expression Language]
+* xref:tokenize-language.adoc[Tokenizer]
+* xref:components::xpath-language.adoc[XPath]
+* xref:components::xquery-language.adoc[XQuery]
 * https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages is also supported used as
-xref:annotation-based-expression-language.adoc[Annotation Based
+xref:parameter-binding-annotations.adoc[Annotation Based
 Expression Language].
 
 You can easily write your own plugin predicate by implementing the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Predicate.html[Predicate
+https://github.com/apache/camel/blob/master/core/camel-api/src/main/java/org/apache/camel/Predicate.java[Predicate
 interface].
 
 There are also a number of helper builders available such as the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builder/PredicateBuilder.html[PredicateBuilder
+https://github.com/apache/camel/blob/master/core/camel-core/src/main/java/org/apache/camel/builder/PredicateBuilder.java[PredicateBuilder
 class]
 
 [[Predicate-UsingPredicatesinyourIDE]]
@@ -200,20 +192,13 @@ wish to use.
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
 |Language(s) |Builder class to import
-|xref:scripting-languages.adoc[Scripting Languages] such as
-xref:beanshell.adoc[BeanShell], xref:javascript.adoc[JavaScript],
-xref:groovy.adoc[Groovy], xref:php.adoc[PHP], xref:python.adoc[Python]
-and xref:ruby.adoc[Ruby]
-|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/ScriptBuilder.html[org.apache.camel.builder.script.ScriptBuilder]
+|xref:scripting-languages.adoc[Scripting Languages] such as xref:components::groovy-language.adoc[Groovy]
 
-|xref:sql.adoc[SQL]
-|http://camel.apache.org/maven/current/camel-josql/apidocs/org/apache/camel/builder/sql/SqlBuilder.html[org.apache.camel.builder.josql.SqlBuilder]
+|xref:components::xpath-language.adoc[XPath]
+|https://github.com/apache/camel/blob/master/components/camel-xpath/src/main/java/org/apache/camel/language/xpath/XPathBuilder.java[org.apache.camel.builder.xml.XPathBuilder]
 
-|xref:xpath.adoc[XPath]
-|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builder/xml/XPathBuilder.html[org.apache.camel.builder.xml.XPathBuilder]
-
-|xref:xquery.adoc[XQuery]
-|http://camel.apache.org/maven/current/camel-saxon/apidocs/org/apache/camel/builder/saxon/XQueryBuilder.html[org.apache.camel.builder.saxon.XQueryBuilder]
+|xref:components::xquery-language.adoc[XQuery]
+|https://github.com/apache/camel/blob/master/components/camel-saxon/src/main/java/org/apache/camel/component/xquery/XQueryBuilder.java[org.apache.camel.builder.saxon.XQueryBuilder]
 |=======================================================================
 
 [[Predicate-SeeAlso]]

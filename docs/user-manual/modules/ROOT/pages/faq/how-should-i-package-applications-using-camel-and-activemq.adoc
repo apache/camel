@@ -19,4 +19,4 @@ necessary jars and customise the Spring XML and you're good to go.
 ==== What jars do I need?
 
 * https://cwiki.apache.org/confluence/display/ACTIVEMQ/Initial+Configuration[What jars are required for ActiveMQ]
-* xref:what-jars-do-i-need.adoc[What jars are required for Camel]
+* xref:faq/what-jars-do-i-need.adoc[What jars are required for Camel]

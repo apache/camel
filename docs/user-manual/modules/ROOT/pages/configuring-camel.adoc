@@ -72,4 +72,4 @@ you could write your own namespace & schema if you prefer.
 ==== See Also
 
 * xref:writing-components.adoc[Writing Components]
-* xref:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]

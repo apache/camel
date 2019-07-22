@@ -14,4 +14,4 @@ converters rely on 3rd. party .jar files.
 To remedy this either add the missing .jars to the classpath, or stop
 using the big .jar and use the fine grained jars.
 
-See also xref:how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?]
+See also xref:faq/how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?]

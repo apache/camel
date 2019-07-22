@@ -1,4 +1,3 @@
-[[Examples-Examples]]
 === Examples
 
 Once you have read about xref:getting-started.adoc[Getting Started] and
@@ -10,8 +9,6 @@ xref:faq/what-are-the-dependencies.adoc[check the requirements for working
 with Camel]. Then xref:running-examples.adoc[Running Examples] describes
 how to get the examples to run
 
-
-[[Examples-Walk-throughs]]
 ==== Walk-throughs
 
 * Walk through the code of a
@@ -26,7 +23,7 @@ practice reading input from the console.
 [NOTE]
 ====
 The examples listed below are hosted at Apache. We also offer the
-xref:articles.adoc[Articles] page as a collection of 3rd-party Camel
+link:../../community/articles/[Articles] page as a collection of 3rd-party Camel
 material - such as tutorials, blog posts, published articles, videos,
 podcasts, presentations, and so forth.
 
@@ -36,8 +33,6 @@ our xref:mailing-lists.adoc[Mailing Lists], or simply post a tweet with
 the words "Apache Camel".
 ====
 
-
-[[Examples-Examples.1]]
 ==== Examples
 
 Browse the examples from github where each example is documented and up
@@ -49,7 +44,5 @@ https://github.com/apache/camel/tree/master/examples#welcome-to-the-apache-camel
 [[Examples-SeeAlso]]
 ==== See Also
 
-* xref:tutorials.adoc[Tutorials]
-* xref:cookbook.adoc[Cookbook]
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns]

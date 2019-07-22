@@ -15,19 +15,19 @@ The following camel boot options are supported:
 [[CamelBoot-CDI]]
 ==== CDI
 
-Using the xref:cdi-component.adoc[camel-cdi module] you can boot up your Camel
+Using the xref:components::cdi.adoc[camel-cdi module] you can boot up your Camel
 Java process using the *org.apache.camel.cdi.Main* class
 
 [[CamelBoot-Spring]]
 ==== Spring
 
-Using the xref:SpringSupport-SpringSupport.adoc[camel-spring module] you can boot your
+Using the xref:spring.adoc[Spring] you can boot your
 Camel Java process using the *org.apache.camel.spring.Main* class
 
 [[CamelBoot-SpringBoot]]
 ==== Spring Boot
 
 You can combine Spring Boot with Camel using
-xref:SpringBoot-SpringBoot.adoc[Camel's Spring Boot integration]. In this case
+xref:components::spring-boot.adoc[Camel's Spring Boot integration]. In this case
 your application looks and feels like a regular Spring Boot application
 but with full Camel integration.

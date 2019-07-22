@@ -24,7 +24,7 @@ This will then set up a properly configured xref:mock-component.adoc[Mock]
 endpoint, which is only valid if the received messages match the number
 of expected messages and their message payloads are equal.
 
-The xref:test-component.adoc[Test] component is provided
+The xref:test.adoc[Test] component is provided
 directly in the camel-core.
 
 === URI format

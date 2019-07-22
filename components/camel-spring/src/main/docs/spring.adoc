@@ -10,10 +10,6 @@ components like xref:jms-component.adoc[JMS] and xref:jms-component.adoc[JPA]
 Xml Configuration
 * Camel Spring XML Schema's is defined at xref:manual::xml-reference.adoc[Xml
 Reference]
-* Camel supports a powerful version of xref:spring-remoting.adoc[Spring
-Remoting] which can use powerful routing between the client and server
-side along with using all of the available
-Components for the transport
 * Camel provides powerful Bean Integration
 with any bean defined in a Spring ApplicationContext
 * Camel integrates with various Spring helper classes; such as providing
@@ -26,7 +22,7 @@ and auto-expose Spring beans as components and endpoints.
 framework to simplify your unit and integration testing using
 xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
-xref:test-component.adoc[Test] endpoints
+xref:test.adoc[Test] endpoints
 Camel supports Spring Boot using the `camel-spring-boot` component.
 
 === Using Spring to configure the CamelContext
@@ -98,7 +94,7 @@ inline namespace declaration:
 ==== Advanced configuration using Spring
 
 See more details at
-xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
+xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring]
 
 $### Using Java Code
@@ -340,7 +336,7 @@ SpringCamelContext lazily fetching components from the spring context
 for the scheme name you use for Endpoint
 URIs.
 
-For more detail see xref:how-do-i-configure-endpoints.adoc[Configuring
+For more detail see xref:manual::faq/how-do-i-configure-endpoints.adoc[Configuring
 Endpoints and Components].
 
 === CamelContextAware
@@ -361,12 +357,12 @@ under Transactional Client.
 === See also
 
 * Spring JMS Tutorial
-* xref:creating-a-new-spring-based-camel-route.adoc[Creating a new
+* xref:manual::creating-a-new-spring-based-camel-route.adoc[Creating a new
 Spring based Camel Route]
 * Spring example
 * Xml Reference
-* xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
+* xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring]
-* xref:how-do-i-import-routes-from-other-xml-files.adoc[How do I import
+* xref:manual::faq/how-do-i-import-routes-from-other-xml-files.adoc[How do I import
 routes from other XML files]
 

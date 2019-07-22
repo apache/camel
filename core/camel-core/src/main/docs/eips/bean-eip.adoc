@@ -11,7 +11,7 @@ bean:beanID[?options]
 ----
 
 Where *beanID* can be any string which is used to look up the bean in
-the xref:Registry-Registry.adoc[Registry]
+the xref:registry.adoc[Registry]
 
 === EIP options
 

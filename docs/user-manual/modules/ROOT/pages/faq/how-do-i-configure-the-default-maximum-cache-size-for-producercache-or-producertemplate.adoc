@@ -33,4 +33,4 @@ the `services` category.
 [[HowdoIconfigurethedefaultmaximumcachesizeforProducerCacheorProducerTemplate-SeeAlso]]
 ==== See Also
 
-* xref:how-do-i-configure-the-maximum-endpoint-cache-size-for-camelcontext.adoc[How do I configure the maximum endpoint cache size for CamelContext]
+* xref:faq/how-do-i-configure-the-maximum-endpoint-cache-size-for-camelcontext.adoc[How do I configure the maximum endpoint cache size for CamelContext]

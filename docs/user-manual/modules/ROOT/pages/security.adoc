@@ -28,8 +28,8 @@ etc) on sections/segments of a camel route.
 The components offering authentication and authorization Services
 utilizing Route Policies are
 
-* xref:../../../components/camel-shiro/src/main/docs/shiro.adoc[Shiro Security]
-* xref:../../../components/camel-spring-security/src/main/docs/spring-security.adoc[Spring Security]
+* xref:components::shiro.adoc[Shiro Security]
+* xref:components::spring-security.adoc[Spring Security]
 
 [[Security-PayloadSecurity-DataFormatsandProducers/Consumersofferingencryption/decryptionservices]]
 ==== Payload Security - Data Formats and Producers/Consumers offering encryption/decryption services
@@ -40,12 +40,12 @@ portions/sections of a payload.
 
 These capabilites are offered by the following components
 
-* xref:../../../components/camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
+* xref:components::secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
 Encryption support)
-* xref:../../../components/camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security component] (XML
+* xref:components::xmlsecurity-component.adoc[XML Security component] (XML
 Signature support)
-* xref:../../../components/camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
-* xref:../../../components/camel-crypto/src/main/docs/crypto-component.adoc[Crypto component] (Signature
+* xref:components::crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
+* xref:components::crypto-component.adoc[Crypto component] (Signature
 support)
 
 [[Security-EndpointSecurity]]
@@ -59,16 +59,16 @@ components.
 
 Some such components are
 
-* xref:../../../components/camel-jetty9/src/main/docs/jetty-component.adoc[Jetty] - HTTP Basic Authentication support * SSL
+* xref:components::jetty-component.adoc[Jetty] - HTTP Basic Authentication support * SSL
 support
-* xref:../../../components/camel-cxf/src/main/docs/cxf-component.adoc[CXF] - HTTP Basic Authentication & WS-Security support
+* xref:components::cxf-component.adoc[CXF] - HTTP Basic Authentication & WS-Security support
 using the CXF Bus driven interceptor chain
-* xref:../../../components/camel-spring-ws/src/main/docs/spring-ws-component.adoc[Spring Web Services] - HTTP Basic
+* xref:components::spring-ws-component.adoc[Spring Web Services] - HTTP Basic
 Authentication & WS-Security support
-* xref:../../../components/camel-netty4/src/main/docs/netty4-component.adoc[Netty] - SSL support
-* xref:../../../components/camel-mina2/src/main/docs/mina2-component.adoc[MINA] - SSL support
-* xref:../../../components/camel-cometd/src/main/docs/cometd-component.adoc[Cometd] - SSL support
-* xref:../../../components/camel-jms/src/main/docs/jms-component.adoc[JMS] - JAAS and SSL based security for client <-->
+* xref:components::netty4-component.adoc[Netty] - SSL support
+* xref:components::mina2-component.adoc[MINA] - SSL support
+* xref:components::cometd-component.adoc[Cometd] - SSL support
+* xref:components::jms-component.adoc[JMS] - JAAS and SSL based security for client <-->
 broker communication
 
 [[Security-ConfigurationSecurity]]
@@ -76,12 +76,12 @@ broker communication
 
 *Available as of Camel 2.5*
 
-Camel offers the xref:../../../camel-core/src/main/docs/properties-component.adoc[Properties] component to
+Camel offers the xref:components::properties-component.adoc[Properties] component to
 externalize configuration values to properties files. Those values could
 contain sensitive information such as usernames and passwords. Those
 values can be encrypted and automatic decrypted by Camel.
 
-* xref:../../../components/camel-jasypt/src/main/docs/jasypt.adoc[Jasypt]
+* xref:components::jasypt.adoc[Jasypt]
 
 *Available as of Camel 2.8*
 

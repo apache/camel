@@ -6,7 +6,7 @@ http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
 Delivery] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] using among others the following components:
 
-* xref:file2.adoc[File] for using file systems as a persistent store of
+* xref:components::file-component.adoc[File] for using file systems as a persistent store of
 messages
 * xref:components::jms-component.adoc[JMS] when using persistent delivery (the default) for
 working with JMS Queues and Topics for high performance, clustering and
@@ -14,9 +14,7 @@ load balancing
 * xref:components::jpa-component.adoc[JPA] for using a database as a persistence layer, or use
 any of the many other database component such as xref:components::sql-component.adoc[SQL],
 xref:components::jdbc-component.adoc[JDBC],
-xref:components::mybatis-component.adoc[MyBatis],
-xref:hibernate.adoc[Hibernate]
-* xref:hawtdb.adoc[HawtDB] for a lightweight key-value persistent store
+xref:components::mybatis-component.adoc[MyBatis]
 
 image:http://www.enterpriseintegrationpatterns.com/img/GuaranteedMessagingSolution.gif[image]
 

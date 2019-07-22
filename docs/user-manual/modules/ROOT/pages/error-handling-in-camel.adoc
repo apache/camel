@@ -43,7 +43,7 @@ better suit you needs.
 [[ErrorhandlinginCamel-Camel1.xdefaulterrorhandler]]
 ==== Camel 1.x default error handler
 
-In Camel 1.x a global xref:deadLetterChannel-eip.adoc[Dead Letter Channel]
+In Camel 1.x a global xref:dead-letter-channel.adoc[Dead Letter Channel]
 is setup as the xref:error-handler.adoc[Error Handler] by default. It's
 configured as:
 
@@ -119,7 +119,7 @@ multiple RouteBuilder classes. See more details at
 https://issues.apache.org/jira/browse/CAMEL-5456[CAMEL-5456].
 
 [[ErrorhandlinginCamel-Howdoestheerrorhandlerwork]]
-==== How does the xref:deadLetterChannel-eip.adoc[Dead Letter Channel] error handler work
+==== How does the xref:dead-letter-channel.adoc[Dead Letter Channel] error handler work
 
 When Camel is started it will inspect the routes and weave in the error
 handling into the routing. With up to 3 supported scopes, the error
@@ -157,14 +157,14 @@ stuff). So when an order arrives on the seda queue we consume it and
 send it to the validateOrder bean. In case the validation bean processed
 ok, we move on to the next node. In case the storeOrder bean failed and
 throws an exception it's caught by the
-xref:deadLetterChannel-eip.adoc[Dead Letter Channel] that decides what to
+xref:dead-letter-channel.adoc[Dead Letter Channel] that decides what to
 do next. Either it does a:
 
 * redeliver
 * or move it to dead letter queue
 
 It will continue to do redeliveries based on the policy configured. By
-default xref:deadLetterChannel-eip.adoc[Dead Letter Channel] will attempt
+default xref:dead-letter-channel.adoc[Dead Letter Channel] will attempt
 at most 6 redeliveries with 1 second delay. So if the storeOrder bean
 did succeed at the 3rd attempt the routing will continue to the next
 node the confirmOrder bean. In case all redeliveries failed the Exchange
@@ -219,16 +219,16 @@ xref:transactionerrorhandler.adoc[TransactionErrorHandler] does *not*
 attempt any local redeliveries. You have to configure it to do so, for
 instance to set a maximum redelivers to a number > 0.
 
-See xref:transactionalClient-eip.adoc[Transactional Client]
+See xref:transactional-client.adoc[Transactional Client]
 for more.
 
 [[ErrorhandlinginCamel-Seealso]]
 ==== See also
 
 * xref:error-handler.adoc[Error Handler]
-* xref:deadLetterChannel-eip.adoc[Dead Letter Channel]
+* xref:dead-letter-channel.adoc[Dead Letter Channel]
 * xref:exception-clause.adoc[Exception Clause]
-* xref:transactionalClient-eip.adoc[Transactional Client]
+* xref:transactional-client.adoc[Transactional Client]
 * xref:transactionerrorhandler.adoc[TransactionErrorHandler]
 * xref:defaulterrorhandler.adoc[DefaultErrorHandler]
 * xref:try-catch-finally.adoc[Try Catch Finally]

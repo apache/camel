@@ -47,7 +47,7 @@ event message.
 
 The Request Reply is when the caller sends a
 message and then *waits for a reply*. This is like the
-xref:http-component.adoc[HTTP] protocol that we use every day when we surf the
+xref:components::http4-component.adoc[HTTP] protocol that we use every day when we surf the
 web. We send a request to fetch a web page and wait until the reply message
 comes with the web content.
 
@@ -72,9 +72,9 @@ diagram below:
 image:async.data/camel_sync_request_reply.png[image]
 
 \1. The client sends a sync Request Reply
-message over xref:http-component.adoc[HTTP] to Camel. The client application will
+message over xref:components::http4-component.adoc[HTTP] to Camel. The client application will
 wait for the response that Camel routes and processes. +
- 2. The message invokes an external xref:mina-component.adoc[TCP] service using
+ 2. The message invokes an external xref:components::mina2-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application still waits for the response. +
  3. The response is send back to the client.
@@ -95,7 +95,7 @@ image:async.data/camel_async_request_reply.png[image]
 Request Reply message over HTTP
 to Camel. The control is immediately returned to the client application,
 that can continue and do other work while Camel routes the message. +
- 2. Camel invokes an external xref:mina-component.adoc[TCP] service using
+ 2. Camel invokes an external xref:components::mina2-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application can do other work simultaneously. +
  3. The client wants to get the reply so it uses the Future handle it
@@ -113,9 +113,9 @@ completely. This is illustrated in the diagram below:
 image:async.data/camel_sync_request_only.png[image]
 
 \1. The client sends a Request only and we can
-still use xref:http-component.adoc[HTTP] despite http being
+still use xref:components::http4-component.adoc[HTTP] despite http being
 Request Reply by nature. +
- 2. Camel invokes an external xref:mina-component.adoc[TCP] service using
+ 2. Camel invokes an external xref:components::mina2-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application is still waiting. +
  3. The message is processed completely and the control is returned to
@@ -141,11 +141,11 @@ processed in Camel. This is illustrated in the diagram below:
 image:async.data/camel_async_request_only.png[image]
 
 \1. The client sends a Request only and we can
-still use xref:http-component.adoc[HTTP] despite http being
+still use xref:components::http4-component.adoc[HTTP] despite http being
 Request Reply by nature. The control is
 immediately returned to the client application, that can continue and do
 other work while Camel routes the message. +
- 2. Camel invokes an external xref:mina-component.adoc[TCP] service using
+ 2. Camel invokes an external xref:components::mina2-component.adoc[TCP] service using
 synchronous Request Reply. The client
 application can do other work simultaneously. +
  3. The message completes but no result is returned to the client.
@@ -253,19 +253,19 @@ exception.
 [[Async-Example:AsynchronousRequestReply]]
 ==== Example: Asynchronous Request Reply
 
-Suppose we want to call a xref:http-component.adoc[HTTP] service but it is usually
+Suppose we want to call a xref:components::http4-component.adoc[HTTP] service but it is usually
 slow and thus we do not want to block and wait for the response, as we
 can do other important computation. So we can initiate an
 Async exchange to the HTTP endpoint and
-then do other stuff while the slow xref:http-component.adoc[HTTP] service is
+then do other stuff while the slow xref:components::http4-component.adoc[HTTP] service is
 processing our request. And then a bit later we can use the `Future`
-handle to get the response from the xref:http-component.adoc[HTTP] service. Yeah
+handle to get the response from the xref:components::http4-component.adoc[HTTP] service. Yeah
 nice so lets do it:
 
-First we define some routes in Camel. One for the xref:http-component.adoc[HTTP]
+First we define some routes in Camel. One for the xref:components::http4-component.adoc[HTTP]
 service where we simulate a slow server as it takes at least 1 second to
 reply. And then other route that we want to invoke while the
-xref:http-component.adoc[HTTP] service is on route. This allows you to be able to
+xref:components::http4-component.adoc[HTTP] service is on route. This allows you to be able to
 process the two routes simultaneously:
 
 [source,java]
@@ -347,13 +347,13 @@ assertMockEndpointsSatisfied();
 [[Async-UsingtheAPIwithcallbacks]]
 ==== Using the Async API with callbacks
 
-Suppose we want to call a xref:http-component.adoc[HTTP] service but it is usually
+Suppose we want to call a xref:components::http4-component.adoc[HTTP] service but it is usually
 slow and thus we do not want to block and wait for the response, but
 instead let a callback gather the response. This allows us to send
 multiple requests without waiting for the replies before we can send the
 next request.
 
-First we define a route in Camel for the xref:http-component.adoc[HTTP] service
+First we define a route in Camel for the xref:components::http4-component.adoc[HTTP] service
 where we simulate a slow server as it takes at least 1 second to reply.
 
 [source,java]
@@ -404,7 +404,7 @@ private static class MyCallback extends SynchronizationAdapter {
 }
 ---------------------------------------------------------------------------
 
-And then we have the client API where we call the xref:http-component.adoc[HTTP]
+And then we have the client API where we call the xref:components::http4-component.adoc[HTTP]
 service using `asyncCallback` 3 times with different input. As the
 invocation is Async the client will send 3 requests
 right after each other, so we have 3 concurrent exchanges in progress.
@@ -485,7 +485,7 @@ The `threads` DSL leverages the JDK concurrency framework for multi
 threading. It can be used to turn a synchronous route into
 Async. What happens is that from the point forwards
 from `threads` the messages is routed asynchronous in a new thread.
-Camel leverages the xref:asynchronous-processing.adoc[asynchronous routing engine], 
+Camel leverages the xref:asynchronous-routing-engine.adoc[asynchronous routing engine], 
 which was re-introduced in Camel 2.4, to continue
 routing the Exchange asynchronously.
 
@@ -623,13 +623,10 @@ transaction.
 [[Async-SeeAlso]]
 ==== See Also
 
-* Asynchronous Processing
-* Request Reply
-* Request Only
+* xref:async.adoc[Asynchronous Processing]
+* xref:requestReply-eip.adoc[Request Reply]
 * http://davsclaus.blogspot.com/2009/05/on-road-to-camel-20-concurrency-with.html[Blog
 entry on using async for concurrent file processing]
 * xref:components::seda-component.adoc[SEDA]
 * xref:components::direct-component.adoc[Direct]
-* To Async for non blocking
-Request Reply
 

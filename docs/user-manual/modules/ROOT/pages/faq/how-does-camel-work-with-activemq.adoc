@@ -13,8 +13,8 @@ xref:components::file-component.adoc[File], xref:components::ftp-component.adoc[
 xref:components::xmpp-component.adoc[XMPP] other xref:components::jms-component.adoc[JMS] providers and any of the
 other Camel xref:component.adoc[Components] as well as implementating
 all of the xref:enterprise-integration-patterns.adoc[Enterprise
-Integration Patterns] such as xref:content-based-router.adoc[Content
-Based Router] or xref:messageTranslator-eip.adoc[Message Translator].
+Integration Patterns] such as xref:content-based-router-eip.adoc[Content
+Based Router] or xref:message-translator.adoc[Message Translator].
 
 For more details see
 http://activemq.apache.org/enterprise-integration-patterns.html[ActiveMQ

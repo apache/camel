@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.20*
 
-The Kubernetes Deployments component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
+The Kubernetes Deployments component is one of xref:kubernetes.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes secret operations.
 
 

@@ -182,7 +182,7 @@ Nagios. For example we can enable this from Java as follows:
 
 In Spring XML its just a matter of defining a Spring bean with the type
 `EventNotifier` and Camel will pick it up as documented here:
-xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
+xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
 
 ### See Also

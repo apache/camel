@@ -15,14 +15,3 @@ to use raw values for password options, and using
 xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
 
-
-[[URIs-CurrentSupportedURIs]]
-==== Current Supported URIs
-
-===== Core Components
-
-include::../../../camel-core/readme.adoc[]
-
-===== Components
-
-include::../../../components/readme.adoc[]

@@ -36,7 +36,7 @@ will create a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 for sending message exchanges to the endpoint
 * http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html#createConsumer(org.apache.camel.Processor)[createConsumer()]
-implements the xref:event-driven-consumer.adoc[Event Driven Consumer]
+implements the xref:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
 pattern for consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
 when creating a

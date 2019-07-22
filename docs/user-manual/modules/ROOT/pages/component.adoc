@@ -22,15 +22,6 @@ to use raw values for password options, and using
 xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
 
-===== Core Components
-
-include::../../../camel-core/readme.adoc[]
-
-===== Components
-
-include::../../../components/readme.adoc[]
-
-
 [[Component-SeeAlso]]
 ==== See Also
 

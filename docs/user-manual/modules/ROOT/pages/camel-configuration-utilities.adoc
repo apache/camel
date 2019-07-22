@@ -16,7 +16,7 @@ configuration utility:
 * xref:components::http4-component.adoc[HTTP4]
 * xref:components::jetty-component.adoc[Jetty]
 * xref:components::ahc-component.adoc[AHC]
-* xref:netty-component.adoc[Netty]
+* xref:components::netty4-component.adoc[Netty]
 * xref:components::cometd-component.adoc[Cometd]
 * FTP2
 * xref:components::irc-component.adoc[IRC]
@@ -27,7 +27,7 @@ The following Camel components indirectly support the use of this
 configuration utility:
 
 * xref:components::cxf-component.adoc[CXF]
-* xref:http-component.adoc[HTTP]
+* xref:components::http4-component.adoc[HTTP]
 
 [[CamelConfigurationUtilities-Configuration]]
 ==== Configuration

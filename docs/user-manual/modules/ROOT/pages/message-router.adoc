@@ -35,7 +35,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ----
 
-TIP: See xref:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
+TIP: See xref:faq/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
 can I not use when or otherwise in a Java Camel route] if you have
 problems with the Java DSL, accepting using `when` or `otherwise`.
 

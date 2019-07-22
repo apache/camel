@@ -5,7 +5,7 @@ This FAQ entry was written when Mule 1.x and 2.x existed. It doesn't
 cater for how Mule may go in Mule 3.x.
 
 I guess from 30,000 feet they're kinda
-xref:why-the-name-camel.adoc[similar beasts]; they're both kinds of
+xref:faq/why-the-name-camel.adoc[similar beasts]; they're both kinds of
 routing/mediation engines. The main differences are as follows:
 
 * Camel uses a Java xref:dsl.adoc[Domain Specific Language] in addition
@@ -20,7 +20,7 @@ routing/mediation engines. The main differences are as follows:
 * Camel allows the underlying transport details to be easily exposed
   (e.g. the `JmsExchange`, `JbiExchange`, `HttpExchange` objects expose all the
   underlying transport information & behaviour if its required). See
-  xref:how-does-the-camel-api-compare-to.adoc[How does the Camel API
+  xref:faq/how-does-the-camel-api-compare-to.adoc[How does the Camel API
   compare to]
 * Camel supports an implicit xref:type-converter.adoc[Type Converter] in
   the core API to make it simpler to connect components together requiring

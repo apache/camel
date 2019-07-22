@@ -20,8 +20,6 @@ The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
 * xref:components::rest-component.adoc[came-rest] *required* contains the base rest component needed by Rest DSL
-* xref:netty-http-component.adoc[camel-netty-http] (also
-supports Swagger Java)
 * xref:components::netty4-http-component.adoc[camel-netty4-http] (also
 supports Swagger Java)
 * xref:components::jetty-component.adoc[camel-jetty] (also
@@ -558,15 +556,15 @@ whether the Content-Type and Accept headers from
 |componentProperty | -|Allows to configure as many additional properties.
   This is used to configure component specific options such as for Restlet / Spark-Rest etc.
   The options value can use the # notation to refer to a bean to lookup in
-  the xref:../../../../docs/user-manual/en/registry.adoc[Registry]
+  the xref:registry.adoc[Registry]
 |endpointProperty | -|Allows to configure as many additional properties.
   This is used to configure endpoint specific options for  Restlet / Spark-Rest etc.
   The options value can use the # notation to refer to a bean to lookup in
-  the xref:../../../../docs/user-manual/en/registry.adoc[Registry]
+  the xref:registry.adoc[Registry]
 |consumerProperty |- |Allows to configure as many additional properties.
   This is used to configure consumer specific options for  Restlet / Spark-Rest etc.
   The options value can use the # notation to refer to a bean to lookup in
-  the xref:../../../../docs/user-manual/en/registry.adoc[Registry]
+  the xref:registry.adoc[Registry]
 |dataFormatProperty |- |Allows to configure as many additional properties.
   This is used to configure the data format specific options.
 

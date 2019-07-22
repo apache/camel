@@ -10,7 +10,7 @@ body, the Camel Context, etc.
 *Dynamic To - out of the box*
 
 From *Camel 2.16* onwards there is a new `<toD>` which is a dynamic to.
-See more details at xref:messageEndpoint-eip.adoc[Message Endpoint].
+See more details at xref:message-endpoint.adoc[Message Endpoint].
 ====
 
 For example, if you're using a Freemarker producer and the template

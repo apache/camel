@@ -1,7 +1,7 @@
 [[WhycanInotusewhenorotherwiseinaJavaCamelroute-WhycanInotusewhenotherwiseinaJavaCamelroute]]
 === Why can I not use when/otherwise in a Java Camel route?
 
-When using the xref:contentBasedRouter-eip.adoc[Content Based Router] in
+When using the xref:content-based-router-eip.adoc[Content Based Router] in
 the Java DSL you may have a situation where the compiler will not accept
 the following `when()` or `otherwise()` statement.
 
@@ -10,12 +10,12 @@ the following `when()` or `otherwise()` statement.
 **Quick tip**
 
 Use `.endChoice()` to return "back" to the
-xref:contentBasedRouter-eip.adoc[Content Based Router].
+xref:content-based-router-eip.adoc[Content Based Router].
 ====
 
 For example as shown in the route below where we use the
 xref:loadBalance-eip.adoc[Load Balancer] inside the
-xref:contentBasedRouter-eip.adoc[Content Based Router] in the first when:
+xref:content-based-router-eip.adoc[Content Based Router] in the first when:
 
 *Code will not compile*
 
@@ -59,10 +59,10 @@ xref:dsl.adoc[DSL]. In a more modern language such as
 xref:scala-dsl.adoc[Scala] or xref:groovy-dsl.adoc[Groovy] you would be able
 to let it be stack based, so the `.end()` will pop the last type of the
 stack, and you would return back to the scope of the
-xref:contentBasedRouter-eip.adoc[Content Based Router]. However that's not
+xref:content-based-router-eip.adoc[Content Based Router]. However that's not
 easily doable in Java. So we need to help Java a bit, which you do by
 using `.endChoice()`, which tells Camel to "pop the stack" and return
-back to the scope of the xref:content-based-router.adoc[Content Based
+back to the scope of the xref:content-based-router-eip.adoc[Content Based
 Router].
 
 *Code compiles*
@@ -84,7 +84,7 @@ xref:enterprise-integration-patterns.adoc[EIP] itself. For example the
 xref:split-eip.adoc[Splitter] EIP has a sub-route which denotes the
 routing of each splitted message. You would also have to use
 `.endChoice()` to indicate the end of the sub-route and to return back
-to the xref:contentBasedRouter-eip.adoc[Content Based Router]. Note
+to the xref:content-based-router-eip.adoc[Content Based Router]. Note
 `.endChoice()` is *available as of Camel 2.7*.
 
 [[WhycanInotusewhenorotherwiseinaJavaCamelroute-Stillproblems]]

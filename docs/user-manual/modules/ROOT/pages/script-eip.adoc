@@ -7,7 +7,7 @@ This is useful when you need to invoke some logic that are not in Java code such
 Groovy or any of the other Languages. The message body is not changed (by default) however the scripting
 context has access to the current Exchange and can essentially change the message or headers directly.
 But the return value from the script is discarded and not used.
-If the return value should be used as a changed message body then use xref:./message-translator.adoc[Message Translator] EIP instead.
+If the return value should be used as a changed message body then use xref:message-translator.adoc[Message Translator] EIP instead.
 
 === Options
 

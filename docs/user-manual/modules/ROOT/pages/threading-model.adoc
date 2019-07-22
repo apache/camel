@@ -8,13 +8,13 @@ API which provides thread pools, named `ExecutorService`.
 
 Camel leverages thread pools in the following places:
 
-* several xref:eip.adoc[EIP] patterns supports using thread pools for
+* several xref:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
 concurrency
-* xref:seda.adoc[SEDA] component for asynchronous connectivity
+* xref:components::seda-component.adoc[SEDA] component for asynchronous connectivity
 * xref:async.adoc[Threads DSL] in the Camel route
 * xref:servicepool.adoc[ServicePool] for pooling services
 * And some component provide thread pools by nature such as
-xref:jms.adoc[JMS], xref:jetty.adoc[Jetty]
+xref:components::jms-component.adoc[JMS], xref:components::jetty-component.adoc[Jetty]
 
 [[ThreadingModel-Threadpoolprofiles]]
 ==== Thread pool profiles
@@ -30,7 +30,7 @@ default thread pool profile which is:
 --------------------------------------------------------------------------------------------------------
 
 What that means is that for example when you use
-xref:multicast.adoc[Multicast] with `parallelProcessing=true` enabled,
+xref:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
 then it would create a thread pool based on the profile above. The
 `rejectedPolicy` has four options:
 `Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the
@@ -80,7 +80,7 @@ xref:registry.adoc[Registry] for a `ExecutorService` with the id =
 fooProfile. If none found it will fallback and see if there is a
 `ThreadPoolProfile` defined with that id. And in this example there is
 and so the profile is used for creating a new `ExecutorService` which is
-handed back to the xref:multicast.adoc[Multicast] EIP to use in the
+handed back to the xref:multicast-eip.adoc[Multicast] EIP to use in the
 route.
 
 [[ThreadingModel-Createcustomthreadpool]]

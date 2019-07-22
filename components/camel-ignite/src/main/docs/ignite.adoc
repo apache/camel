@@ -29,7 +29,7 @@ To use this component, add the following dependency to your pom.xml:
 
 [IMPORTANT,title=Running in OSGi]
 ====
-If running in an OSGi container, please don't miss the xref:Ignite-OsgiSupport.adoc[OSGi Support] section below.
+If running in an OSGi container, please don't miss the <<Ignite-OsgiSupport,OSGi Support>> section below.
 ====
 
 

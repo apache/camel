@@ -8,7 +8,7 @@ message.
 By default Camel will retry consuming a message up til 6 times before
 its moved to the default dead letter queue.
 
-If you configure the xref:deadLetterChannel-eip.adoc[Dead Letter Channel]
+If you configure the xref:dead-letter-channel.adoc[Dead Letter Channel]
 to use `maximumRedeliveries = -1` then Camel will retry forever.
 
 When you consume a message you can check the in message header

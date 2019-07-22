@@ -139,11 +139,6 @@ from("direct:foo")
   .to("twitter-search://foo?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
 ----
 
-### Example
-
-See also the xref:twitter-websocket-example.adoc[Twitter Websocket
-Example].
-
 ### See Also
 
 * Configuring Camel

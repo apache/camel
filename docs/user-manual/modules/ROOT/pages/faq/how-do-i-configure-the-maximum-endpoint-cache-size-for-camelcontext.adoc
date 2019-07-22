@@ -39,4 +39,4 @@ in the `services` category.
 [[HowdoIconfigurethemaximumendpointcachesizeforCamelContext-SeeAlso]]
 ==== See Also
 
-* xref:how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How do I configure the default maximum cache size for ProducerCache or ProducerTemplate]
+* xref:faq/how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How do I configure the default maximum cache size for ProducerCache or ProducerTemplate]

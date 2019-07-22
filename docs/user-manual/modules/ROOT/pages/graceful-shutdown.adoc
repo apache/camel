@@ -278,7 +278,7 @@ default it uses the option `CompleteCurrentTaskOnly` which mean that the
 current _in progress_ task (message) will be completed and then the
 consumer will shutdown. The other option `CompleteAllTasks` allows the
 consumer to complete all the tasks (messages) before shutting down. For
-example a xref:file2.adoc[File] consumer will process all the pending
+example a xref:components::file-component.adoc[File] consumer will process all the pending
 files it has picked up before shutting down.
 
 [source,java]
@@ -431,5 +431,5 @@ option. See `GenericFileConsumer` for an example.
 route startup ordering and autostartup]
 * xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring]
-* xref:user-guide.adoc[User Guide]
+* xref:index.adoc[User Guide]
 

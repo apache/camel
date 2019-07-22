@@ -48,4 +48,4 @@ And in XML:
 For more details see
 
 * xref:message.adoc[Message]
-* xref:messageEndpoint-eip.adoc[Message Endpoint]
+* xref:message-endpoint.adoc[Message Endpoint]

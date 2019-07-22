@@ -23,5 +23,5 @@ code in the FileComponent to implement completeEndpointPath()].
 
 Some example implementations include:
 
-* xref:file2.adoc[File]
+* xref:components::file-component.adoc[File]
 

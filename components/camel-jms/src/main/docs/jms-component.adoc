@@ -663,7 +663,7 @@ from("file://orders").
 
 #### Using Annotations
 
-Camel also has annotations so you can use xref:pojo-consuming.adoc[POJO
+Camel also has annotations so you can use xref:manual::pojo-consuming.adoc[POJO
 Consuming] and POJO Producing.
 
 #### Spring DSL sample
@@ -1399,7 +1399,7 @@ Transactions and [Request Reply] over JMS
 When using Request Reply over JMS you cannot
 use a single transaction; JMS will not send any messages until a commit
 is performed, so the server side won't receive anything at all until the
-transaction commits. Therefore to use xref:request-reply.adoc[Request
+transaction commits. Therefore to use xref:manual::requestReply-eip.adoc[Request
 Reply] you must commit a transaction after sending the request and then
 use a separate transaction for receiving the response.
 

@@ -10,7 +10,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/WireTap.gif[image]
 
 === Streams
 
-If you xref:wire-tap.adoc[Wire Tap] a stream message body then you
+If you xref:wireTap-eip.adoc[Wire Tap] a stream message body then you
 should consider enabling xref:stream-caching.adoc[Stream caching] to
 ensure the message body can be read at each endpoint. See more details
 at xref:stream-caching.adoc[Stream caching].
@@ -44,7 +44,7 @@ tapped messages. This thread pool will by default use the settings
 detailed at xref:threading-model.adoc[Threading Model]. In particular,
 when the pool is exhausted (with all threads utilized), further wiretaps
 will be executed synchronously by the calling thread. To remedy this,
-you can configure an explicit thread pool on the xref:wire-tap.adoc[Wire
+you can configure an explicit thread pool on the xref:wireTap-eip.adoc[Wire
 Tap] having either a different rejection policy, a larger worker queue,
 or more worker threads.
 
@@ -68,7 +68,7 @@ values.
 
 === Sending a Copy (traditional wiretap)
 
-* Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]
+* Using the xref:fluent-builders.adoc[Fluent Builders]
 
 [source,java]
 ----
@@ -95,7 +95,7 @@ values.
 
 === Sending a New xref:exchange.adoc[Exchange]
 
-*Using the xref:FluentBuilders-FluentBuilders.adoc[Fluent Builders]*
+*Using the xref:fluent-builders.adoc[Fluent Builders]*
 
 Camel supports either a processor or an
 xref:expression.adoc[Expression] to populate the new
@@ -158,7 +158,7 @@ part of the queue name:
 
 *Available as of Camel 2.8*
 
-If you send a new message using xref:wire-tap.adoc[Wire Tap], then you
+If you send a new message using xref:wireTap-eip.adoc[Wire Tap], then you
 could only set the message body using an
 xref:expression.adoc[Expression] from the DSL. If you also need to set
 headers, you would have to use a xref:processor.adoc[Processor]. From
@@ -206,6 +206,6 @@ The following example sends a new message which has
 
 *Available as of Camel 2.8*
 
-See details at xref:multicast.adoc[Multicast]
+See details at xref:multicast-eip.adoc[Multicast]
 
 xref:using-this-pattern.adoc[Using This Pattern]

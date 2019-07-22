@@ -3,41 +3,26 @@
 
 Camel supports a pluggable DataFormat to allow messages to be marshalled
 to and from binary or text formats to support a kind of
-xref:messageTranslator-eip.adoc[Message Translator].
+xref:message-translator.adoc[Message Translator].
 
 The following data formats are currently supported:
-
-* Standard JVM object marshalling
-** xref:serialization-dataformat.adoc[Serialization]
-** xref:string-dataformat.adoc[String]
 
 * Object marshalling
 ** xref:components::avro-dataformat.adoc[Avro]
 ** xref:components::boon-dataformat.adoc[Boon]
-** xref:hessian-dataformat.adoc[Hessian]
 ** xref:json.adoc[JSON]
 ** xref:components::protobuf-dataformat.adoc[Protobuf]
 ** xref:components::yaml-snakeyaml-dataformat.adoc[YAML]
 
 * Object/XML marshalling
-** xref:castor-dataformat.adoc[Castor]
 ** xref:components::jaxb-dataformat.adoc[JAXB]
-** xref:xmlBeans-dataformat.adoc[XmlBeans]
 ** xref:components::xstream-dataformat.adoc[XStream]
-** xref:jibx-dataformat.adoc[JiBX]
 ** xref:components::jacksonxml-dataformat.adoc[Jackson XML]
-
-* Object/XML/Webservice marshalling
-** xref:soap-dataformat.adoc[SOAP]
-
-* Direct JSON / XML marshalling
-** xref:xmljson-dataformat.adoc[XmlJson]
 
 * Flat data structure marshalling
 ** xref:components::beanio-dataformat.adoc[BeanIO]
 ** xref:components::bindy-dataformat.adoc[Bindy]
 ** xref:components::csv-dataformat.adoc[CSV]
-** xref:edi-dataformat.adoc[EDI]
 ** xref:components::flatpack-dataformat.adoc[Flatpack DataFormat]
 ** uniVocity DataFormats xref:components::univocity-csv-dataformat.adoc[CSV] / xref:components::univocity-tsv-dataformat.adoc[TSV] / xref:components::univocity-fixed-dataformat.adoc[Fixed Length]
 
@@ -45,11 +30,8 @@ The following data formats are currently supported:
 ** xref:components::hl7-dataformat.adoc[HL7 DataFormat]
 
 * Compression
-** xref:gzip-dataformat.adoc[GZip DataFormat]
-** xref:zip-dataformat.adoc[Zip DataFormat]
 ** xref:components::zipfile-dataformat.adoc[Zip File DataFormat]
 ** xref:components::lzf-dataformat.adoc[LZF Data Format]
-** xref:tar-dataformat.adoc[Tar DataFormat]
 
 * Security
 ** xref:components::crypto-component.adoc[Crypto]
@@ -58,11 +40,8 @@ The following data formats are currently supported:
 
 * Misc.
 ** xref:components::base64-dataformat.adoc[Base64]
-** xref:custom-dataformat.adoc[Custom DataFormat] -- to use your own
-custom implementation
 ** xref:components::mime-multipart-dataformat.adoc[MIME-Multipart]
 ** xref:components::rss-dataformat.adoc[RSS]
-** xref:tidymarkup-dataformat.adoc[TidyMarkup]
 ** xref:components::syslog-dataformat.adoc[Syslog]
 ** xref:components::ical-dataformat.adoc[ICal]
 ** xref:components::barcode-dataformat.adoc[Barcode] -- to read and generate barcodes
@@ -81,7 +60,7 @@ And related is the following:
 
 If you receive a message from one of the Camel
 xref:component.adoc[Components] such as xref:components::file-component.adoc[File],
-xref:http-component.adoc[HTTP] or xref:components::jms-component.adoc[JMS] you often want to unmarshal
+xref:components::http4-component.adoc[HTTP] or xref:components::jms-component.adoc[JMS] you often want to unmarshal
 the payload into some bean so that you can process it using some
 xref:bean-integration.adoc[Bean Integration] or perform
 xref:predicate.adoc[Predicate] evaluation and so forth. To do this use
@@ -102,12 +81,12 @@ from("activemq:My.Queue").
 The above uses a named DataFormat of `jaxb` which is configured with a
 number of Java package names. You can if you prefer use a named
 reference to a data format which can then be defined in your
-xref:registry.adoc[Registry] such as via your xref:components::spring.adoc[Spring]
+xref:registry.adoc[Registry] such as via your xref:spring.adoc[Spring]
 XML file.
 
 You can also use the DSL itself to define the data format as you use it.
 For example the following uses Java serialization to unmarshal a binary
-file then send it as an ObjectMessage to xref:activemq.adoc[ActiveMQ]
+file then send it as an ObjectMessage to xref:components::activemq-component.adoc[ActiveMQ]
 
 [source,java]
 ----
@@ -129,7 +108,7 @@ xref:registry.adoc[Registry].
 
 The following example unmarshals via serialization then marshals using a
 named JAXB data format to perform a kind of
-xref:messageTranslator-eip.adoc[Message Translator]:
+xref:message-translator.adoc[Message Translator]:
 
 [source,java]
 ----

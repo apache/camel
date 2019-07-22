@@ -19,32 +19,24 @@ For more information, see xref:predicate.adoc[Compound Predicates].
 
 ==== The following is the list of currently supported languages:
 
-* xref:bean-language.adoc[Bean Language] for using Java for expressions
+* xref:components::bean-language.adoc[Bean Language] for using Java for expressions
 * xref:constant-language.adoc[Constant]
-* the unified xref:el-language.adoc[EL] from JSP and JSF
 * xref:header-language.adoc[Header]
 * xref:components::jsonpath-language.adoc[JSonPath]
-* xref:jxpath-language.adoc[JXPath]
 * xref:components::mvel-language.adoc[Mvel]
 * xref:components::ognl-language.adoc[OGNL]
 * xref:ref-language.adoc[Ref Language]
-* xref:exchangeproperty-language.adoc[ExchangeProperty] / xref:property-language.adoc[Property]
-* xref:scripting-languages-language.adoc[Scripting Languages] such as:
-** xref:beanshell-language.adoc[BeanShell]
-** xref:javascript-language.adoc[JavaScript]
+* xref:exchangeProperty-language.adoc[ExchangeProperty]
+* xref:scripting-languages.adoc[Scripting Languages] such as:
 ** xref:components::groovy-language.adoc[Groovy]
-** xref:python-language.adoc[Python]
-** xref:php-language.adoc[PHP]
-** xref:ruby-language.adoc[Ruby]
 * xref:simple-language.adoc[Simple]
 ** xref:file-language.adoc[File Language]
 * xref:components::spel-language.adoc[Spring Expression Language]
-* xref:sql-language.adoc[SQL]
-* xref:tokenizer-language.adoc[Tokenizer]
+* xref:tokenize-language.adoc[Tokenizer]
 * xref:components::xpath-language.adoc[XPath]
 * xref:components::xquery-language.adoc[XQuery]
 * https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages are also supported used as
-xref:annotation-based-expression-language.adoc[Annotation Based
+xref:parameter-binding-annotations.adoc[Annotation Based
 Expression Language].

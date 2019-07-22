@@ -229,7 +229,7 @@ delete routes and then call the commit route.
 ### Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
-added later). For now, you can query Solr using xref:http-component.adoc[HTTP] as
+added later). For now, you can query Solr using xref:http4-component.adoc[HTTP] as
 follows:
 
 [source,java]

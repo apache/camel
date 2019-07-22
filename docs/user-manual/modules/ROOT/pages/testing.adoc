@@ -153,7 +153,7 @@ using Java Config]:
 include::{examplesdir}/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[tags=example]
 ----
 
-For more information see xref:spring-java-config.adoc[Spring Java
+For more information see xref:components::spring-javaconfig.adoc[Spring Java
 Config].
 
 This is similar to the XML Config example above except that there is no
@@ -237,7 +237,7 @@ correctly
 |xref:components::mock-component.adoc[Mock] |For testing routes and mediation rules using
 mocks and allowing assertions to be added to an endpoint
 
-|xref:test-component.adoc[Test] |Creates a xref:test-component.adoc[Mock] endpoint which
+|xref:components::test.adoc[Test] |Creates a xref:components::mock-component.adoc[Mock] endpoint which
 expects to receive all the message bodies that could be polled from the
 given underlying endpoint
 |=======================================================================

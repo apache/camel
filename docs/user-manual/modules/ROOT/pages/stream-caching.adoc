@@ -13,12 +13,12 @@ Streams are caching in memory. In Camel 2.0, large stream messages (over 64 KB i
 *StreamCache Affects your payload object*
 
 The `StreamCache` will affect your payload object as it will replace the `Stream` payload with a `org.apache.camel.StreamCache` object.
-This `StreamCache` is capable of being re-readable and thus possible to better be routed within Camel using redelivery or xref:contentBasedRouter-eip.adoc[Content Based Router] or the likes.
+This `StreamCache` is capable of being re-readable and thus possible to better be routed within Camel using redelivery or xref:content-based-router-eip.adoc[Content Based Router] or the likes.
 
 However to not change the payload under the covers without the end user really knowing we changed the default in Camel 2.0 to *disabled*. So in Camel 2.0 you have to explicit enable it if you want to use it.
 ====
 
-TIP: If using Camel 2.12 onwards then see xref:Streamcaching-UsingStreamCachingStrategy.adoc[Using StreamCachingStrategy] further below which is the recommended way to configure stream caching options.
+TIP: If using Camel 2.12 onwards then see xref:stream-caching.adoc[Using StreamCachingStrategy] further below which is the recommended way to configure stream caching options.
 
 [[Streamcaching-Enablingstreamcaching]]
 ==== Enabling stream caching

@@ -6,7 +6,7 @@ DSL, but it additionally allows to use Groovy language
 features in your routes, particularly
 http://www.groovy-lang.org/closures.html[Closures] acting as
 Processor, Expression,
-Predicate, or xref:aggregator.adoc[Aggregation
+Predicate, or xref:aggregate-eip.adoc[Aggregation
 Strategy]. +
  With the Groovy DSL you write your RouteBuilder classes entirely in
 Groovy, while the scripting component

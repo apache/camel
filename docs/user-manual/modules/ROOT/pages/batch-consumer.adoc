@@ -16,7 +16,6 @@ Consumer] by its consumer:
 * File
 * FTP
 * xref:components::hbase-component.adoc[hbase]
-* xref:ibatis-component.adoc[iBatis]
 * xref:components::jpa-component.adoc[JPA]
 * xref:components::jclouds-component.adoc[JCLOUDS]
 * xref:components::mail-component.adoc[Mail]

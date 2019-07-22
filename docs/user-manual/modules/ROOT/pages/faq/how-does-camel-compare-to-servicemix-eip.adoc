@@ -8,8 +8,8 @@ The main difference with ServiceMix EIP is its integrated into the
 existing ServiceMix XBean XML configuration whereas Camel has more
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and can be used outside of JBI (e.g. just with pure
-xref:components::jms-component.adoc[JMS] or xref:mina-component.adoc[MINA]). Also Camel supports a
-xref:dsl.adoc[Java DSL] or xref:components::spring.adoc[XML configuration].
+xref:components::jms-component.adoc[JMS] or xref:components::mina2-component.adoc[MINA]). Also Camel supports a
+xref:dsl.adoc[Java DSL] or xref:spring.adoc[XML configuration].
 
 [[HowdoesCamelcomparetoServiceMixEIP-ConvertingfromServiceMixEIPtoCamel]]
 ==== Converting from ServiceMix EIP to Camel
@@ -53,9 +53,9 @@ from("jbi:endpoint:test:messageFilter:endpoint").
 [[HowdoesCamelcomparetoServiceMixEIP-SeeAlso]]
 ==== See Also
 
-* xref:how-does-camel-work-with-servicemix.adoc[How does Camel work with
+* xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with
 ServiceMix]
-* xref:how-does-camel-compare-to-servicemix.adoc[How does Camel compare
+* xref:faq/how-does-camel-compare-to-servicemix.adoc[How does Camel compare
 to ServiceMix]
 * http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
 Camel plugin]
