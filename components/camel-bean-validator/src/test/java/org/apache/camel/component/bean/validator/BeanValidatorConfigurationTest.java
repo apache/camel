@@ -25,6 +25,7 @@ import javax.validation.Path;
 import javax.validation.Path.Node;
 import javax.validation.TraversableResolver;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
@@ -32,8 +33,11 @@ import org.junit.Test;
 
 public class BeanValidatorConfigurationTest extends CamelTestSupport {
     
+	@BindToRegistry("myMessageInterpolator")
     private MessageInterpolator messageInterpolator;
+	@BindToRegistry("myTraversableResolver")
     private TraversableResolver traversableResolver;
+	@BindToRegistry("myConstraintValidatorFactory")
     private ConstraintValidatorFactory constraintValidatorFactory;
     
     @Override
@@ -44,16 +48,6 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
         this.constraintValidatorFactory = new MyConstraintValidatorFactory();
         
         super.setUp();
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        registry.bind("myMessageInterpolator", this.messageInterpolator);
-        registry.bind("myTraversableResolver", this.traversableResolver);
-        registry.bind("myConstraintValidatorFactory", this.constraintValidatorFactory);
-        return registry;
     }
     
     @Test
