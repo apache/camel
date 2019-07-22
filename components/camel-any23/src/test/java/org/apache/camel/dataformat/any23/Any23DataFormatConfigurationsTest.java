@@ -58,7 +58,7 @@ public class Any23DataFormatConfigurationsTest extends CamelTestSupport {
       public void configure() {
         Map<String, String> conf = new HashMap();
         conf.put("any23.extraction.metadata.nesting", "off");
-        from("direct:start").marshal().any23(BASEURI, Any23Type.TURTLE, conf).to("mock:result");
+        from("direct:start").unmarshal().any23(BASEURI, Any23Type.TURTLE, conf).to("mock:result");
       }
     };
   }

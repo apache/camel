@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.itest.karaf;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-/**
- * Represents the different types of bindy data formats.
- */
-@XmlType
-@XmlEnum
-public enum Any23Type {
+@RunWith(PaxExam.class)
+public class CamelAny23Test extends BaseKarafTest {
 
-  NTRIPLES, TURTLE, NQUADS, RDFXML, JSONLD, RDFJSON, RDF4JMODEL
+  public static final String COMPONENT = extractName(CamelAny23Test.class);
+
+  @Test
+  public void test() throws Exception {
+    testDataFormat(COMPONENT, "any23");
+  }
+
 }

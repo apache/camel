@@ -42,10 +42,8 @@ public class Any23DataFormatDefaultTest extends CamelTestSupport {
     List<Exchange> list = resultEndpoint.getReceivedExchanges();
     for (Exchange exchange : list) {
       Message in = exchange.getIn();
-      String resultingRDF = in.getBody(String.class);
-      InputStream toInputStream = IOUtils.toInputStream(resultingRDF);
-      Model parse = Rio.parse(toInputStream, BASEURI, RDFFormat.RDFXML);
-      assertEquals(parse.size(), 28);
+      Model resultingRDF = in.getBody(Model.class);
+      assertEquals(resultingRDF.size(), 28);
     }
   }
 
@@ -53,7 +51,7 @@ public class Any23DataFormatDefaultTest extends CamelTestSupport {
   protected RouteBuilder createRouteBuilder() {
     return new RouteBuilder() {
       public void configure() {
-        from("direct:start").marshal().any23(BASEURI).to("mock:result");
+        from("direct:start").unmarshal().any23(BASEURI).to("mock:result");
       }
     };
   }

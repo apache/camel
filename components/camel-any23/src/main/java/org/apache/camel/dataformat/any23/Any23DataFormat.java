@@ -16,25 +16,30 @@
  */
 package org.apache.camel.dataformat.any23;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.any23.Any23;
 import org.apache.any23.configuration.DefaultConfiguration;
 import org.apache.any23.configuration.ModifiableConfiguration;
-import org.apache.any23.source.DocumentSource;
-import org.apache.any23.source.StringDocumentSource;
+import org.apache.any23.source.ByteArrayDocumentSource;
 import org.apache.any23.writer.TripleHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.any23.utils.Any23Utils;
+import org.apache.camel.dataformat.any23.writer.RDF4JModelWriter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.commons.io.IOUtils;
+import org.eclipse.rdf4j.model.Model;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +62,31 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
   private Any23OutputFormat outputFormat;
   private String baseURI;
 
+  public Any23DataFormat() {
+  }
+
+  public Any23DataFormat(String baseURI) {
+    this.baseURI = baseURI;
+  }
+
+  public Any23DataFormat(Any23OutputFormat outputFormat, String baseURI) {
+    this.outputFormat = outputFormat;
+    this.baseURI = baseURI;
+  }
+
+  public Any23DataFormat(Map<String, String> configurations, Any23OutputFormat outputFormat, String baseURI) {
+    this.configurations = configurations;
+    this.outputFormat = outputFormat;
+    this.baseURI = baseURI;
+  }
+
+  public Any23DataFormat(Map<String, String> configurations, List<String> extractors, Any23OutputFormat outputFormat, String baseURI) {
+    this.configurations = configurations;
+    this.extractors = extractors;
+    this.outputFormat = outputFormat;
+    this.baseURI = baseURI;
+  }
+
   @Override
   public String getDataFormatName() {
     return "any23";
@@ -66,22 +96,34 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
    * Marshal data. Generate RDF.
    */
   public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-    final String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, object);
-    DocumentSource source = new StringDocumentSource(payload, baseURI);
-    TripleHandler handler = Any23Utils.obtainHandler(outputFormat, outputStream);
-    any23.extract(source, handler);
-    handler.close();
+    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+    outputStreamWriter.write("<html><script type=\"application/ld+json\">\n");
+    outputStreamWriter.flush();
+    Model mdl = (Model) object;
+    Rio.write(mdl, outputStream, RDFFormat.JSONLD);
+    outputStreamWriter.write("\n</script></html>");
+    outputStreamWriter.flush();
+    outputStreamWriter.close();
+    outputStream.close();
   }
 
   /**
    * Unmarshal the data
    */
   public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-    //TODO
-    //Under construction
-    //Looking for libraries which could perform RDF -> HTML 
-    //Candidate: https://github.com/rhizomik/redefer-rdf2html
-    return null;
+    ByteArrayDocumentSource source = new ByteArrayDocumentSource(inputStream, this.baseURI, null);
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    TripleHandler handler = Any23Utils.obtainHandler(outputFormat, out);
+    any23.extract(source, handler);
+    handler.close();
+    Object respon;
+    if (outputFormat == Any23OutputFormat.RDF4JMODEL) {
+      respon = ((RDF4JModelWriter) handler).getModel();
+    } else {
+      respon = IOUtils.toString(out.toByteArray());
+    }
+    return respon;
+
   }
 
   @Override
@@ -100,7 +142,7 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
     }
     if (outputFormat == null) {
       //Default output format
-      outputFormat = Any23OutputFormat.RDFXML;
+      outputFormat = Any23OutputFormat.RDF4JMODEL;
     }
     if (conf == null && extrArray == null) {
       any23 = new Any23();
@@ -122,40 +164,45 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
     return any23;
   }
 
-  public void setAny23(Any23 any23) {
+  public Any23DataFormat setAny23(Any23 any23) {
     this.any23 = any23;
+    return this;
   }
 
   public Map<String, String> getConfigurations() {
     return configurations;
   }
 
-  public void setConfigurations(Map<String, String> configurations) {
+  public Any23DataFormat setConfigurations(Map<String, String> configurations) {
     this.configurations = configurations;
+    return this;
   }
 
   public List<String> getExtractors() {
     return extractors;
   }
 
-  public void setExtractors(List<String> extractors) {
+  public Any23DataFormat setExtractors(List<String> extractors) {
     this.extractors = extractors;
+    return this;
   }
 
   public Any23OutputFormat getOutputFormat() {
     return outputFormat;
   }
 
-  public void setOutputFormat(Any23OutputFormat outputFormat) {
+  public Any23DataFormat setOutputFormat(Any23OutputFormat outputFormat) {
     this.outputFormat = outputFormat;
+    return this;
   }
 
   public String getBaseURI() {
     return baseURI;
   }
 
-  public void setBaseURI(String baseURI) {
+  public Any23DataFormat setBaseURI(String baseURI) {
     this.baseURI = baseURI;
+    return this;
   }
 
 }
