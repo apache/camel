@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.corda;
 
-import com.google.common.collect.ImmutableSet;
 import net.corda.core.contracts.OwnableState;
 import net.corda.core.flows.FlowLogic;
 import net.corda.core.node.services.Vault;
@@ -26,7 +25,6 @@ import net.corda.core.node.services.vault.Sort;
 import net.corda.core.node.services.vault.SortAttribute;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Ignore;
 
 import static net.corda.core.node.services.vault.QueryCriteriaUtils.DEFAULT_PAGE_NUM;
