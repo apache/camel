@@ -19,6 +19,7 @@ package org.apache.camel.component.disruptor.vm;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -26,12 +27,8 @@ import org.junit.Test;
 
 public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("splitterBean", new SplitWordsBean());
-        return jndi;
-    }
-
+	@BindToRegistry("splitterBean")
+	private SplitWordsBean swb =  new SplitWordsBean();
 
     @Test
     public void testSplitUsingMethodCall() throws Exception {
