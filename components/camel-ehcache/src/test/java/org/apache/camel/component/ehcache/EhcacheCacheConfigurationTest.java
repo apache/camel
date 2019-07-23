@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ehcache;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -23,6 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.UserManagedCache;
+import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.ResourceType;
 import org.ehcache.config.SizedResourcePool;
@@ -42,36 +44,26 @@ public class EhcacheCacheConfigurationTest extends CamelTestSupport {
     private EhcacheEndpoint ehcacheUserConf;
     @EndpointInject("ehcache:myCache?cacheManager=#myCacheManager&keyType=java.lang.String&valueType=java.lang.String")
     private EhcacheEndpoint ehcacheCacheManager;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind(
-            "myProgrammaticConfiguration",
-            CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                String.class,
-                String.class,
-                ResourcePoolsBuilder.newResourcePoolsBuilder()
-                    .heap(100, EntryUnit.ENTRIES)
-                    .offheap(1, MemoryUnit.MB))
-            .build()
-        );
-        registry.bind(
-            "myCacheManager",
-            CacheManagerBuilder.newCacheManagerBuilder()
-                .withCache(
-                    "myCache",
-                    CacheConfigurationBuilder.newCacheConfigurationBuilder(
-                    String.class,
-                    String.class,
-                    ResourcePoolsBuilder.newResourcePoolsBuilder()
-                        .heap(100, EntryUnit.ENTRIES)
-                        .offheap(1, MemoryUnit.MB))
-            ).build(true)
-        );
-
-        return registry;
-    }
+    
+    @BindToRegistry("myProgrammaticConfiguration")
+    private CacheConfiguration c = CacheConfigurationBuilder.newCacheConfigurationBuilder(
+            String.class,
+            String.class,
+            ResourcePoolsBuilder.newResourcePoolsBuilder()
+                .heap(100, EntryUnit.ENTRIES)
+                .offheap(1, MemoryUnit.MB))
+        .build();
+    
+    @BindToRegistry("myCacheManager")
+    private CacheManager el = CacheManagerBuilder.newCacheManagerBuilder()
+    .withCache(
+        "myCache",
+        CacheConfigurationBuilder.newCacheConfigurationBuilder(
+        String.class,
+        String.class,
+        ResourcePoolsBuilder.newResourcePoolsBuilder()
+            .heap(100, EntryUnit.ENTRIES)
+            .offheap(1, MemoryUnit.MB))).build(true);
 
     // *****************************
     // Test
