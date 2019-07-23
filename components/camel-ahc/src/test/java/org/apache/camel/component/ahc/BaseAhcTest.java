@@ -20,7 +20,6 @@ import java.util.Properties;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
