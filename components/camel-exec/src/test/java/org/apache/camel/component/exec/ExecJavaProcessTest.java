@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -69,6 +70,9 @@ public class ExecJavaProcessTest extends CamelTestSupport {
 
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
 
+    @BindToRegistry("executorMock")
+    private ProvokeExceptionExecCommandExecutor provokerMock = new ProvokeExceptionExecCommandExecutor();
+    
     @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
@@ -79,13 +83,6 @@ public class ExecJavaProcessTest extends CamelTestSupport {
     public boolean isUseAdviceWith() {
         return true;
     }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("executorMock", new ProvokeExceptionExecCommandExecutor());
-        return registry;
-    } 
 
     @Test
     public void testExecJavaProcessExitCode0() throws Exception {
