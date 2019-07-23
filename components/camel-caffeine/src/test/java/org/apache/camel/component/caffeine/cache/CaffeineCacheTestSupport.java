@@ -29,6 +29,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.slf4j.Logger;
@@ -37,20 +39,13 @@ import org.slf4j.LoggerFactory;
 public class CaffeineCacheTestSupport extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CaffeineCacheTestSupport.class);
+    @BindToRegistry("cache")
     private Cache cache = Caffeine.newBuilder().recordStats().build();
+    @BindToRegistry("cacheRl")
     private Cache cacheRl = Caffeine.newBuilder().recordStats().removalListener(new DummyRemovalListener()).build();
     private MetricRegistry mRegistry = new MetricRegistry();
+    @BindToRegistry("cacheSc")
     private Cache cacheSc = Caffeine.newBuilder().recordStats(() -> new MetricsStatsCounter(mRegistry)).build();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cache", cache);
-        registry.bind("cacheRl", cacheRl);
-        registry.bind("cacheSc", cacheSc);
-
-        return registry;
-    }
 
     protected Cache getTestCache() {
         return cache;

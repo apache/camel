@@ -17,6 +17,8 @@
 package org.apache.camel.component.caffeine.cache;
 
 import com.codahale.metrics.MetricRegistry;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +29,8 @@ import org.junit.Test;
 public class CaffeineCacheFromScratchStatsCounterTest extends CamelTestSupport {
 
     private MetricRegistry metricRegistry = new MetricRegistry();
+    @BindToRegistry("statsCounter")
+    private MetricsStatsCounter msc = new MetricsStatsCounter(metricRegistry);
 
     @Test
     public void testCacheStatsCounter() throws Exception {
@@ -54,14 +58,6 @@ public class CaffeineCacheFromScratchStatsCounterTest extends CamelTestSupport {
         assertEquals(2, metricRegistry.counter("camelcache.hits").getCount());
         assertEquals(1, metricRegistry.counter("camelcache.misses").getCount());
 
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("statsCounter", new MetricsStatsCounter(metricRegistry));
-
-        return registry;
     }
 
     // ****************************
