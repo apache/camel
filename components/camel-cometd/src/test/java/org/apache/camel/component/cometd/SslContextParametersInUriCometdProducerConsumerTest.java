@@ -18,6 +18,7 @@ package org.apache.camel.component.cometd;
 
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,8 +40,8 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
     private int port;
     private String uri;
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("sslContextParameters")
+    public SSLContextParameters addSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("jsse/localhost.ks");
         ksp.setPassword("changeit");
@@ -56,9 +57,7 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", sslContextParameters);
-        return registry;
+        return sslContextParameters;
     }
 
     @Test
