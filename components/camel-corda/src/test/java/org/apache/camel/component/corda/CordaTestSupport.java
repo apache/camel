@@ -41,12 +41,6 @@ public class CordaTestSupport extends CamelTestSupport {
         return true;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        return registry;
-    }
-
     protected String getUrl() {
         return "corda://localhost:10006?username=user1&password=test";
     }
