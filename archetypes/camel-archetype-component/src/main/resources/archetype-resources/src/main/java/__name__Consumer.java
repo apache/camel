@@ -25,7 +25,7 @@ import org.apache.camel.support.ScheduledPollConsumer;
 /**
  * The ${name} consumer.
  */
-public class ${name}Consumer extends ScheduledPollConsumer {
+public class ${name}Consumer extends DefaultConsumer {
     private final ${name}Endpoint endpoint;
 
     public ${name}Consumer(${name}Endpoint endpoint, Processor processor) {
@@ -34,7 +34,7 @@ public class ${name}Consumer extends ScheduledPollConsumer {
     }
 
     @Override
-    protected int poll() throws Exception {
+    protected void doStart() throws Exception {
         Exchange exchange = endpoint.createExchange();
 
         // create a message body
@@ -44,7 +44,6 @@ public class ${name}Consumer extends ScheduledPollConsumer {
         try {
             // send message to next processor in the route
             getProcessor().process(exchange);
-            return 1; // number of messages polled
         } finally {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
