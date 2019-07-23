@@ -19,7 +19,6 @@ package org.apache.camel.component.ehcache;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
