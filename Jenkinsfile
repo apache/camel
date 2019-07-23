@@ -57,7 +57,7 @@ pipeline {
         stage('Website update') {
             when {
                 branch 'master'
-                changeset "docs/**/*"
+                changeset 'docs/**/*'
             }
 
             build 'Camel.website'
