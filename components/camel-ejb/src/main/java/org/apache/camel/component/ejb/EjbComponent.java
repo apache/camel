@@ -26,8 +26,6 @@ import javax.naming.NamingException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.jndi.JndiBeanRepository;
 
