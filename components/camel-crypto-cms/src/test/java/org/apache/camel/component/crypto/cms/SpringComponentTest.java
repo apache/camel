@@ -30,11 +30,6 @@ public class SpringComponentTest extends ComponentTest {
                 new ClassPathXmlApplicationContext("SpringCryptoCmsTests.xml"), true);
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        return super.createRegistry();
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
