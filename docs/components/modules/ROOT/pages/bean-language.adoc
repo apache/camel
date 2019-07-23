@@ -8,8 +8,7 @@
 
 The purpose of the Bean Language is to be able to implement an
 xref:manual::expression.adoc[Expression] or xref:manual::predicate.adoc[Predicate] using
-a simple method on a bean. The bean name is resolved using a
-xref:manual::registry.adoc[Registry], such as the
+a simple method on a bean. The bean name is resolved using a Registry, such as the
 xref:manual::spring.adoc[Spring] *`ApplicationContext`*, then a method is
 invoked to evaluate the xref:manual::expression.adoc[Expression] or
 xref:manual::predicate.adoc[Predicate]. If no method name is provided then one
@@ -99,9 +98,9 @@ or other expressions.
 === Non-Registry Beans
 
 The xref:bean-language.adoc[Bean Language] also supports invoking beans
-that isn't registered in the xref:manual::registry.adoc[Registry]. This is
+that isn't registered in the Registry. This is
 usable for quickly to invoke a bean from Java DSL where you don't need
-to register the bean in the xref:manual::registry.adoc[Registry] such as the
+to register the bean in the Registry such as the
 xref:spring.adoc[Spring] *`ApplicationContext`*. Camel can instantiate
 the bean and invoke the method if given a class or invoke an already
 existing instance.

@@ -9,7 +9,7 @@ Allows to test Camel with Spring applications such as Spring XML files or Spring
 This documentation is old and needs to be updated
 ====
 
-xref:testing.adoc[Testing] is a crucial part of any development or integration work. The Spring Framework offers a number of features that makes it easy to test while using Spring for Inversion of Control which works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
+Testing is a crucial part of any development or integration work. The Spring Framework offers a number of features that makes it easy to test while using Spring for Inversion of Control which works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
 
 We can use Spring for IoC and the Camel xref:components::mock-component.adoc[Mock] and xref:components::test.adoc[Test] endpoints to create sophisticated integration/unit tests that are easy to run and debug inside your IDE.  There are three supported approaches for testing with Spring in Camel.
 [width="100%",cols="1,1,4,1",options="header",]
