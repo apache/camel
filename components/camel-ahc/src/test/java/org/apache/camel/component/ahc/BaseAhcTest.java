@@ -17,6 +17,7 @@
 package org.apache.camel.component.ahc;
 import java.util.Properties;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
@@ -47,27 +48,16 @@ public abstract class BaseAhcTest extends CamelTestSupport {
         context.addComponent("properties", new PropertiesComponent("ref:prop"));
         return context;
     }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
+    
+    @BindToRegistry("prop")
+    public Properties addProperties() {
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
-        jndi.bind("prop", prop);
-
-        if (isHttps()) {
-            addSslContextParametersToRegistry(jndi);
-        }
-
-        return jndi;
+        return prop;
     }
 
-    protected void addSslContextParametersToRegistry(JndiRegistry registry) {
-        registry.bind("sslContextParameters", createSSLContextParameters());
-    }
-
-    protected SSLContextParameters createSSLContextParameters() {
+    @BindToRegistry("sslContextParameters") 
+    public SSLContextParameters createSSLContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
