@@ -775,8 +775,8 @@ public final class IntrospectionSupport {
         if (context != null) {
             PropertiesComponent pc = context.getPropertiesComponent(false);
             if (pc != null) {
-                return value.toString().contains(pc.getPrefixToken())
-                        && value.toString().contains(pc.getSuffixToken());
+                String text = value.toString();
+                return text.contains(PropertiesComponent.PREFIX_TOKEN) && text.contains(PropertiesComponent.SUFFIX_TOKEN);
             }
         }
         return false;

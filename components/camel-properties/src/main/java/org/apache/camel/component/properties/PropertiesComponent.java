@@ -114,10 +114,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private String encoding;
     @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
-    @Metadata(label = "advanced", defaultValue = DEFAULT_PREFIX_TOKEN)
-    private String prefixToken = DEFAULT_PREFIX_TOKEN;
-    @Metadata(label = "advanced", defaultValue = DEFAULT_SUFFIX_TOKEN)
-    private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     @Metadata(label = "advanced")
     private Properties initialProperties;
     @Metadata(label = "advanced")
@@ -208,15 +204,15 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
 
     protected String parseUri(String uri, PropertiesLookup properties) {
         // enclose tokens if missing
-        if (!uri.contains(prefixToken) && !uri.startsWith(prefixToken)) {
-            uri = prefixToken + uri;
+        if (!uri.contains(PREFIX_TOKEN) && !uri.startsWith(PREFIX_TOKEN)) {
+            uri = PREFIX_TOKEN + uri;
         }
-        if (!uri.contains(suffixToken) && !uri.endsWith(suffixToken)) {
-            uri = uri + suffixToken;
+        if (!uri.contains(SUFFIX_TOKEN) && !uri.endsWith(SUFFIX_TOKEN)) {
+            uri = uri + SUFFIX_TOKEN;
         }
 
         log.trace("Parsing uri {}", uri);
-        return propertiesParser.parseUri(uri, properties, prefixToken, suffixToken, defaultFallbackEnabled);
+        return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled);
     }
 
     @SuppressWarnings("unchecked")
@@ -346,40 +342,6 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
      */
     public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
-    }
-
-    @ManagedAttribute(description = "Prefix token")
-    public String getPrefixToken() {
-        return prefixToken;
-    }
-
-    /**
-     * Sets the value of the prefix token used to identify properties to replace.  Setting a value of
-     * {@code null} restores the default token (@link {@link #DEFAULT_PREFIX_TOKEN}).
-     */
-    public void setPrefixToken(String prefixToken) {
-        if (prefixToken == null) {
-            this.prefixToken = DEFAULT_PREFIX_TOKEN;
-        } else {
-            this.prefixToken = prefixToken;
-        }
-    }
-
-    @ManagedAttribute(description = "Suffix token")
-    public String getSuffixToken() {
-        return suffixToken;
-    }
-
-    /**
-     * Sets the value of the suffix token used to identify properties to replace.  Setting a value of
-     * {@code null} restores the default token (@link {@link #DEFAULT_SUFFIX_TOKEN}).
-     */
-    public void setSuffixToken(String suffixToken) {
-        if (suffixToken == null) {
-            this.suffixToken = DEFAULT_SUFFIX_TOKEN;
-        } else {
-            this.suffixToken = suffixToken;
-        }
     }
 
     public Properties getInitialProperties() {

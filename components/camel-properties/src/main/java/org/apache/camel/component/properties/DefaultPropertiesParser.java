@@ -24,6 +24,8 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
+import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
 import static org.apache.camel.util.IOHelper.lookupEnvironmentVariable;
 
 /**
@@ -52,8 +54,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
     }
 
     @Override
-    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, boolean defaultFallbackEnabled) throws IllegalArgumentException {
-        ParsingContext context = new ParsingContext(properties, prefixToken, suffixToken, defaultFallbackEnabled);
+    public String parseUri(String text, PropertiesLookup properties, boolean defaultFallbackEnabled) throws IllegalArgumentException {
+        ParsingContext context = new ParsingContext(properties, defaultFallbackEnabled);
         return context.parse(text);
     }
 
@@ -66,14 +68,10 @@ public class DefaultPropertiesParser implements PropertiesParser {
      */
     private final class ParsingContext {
         private final PropertiesLookup properties;
-        private final String prefixToken;
-        private final String suffixToken;
         private final boolean defaultFallbackEnabled;
 
-        ParsingContext(PropertiesLookup properties, String prefixToken, String suffixToken, boolean defaultFallbackEnabled) {
+        ParsingContext(PropertiesLookup properties, boolean defaultFallbackEnabled) {
             this.properties = properties;
-            this.prefixToken = prefixToken;
-            this.suffixToken = suffixToken;
             this.defaultFallbackEnabled = defaultFallbackEnabled;
         }
 
@@ -129,7 +127,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
             // If not found, ensure that there is no valid prefix token in the string
             if (suffix == -1) {
                 if (getMatchingPrefixIndex(input, input.length()) != -1) {
-                    throw new IllegalArgumentException(String.format("Missing %s from the text: %s", suffixToken, input));
+                    throw new IllegalArgumentException(String.format("Missing %s from the text: %s", SUFFIX_TOKEN, input));
                 }
                 return null;
             }
@@ -137,12 +135,12 @@ public class DefaultPropertiesParser implements PropertiesParser {
             // Find the index of the prefix token that matches the suffix token
             int prefix = getMatchingPrefixIndex(input, suffix);
             if (prefix == -1) {
-                throw new IllegalArgumentException(String.format("Missing %s from the text: %s", prefixToken, input));
+                throw new IllegalArgumentException(String.format("Missing %s from the text: %s", PREFIX_TOKEN, input));
             }
 
-            String key = input.substring(prefix + prefixToken.length(), suffix);
+            String key = input.substring(prefix + PREFIX_TOKEN.length(), suffix);
             String value = getPropertyValue(key, input);
-            return new Property(prefix, suffix + suffixToken.length(), key, value);
+            return new Property(prefix, suffix + SUFFIX_TOKEN.length(), key, value);
         }
 
         /**
@@ -154,8 +152,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         private int getSuffixIndex(String input) {
             int index = -1;
             do {
-                index = input.indexOf(suffixToken, index + 1);
-            } while (index != -1 && isQuoted(input, index, suffixToken));
+                index = input.indexOf(SUFFIX_TOKEN, index + 1);
+            } while (index != -1 && isQuoted(input, index, SUFFIX_TOKEN));
             return index;
         }
 
@@ -169,8 +167,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         private int getMatchingPrefixIndex(String input, int suffixIndex) {
             int index = suffixIndex;
             do {
-                index = input.lastIndexOf(prefixToken, index - 1);
-            } while (index != -1 && isQuoted(input, index, prefixToken));
+                index = input.lastIndexOf(PREFIX_TOKEN, index - 1);
+            } while (index != -1 && isQuoted(input, index, PREFIX_TOKEN));
             return index;
         }
 

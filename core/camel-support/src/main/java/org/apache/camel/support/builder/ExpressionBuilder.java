@@ -1451,7 +1451,7 @@ public class ExpressionBuilder {
                             + " in CamelContext to support property placeholders in expressions");
                     }
                     // enclose key with {{ }} to force parsing as key can be a nested expression too
-                    return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
+                    return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + text + PropertiesComponent.SUFFIX_TOKEN);
                 } catch (Exception e) {
                     // property with key not found, use default value if provided
                     if (defaultValue != null) {

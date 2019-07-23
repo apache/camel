@@ -642,9 +642,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }
             
-            pc.setPrefixToken(def.getPrefixToken());
-            pc.setSuffixToken(def.getSuffixToken());
-
             if (def.getFunctions() != null && !def.getFunctions().isEmpty()) {
                 for (CamelPropertyPlaceholderFunctionDefinition function : def.getFunctions()) {
                     String ref = function.getRef();

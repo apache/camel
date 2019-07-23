@@ -65,36 +65,6 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
     
     @Test
-    public void testPropertiesComponentCustomTokens() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setPrefixToken("[[");
-        pc.setSuffixToken("]]");
-        
-        assertEquals("[[", pc.getPrefixToken());
-        assertEquals("]]", pc.getSuffixToken());
-        
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to("properties:[[cool.end]]");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-        
-        pc.setPrefixToken(null);
-        pc.setSuffixToken(null);
-        
-        assertEquals(PropertiesComponent.DEFAULT_PREFIX_TOKEN, pc.getPrefixToken());
-        assertEquals(PropertiesComponent.DEFAULT_SUFFIX_TOKEN, pc.getSuffixToken());
-    }
-
-    @Test
     public void testPropertiesComponentTemplate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

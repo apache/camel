@@ -1635,26 +1635,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return answer;
     }
 
-    public String getPropertyPrefixToken() {
-        PropertiesComponent pc = getPropertiesComponent(false);
-
-        if (pc != null) {
-            return pc.getPrefixToken();
-        } else {
-            return null;
-        }
-    }
-
-    public String getPropertySuffixToken() {
-        PropertiesComponent pc = getPropertiesComponent(false);
-
-        if (pc != null) {
-            return pc.getSuffixToken();
-        } else {
-            return null;
-        }
-    }
-
     public String resolvePropertyPlaceholders(String text) {
         // While it is more efficient to only do the lookup if we are sure we
         // need the component,
@@ -1668,13 +1648,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // it will handle that itself
         if (text != null && !text.startsWith("properties:")) {
             // No component, assume default tokens.
-            if (pc == null && text.contains(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            if (pc == null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
                 // lookup existing properties component, or force create a new
                 // default component
                 pc = getPropertiesComponent(true);
             }
 
-            if (pc != null && text.contains(pc.getPrefixToken())) {
+            if (pc != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
                 // the parser will throw exception if property key was not found
                 String answer = pc.parseUri(text);
                 log.debug("Resolved text: {} -> {}", text, answer);
