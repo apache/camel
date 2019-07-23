@@ -19,6 +19,7 @@ package org.apache.camel.component.elsql;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,22 +36,11 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  */
 public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
+	@BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+	@BindToRegistry("myIdGenerator")
     private MyIdGenerator idGenerator = new MyIdGenerator();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myIdGenerator", idGenerator);
-
-        // this is the database we create with some initial data for our unit test
-        db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-
-        jndi.bind("dataSource", db);
-
-        return jndi;
-    }
 
     @After
     public void tearDown() throws Exception {

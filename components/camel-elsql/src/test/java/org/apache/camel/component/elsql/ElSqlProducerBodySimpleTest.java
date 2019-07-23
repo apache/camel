@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sql.SqlConstants;
@@ -34,20 +35,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        // this is the database we create with some initial data for our unit test
-        db = new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-
-        jndi.bind("dataSource", db);
-
-        return jndi;
-    }
+	@BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test
     public void testSimpleBody() throws Exception {
