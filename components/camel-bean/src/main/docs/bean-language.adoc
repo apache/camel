@@ -101,7 +101,7 @@ or other expressions.
 The xref:bean-language.adoc[Bean Language] also supports invoking beans
 that isn't registered in the xref:registry.adoc[Registry]. This is
 usable for quickly to invoke a bean from Java DSL where you don't need
-to register the bean in the xref:registry.html[Registry] such as the
+to register the bean in the xref:registry.adoc[Registry] such as the
 xref:spring.adoc[Spring] *`ApplicationContext`*. Camel can instantiate
 the bean and invoke the method if given a class or invoke an already
 existing instance.
