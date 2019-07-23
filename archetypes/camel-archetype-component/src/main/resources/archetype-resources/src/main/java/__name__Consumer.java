@@ -20,7 +20,7 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * The ${name} consumer.
