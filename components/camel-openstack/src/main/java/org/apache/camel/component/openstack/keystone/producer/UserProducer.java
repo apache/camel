@@ -92,7 +92,7 @@ public class UserProducer extends AbstractKeystoneProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.USER_ID, String.class), String.class);
         StringHelper.notEmpty(id, "User ID");
         final ActionResponse response = osV3Client.identity().users().delete(id);
-        checkFailure(response, msg, "Delete user with ID " + id);
+        checkFailure(response, exchange, "Delete user with ID " + id);
     }
 
     private User messageToUser(Message message) {

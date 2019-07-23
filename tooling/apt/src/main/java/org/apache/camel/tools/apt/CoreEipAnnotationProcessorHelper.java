@@ -618,11 +618,6 @@ public class CoreEipAnnotationProcessorHelper {
         ep = new EipOption("logMask", "Log Mask", "attribute", "java.lang.String", false, "false", docComment, false, null, false, null, false, null, false);
         eipOptions.add(ep);
 
-        // trace
-        docComment = findJavaDoc(elementUtils, null, "handleFault", null, classElement, true);
-        ep = new EipOption("handleFault", "Handle Fault", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);
-        eipOptions.add(ep);
-
         // delayer
         docComment = findJavaDoc(elementUtils, null, "delayer", null, classElement, true);
         ep = new EipOption("delayer", "Delayer", "attribute", "java.lang.String", false, "", docComment, false, null, false, null, false, null, false);

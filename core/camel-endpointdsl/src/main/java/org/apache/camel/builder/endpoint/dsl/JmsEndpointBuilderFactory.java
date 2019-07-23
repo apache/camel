@@ -1828,46 +1828,6 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedJmsEndpointConsumerBuilder transferFault(
-                boolean transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedJmsEndpointConsumerBuilder transferFault(
-                String transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
@@ -3755,46 +3715,6 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedJmsEndpointProducerBuilder transferFault(
-                boolean transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedJmsEndpointProducerBuilder transferFault(
-                String transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
@@ -4990,44 +4910,6 @@ public interface JmsEndpointBuilderFactory {
         default AdvancedJmsEndpointBuilder transferExchange(
                 String transferExchange) {
             setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedJmsEndpointBuilder transferFault(boolean transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedJmsEndpointBuilder transferFault(String transferFault) {
-            setProperty("transferFault", transferFault);
             return this;
         }
         /**

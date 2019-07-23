@@ -445,17 +445,6 @@ public class ActiveMQComponentConfiguration
      */
     private Boolean transferException = false;
     /**
-     * If enabled and you are using Request Reply messaging (InOut) and an
-     * Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on org.apache.camel.Message#isFault() will be send
-     * back in the response as a JMS header with the key
-     * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-     * fault flag will be set on the org.apache.camel.Message#setFault(boolean).
-     * You may want to enable this when using Camel components that support
-     * faults such as SOAP based such as cxf or spring-ws.
-     */
-    private Boolean transferFault = false;
-    /**
      * Allows you to use your own implementation of the
      * org.springframework.jms.core.JmsOperations interface. Camel uses
      * JmsTemplate as default. Can be used for testing purpose, but not used
@@ -1150,14 +1139,6 @@ public class ActiveMQComponentConfiguration
 
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
-    }
-
-    public Boolean getTransferFault() {
-        return transferFault;
-    }
-
-    public void setTransferFault(Boolean transferFault) {
-        this.transferFault = transferFault;
     }
 
     public String getJmsOperations() {

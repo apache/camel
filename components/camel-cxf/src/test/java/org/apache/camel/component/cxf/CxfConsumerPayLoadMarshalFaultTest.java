@@ -51,7 +51,6 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
                         context.createMarshaller().marshal(unknowPersonFault, details);
                         fault.setDetail(details);
                         exchange.getOut().setBody(fault);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

@@ -120,15 +120,7 @@ public class ServerProducerTest extends NovaProducerTestSupport {
 
         assertEquals(id, idArgumentCaptor.getValue());
         assertTrue(actionArgumentCaptor.getValue() == Action.PAUSE);
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
-
-        //test fail
-        final String failReason = "fr";
-        when(serverService.action(anyString(), any())).thenReturn(ActionResponse.actionFailed(failReason, 401));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failReason));
     }
 
     @Test

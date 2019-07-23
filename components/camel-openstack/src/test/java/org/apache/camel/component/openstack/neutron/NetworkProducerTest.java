@@ -133,14 +133,6 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
 
         verify(networkService).delete(networkIdCaptor.capture());
         assertEquals(networkID, networkIdCaptor.getValue());
-        assertFalse(msg.isFault());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(networkService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
     }
 
     private Network createNetwork() {

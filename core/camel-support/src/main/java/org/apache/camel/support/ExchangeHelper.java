@@ -372,7 +372,7 @@ public final class ExchangeHelper {
         // copy out message
         if (source.hasOut()) {
             // exchange pattern sensitive
-            Message resultMessage = source.getOut().isFault() ? result.getOut() : getResultMessage(result);
+            Message resultMessage = getResultMessage(result);
             resultMessage.copyFrom(source.getOut());
         }
 
@@ -675,13 +675,6 @@ public final class ExchangeHelper {
                 throw CamelExecutionException.wrapCamelExecutionException(exchange, exchange.getException());
             }
 
-            // result could have a fault message
-            if (hasFaultMessage(exchange)) {
-                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-                answer = msg.getBody();
-                return answer;
-            }
-
             // okay no fault then return the response according to the pattern
             // try to honor pattern if provided
             boolean notOut = pattern != null && !pattern.isOutCapable();
@@ -699,17 +692,6 @@ public final class ExchangeHelper {
             }
         }
         return answer;
-    }
-
-    /**
-     * Tests whether the exchange has a fault message set and that its not null.
-     *
-     * @param exchange the exchange
-     * @return <tt>true</tt> if fault message exists
-     */
-    public static boolean hasFaultMessage(Exchange exchange) {
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-        return msg.isFault() && msg.getBody() != null;
     }
 
     /**

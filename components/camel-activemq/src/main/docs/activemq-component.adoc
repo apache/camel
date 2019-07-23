@@ -44,7 +44,7 @@ activemq:foo
 === Component options
 
 // component options: START
-The ActiveMQ component supports 86 options, which are listed below.
+The ActiveMQ component supports 85 options, which are listed below.
 
 
 
@@ -112,7 +112,6 @@ The ActiveMQ component supports 86 options, which are listed below.
 | *requestTimeoutChecker Interval* (advanced) | Configures how often Camel should check for timed out Exchanges when doing request/reply over JMS. By default Camel checks once per second. But if you must react faster when a timeout occurs, then you can lower this interval, to check more frequently. The timeout is determined by the option requestTimeout. | 1000 | long
 | *transferExchange* (advanced) | You can transfer the exchange over the wire instead of just the body and headers. The following fields are transferred: In body, Out body, Fault body, In headers, Out headers, Fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload. | false | boolean
 | *transferException* (advanced) | If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side, then the caused Exception will be send back in response as a javax.jms.ObjectMessage. If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge in your routing - for example, using persistent queues to enable robust routing. Notice that if you also have transferExchange enabled, this option takes precedence. The caught exception is required to be serializable. The original Exception on the consumer side can be wrapped in an outer exception such as org.apache.camel.RuntimeCamelException when returned to the producer. | false | boolean
-| *transferFault* (advanced) | If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side, then the fault flag on org.apache.camel.Message#isFault() will be send back in the response as a JMS header with the key JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned fault flag will be set on the org.apache.camel.Message#setFault(boolean). You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws. | false | boolean
 | *jmsOperations* (advanced) | Allows you to use your own implementation of the org.springframework.jms.core.JmsOperations interface. Camel uses JmsTemplate as default. Can be used for testing purpose, but not used much as stated in the spring API docs. |  | JmsOperations
 | *destinationResolver* (advanced) | A pluggable org.springframework.jms.support.destination.DestinationResolver that allows you to use your own resolver (for example, to lookup the real destination in a JNDI registry). |  | DestinationResolver
 | *replyToType* (producer) | Allows for explicitly specifying which kind of strategy to use for replyTo queues when doing request/reply over JMS. Possible values are: Temporary, Shared, or Exclusive. By default Camel will use temporary queues. However if replyTo has been configured, then Shared is used by default. This option allows you to use exclusive queues instead of shared ones. See Camel JMS documentation for more details, and especially the notes about the implications if running in a clustered environment, and the fact that Shared reply queues has lower performance than its alternatives Temporary and Exclusive. |  | ReplyToType
@@ -163,7 +162,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (93 parameters):
+==== Query Parameters (92 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -249,7 +248,6 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *transferException* (advanced) | If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side, then the caused Exception will be send back in response as a javax.jms.ObjectMessage. If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge in your routing - for example, using persistent queues to enable robust routing. Notice that if you also have transferExchange enabled, this option takes precedence. The caught exception is required to be serializable. The original Exception on the consumer side can be wrapped in an outer exception such as org.apache.camel.RuntimeCamelException when returned to the producer. | false | boolean
 | *transferExchange* (advanced) | You can transfer the exchange over the wire instead of just the body and headers. The following fields are transferred: In body, Out body, Fault body, In headers, Out headers, Fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload. | false | boolean
-| *transferFault* (advanced) | If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side, then the fault flag on org.apache.camel.Message#isFault() will be send back in the response as a JMS header with the key JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned fault flag will be set on the org.apache.camel.Message#setFault(boolean). You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws. | false | boolean
 | *useMessageIDAsCorrelation ID* (advanced) | Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages. | false | boolean
 | *waitForProvisionCorrelation ToBeUpdatedCounter* (advanced) | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled. | 50 | int
 | *waitForProvisionCorrelation ToBeUpdatedThreadSleeping Time* (advanced) | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | long
@@ -281,7 +279,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 87 options, which are listed below.
+The component supports 86 options, which are listed below.
 
 
 
@@ -367,7 +365,6 @@ The component supports 87 options, which are listed below.
 | *camel.component.activemq.transaction-timeout* | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | Integer
 | *camel.component.activemq.transfer-exception* | If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side, then the caused Exception will be send back in response as a javax.jms.ObjectMessage. If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge in your routing - for example, using persistent queues to enable robust routing. Notice that if you also have transferExchange enabled, this option takes precedence. The caught exception is required to be serializable. The original Exception on the consumer side can be wrapped in an outer exception such as org.apache.camel.RuntimeCamelException when returned to the producer. | false | Boolean
 | *camel.component.activemq.transfer-exchange* | You can transfer the exchange over the wire instead of just the body and headers. The following fields are transferred: In body, Out body, Fault body, In headers, Out headers, Fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload. | false | Boolean
-| *camel.component.activemq.transfer-fault* | If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side, then the fault flag on org.apache.camel.Message#isFault() will be send back in the response as a JMS header with the key JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned fault flag will be set on the org.apache.camel.Message#setFault(boolean). You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws. | false | Boolean
 | *camel.component.activemq.trust-all-packages* | Define if all packages are trusted or not | false | Boolean
 | *camel.component.activemq.use-message-i-d-as-correlation-i-d* | Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages. | false | Boolean
 | *camel.component.activemq.use-pooled-connection* | Enables or disables whether a PooledConnectionFactory will be used so that when messages are sent to ActiveMQ from outside of a message consuming thread, pooling will be used rather than the default with the Spring JmsTemplate which will create a new connection, session, producer for each message then close them all down again. The default value is true. Note that this requires an extra dependency on commons-pool2. | false | Boolean

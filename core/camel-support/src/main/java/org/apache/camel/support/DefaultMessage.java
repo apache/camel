@@ -37,7 +37,6 @@ import org.apache.camel.util.ObjectHelper;
  * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  */
 public class DefaultMessage extends MessageSupport {
-    private boolean fault;
     private Map<String, Object> headers;
 
     public DefaultMessage(Exchange exchange) {
@@ -47,14 +46,6 @@ public class DefaultMessage extends MessageSupport {
 
     public DefaultMessage(CamelContext camelContext) {
         setCamelContext(camelContext);
-    }
-
-    public boolean isFault() {
-        return fault;
-    }
-
-    public void setFault(boolean fault) {
-        this.fault = fault;
     }
 
     public Object getHeader(String name) {

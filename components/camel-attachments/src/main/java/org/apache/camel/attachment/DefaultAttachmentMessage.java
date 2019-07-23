@@ -58,16 +58,6 @@ public final class DefaultAttachmentMessage implements AttachmentMessage {
     }
 
     @Override
-    public boolean isFault() {
-        return delegate.isFault();
-    }
-
-    @Override
-    public void setFault(boolean fault) {
-        delegate.setFault(fault);
-    }
-
-    @Override
     public Object getHeader(String name) {
         return delegate.getHeader(name);
     }

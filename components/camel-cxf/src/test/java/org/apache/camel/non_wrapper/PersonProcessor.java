@@ -49,9 +49,6 @@ public class PersonProcessor implements Processor {
             personFault.setPersonId("");
             org.apache.camel.non_wrapper.UnknownPersonFault fault =
                 new org.apache.camel.non_wrapper.UnknownPersonFault("Get the null value of person name", personFault);
-            // Since camel has its own exception handler framework, we can't throw the exception to trigger it
-            // We just set the fault message in the exchange for camel-cxf component handling and return
-            exchange.getOut().setFault(true);
             exchange.getOut().setBody(fault);
             return;
         }

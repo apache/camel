@@ -115,7 +115,6 @@ public class MailMessage extends DefaultMessage {
         } else {
             // no deep copy needed, but copy message id
             setMessageId(that.getMessageId());
-            setFault(that.isFault());
         }
         if (that instanceof MailMessage) {
             MailMessage mailMessage = (MailMessage) that;

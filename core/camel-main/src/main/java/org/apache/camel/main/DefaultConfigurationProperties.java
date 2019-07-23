@@ -53,7 +53,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean messageHistory = true;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
-    private boolean handleFault;
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
     private boolean endpointRuntimeStatisticsEnabled;
@@ -436,19 +435,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
-    }
-
-    public boolean isHandleFault() {
-        return handleFault;
-    }
-
-    /**
-     * Sets whether fault handling is enabled or not.
-     *
-     * Default is false.
-     */
-    public void setHandleFault(boolean handleFault) {
-        this.handleFault = handleFault;
     }
 
     public boolean isAutoStartup() {
@@ -920,16 +906,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
-        return (T) this;
-    }
-
-    /**
-     * Sets whether fault handling is enabled or not.
-     *
-     * Default is false.
-     */
-    public T withHandleFault(boolean handleFault) {
-        this.handleFault = handleFault;
         return (T) this;
     }
 

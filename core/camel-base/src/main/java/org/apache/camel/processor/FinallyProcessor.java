@@ -37,17 +37,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // clear exception and fault so finally block can be executed
-        final boolean fault;
-        if (exchange.hasOut()) {
-            fault = exchange.getOut().isFault();
-            exchange.getOut().setFault(false);
-        } else {
-            fault = exchange.getIn().isFault();
-            exchange.getIn().setFault(false);
-        }
-
-        final Exception exception = exchange.getException();
+        Exception exception = exchange.getException();
         exchange.setException(null);
         // but store the caught exception as a property
         if (exception != null) {
@@ -60,7 +50,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         }
 
         // continue processing
-        return processor.process(exchange, new FinallyAsyncCallback(exchange, callback, exception, fault));
+        return processor.process(exchange, new FinallyAsyncCallback(exchange, callback, exception));
     }
 
     @Override
@@ -85,13 +75,11 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         private final Exchange exchange;
         private final AsyncCallback callback;
         private final Exception exception;
-        private final boolean fault;
 
-        FinallyAsyncCallback(Exchange exchange, AsyncCallback callback, Exception exception, boolean fault) {
+        FinallyAsyncCallback(Exchange exchange, AsyncCallback callback, Exception exception) {
             this.exchange = exchange;
             this.callback = callback;
             this.exception = exception;
-            this.fault = fault;
         }
 
         @Override
@@ -103,14 +91,6 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
                     // set exception back on exchange
                     exchange.setException(exception);
                     exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
-                }
-                // set fault flag back
-                if (fault) {
-                    if (exchange.hasOut()) {
-                        exchange.getOut().setFault(true);
-                    } else {
-                        exchange.getIn().setFault(true);
-                    }
                 }
 
                 if (!doneSync) {

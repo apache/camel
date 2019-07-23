@@ -255,12 +255,10 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                     Response r = Response.status(404).entity("Can't found the customer with uri " + path)
                         .header("Content-Type", "text/plain").build();
                     exchange.getOut().setBody(r);
-                    exchange.getOut().setFault(true);
                 } else if ("/customerservice/customers/789".equals(path)) {
                     exchange.getOut().setBody("Can't found the customer with uri " + path);
                     exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
                     exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");                    
-                    exchange.getOut().setFault(true);
                 } else {
                     throw new RuntimeCamelException("Can't found the customer with uri " + path);
                 }

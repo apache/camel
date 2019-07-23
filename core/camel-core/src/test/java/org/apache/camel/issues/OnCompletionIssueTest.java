@@ -34,11 +34,10 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         complete.expectedBodiesReceivedInAnyOrder("finish", "stop", "ile", "markRollback");
 
         MockEndpoint failed = getMockEndpoint("mock:failed");
-        failed.expectedBodiesReceivedInAnyOrder("faulted", "npe", "rollback");
+        failed.expectedBodiesReceivedInAnyOrder("npe", "rollback");
 
         template.sendBody("direct:input", "finish");
         template.sendBody("direct:input", "stop");
-        template.sendBody("direct:input", "fault");
         template.sendBody("direct:input", "ile");
         template.sendBody("direct:input", "markRollback");
 
@@ -80,9 +79,6 @@ public class OnCompletionIssueTest extends ContextTestSupport {
                         .when(simple("${body} == 'stop'"))
                             .log("stopping")
                             .stop()
-                        .when(simple("${body} == 'fault'"))
-                            .log("faulting")
-                            .setFaultBody(constant("faulted"))
                         .when(simple("${body} == 'ile'"))
                             .log("excepting")
                             .throwException(new IllegalArgumentException("Exception requested"))

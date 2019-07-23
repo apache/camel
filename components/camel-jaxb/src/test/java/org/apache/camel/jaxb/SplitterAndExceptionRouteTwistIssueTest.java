@@ -107,7 +107,6 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                 );
 
                 from("direct:error")
-                    .handleFault()
                     .convertBodyTo(String.class, "UTF-8")
                     .process(new Processor() {
                         @Override
@@ -127,7 +126,6 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
 
 
                 from("direct:error2")
-                    .handleFault()
                     .convertBodyTo(String.class, "UTF-8")
                     .process(new Processor() {
                         @Override
