@@ -19,7 +19,7 @@ methods.
 The xref:manual::bean-binding.adoc[Bean Binding] rules are used to bind the
 xref:manual::message.adoc[Message] Exchange to the method parameters; so you can
 annotate the bean to extract headers or other expressions such as
-xref:components::xpath-language.adoc[XPath] or xref:components::xquery-language.adoc[XQuery] from the message.
+xref:xpath-language.adoc[XPath] or xref:xquery-language.adoc[XQuery] from the message.
 
 [[BeanLanguage-UsingBeanExpressionsinJava]]
 === Using Bean Expressions in Java
