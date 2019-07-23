@@ -24,6 +24,8 @@ import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.node.services.vault.Sort;
 import net.corda.core.node.services.vault.SortAttribute;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Ignore;
 
@@ -37,26 +39,39 @@ public class CordaConsumerTestSupport extends CordaTestSupport {
     public boolean isUseAdviceWith() {
         return false;
     }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        String [] args = new String[] {"Hello"};
-        Class<FlowLogic<String>> flowLociClass = (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
-
-        QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
-        PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
-        Sort.SortColumn sortByUid = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
-        Sort sort = new Sort(ImmutableSet.of(sortByUid));
-
-        registry.bind("contractStateClass", OwnableState.class);
-        registry.bind("queryCriteria", criteria);
-        registry.bind("pageSpecification", pageSpec);
-        registry.bind("sort", sort);
-        registry.bind("flowLociClass", flowLociClass);
-        registry.bind("arguments", args);
-        return registry;
+    
+    @BindToRegistry("arguments")
+    public String[] addArgs() {
+    	String [] args = new String[] {"Hello"};
+    	return args;
     }
 
+    @BindToRegistry("flowLociClass")
+    public Class<FlowLogic<String>> addFlowLociClass() throws Exception {
+    	Class<FlowLogic<String>> flowLociClass = (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
+    	return flowLociClass;
+    }
+    
+    @BindToRegistry("queryCriteria")
+    public QueryCriteria addCriteria() {
+    	QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
+    	return criteria;
+    }
+    
+    @BindToRegistry("pageSpecification")
+    public PageSpecification addPageSpec() {
+    	PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
+    	return pageSpec;
+    }
+    
+    @BindToRegistry("contractStateClass")
+    public Class<OwnableState> addContractStateClass() {
+    	return OwnableState.class;
+    }
+    
+    @BindToRegistry("sort")
+    public Sort.SortColumn addSort() {
+    	Sort.SortColumn sortByUid = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
+    	return sortByUid;
+    }
 }
