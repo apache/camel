@@ -42,36 +42,36 @@ public class CordaConsumerTestSupport extends CordaTestSupport {
     
     @BindToRegistry("arguments")
     public String[] addArgs() {
-    	String [] args = new String[] {"Hello"};
-    	return args;
+        String [] args = new String[] {"Hello"};
+        return args;
     }
 
     @BindToRegistry("flowLociClass")
     public Class<FlowLogic<String>> addFlowLociClass() throws Exception {
-    	Class<FlowLogic<String>> flowLociClass = (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
-    	return flowLociClass;
+        Class<FlowLogic<String>> flowLociClass = (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
+        return flowLociClass;
     }
     
     @BindToRegistry("queryCriteria")
     public QueryCriteria addCriteria() {
-    	QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
-    	return criteria;
+        QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
+        return criteria;
     }
     
     @BindToRegistry("pageSpecification")
     public PageSpecification addPageSpec() {
-    	PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
-    	return pageSpec;
+        PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
+        return pageSpec;
     }
     
     @BindToRegistry("contractStateClass")
     public Class<OwnableState> addContractStateClass() {
-    	return OwnableState.class;
+        return OwnableState.class;
     }
     
     @BindToRegistry("sort")
     public Sort.SortColumn addSort() {
-    	Sort.SortColumn sortByUid = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
-    	return sortByUid;
+        Sort.SortColumn sortByUid = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
+        return sortByUid;
     }
 }
