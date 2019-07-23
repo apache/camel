@@ -320,7 +320,7 @@ bind to message headers and other values such as:
 .bean(OrderService.class, "doSomething(${body}, ${header.high})") 
 ----
 
-You can also use the OGNL support of the xref:simple-language.html[Simple]
+You can also use the OGNL support of the xref:simple-language.adoc[Simple]
 expression language. Now suppose the message body is an object which has
 a method named `asXml`. To invoke the `asXml` method we can do as
 follows:

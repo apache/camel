@@ -9,13 +9,13 @@ Allows to test Camel with Spring applications such as Spring XML files or Spring
 This documentation is old and needs to be updated
 ====
 
-http://camel.apache.org/testing.html[Testing] is a crucial part of any development or integration work. The Spring Framework offers a number of features that makes it easy to test while using Spring for Inversion of Control which works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
+xref:testing.adoc[Testing] is a crucial part of any development or integration work. The Spring Framework offers a number of features that makes it easy to test while using Spring for Inversion of Control which works with JUnit 3.x, JUnit 4.x, and http://testng.org[TestNG].
 
-We can use Spring for IoC and the Camel http://camel.apache.org/mock.html[Mock] and http://camel.apache.org/test.html[Test] endpoints to create sophisticated integration/unit tests that are easy to run and debug inside your IDE.  There are three supported approaches for testing with Spring in Camel.
+We can use Spring for IoC and the Camel xref:components::mock-component.adoc[Mock] and xref:components::test.adoc[Test] endpoints to create sophisticated integration/unit tests that are easy to run and debug inside your IDE.  There are three supported approaches for testing with Spring in Camel.
 [width="100%",cols="1,1,4,1",options="header",]
 |=======================================================================
 |Name |Testing Frameworks Supported |Description |Required Camel Test Dependencies
-|<<SpringTesting-CamelSpringTestSupport>>[CamelSpringTestSupport] a|
+|<<camel-spring-test-support,Camel Spring Test Support>> a|
 * JUnit 3.x (deprecated)
 * JUnit 4.x
 * TestNG
@@ -27,14 +27,14 @@ Provided by:
 * `org.apache.camel.test.junit4.CamelSpringTestSupport`
 * `org.apache.camel.testng.CamelSpringTestSupport`
 
-These base classes provide http://camel.apache.org/camel-test.html#CamelTest-FeaturesProvidedbyCamelTestSupport[feature parity] with the simple `CamelTestSupport` classes from http://camel.apache.org/camel-test.html[Camel Test] but do not support Spring annotations on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
+These base classes provide feature parity with the simple `CamelTestSupport` classes from xref:components::test.adoc[Camel Test] but do not support Spring annotations on the test class such as `@Autowired`, `@DirtiesContext`, and `@ContextConfiguration`.
 
 a|
 * JUnit 3.x (deprecated) - camel-test-spring
 * JUnit 4.x - camel-test-spring
 * TestNG - camel-test-ng
 
-|<<SpringTesting-PlainSpringTest>>[Plain Spring Test] a|
+|<<plain-spring-test, Plain Spring Test>> a|
 * JUnit 3.x
 * JUnit 4.x
 * TestNG
@@ -59,7 +59,7 @@ a|
 * JUnit 4.x - None
 * TestNG - None
 
-|<<SpringTesting-CamelEnhancedSpringTest>>[Camel Enhanced Spring Test] a|
+|<<camel-enhanced-spring-test,Camel Enhanced Spring Test>> a|
 * JUnit 4.x
 * TestNG
 
@@ -75,8 +75,7 @@ a|
 * TestNG - camel-test-ng
 |=======================================================================
 
-
-
+[#camel-spring-test-support]
 ### CamelSpringTestSupport
 
 The following Spring test support classes:
@@ -100,8 +99,7 @@ protected abstract AbstractApplicationContext createApplicationContext();
 ----
 You are responsible for the instantiation of the Spring context in the method implementation.  All of the features available in the non-Spring aware counterparts from http://camel.apache.org/camel-test.html[Camel Test] are available in your test.
 
-
-
+[#plain-spring-test]
 ### Plain Spring Test
 
 In this approach, your test classes directly inherit from the Spring Test abstract test classes or use the JUnit 4.x test runner provided in Spring Test.  This approach supports dependency injection into your test class and the full suite of Spring Test annotations. However, it does not support the features provided by the `CamelSpringTestSupport` classes.
@@ -293,7 +291,7 @@ public class MyCamelTest {
 }
 ----
 
-
+[#camel-enhanced-spring-test]
 ### Camel Enhanced Spring Test
 
 Using the `org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner` runner with the `@RunWith` annotation or extending `org.apache.camel.testng.AbstractCamelTestNGSpringContextTests` provides the full feature set of Spring Test with support for the feature set provided in the `CamelTestSupport` classes.
