@@ -31,7 +31,7 @@ pipeline {
     tools {
         jdk JDK_NAME
     }
-   
+
     environment {
         MAVEN_SKIP_RC = true
     }
@@ -52,6 +52,15 @@ pipeline {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Pdeploy -Dmaven.test.skip.exec=true clean deploy"
             }
+        }
+
+        stage('Website update') {
+            when {
+                branch 'master'
+                changeset "docs/**/*"
+            }
+
+            build 'Camel.website'
         }
 
         stage('Checks') {
