@@ -35,10 +35,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  */
 public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
 
-	@BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-	@BindToRegistry("myIdGenerator")
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    @BindToRegistry("myIdGenerator")
     private MyIdGenerator idGenerator = new MyIdGenerator();
 
     @After
@@ -75,8 +74,7 @@ public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("elsql:projectsByIdBean:elsql/projects.elsql?dataSource=#dataSource&consumer.initialDelay=0&consumer.delay=50")
-                    .routeId("foo").noAutoStartup()
+                from("elsql:projectsByIdBean:elsql/projects.elsql?dataSource=#dataSource&consumer.initialDelay=0&consumer.delay=50").routeId("foo").noAutoStartup()
                     .to("mock:result");
             }
         };
@@ -87,7 +85,8 @@ public class ElSqlConsumerDynamicParameterTest extends CamelTestSupport {
         private int id = 1;
 
         public int nextId() {
-            // spring will call this twice, one for initializing query and 2nd for actual value
+            // spring will call this twice, one for initializing query and 2nd
+            // for actual value
             id++;
             return id / 2;
         }

@@ -33,9 +33,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 
 public class ElSqlProducerStreamListTest extends CamelTestSupport {
 
-	@BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test
     public void testReturnAnIterator() throws Exception {
@@ -91,26 +90,13 @@ public class ElSqlProducerStreamListTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("elsql", ElsqlComponent.class).setDataSource(db);
 
-                from("direct:start")
-                    .to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList")
-                    .to("log:stream")
-                    .to("mock:result");
+                from("direct:start").to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList").to("log:stream").to("mock:result");
 
-                from("direct:withSplit")
-                    .to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList")
-                    .to("log:stream")
-                    .split(body()).streaming()
-                        .to("log:row")
-                        .to("mock:result")
-                    .end();
+                from("direct:withSplit").to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList").to("log:stream").split(body()).streaming().to("log:row")
+                    .to("mock:result").end();
 
-                from("direct:withSplitModel")
-                    .to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList&outputClass=org.apache.camel.component.elsql.Project")
-                    .to("log:stream")
-                    .split(body()).streaming()
-                        .to("log:row")
-                        .to("mock:result")
-                    .end();
+                from("direct:withSplitModel").to("elsql:allProjects:elsql/projects.elsql?outputType=StreamList&outputClass=org.apache.camel.component.elsql.Project")
+                    .to("log:stream").split(body()).streaming().to("log:row").to("mock:result").end();
             }
         };
     }
