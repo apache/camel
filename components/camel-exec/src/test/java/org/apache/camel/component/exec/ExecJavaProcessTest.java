@@ -31,7 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.exec.impl.ProvokeExceptionExecCommandExecutor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
