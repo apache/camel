@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.ehcache.processor.aggregate.EhcacheAggregationRepository;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.DefaultExchangeHolder;
@@ -48,6 +49,7 @@ public class EhcacheTestSupport extends CamelTestSupport  {
 
     @Rule
     public final TestName testName = new TestName();
+    @BindToRegistry("cacheManager")
     protected CacheManager cacheManager;
 
     @Override
@@ -66,14 +68,6 @@ public class EhcacheTestSupport extends CamelTestSupport  {
         if (cacheManager != null) {
             cacheManager.close();
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cacheManager", cacheManager);
-
-        return registry;
     }
 
     protected Cache<Object, Object> getCache(String name) {
