@@ -31,9 +31,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class ElSqlDataSourceTest extends CamelTestSupport {
 
-	@BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test
     public void testSimpleBody() throws Exception {
@@ -50,7 +49,8 @@ public class ElSqlDataSourceTest extends CamelTestSupport {
         // and each row in the list is a Map
         Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
 
-        // and we should be able the get the project from the map that should be Linux
+        // and we should be able the get the project from the map that should be
+        // Linux
         assertEquals("Linux", row.get("PROJECT"));
     }
 
@@ -65,9 +65,7 @@ public class ElSqlDataSourceTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:simple")
-                        .to("elsql:projectsById:elsql/projects.elsql?dataSource=#dataSource")
-                        .to("mock:result");
+                from("direct:simple").to("elsql:projectsById:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
             }
         };
     }

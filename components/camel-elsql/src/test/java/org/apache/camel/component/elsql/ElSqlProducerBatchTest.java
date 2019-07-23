@@ -32,10 +32,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 public class ElSqlProducerBatchTest extends CamelTestSupport {
 
-	@BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
-    
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -48,17 +47,17 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header(SqlConstants.SQL_UPDATE_COUNT).isEqualTo(1);
-        
-        Map<String, Object> batchParams = new HashMap<>();       
+
+        Map<String, Object> batchParams = new HashMap<>();
         batchParams.put("id", "4");
         batchParams.put("license", "GNU");
         batchParams.put("project", "Batch");
-        
+
         template.sendBody("direct:batch", batchParams);
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testNonBatchMode() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -67,30 +66,25 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
         mock.message(0).header("id").isEqualTo("4");
         mock.message(0).header("license").isEqualTo("GNU");
         mock.message(0).header("project").isEqualTo("nonBatch");
-        
-        Map<String, Object> headers = new HashMap<>();       
+
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", "4");
         headers.put("license", "GNU");
         headers.put("project", "nonBatch");
-        
+
         template.sendBodyAndHeaders("direct:nonBatch", "", headers);
 
         mock.assertIsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                
-                from("direct:batch")
-                        .to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource&batch=true")
-                        .to("mock:result");
-                
-                from("direct:nonBatch")
-                        .to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource")
-                        .to("mock:result");
+
+                from("direct:batch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource&batch=true").to("mock:result");
+
+                from("direct:nonBatch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
 
             }
         };

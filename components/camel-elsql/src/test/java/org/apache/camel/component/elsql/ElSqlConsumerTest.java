@@ -35,9 +35,8 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  */
 public class ElSqlConsumerTest extends CamelTestSupport {
 
-	@BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    @BindToRegistry("dataSource")
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
 
     @After
     public void tearDown() throws Exception {
@@ -69,8 +68,7 @@ public class ElSqlConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("elsql:allProjects:elsql/projects.elsql?dataSource=#dataSource")
-                        .to("mock:result");
+                from("elsql:allProjects:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
             }
         };
     }
