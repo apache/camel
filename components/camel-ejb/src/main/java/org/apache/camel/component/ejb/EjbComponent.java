@@ -29,6 +29,7 @@ import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 
 /**
  * EJB component to invoke EJBs like the {@link org.apache.camel.component.bean.BeanComponent}.
@@ -48,7 +49,7 @@ public class EjbComponent extends BeanComponent {
         answer.setBeanName(remaining);
 
         // plugin registry to lookup in jndi for the EJBs
-        Registry registry = new JndiRegistry(getContext());
+        JndiBeanRepository registry = new JndiBeanRepository(getContext());
         // and register the bean as a holder on the endpoint
         BeanHolder holder = new EjbRegistryBean(registry, getCamelContext(), answer.getBeanName());
         answer.setBeanHolder(holder);
