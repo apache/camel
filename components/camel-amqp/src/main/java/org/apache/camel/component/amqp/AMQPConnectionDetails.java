@@ -19,6 +19,9 @@ package org.apache.camel.component.amqp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.PropertiesComponent;
 
+import static org.apache.camel.spi.PropertiesComponent.PREFIX_TOKEN;
+import static org.apache.camel.spi.PropertiesComponent.SUFFIX_TOKEN;
+
 public class AMQPConnectionDetails {
 
     public static final String AMQP_HOST = "AMQP_SERVICE_HOST";
@@ -93,7 +96,7 @@ public class AMQPConnectionDetails {
 
     private static String property(PropertiesComponent propertiesComponent, String key, String defaultValue) {
         try {
-            return propertiesComponent.parseUri(propertiesComponent.getPrefixToken() + key + propertiesComponent.getSuffixToken());
+            return propertiesComponent.parseUri(PREFIX_TOKEN + key + SUFFIX_TOKEN);
         } catch (IllegalArgumentException e) {
             return defaultValue;
         } catch (Exception e) {

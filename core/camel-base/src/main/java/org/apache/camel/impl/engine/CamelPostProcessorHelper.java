@@ -38,6 +38,7 @@ import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -272,8 +273,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             getCamelContext().getPropertiesComponent(true);
 
             String key;
-            String prefix = getCamelContext().getPropertyPrefixToken();
-            String suffix = getCamelContext().getPropertySuffixToken();
+            String prefix = PropertiesComponent.PREFIX_TOKEN;
+            String suffix = PropertiesComponent.SUFFIX_TOKEN;
             if (!propertyName.contains(prefix)) {
                 // must enclose the property name with prefix/suffix to have it resolved
                 key = prefix + propertyName + suffix;

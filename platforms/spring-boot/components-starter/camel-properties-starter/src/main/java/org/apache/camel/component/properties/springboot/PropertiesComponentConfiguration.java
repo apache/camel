@@ -73,18 +73,6 @@ public class PropertiesComponentConfiguration
      */
     private Boolean ignoreMissingLocation = false;
     /**
-     * Sets the value of the prefix token used to identify properties to
-     * replace. Setting a value of null restores the default token (link
-     * DEFAULT_PREFIX_TOKEN).
-     */
-    private String prefixToken = "{{";
-    /**
-     * Sets the value of the suffix token used to identify properties to
-     * replace. Setting a value of null restores the default token (link
-     * DEFAULT_SUFFIX_TOKEN).
-     */
-    private String suffixToken = "}}";
-    /**
      * Sets initial properties which will be used before any locations are
      * resolved. The option is a java.util.Properties type.
      */
@@ -164,22 +152,6 @@ public class PropertiesComponentConfiguration
 
     public void setIgnoreMissingLocation(Boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
-    }
-
-    public String getPrefixToken() {
-        return prefixToken;
-    }
-
-    public void setPrefixToken(String prefixToken) {
-        this.prefixToken = prefixToken;
-    }
-
-    public String getSuffixToken() {
-        return suffixToken;
-    }
-
-    public void setSuffixToken(String suffixToken) {
-        this.suffixToken = suffixToken;
     }
 
     public String getInitialProperties() {

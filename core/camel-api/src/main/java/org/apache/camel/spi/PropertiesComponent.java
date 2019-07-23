@@ -30,31 +30,19 @@ import org.apache.camel.StaticService;
 public interface PropertiesComponent extends Component, StaticService {
 
     /**
-     * The default prefix token.
+     * The prefix token.
      */
-    String DEFAULT_PREFIX_TOKEN = "{{";
+    String PREFIX_TOKEN = "{{";
 
     /**
-     * The default suffix token.
+     * The suffix token.
      */
-    String DEFAULT_SUFFIX_TOKEN = "}}";
+    String SUFFIX_TOKEN = "}}";
 
     /**
      * Has the component been created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
      */
     String DEFAULT_CREATED = "PropertiesComponentDefaultCreated";
-
-    /**
-     * The value of the prefix token used to identify properties to replace.
-     * Is default {@link #DEFAULT_PREFIX_TOKEN}
-     */
-    String getPrefixToken();
-
-    /**
-     * The value of the suffix token used to identify properties to replace.
-     * Is default {@link #DEFAULT_SUFFIX_TOKEN}
-     */
-    String getSuffixToken();
 
     /**
      * Parses the input text and resolve all property placeholders from within the text.
