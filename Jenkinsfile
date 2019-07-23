@@ -60,7 +60,9 @@ pipeline {
                 changeset 'docs/**/*'
             }
 
-            build 'Camel.website'
+            steps {
+                build 'Camel.website'
+            }
         }
 
         stage('Checks') {
