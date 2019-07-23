@@ -109,7 +109,6 @@
  ** xref:script-eip.adoc[Script EIP]
  ** xref:serviceCall-eip.adoc[Service Call EIP]
  ** xref:setBody-eip.adoc[Set Body EIP]
- ** xref:setFaultBody-eip.adoc[Set Fault Body EIP]
  ** xref:setHeader-eip.adoc[Set Header EIP]
  ** xref:setOutHeader-eip.adoc[Set Out Header EIP (deprecated)]
  ** xref:setProperty-eip.adoc[Set Property EIP]

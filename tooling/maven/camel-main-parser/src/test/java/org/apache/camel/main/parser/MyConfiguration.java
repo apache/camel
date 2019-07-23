@@ -50,7 +50,6 @@ public class MyConfiguration {
     private boolean messageHistory = true;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
-    private boolean handleFault;
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
     private boolean endpointRuntimeStatisticsEnabled;
@@ -433,19 +432,6 @@ public class MyConfiguration {
      */
     public void setLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
-    }
-
-    public boolean isHandleFault() {
-        return handleFault;
-    }
-
-    /**
-     * Sets whether fault handling is enabled or not.
-     *
-     * Default is false.
-     */
-    public void setHandleFault(boolean handleFault) {
-        this.handleFault = handleFault;
     }
 
     public boolean isAutoStartup() {

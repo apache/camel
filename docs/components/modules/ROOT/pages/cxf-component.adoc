@@ -765,7 +765,7 @@ set the SOAP Fault message in the message body and set the response
 code in the message header.
 
 Same for using POJO data format. You can set the SOAPFault on the out
-body and also indicate it's a fault by calling Message.setFault(true):
+body.
 
 [#propagate-request-response-context]
 === How to propagate a camel-cxf endpoint's request and response context

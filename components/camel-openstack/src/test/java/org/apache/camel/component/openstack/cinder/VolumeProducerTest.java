@@ -110,24 +110,7 @@ public class VolumeProducerTest extends CinderProducerTestSupport {
         assertEquals(id, idCaptor.getValue());
         assertEquals(name, nameCaptor.getValue());
         assertEquals(desc, descCaptor.getValue());
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
-    }
-
-    @Test
-    public void updateVolumeFailTest() throws Exception {
-        final String faultMessage = "fault";
-        when(volumeService.update(anyString(), anyString(), anyString())).thenReturn(ActionResponse.actionFailed(faultMessage, 401));
-
-        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
-        final String id = "id";
-        msg.setHeader(OpenstackConstants.ID, id);
-        msg.setBody(createTestVolume());
-
-        producer.process(exchange);
-
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(faultMessage));
     }
 
     @Test
@@ -150,8 +133,6 @@ public class VolumeProducerTest extends CinderProducerTestSupport {
 
         verify(volumeService).delete(captor.capture());
         assertEquals(id, captor.getValue());
-
-        assertFalse(msg.isFault());
     }
 
     private void assertEqualVolumes(Volume old, Volume newVolume) {

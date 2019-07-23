@@ -109,7 +109,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 if (counter.incrementAndGet() == maxAttemptsCount) {
                                     log.info("{} Messages have been processed. Failing the exchange to force a rollback of the transaction.", maxAttemptsCount);
-                                    exchange.getOut().setFault(true);
+                                    throw new IllegalArgumentException("Forced rollback");
                                 }
                                 
                                 // Countdown the latch

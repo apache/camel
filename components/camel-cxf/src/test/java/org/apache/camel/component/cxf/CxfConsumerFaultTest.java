@@ -40,7 +40,6 @@ public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
                         faultDetail.setPersonId("");
                         UnknownPersonFault fault = new UnknownPersonFault("Get the null value of person name", faultDetail);
                         exchange.getOut().setBody(fault);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

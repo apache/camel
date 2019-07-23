@@ -86,7 +86,7 @@ public class SubnetProducer extends AbstractOpenstackProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.SUBNET_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Subnet ID");
         final ActionResponse response = os.networking().subnet().delete(id);
-        checkFailure(response, msg, "Delete network " + id);
+        checkFailure(response, exchange, "Delete network " + id);
     }
 
 

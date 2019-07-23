@@ -49,19 +49,6 @@ public class UnitOfWorkTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFail() throws Exception {
-        sendMessage();
-
-        assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
-        assertNull("Should not have completed", completed);
-        assertNotNull("Should have received failed notification", failed);
-        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "bat", baz);
-        assertNull("The Synchronization.onComplete() callback should have not been invoked", foo);
-
-        log.info("Received fail: " + failed);
-    }
-
-    @Test
     public void testException() throws Exception {
         sendMessage();
 
@@ -115,11 +102,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
                         exchange.getUnitOfWork().addSynchronization(synchronization);
 
                         String name = getName();
-                        if (name.equals("testFail")) {
-                            log.info("Failing test!");
-                            exchange.getOut().setFault(true);
-                            exchange.getOut().setBody("testFail() should always fail with a fault!");
-                        } else if (name.equals("testException")) {
+                        if (name.equals("testException")) {
                             log.info("Throwing exception!");
                             throw new Exception("Failing test!");
                         }

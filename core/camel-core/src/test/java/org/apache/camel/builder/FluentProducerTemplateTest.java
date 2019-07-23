@@ -153,21 +153,6 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
-        Object result = DefaultFluentProducerTemplate.on(context)
-            .withBody("Hello World")
-            .to("direct:fault")
-            .request();
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals("Faulty World", result);
-    }
-
-    @Test
     public void testExceptionUsingBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -435,12 +420,6 @@ public class FluentProducerTemplateTest extends ContextTestSupport {
                     .to("mock:result");
                 from("direct:out")
                     .process(exchange -> exchange.getOut().setBody("Bye Bye World"))
-                    .to("mock:result");
-                from("direct:fault")
-                    .process(exchange -> {
-                        exchange.getOut().setFault(true);
-                        exchange.getOut().setBody("Faulty World");
-                    })
                     .to("mock:result");
 
                 from("direct:exception")

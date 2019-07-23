@@ -3,7 +3,7 @@
 Camel supports most of the link:http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns] from the excellent book by link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Gregor%20Hohpe[Gregor Hohpe] and link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Bobby%20Woolf[Bobby Woolf].
 
 // eips: START
-Number of EIPs: 63 (0 deprecated)
+Number of EIPs: 62 (0 deprecated)
 
 [width="100%",cols="4,6",options="header"]
 |===
@@ -137,9 +137,6 @@ Number of EIPs: 63 (0 deprecated)
 
 | link:src/main/docs/eips/setBody-eip.adoc[Set Body] +
 `<setBody>` | Sets the contents of the message body
-
-| link:src/main/docs/eips/setFaultBody-eip.adoc[Set Fault Body] +
-`<setFaultBody>` | Sets the contents of a fault message's body
 
 | link:src/main/docs/eips/setHeader-eip.adoc[Set Header] +
 `<setHeader>` | Sets the value of a message header

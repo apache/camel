@@ -43,21 +43,6 @@ public class PipelineTest extends ContextTestSupport {
         }
     }
 
-    /**
-     * Simple processor the copies the in to the fault and increments a counter.
-     */
-    private static final class InToFault implements Processor {
-        public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setFault(true);
-            exchange.getOut().setBody(exchange.getIn().getBody());
-            Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
-            if (counter == null) {
-                counter = 0;
-            }
-            exchange.getOut().setHeader("copy-counter", counter + 1);
-        }
-    }
-
     protected MockEndpoint resultEndpoint;
 
     @Test
@@ -89,25 +74,6 @@ public class PipelineTest extends ContextTestSupport {
         
         assertEquals("Hello World", exchange.getOut().getBody());
         assertEquals(3, exchange.getOut().getHeader("copy-counter"));        
-    }
-
-    /**
-     * Disabled for now until we figure out fault processing in the pipeline.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testFaultStopsPipeline() throws Exception {
-        Exchange exchange = template.request("direct:c", new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Fault Message");
-            }
-        });
-        
-        // Check the fault..
-        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
-        assertEquals("Fault Message", exchange.getOut().getBody());
-        assertEquals(2, exchange.getOut().getHeader("copy-counter"));        
     }
 
     @Test
@@ -153,8 +119,6 @@ public class PipelineTest extends ContextTestSupport {
                 
                 // Create a route that uses the  InToOut processor 3 times. the copy-counter header should be == 3
                 from("direct:b").process(new InToOut()).process(new InToOut()).process(new InToOut());
-                // Create a route that uses the  InToFault processor.. the last InToOut will not be called since the Fault occurs before.
-                from("direct:c").process(new InToOut()).process(new InToFault()).process(new InToOut());
             }
         };
     }

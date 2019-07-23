@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 113 (0 deprecated)
+Number of Examples: 114 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -182,6 +182,8 @@ Number of Examples: 113 (0 deprecated)
 | link:camel-example-jms-file/README.md[JMS-File] (camel-example-jms-file) | Messaging | An example that persists messages from JMS to files
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
+
+| link:camel-example-kafka-offsetrepository/README.adoc[Kafka Offsetrepository] (camel-example-kafka-offsetrepository) | Messaging | An example for Kafka offsetrepository
 
 | link:camel-example-main-artemis/readme.adoc[Main Artemis] (camel-example-main-artemis) | Messaging | An example for showing standalone Camel with Artemis (autowiring JMS client via classpath scanning)
 

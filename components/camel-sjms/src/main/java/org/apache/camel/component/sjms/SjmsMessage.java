@@ -96,7 +96,6 @@ public class SjmsMessage extends DefaultMessage {
 
         // copy body and fault flag
         setBody(that.getBody());
-        setFault(that.isFault());
 
         // we have already cleared the headers
         if (that.hasHeaders()) {

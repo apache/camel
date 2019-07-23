@@ -33,7 +33,6 @@ import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
@@ -136,7 +135,6 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setMessageHistory(config.isMessageHistory());
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
-        camelContext.setHandleFault(config.isHandleFault());
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
@@ -177,10 +175,6 @@ public final class DefaultConfigurationConfigurer {
         BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
         if (bt != null) {
             ecc.setExtension(BacklogTracer.class, bt);
-        }
-        HandleFault hf = getSingleBeanOfType(registry, HandleFault.class);
-        if (hf != null) {
-            ecc.addInterceptStrategy(hf);
         }
         InflightRepository ir = getSingleBeanOfType(registry, InflightRepository.class);
         if (ir != null) {

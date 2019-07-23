@@ -102,8 +102,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String delayer;
     @XmlAttribute
-    private String handleFault;
-    @XmlAttribute
     private String errorHandlerRef;
     @XmlAttribute
     private String autoStartup = "true";
@@ -587,14 +585,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setDelayer(String delayer) {
         this.delayer = delayer;
-    }
-
-    public String getHandleFault() {
-        return handleFault;
-    }
-
-    public void setHandleFault(String handleFault) {
-        this.handleFault = handleFault;
     }
 
     public String getErrorHandlerRef() {

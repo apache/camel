@@ -63,18 +63,6 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
     }
 
     @Test
-    public void testFault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
-        Object result = template.requestBody("direct:fault", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals("Faulty World", result);
-    }
-
-    @Test
     public void testExceptionUsingBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -271,14 +259,6 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody("Bye Bye World");
-                    }
-                }).to("mock:result");
-
-                from("direct:fault").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setFault(true);
-                        exchange.getOut().setBody("Faulty World");
                     }
                 }).to("mock:result");
 

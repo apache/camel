@@ -398,17 +398,13 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             // 500 for internal server error which can be overridden by response code in header
             response.setStatus(Status.valueOf(500));
             Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            if (msg.isFault()) {
-                out = msg;
-            } else {
-                // print exception as message and stacktrace
-                Exception t = exchange.getException();
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                t.printStackTrace(pw);
-                response.setEntity(sw.toString(), MediaType.TEXT_PLAIN);
-                return;
-            }
+            // print exception as message and stacktrace
+            Exception t = exchange.getException();
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            t.printStackTrace(pw);
+            response.setEntity(sw.toString(), MediaType.TEXT_PLAIN);
+            return;
         } else {
             out = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
         }

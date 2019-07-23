@@ -905,41 +905,6 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the fault messages body
-     */
-    public static Expression faultBodyExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-                return msg.isFault() ? msg.getBody() : null;
-            }
-
-            @Override
-            public String toString() {
-                return "faultBody";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for the exchanges fault message body converted
-     * to the given type
-     */
-    public static <T> Expression faultBodyExpression(final Class<T> type) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-                return msg.isFault() ? msg.getBody(type) : null;
-            }
-
-            @Override
-            public String toString() {
-                return "faultBodyAs[" + type.getName() + "]";
-            }
-        };
-    }
-
-    /**
      * Returns the expression for the exchange
      */
     public static Expression exchangeExpression() {

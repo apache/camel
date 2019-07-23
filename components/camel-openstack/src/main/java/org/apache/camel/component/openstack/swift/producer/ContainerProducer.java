@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
+import org.apache.camel.component.openstack.common.OpenstackException;
 import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.apache.camel.component.openstack.swift.SwiftEndpoint;
 import org.apache.camel.util.StringHelper;
@@ -80,7 +81,7 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
         final CreateUpdateContainerOptions options = messageToCreateUpdateOptions(msg);
         final ActionResponse out = os.objectStorage().containers().create(name, options);
-        checkFailure(out, msg, "Create container " + name);
+        checkFailure(out, exchange, "Create container " + name);
     }
 
     private void doGet(Exchange exchange) {
@@ -102,7 +103,7 @@ public class ContainerProducer extends AbstractOpenstackProducer {
         StringHelper.notEmpty(name, "Container name");
         final CreateUpdateContainerOptions options = messageToCreateUpdateOptions(msg);
         final ActionResponse out = os.objectStorage().containers().update(name, options);
-        checkFailure(out, msg, "Update container " + name);
+        checkFailure(out, exchange, "Update container " + name);
     }
 
     private void doDelete(Exchange exchange) {
@@ -110,7 +111,7 @@ public class ContainerProducer extends AbstractOpenstackProducer {
         final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         StringHelper.notEmpty(name, "Container name");
         final ActionResponse out = os.objectStorage().containers().delete(name);
-        checkFailure(out, msg, "Delete container " + name);
+        checkFailure(out, exchange, "Delete container " + name);
     }
 
     private void doGetMetadata(Exchange exchange) {
@@ -125,9 +126,8 @@ public class ContainerProducer extends AbstractOpenstackProducer {
         final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         StringHelper.notEmpty(name, "Container name");
         boolean success = os.objectStorage().containers().deleteMetadata(name, msg.getBody(Map.class));
-        msg.setFault(!success);
         if (!success) {
-            msg.setBody("Removing metadata was not successful");
+            exchange.setException(new OpenstackException("Removing metadata was not successful"));
         }
     }
 
@@ -136,9 +136,8 @@ public class ContainerProducer extends AbstractOpenstackProducer {
         final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         StringHelper.notEmpty(name, "Container name");
         boolean success = os.objectStorage().containers().updateMetadata(name, msg.getBody(Map.class));
-        msg.setFault(!success);
         if (!success) {
-            msg.setBody("Updating metadata was not successful");
+            exchange.setException(new OpenstackException("Updating metadata was not successful"));
         }
     }
 

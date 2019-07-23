@@ -77,7 +77,6 @@ import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SetExchangePatternDefinition;
-import org.apache.camel.model.SetFaultBodyDefinition;
 import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.model.SortDefinition;
@@ -102,7 +101,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.channel.DefaultChannel;
-import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
@@ -162,7 +160,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         map.put(ServiceCallDefinition.class, ServiceCallReifier::new);
         map.put(SetBodyDefinition.class, SetBodyReifier::new);
         map.put(SetExchangePatternDefinition.class, SetExchangePatternReifier::new);
-        map.put(SetFaultBodyDefinition.class, SetFaultBodyReifier::new);
         map.put(SetHeaderDefinition.class, SetHeaderReifier::new);
         map.put(SetPropertyDefinition.class, SetPropertyReifier::new);
         map.put(SortDefinition.class, SortReifier::new);
@@ -418,15 +415,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
      * @param strategies    list of strategies to add.
      */
     protected void addInterceptStrategies(RouteContext routeContext, List<InterceptStrategy> interceptors, List<InterceptStrategy> strategies) {
-        for (InterceptStrategy strategy : strategies) {
-            if (!routeContext.isHandleFault() && strategy instanceof HandleFault) {
-                // handle fault is disabled so we should not add it
-                continue;
-            }
-
-            // add strategy
-            interceptors.add(strategy);
-        }
+        interceptors.addAll(strategies);
     }
 
     /**

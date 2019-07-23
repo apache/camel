@@ -30,7 +30,7 @@ public class MyConfigurationParserTest extends TestCase {
         MainConfigurationParser parser = new MainConfigurationParser();
         List<ConfigurationModel> list = parser.parseConfigurationSource(fileName);
         assertNotNull(list);
-        assertEquals(41, list.size());
+        assertEquals(40, list.size());
 
         assertEquals("name", list.get(0).getName());
         assertEquals("java.lang.String", list.get(0).getJavaType());

@@ -61,19 +61,17 @@ public class Mina2VMTransferExchangeOptionTest extends BaseMina2Test {
         return exchange;
     }
 
-    private void assertExchange(Exchange exchange, boolean hasFault) {
-        if (!hasFault) {
+    private void assertExchange(Exchange exchange, boolean hasException) {
+        if (!hasException) {
             Message out = exchange.getOut();
             assertNotNull(out);
-            assertFalse(out.isFault());
             assertEquals("Goodbye!", out.getBody());
             assertEquals("cheddar", out.getHeader("cheese"));
         } else {
             Message fault = exchange.getOut();
             assertNotNull(fault);
-            assertTrue(fault.isFault());
             assertNotNull(fault.getBody());
-            assertTrue("Should get the InterrupteException exception", fault.getBody() instanceof InterruptedException);
+            assertTrue("Should get the InterruptedException exception", fault.getBody() instanceof InterruptedException);
             assertEquals("nihao", fault.getHeader("hello"));
         }
 
@@ -105,7 +103,6 @@ public class Mina2VMTransferExchangeOptionTest extends BaseMina2Test {
                         Boolean setException = (Boolean) e.getProperty("setException");
 
                         if (setException) {
-                            e.getOut().setFault(true);
                             e.getOut().setBody(new InterruptedException());
                             e.getOut().setHeader("hello", "nihao");
                         } else {

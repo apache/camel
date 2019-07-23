@@ -84,7 +84,7 @@ public class NetworkProducer extends AbstractOpenstackProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.NETWORK_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Network ID");
         final ActionResponse response = os.networking().network().delete(id);
-        checkFailure(response, msg, "Delete network" + id);
+        checkFailure(response, exchange, "Delete network" + id);
     }
 
     private Network messageToNetwork(Message message) {

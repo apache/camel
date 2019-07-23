@@ -92,9 +92,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String delayer;
 
     @XmlAttribute
-    private String handleFault;
-
-    @XmlAttribute
     private String errorHandlerRef;
 
     @XmlAttribute
@@ -567,14 +564,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setDelayer(String delayer) {
         this.delayer = delayer;
-    }
-
-    public String getHandleFault() {
-        return handleFault;
-    }
-
-    public void setHandleFault(String handleFault) {
-        this.handleFault = handleFault;
     }
 
     public String getAutoStartup() {

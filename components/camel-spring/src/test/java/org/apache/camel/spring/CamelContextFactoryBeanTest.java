@@ -38,8 +38,6 @@ public class CamelContextFactoryBeanTest extends Assert {
 
     @Before
     public void setUp() throws Exception {
-
-        
         factory = new CamelContextFactoryBean();
         factory.setId("camelContext");
     }

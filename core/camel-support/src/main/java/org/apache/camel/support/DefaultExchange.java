@@ -98,14 +98,12 @@ public final class DefaultExchange implements Exchange {
 
         exchange.setIn(getIn().copy());
         exchange.getIn().setBody(getIn().getBody());
-        exchange.getIn().setFault(getIn().isFault());
         if (getIn().hasHeaders()) {
             exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
         }
         if (hasOut()) {
             exchange.setOut(getOut().copy());
             exchange.getOut().setBody(getOut().getBody());
-            exchange.getOut().setFault(getOut().isFault());
             if (getOut().hasHeaders()) {
                 exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
             }
@@ -408,10 +406,7 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean isFailed() {
-        if (exception != null) {
-            return true;
-        }
-        return hasOut() ? getOut().isFault() : getIn().isFault();
+        return exception != null;
     }
 
     public boolean isTransacted() {

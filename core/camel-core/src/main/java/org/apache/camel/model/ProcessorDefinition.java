@@ -2526,18 +2526,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Adds a processor which sets the body on the FAULT message
-     *
-     * @param expression   the expression used to set the body
-     * @return the builder
-     */
-    public Type setFaultBody(Expression expression) {
-        SetFaultBodyDefinition answer = new SetFaultBodyDefinition(expression);
-        addOutput(answer);
-        return asType();
-    }
-
-    /**
      * Adds a processor which sets the header on the IN message
      *
      * @param name  the header name

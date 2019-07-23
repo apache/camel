@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,11 +42,6 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
     private MockEndpoint exceptionEndpoint;
 
     @Test
-    public void testSendFault() throws Exception {
-        doTestInputStreamPayload("fault");
-    }
-
-    @Test
     public void testSendError() throws Exception {
         doTestInputStreamPayload("error");
     }
@@ -61,11 +57,6 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
 
         InputStream body = (InputStream) exceptionEndpoint.getExchanges().get(0).getIn().getBody();
         assertEquals("Ensure message re-readability in the exception handler", message, new String(IOConverter.toBytes(body)));
-    }
-
-    @Test
-    public void testSendFaultXml() throws Exception {
-        doTestXmlPayload("<fault/>");
     }
 
     @Test
@@ -99,8 +90,7 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                // enable support for handling faults and stream caching
-                context.setHandleFault(true);
+                // enable support for stream caching
                 context.setStreamCaching(true);
 
                 onException(Exception.class).handled(true).to("mock:exception");
@@ -108,12 +98,6 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String message = exchange.getIn().getBody(String.class);
-
-                        if (message.contains("fault")) {
-                            exchange.getOut().copyFrom(exchange.getIn());
-                            exchange.getOut().setBody(new ByteArrayInputStream(message.getBytes()));
-                            exchange.getOut().setFault(true);
-                        }
 
                         if (message.contains("error")) {
                             throw new RuntimeException(message);

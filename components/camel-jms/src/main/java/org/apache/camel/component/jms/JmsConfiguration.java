@@ -339,13 +339,6 @@ public class JmsConfiguration implements Cloneable {
                     + " The original Exception on the consumer side can be wrapped in an outer exception"
                     + " such as org.apache.camel.RuntimeCamelException when returned to the producer.")
     private boolean transferException;
-    @UriParam(label = "advanced",
-            description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,"
-                    + " then the fault flag on Message#isFault() will be send back in the response as a JMS header with the key"
-                    + " org.apache.camel.component.jms.JmsConstants#JMS_TRANSFER_FAULT#JMS_TRANSFER_FAULT."
-                    + " If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}."
-                    + " You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.")
-    private boolean transferFault;
     @UriParam(description = "Specifies whether to test the connection on startup."
             + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
             + " If a connection cannot be granted then Camel throws an exception on startup."
@@ -1836,22 +1829,6 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
-    }
-
-    public boolean isTransferFault() {
-        return transferFault;
-    }
-
-    /**
-     * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on {@link org.apache.camel.Message#isFault()} will be send back in the response as a JMS header with the key
-     * {@link JmsConstants#JMS_TRANSFER_FAULT}.
-     * If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}.
-     * <p>
-     * You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
-     */
-    public void setTransferFault(boolean transferFault) {
-        this.transferFault = transferFault;
     }
 
     public boolean isAsyncStartListener() {

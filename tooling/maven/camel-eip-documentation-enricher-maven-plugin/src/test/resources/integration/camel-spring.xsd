@@ -85,7 +85,6 @@
             <xs:element ref="tns:sample"/>
             <xs:element ref="tns:setBody"/>
             <xs:element ref="tns:setExchangePattern"/>
-            <xs:element ref="tns:setFaultBody"/>
             <xs:element ref="tns:setHeader"/>
             <xs:element ref="tns:setOutHeader"/>
             <xs:element ref="tns:setProperty"/>

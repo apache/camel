@@ -78,7 +78,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
-import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -198,7 +197,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
-    private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.TRUE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
@@ -1886,13 +1884,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
-
-        // for backwards compatible or if user add them here instead of the
-        // setXXX methods
-
-        if (interceptStrategy instanceof HandleFault) {
-            setHandleFault(true);
-        }
     }
 
     public List<RoutePolicyFactory> getRoutePolicyFactories() {
@@ -1961,14 +1952,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
-    }
-
-    public Boolean isHandleFault() {
-        return handleFault;
-    }
-
-    public void setHandleFault(Boolean handleFault) {
-        this.handleFault = handleFault;
     }
 
     public Long getDelayer() {
@@ -2444,14 +2427,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         if (isUseMDCLogging()) {
             // log if MDC has been enabled
             log.info("MDC logging is enabled on CamelContext: {}", getName());
-        }
-
-        if (isHandleFault()) {
-            // only add a new handle fault if not already configured
-            if (HandleFault.getHandleFault(this) == null) {
-                log.info("HandleFault is enabled on CamelContext: {}", getName());
-                addInterceptStrategy(new HandleFault());
-            }
         }
 
         if (getDelayer() != null && getDelayer() > 0) {

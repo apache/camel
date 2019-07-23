@@ -185,17 +185,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     } else {
                         log.debug("Reply received. OUT message body set to reply payload: {}", body);
                     }
-                    if (endpoint.isTransferFault()) {
-                        // remove the header as we do not want to keep it on the Camel Message either
-                        Object faultHeader = response.removeHeader(JmsConstants.JMS_TRANSFER_FAULT);
-                        if (faultHeader != null) {
-                            boolean isFault = exchange.getContext().getTypeConverter().tryConvertTo(boolean.class, faultHeader);
-                            log.debug("Transfer fault on OUT message: {}", isFault);
-                            if (isFault) {
-                                exchange.getOut().setFault(true);
-                            }
-                        }
-                    }
 
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {

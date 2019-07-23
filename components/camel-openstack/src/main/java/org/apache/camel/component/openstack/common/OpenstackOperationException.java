@@ -14,16 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
+package org.apache.camel.component.openstack.common;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.HandleFaultPerRouteTest;
+public class OpenstackOperationException extends OpenstackException {
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+    private String operation;
+    private String fault;
+    private int code;
 
-public class SpringHandleFaultPerRouteTest extends HandleFaultPerRouteTest {
+    public OpenstackOperationException(String operation, String fault, int code) {
+        super(String.format("%s was not successful: %s (%s)", operation, fault, code));
+        this.operation = operation;
+        this.fault = fault;
+        this.code = code;
+    }
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/handlefaultperroute.xml");
+    public String getOperation() {
+        return operation;
+    }
+
+    public String getFault() {
+        return fault;
+    }
+
+    public int getCode() {
+        return code;
     }
 }

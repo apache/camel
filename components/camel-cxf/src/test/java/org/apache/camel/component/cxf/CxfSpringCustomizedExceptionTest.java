@@ -21,7 +21,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -94,10 +96,13 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfCustomizedExceptionContext.xml");
     }
     
-    public static class SOAPFaultFactory {
-        public SoapFault getSoapFault() {
-            return SOAP_FAULT;
+    public static class SOAPFaultProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            exchange.getMessage().setBody(SOAP_FAULT);
         }
     }
+
 
 }

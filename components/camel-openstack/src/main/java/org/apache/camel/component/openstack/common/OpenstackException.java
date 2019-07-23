@@ -14,30 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.component.openstack.common;
 
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Exchange;
 
-public class FaultRetryRouteNewConfigurationTest extends FaultRetryRouteTest {
+public class OpenstackException extends Exception {
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                getContext().setHandleFault(true);
-
-                errorHandler(
-                    deadLetterChannel("mock:error")
-                        .maximumRedeliveries(4)
-                        .loggingLevel(LoggingLevel.DEBUG));
-
-                from("direct:start")
-                    .to("mock:a")
-                    .process(successOnRetryProcessor)
-                    .to("mock:b");
-            }
-        };
+    public OpenstackException(String message) {
+        super(message);
     }
 }

@@ -59,7 +59,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     private String trace;
     private String messageHistory;
     private String logMask;
-    private String handleFault;
     private String delayer;
     private String autoStartup;
     private Integer startupOrder;
@@ -340,26 +339,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      */
     public RouteDefinition noMessageHistory() {
         setMessageHistory("false");
-        return this;
-    }
-
-    /**
-     * Disable handle fault for this route.
-     *
-     * @return the builder
-     */
-    public RouteDefinition noHandleFault() {
-        setHandleFault("false");
-        return this;
-    }
-
-    /**
-     * Enable handle fault for this route.
-     *
-     * @return the builder
-     */
-    public RouteDefinition handleFault() {
-        setHandleFault("true");
         return this;
     }
 
@@ -773,21 +752,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     @XmlAttribute
     public void setLogMask(String logMask) {
         this.logMask = logMask;
-    }
-
-    /**
-     * Whether handle fault is enabled on this route.
-     */
-    public String getHandleFault() {
-        return handleFault;
-    }
-
-    /**
-     * Whether handle fault is enabled on this route.
-     */
-    @XmlAttribute
-    public void setHandleFault(String handleFault) {
-        this.handleFault = handleFault;
     }
 
     /**

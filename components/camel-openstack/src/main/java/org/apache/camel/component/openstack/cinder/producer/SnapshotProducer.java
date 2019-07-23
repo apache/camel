@@ -90,7 +90,7 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
         StringHelper.notEmpty(id, "Cinder Snapshot ID");
 
         final ActionResponse out = os.blockStorage().snapshots().update(id, vs.getName(), vs.getDescription());
-        checkFailure(out, msg, "Update volume snapshot " + id);
+        checkFailure(out, exchange, "Update volume snapshot " + id);
     }
 
     private void doDelete(Exchange exchange) {
@@ -99,7 +99,7 @@ public class SnapshotProducer extends AbstractOpenstackProducer {
         StringHelper.notEmpty(id, "Cinder Snapshot ID");
 
         final ActionResponse out = os.blockStorage().snapshots().delete(id);
-        checkFailure(out, msg, "Delete snapshot " + id);
+        checkFailure(out, exchange, "Delete snapshot " + id);
     }
 
     private VolumeSnapshot messageToSnapshot(Message message) {

@@ -64,7 +64,6 @@ public class DefaultRouteContext implements RouteContext {
     private Boolean logMask;
     private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
-    private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
     private List<RoutePolicy> routePolicyList = new ArrayList<>();
@@ -332,19 +331,6 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             // fallback to the option from camel context
             return getCamelContext().isStreamCaching();
-        }
-    }
-
-    public void setHandleFault(Boolean handleFault) {
-        this.handleFault = handleFault;
-    }
-
-    public Boolean isHandleFault() {
-        if (handleFault != null) {
-            return handleFault;
-        } else {
-            // fallback to the option from camel context
-            return getCamelContext().isHandleFault();
         }
     }
 

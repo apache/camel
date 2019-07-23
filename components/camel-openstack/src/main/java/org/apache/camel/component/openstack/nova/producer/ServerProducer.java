@@ -111,7 +111,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
         ObjectHelper.notNull(action, "Server action");
         StringHelper.notEmpty(serverId, "Server ID");
         final ActionResponse response = os.compute().servers().action(serverId, action);
-        checkFailure(response, msg, "Performing action " + action.name());
+        checkFailure(response, exchange, "Performing action " + action.name());
     }
 
     private void doDelete(Exchange exchange) {
@@ -119,7 +119,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
         final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
         StringHelper.notEmpty(serverId, "Server ID");
         final ActionResponse response = os.compute().servers().delete(serverId);
-        checkFailure(response, msg, "Delete server with ID " + serverId);
+        checkFailure(response, exchange, "Delete server with ID " + serverId);
     }
 
     private ServerCreate messageToServer(Message message) {

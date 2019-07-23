@@ -332,13 +332,6 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     private boolean logExhaustedMessageBody;
 
     /**
-     * Sets whether fault handling is enabled or not.
-     *
-     * Default is false.
-     */
-    private boolean handleFault;
-
-    /**
      * Sets whether the object should automatically start when Camel starts.
      * Important: Currently only routes can be disabled, as CamelContext's are always started.
      * Note: When setting auto startup false on CamelContext then that takes precedence

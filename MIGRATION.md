@@ -140,6 +140,9 @@ To use this API you can get it via the `getMessage` method on `Exchange`:
     AttachmentMessage am = exchange.getMessage(AttachmentMessage.class);
     am.addAttachment("myAtt", new DataHandler(...));
 
+### Fault API on Message
+
+The fault API has been removed from `org.apache.camel.Message` as it was only used for SOAP-WS fault message. The `camel-cxf` and `camel-spring-ws` components for SOAP-WS has been modified to support fault messages from their components. The option `handleFault` has also been removed and you now need to turn this on as endpoint or component option on `camel-cxf` or `camel-spring-ws`.
 
 ### Mock component
 
