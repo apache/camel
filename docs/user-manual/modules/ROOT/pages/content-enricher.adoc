@@ -144,7 +144,7 @@ xref:exchange.adoc[Exchange].
 from. You must use either `uri` or `ref`.  **Important:** From Camel
 2.16 onwards, this option is removed, and you use an
 xref:expression.adoc[Expression] to configure the uri, such as
-xref:simple-language.adoc[Simple] or xref:constant.html[Constant] or any other
+xref:simple-language.adoc[Simple] or xref:constant-language.adoc[Constant] or any other
 dynamic language that can compute the uri dynamically using values from
 the current  xref:exchange.adoc[Exchange].
 
