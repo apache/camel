@@ -68,15 +68,15 @@ import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
 public class ExecJavaProcessTest extends CamelTestSupport {
 
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
-
-    @BindToRegistry("executorMock")
-    private ProvokeExceptionExecCommandExecutor provokerMock = new ProvokeExceptionExecCommandExecutor();
     
     @Produce("direct:input")
     ProducerTemplate producerTemplate;
 
     @EndpointInject("mock:output")
     MockEndpoint output;
+    
+    @BindToRegistry("executorMock")
+    private ProvokeExceptionExecCommandExecutor provokerMock = new ProvokeExceptionExecCommandExecutor();
 
     @Override
     public boolean isUseAdviceWith() {
