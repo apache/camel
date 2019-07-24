@@ -19,8 +19,11 @@ package org.apache.camel.component.aws.sns;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
@@ -103,6 +106,14 @@ public class SnsProducer extends DefaultProducer {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     mav.setDataType("String");
                     mav.withStringValue(value.toString());
+                    result.put(entry.getKey(), mav);
+                } else if (value instanceof List) {
+                    String resultString = ((List<?>) value).stream()
+                            .map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
+                            .collect(Collectors.joining(", "));
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("String.Array");
+                    mav.withStringValue("[" + resultString + "]");
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
