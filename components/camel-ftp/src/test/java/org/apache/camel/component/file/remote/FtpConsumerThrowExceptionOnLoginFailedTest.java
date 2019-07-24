@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,17 +35,13 @@ import org.junit.Test;
 public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSupport {
 
     private CountDownLatch latch = new CountDownLatch(1);
+    
+    @BindToRegistry("myPoll")
+    private MyPoll poll = new MyPoll();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremember"
                 + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myPoll", new MyPoll());
-        return jndi;
     }
 
     @Test

@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,19 +33,15 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin";
     }
+    
+    @BindToRegistry("myguidgenerator")
+    private MyGuidGenerator guid = new MyGuidGenerator();
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/filelanguage");
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myguidgenerator", new MyGuidGenerator());
-        return jndi;
     }
 
     @Test

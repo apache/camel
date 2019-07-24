@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -26,15 +27,8 @@ import org.junit.Test;
 
 public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
-    private MyStrategy myStrategy;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        myStrategy = new MyStrategy();
-        jndi.bind("myStrategy", myStrategy);
-        return jndi;
-    }
+	@BindToRegistry("myStrategy")
+    private MyStrategy myStrategy = new MyStrategy();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?password=admin&processStrategy=#myStrategy";

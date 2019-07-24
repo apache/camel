@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -39,14 +40,8 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myConfig", createConfig());
-        return jndi;
-    }
-
-    private FTPClientConfig createConfig() {
+    @BindToRegistry("myConfig")
+    public FTPClientConfig createConfig() {
         FTPClientConfig config = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
         config.setServerTimeZoneId("Europe/Paris");
         return config;

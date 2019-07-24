@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.net.ServerSocket;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -81,13 +82,11 @@ public class FtpSoTimeoutTest extends CamelTestSupport {
         };
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("myftpclient")
+    public FTPClient createFtpClient() throws Exception {
         FTPClient ftpClient = new FTPClient();
         ftpClient.setDefaultTimeout(300);
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myftpclient", ftpClient);
-        return registry;
+        return ftpClient;
     }
     
     // --- Tests

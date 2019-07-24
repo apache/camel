@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -28,17 +29,13 @@ import org.junit.Test;
 public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
     private static boolean invoked;
+    
+    @BindToRegistry("myRepo")
+    private MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort()
                 + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myRepo", new MyIdempotentRepository());
-        return jndi;
     }
 
     @Test
