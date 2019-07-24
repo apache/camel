@@ -11,20 +11,20 @@ There are many ways you can help make Camel a better piece of software - please 
 
 == Table of Contents
 
-* <<Getting in touch>>
-* <<Improving the documentation>>
-* <<If you find a bug or problem>>
-* <<Working on the code>>
-* <<Running checkstyle>>
-* <<Checking Karaf and Spring Boot Integration Tests>>
-* <<Apache Camel committers should work on the ASF git repo>>
-* <<Creating patches>>
-* <<Pull request at Github>>
-* <<Manual patch files>>
-* <<Submitting patches>>
-* <<Using the issue tracker>>
-* <<Becoming a committer>>
-* <<More resources>>
+* <<getting-in-touch,Getting in touch>>
+* <<improving-the-documentation,Improving the documentation>>
+* <<if-you-find-a-bug-or-problem,If you find a bug or problem>>
+* <<working-on-the-code,Working on the code>>
+* <<running-checkstyle,Running checkstyle>>
+* <<checking-karaf-and-spring-boot-integration-tests,Checking Karaf and Spring Boot Integration Tests>>
+* <<apache-camel-committers-should-work-on-the-asf-git-repo,Apache Camel committers should work on the ASF git repo>>
+* <<creating-patches,Creating patches>>
+* <<pull-request-at-github,Pull request at Github>>
+* <<manual-patch-files,Manual patch files>>
+* <<submitting-patches,Submitting patches>>
+* <<using-the-issue-tracker,Using the issue tracker>>
+* <<becoming-a-committer,Becoming a committer>>
+* <<more-resources,More resources>>
 
 [#getting-in-touch]
 == Getting in touch
