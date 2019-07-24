@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -34,13 +35,11 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
                 + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&idempotentKey=${file:onlyname}&delete=true";
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("myRepo")
+    public MemoryIdempotentRepository addRepo() throws Exception {
         repo = new MemoryIdempotentRepository();
         repo.setCacheSize(5);
-        jndi.bind("myRepo", repo);
-        return jndi;
+        return repo;
     }
 
     @Test

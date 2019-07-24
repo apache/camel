@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.net.SocketFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -35,18 +36,12 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
      */
     private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
+    @BindToRegistry("sf")
+    private SocketFactory sf = new AuditingSocketFactory();
+    
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
             + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        SocketFactory sf = new AuditingSocketFactory();
-        jndi.bind("sf", sf);
-        return jndi;
     }
 
     @Test

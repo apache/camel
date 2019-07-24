@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.util.Comparator;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -33,12 +34,8 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/sorter?password=admin&sorter=#mySorter";
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySorter", new MyRemoteFileSorter());
-        return jndi;
-    }
+    @BindToRegistry("mySorter")
+    private MyRemoteFileSorter sorter = new MyRemoteFileSorter();
 
     @Override
     @Before

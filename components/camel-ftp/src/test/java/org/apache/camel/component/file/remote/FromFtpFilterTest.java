@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
@@ -28,15 +29,11 @@ import org.junit.Test;
  */
 public class FromFtpFilterTest extends FtpServerTestSupport {
 
+	@BindToRegistry("myFilter")
+	private MyFileFilter filter = new MyFileFilter<>();
+	
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filter?password=admin&binary=false&filter=#myFilter";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter<>());
-        return jndi;
     }
 
     @Test

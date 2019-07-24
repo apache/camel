@@ -19,6 +19,8 @@ package org.apache.camel.component.file.remote.sftp;
 import java.io.File;
 
 import com.jcraft.jsch.ProxyHTTP;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
@@ -107,14 +109,12 @@ public class SftpSimpleProduceThroughProxyTest extends SftpServerTestSupport {
         proxyServer.stop();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("proxy")
+    public ProxyHTTP createProxy() throws Exception {
 
         final ProxyHTTP proxyHTTP = new ProxyHTTP("localhost", proxyPort);
         proxyHTTP.setUserPasswd("user", "password");
-        jndi.bind("proxy", proxyHTTP);
-        return jndi;
+        return proxyHTTP;
     }
 
 }

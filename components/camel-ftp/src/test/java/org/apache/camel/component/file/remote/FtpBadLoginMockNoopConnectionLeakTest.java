@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.net.SocketFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -39,6 +40,9 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
     private Map<Integer, boolean[]> socketAudits = new HashMap<>();
+    
+    @BindToRegistry("sf")
+    private SocketFactory sf = new AuditingSocketFactory();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
@@ -58,15 +62,6 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
                 return this.isConnected();
             }
         });
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        SocketFactory sf = new AuditingSocketFactory();
-        jndi.bind("sf", sf);
-        return jndi;
     }
 
     @Test

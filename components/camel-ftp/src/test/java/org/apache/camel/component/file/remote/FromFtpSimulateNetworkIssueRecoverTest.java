@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,13 +36,9 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/recover?password=admin&pollStrategy=#myPoll";
     }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myPoll", new MyPollStrategy());
-        return jndi;
-    }
+    
+    @BindToRegistry("myPoll")
+    private MyPollStrategy strategy = new MyPollStrategy();
 
     @Test
     public void testFtpRecover() throws Exception {
