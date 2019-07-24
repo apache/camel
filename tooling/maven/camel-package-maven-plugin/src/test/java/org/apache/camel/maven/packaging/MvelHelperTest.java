@@ -42,6 +42,12 @@ public class MvelHelperTest {
     }
 
     @ParameterizedTest
+    @MethodSource("curlyBracketEscapeCases")
+    public void shouldcurlyBracket(final String given, final String expected) {
+        assertThat(MvelHelper.escape(given)).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
     @MethodSource("urlEscapeCases")
     public void shouldUrls(final String given, final String expected) {
         assertThat(MvelHelper.escape(given)).isEqualTo(expected);
@@ -50,13 +56,18 @@ public class MvelHelperTest {
     static Stream<Arguments> dollarEscapeCases() {
         return Stream.of(
             arguments("$", "\\$"),
-            arguments("some ${expression} here", "some \\${expression} here"));
+            arguments("some ${expression} here", "some \\$\\{expression\\} here"));
+    }
+
+    static Stream<Arguments> curlyBracketEscapeCases() {
+        return Stream.of(
+            arguments("some {expression} here", "some \\{expression\\} here"));
     }
 
     static Stream<Arguments> urlEscapeCases() {
         return Stream.of(
             arguments("http", "http"),
-            arguments("some ${expression} here", "some \\${expression} here"),
+            arguments("some ${expression} here", "some \\$\\{expression\\} here"),
             arguments("http://example.com", "\\http://example.com"),
             arguments("some http://example.com here", "some \\http://example.com here"),
             arguments("https://example.com", "\\https://example.com"),
