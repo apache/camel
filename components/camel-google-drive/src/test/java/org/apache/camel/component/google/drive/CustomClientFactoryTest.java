@@ -27,9 +27,9 @@ import org.junit.Test;
  */
 public class CustomClientFactoryTest extends AbstractGoogleDriveTestSupport {
 
-	@BindToRegistry("myAuth")
-	private MyClientFactory cf = new MyClientFactory();
-	
+    @BindToRegistry("myAuth")
+    private MyClientFactory cf = new MyClientFactory();
+
     @Test
     public void testClientFactoryUpdated() throws Exception {
         Endpoint endpoint = context.getEndpoint("google-drive://drive-files/list?clientFactory=#myAuth");
