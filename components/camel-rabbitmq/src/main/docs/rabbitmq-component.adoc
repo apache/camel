@@ -220,7 +220,7 @@ The component supports 52 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.rabbitmq.addresses* | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | String
 | *camel.component.rabbitmq.allow-null-headers* | Allow pass null values to header | false | Boolean
-| *camel.component.rabbitmq.args* | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.rabbitmq.args* | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *camel.component.rabbitmq.auto-ack* | If messages should be auto acknowledged | true | Boolean
 | *camel.component.rabbitmq.auto-delete* | If it is true, the exchange will be deleted when it is no longer in use | true | Boolean
 | *camel.component.rabbitmq.auto-detect-connection-factory* | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | Boolean
@@ -228,7 +228,7 @@ The component supports 52 options, which are listed below.
 | *camel.component.rabbitmq.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.rabbitmq.channel-pool-max-size* | Get maximum number of opened channel in pool | 10 | Integer
 | *camel.component.rabbitmq.channel-pool-max-wait* | Set the maximum number of milliseconds to wait for a channel from the pool | 1000 | Long
-| *camel.component.rabbitmq.client-properties* | Connection client properties (client info used in negotiating with the server). The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.rabbitmq.client-properties* | Connection client properties (client info used in negotiating with the server) |  | Map
 | *camel.component.rabbitmq.connection-factory* | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used. The option is a com.rabbitmq.client.ConnectionFactory type. |  | String
 | *camel.component.rabbitmq.connection-timeout* | Connection timeout | 60000 | Integer
 | *camel.component.rabbitmq.dead-letter-exchange* | The name of the dead letter exchange |  | String

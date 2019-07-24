@@ -57,7 +57,7 @@ import org.springframework.core.annotation.Order;
 @EnableConfigurationProperties(CacheConfigurationCustomizerConfiguration.class)
 public class CacheConfigurationCustomizer implements HasId, ComponentCustomizer<EhcacheComponent> {
     @Autowired(required = false)
-    private Map<String, CacheConfiguration<?, ?>> configurations;
+    private Map<String, CacheConfiguration> configurations;
     @Autowired
     private CacheConfigurationCustomizerConfiguration configuration;
 

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jetty9.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
+import org.eclipse.jetty.server.Connector;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -60,17 +62,14 @@ public class JettyHttpComponentConfiguration9
      */
     private String errorHandler;
     /**
-     * A map which contains per port number specific SSL connectors. The option
-     * is a java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector>
-     * type.
+     * A map which contains per port number specific SSL connectors.
      */
-    private String sslSocketConnectors;
+    private Map<Integer, Connector> sslSocketConnectors;
     /**
      * A map which contains per port number specific HTTP connectors. Uses the
-     * same principle as sslSocketConnectors. The option is a
-     * java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector> type.
+     * same principle as sslSocketConnectors.
      */
-    private String socketConnectors;
+    private Map<Integer, Connector> socketConnectors;
     /**
      * To set a value for minimum number of threads in HttpClient thread pool.
      * Notice that both a min and max size must be configured.
@@ -125,16 +124,14 @@ public class JettyHttpComponentConfiguration9
      */
     private String mbContainer;
     /**
-     * A map which contains general SSL connector properties. The option is a
-     * java.util.Map<java.lang.String,java.lang.Object> type.
+     * A map which contains general SSL connector properties.
      */
-    private String sslSocketConnectorProperties;
+    private Map<String, Object> sslSocketConnectorProperties;
     /**
      * A map which contains general HTTP connector properties. Uses the same
-     * principle as sslSocketConnectorProperties. The option is a
-     * java.util.Map<java.lang.String,java.lang.Object> type.
+     * principle as sslSocketConnectorProperties.
      */
-    private String socketConnectorProperties;
+    private Map<String, Object> socketConnectorProperties;
     /**
      * Allows to set a timeout in millis when using Jetty as consumer (server).
      * By default Jetty uses 30000. You can use a value of = 0 to never expire.
@@ -253,19 +250,20 @@ public class JettyHttpComponentConfiguration9
         this.errorHandler = errorHandler;
     }
 
-    public String getSslSocketConnectors() {
+    public Map<Integer, Connector> getSslSocketConnectors() {
         return sslSocketConnectors;
     }
 
-    public void setSslSocketConnectors(String sslSocketConnectors) {
+    public void setSslSocketConnectors(
+            Map<Integer, Connector> sslSocketConnectors) {
         this.sslSocketConnectors = sslSocketConnectors;
     }
 
-    public String getSocketConnectors() {
+    public Map<Integer, Connector> getSocketConnectors() {
         return socketConnectors;
     }
 
-    public void setSocketConnectors(String socketConnectors) {
+    public void setSocketConnectors(Map<Integer, Connector> socketConnectors) {
         this.socketConnectors = socketConnectors;
     }
 
@@ -349,20 +347,21 @@ public class JettyHttpComponentConfiguration9
         this.mbContainer = mbContainer;
     }
 
-    public String getSslSocketConnectorProperties() {
+    public Map<String, Object> getSslSocketConnectorProperties() {
         return sslSocketConnectorProperties;
     }
 
     public void setSslSocketConnectorProperties(
-            String sslSocketConnectorProperties) {
+            Map<String, Object> sslSocketConnectorProperties) {
         this.sslSocketConnectorProperties = sslSocketConnectorProperties;
     }
 
-    public String getSocketConnectorProperties() {
+    public Map<String, Object> getSocketConnectorProperties() {
         return socketConnectorProperties;
     }
 
-    public void setSocketConnectorProperties(String socketConnectorProperties) {
+    public void setSocketConnectorProperties(
+            Map<String, Object> socketConnectorProperties) {
         this.socketConnectorProperties = socketConnectorProperties;
     }
 

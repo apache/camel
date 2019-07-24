@@ -17,6 +17,7 @@
 package org.apache.camel.component.fhir.springboot;
 
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -77,10 +78,9 @@ public class FhirJsonDataFormatConfiguration
      * the patient's name Patient.name.family - Encode only the patient's family
      * name .text - Encode the text element on any resource (only the very first
      * position may contain a wildcard) .(mandatory) - This is a special case
-     * which causes any mandatory fields (min 0) to be encoded. The option is a
-     * java.util.Set<java.lang.String> type.
+     * which causes any mandatory fields (min 0) to be encoded
      */
-    private String encodeElements;
+    private Set<String> encodeElements;
     /**
      * If provided, specifies the elements which should NOT be encoded. Valid
      * values for this field would include: Patient - Don't encode patient and
@@ -90,9 +90,9 @@ public class FhirJsonDataFormatConfiguration
      * position may contain a wildcard) DSTU2 note: Note that values including
      * meta, such as Patient.meta will work for DSTU2 parsers, but values with
      * subelements on meta such as Patient.meta.lastUpdated will only work in
-     * DSTU3 mode. The option is a java.util.Set<java.lang.String> type.
+     * DSTU3 mode.
      */
-    private String dontEncodeElements;
+    private Set<String> dontEncodeElements;
     /**
      * If set to true (which is the default), resource references containing a
      * version will have the version removed when the resource is encoded. This
@@ -184,19 +184,19 @@ public class FhirJsonDataFormatConfiguration
         this.encodeElementsAppliesToChildResourcesOnly = encodeElementsAppliesToChildResourcesOnly;
     }
 
-    public String getEncodeElements() {
+    public Set<String> getEncodeElements() {
         return encodeElements;
     }
 
-    public void setEncodeElements(String encodeElements) {
+    public void setEncodeElements(Set<String> encodeElements) {
         this.encodeElements = encodeElements;
     }
 
-    public String getDontEncodeElements() {
+    public Set<String> getDontEncodeElements() {
         return dontEncodeElements;
     }
 
-    public void setDontEncodeElements(String dontEncodeElements) {
+    public void setDontEncodeElements(Set<String> dontEncodeElements) {
         this.dontEncodeElements = dontEncodeElements;
     }
 
