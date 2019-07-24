@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,11 +54,14 @@ public class SnsProducerTest {
         headers.put("key1", null);
         headers.put("key2", "");
         headers.put("key3", "value3");
+        headers.put("key4", Arrays.asList("Value4", "Value5", "Value6"));
 
         Map<String, MessageAttributeValue> translateAttributes = producer.translateAttributes(headers, exchange);
 
-        assertThat(translateAttributes.size(), is(1));
+        assertThat(translateAttributes.size(), is(2));
         assertThat(translateAttributes.get("key3").getDataType(), is("String"));
         assertThat(translateAttributes.get("key3").getStringValue(), is("value3"));
+        assertThat(translateAttributes.get("key4").getDataType(), is("String.Array"));
+        assertThat(translateAttributes.get("key4").getStringValue(), is("[\"Value4\", \"Value5\", \"Value6\"]"));
     }
 }
