@@ -24,30 +24,30 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
 public class FileToFtpsExplicitTLSWithClientAuthAndSSLContextParametersTest extends FileToFtpsExplicitTLSWithClientAuthTest {
-    
-	@BindToRegistry("sslContextParameters")
+
+    @BindToRegistry("sslContextParameters")
     public SSLContextParameters createSslContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("server.jks");
         ksp.setPassword("password");
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyPassword("password");
         kmp.setKeyStore(ksp);
-        
+
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
-        
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setSecureSocketProtocol("TLSv1.2");
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
-        
+
         return sslContextParameters;
     }
-    
+
     protected String getFtpUrl() {
         return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true"
-                + "&isImplicit=false&sslContextParameters=#sslContextParameters&delete=true";
+               + "&isImplicit=false&sslContextParameters=#sslContextParameters&delete=true";
     }
 }

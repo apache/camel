@@ -27,19 +27,18 @@ import org.junit.Test;
  * Test the ftps component over SSL (explicit) and without client authentication
  */
 public class FileToFtpsWithFtpClientConfigRefTest extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
-    
-	@BindToRegistry("ftpsClient")
-	private FTPSClient client = new FTPSClient("SSLv3");
-	
-	@BindToRegistry("ftpsClientIn")
-	private FTPSClient client1 = new FTPSClient("SSLv3");
-	
+
+    @BindToRegistry("ftpsClient")
+    private FTPSClient client = new FTPSClient("SSLv3");
+
+    @BindToRegistry("ftpsClientIn")
+    private FTPSClient client1 = new FTPSClient("SSLv3");
+
     private String getFtpUrl(boolean in) {
-        return "ftps://admin@localhost:" + getPort() 
-            + "/tmp2/camel?password=admin&consumer.initialDelay=2000&ftpClient=#ftpsClient"
-            + (in ? "In" : "") + "&disableSecureDataChannelDefaults=true&delete=true";
+        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&ftpClient=#ftpsClient" + (in ? "In" : "")
+               + "&disableSecureDataChannelDefaults=true&delete=true";
     }
-    
+
     @Test
     public void testFromFileToFtp() throws Exception {
         // some platforms cannot test SSL

@@ -32,12 +32,12 @@ import org.junit.Test;
  */
 public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
+    @BindToRegistry("myguidgenerator")
+    private MyGuidGenerator guid = new MyGuidGenerator();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&consumer.delay=5000";
     }
-    
-    @BindToRegistry("myguidgenerator")
-    private MyGuidGenerator guid = new MyGuidGenerator();
 
     @Override
     @Before
@@ -45,7 +45,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
         super.setUp();
         deleteDirectory("target/filelanguage");
     }
-    
+
     @Test
     public void testMoveUsingExpression() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -67,8 +67,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
-                        + "-${file:name.noext}.bak").to("mock:result");
+                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}" + "-${file:name.noext}.bak").to("mock:result");
             }
         };
     }

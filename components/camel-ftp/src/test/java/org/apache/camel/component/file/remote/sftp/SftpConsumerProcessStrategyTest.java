@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
-	@BindToRegistry("myStrategy")
+    @BindToRegistry("myStrategy")
     private MyStrategy myStrategy = new MyStrategy();
 
     @Test
@@ -52,7 +52,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
         @Override
         public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -62,7 +62,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
         @Override
         public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -72,7 +72,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
         @Override
         public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         int getInvoked() {

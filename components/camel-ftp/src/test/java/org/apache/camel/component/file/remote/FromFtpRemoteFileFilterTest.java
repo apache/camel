@@ -31,12 +31,12 @@ import org.junit.Test;
  */
 public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
 
+    @BindToRegistry("myFilter")
+    private MyFileFilter filter = new MyFileFilter<>();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filefilter?password=admin&filter=#myFilter";
     }
-   
-	@BindToRegistry("myFilter")
-	private MyFileFilter filter = new MyFileFilter<>();
 
     @Override
     @Before
@@ -44,24 +44,26 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testFtpFilter() throws Exception {
         if (isPlatform("aix")) {
-            // skip testing on AIX as it have an issue with this test with the file filter
+            // skip testing on AIX as it have an issue with this test with the
+            // file filter
             return;
         }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceivedInAnyOrder("Report 1", "Report 2");
-        
+
         mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
         sendFile(getFtpUrl(), "Report 1", "report1.txt");
         sendFile(getFtpUrl(), "Bye World", "bye.txt");
@@ -80,7 +82,7 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
     public class MyFileFilter<T> implements GenericFileFilter<T> {
 
         public boolean accept(GenericFile<T> file) {
-            // we only want report files 
+            // we only want report files
             return file.getFileName().startsWith("report");
         }
     }

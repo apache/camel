@@ -31,12 +31,12 @@ import org.junit.Test;
  */
 public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
 
+    @BindToRegistry("myFilter")
+    private MyFileFilter filter = new MyFileFilter<>();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filefilter?password=admin&recursive=true&filter=#myFilter";
     }
-    
-	@BindToRegistry("myFilter")
-	private MyFileFilter filter = new MyFileFilter<>();
 
     @Override
     @Before
@@ -44,24 +44,26 @@ public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testFtpFilter() throws Exception {
         if (isPlatform("aix")) {
-            // skip testing on AIX as it have an issue with this test with the file filter
+            // skip testing on AIX as it have an issue with this test with the
+            // file filter
             return;
         }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
-        
+
         mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool
         sendFile(getFtpUrl(), "This is a file to be filtered", "skipDir/skipme.txt");
         sendFile(getFtpUrl(), "This is a file to be filtered", "skipDir2/skipme.txt");
         sendFile(getFtpUrl(), "Hello World", "okDir/hello.txt");
@@ -79,7 +81,8 @@ public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
     public class MyFileFilter<T> implements GenericFileFilter<T> {
 
         public boolean accept(GenericFile<T> file) {
-            // we dont accept any files within directory starting with skip in the name
+            // we dont accept any files within directory starting with skip in
+            // the name
             if (file.isDirectory() && file.getFileName().startsWith("skip")) {
                 return false;
             }

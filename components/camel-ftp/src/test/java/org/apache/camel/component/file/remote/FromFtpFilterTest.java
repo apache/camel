@@ -29,9 +29,9 @@ import org.junit.Test;
  */
 public class FromFtpFilterTest extends FtpServerTestSupport {
 
-	@BindToRegistry("myFilter")
-	private MyFileFilter filter = new MyFileFilter<>();
-	
+    @BindToRegistry("myFilter")
+    private MyFileFilter filter = new MyFileFilter<>();
+
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filter?password=admin&binary=false&filter=#myFilter";
     }
@@ -40,7 +40,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
     public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        
+
         sendFile(getFtpUrl(), "This is a file to be filtered", "skipme.txt");
 
         mock.setResultWaitTime(3000);
