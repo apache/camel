@@ -18,9 +18,9 @@ package org.apache.camel.component.openstack.common;
 
 public class OpenstackOperationException extends OpenstackException {
 
-    private String operation;
-    private String fault;
-    private int code;
+    private final String operation;
+    private final String fault;
+    private final int code;
 
     public OpenstackOperationException(String operation, String fault, int code) {
         super(String.format("%s was not successful: %s (%s)", operation, fault, code));
