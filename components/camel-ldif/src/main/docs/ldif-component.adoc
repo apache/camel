@@ -168,6 +168,7 @@ The `LdapConnection` bean may be defined as follows in Spring XML:
 ----
 
 or in a OSGi blueprint.xml:
+[source,xml]
 ----
 <bean id="ldapConnectionOptions" class="org.apache.directory.ldap.client.api.LdapConnectionConfig">
   <property name="ldapHost" value="${ldap.host}"/>
