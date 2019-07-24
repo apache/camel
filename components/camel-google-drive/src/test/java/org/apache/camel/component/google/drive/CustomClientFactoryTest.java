@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.drive;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -26,18 +27,14 @@ import org.junit.Test;
  */
 public class CustomClientFactoryTest extends AbstractGoogleDriveTestSupport {
 
+	@BindToRegistry("myAuth")
+	private MyClientFactory cf = new MyClientFactory();
+	
     @Test
     public void testClientFactoryUpdated() throws Exception {
         Endpoint endpoint = context.getEndpoint("google-drive://drive-files/list?clientFactory=#myAuth");
         assertTrue(endpoint instanceof GoogleDriveEndpoint);
         assertTrue(((GoogleDriveEndpoint)endpoint).getClientFactory() instanceof MyClientFactory);        
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myAuth", new MyClientFactory());
-        return registry;
     }
 
     @Override
