@@ -136,7 +136,7 @@ The component supports 7 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.quickfix.configurations* | To use the given map of pre configured QuickFix configurations mapped to the key. The option is a java.util.Map<java.lang.String,org.apache.camel.component .quickfixj.QuickfixjConfiguration> type. |  | String
+| *camel.component.quickfix.configurations* | To use the given map of pre configured QuickFix configurations mapped to the key |  | Map
 | *camel.component.quickfix.enabled* | Enable quickfix component | true | Boolean
 | *camel.component.quickfix.lazy-create-engines* | If set to true, the engines will be created and started when needed (when first message is send) | false | Boolean
 | *camel.component.quickfix.log-factory* | To use the given LogFactory. The option is a quickfix.LogFactory type. |  | String

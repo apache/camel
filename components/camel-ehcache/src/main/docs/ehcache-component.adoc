@@ -116,7 +116,7 @@ The component supports 25 options, which are listed below.
 | *camel.component.ehcache.cache-configuration-uri* | URI pointing to the Ehcache XML configuration file's location |  | String
 | *camel.component.ehcache.cache-manager* | The cache manager. The option is a org.ehcache.CacheManager type. |  | String
 | *camel.component.ehcache.cache-manager-configuration* | The cache manager configuration. The option is a org.ehcache.config.Configuration type. |  | String
-| *camel.component.ehcache.caches-configurations* | A map of caches configurations to be used to create caches. The option is a java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration<?, ?>> type. |  | String
+| *camel.component.ehcache.caches-configurations* | A map of caches configurations to be used to create caches. |  | Map
 | *camel.component.ehcache.configuration.action* | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
 | *camel.component.ehcache.configuration.cache-manager* | The cache manager |  | CacheManager
 | *camel.component.ehcache.configuration.cache-manager-configuration* | The cache manager configuration |  | Configuration

@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.xstream.springboot;
 
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -80,23 +81,20 @@ public class XStreamDataFormatConfiguration
      */
     private List<String> converters;
     /**
-     * Alias a Class to a shorter name to be used in XML elements. The option is
-     * a java.util.Map<java.lang.String,java.lang.String> type.
+     * Alias a Class to a shorter name to be used in XML elements.
      */
-    private String aliases;
+    private Map<String, String> aliases;
     /**
      * Prevents a field from being serialized. To omit a field you must always
      * provide the declaring type and not necessarily the type that is
-     * converted. The option is a
-     * java.util.Map<java.lang.String,java.lang.String[]> type.
+     * converted.
      */
-    private String omitFields;
+    private Map<String, String[]> omitFields;
     /**
      * Adds a default implicit collection which is used for any unmapped XML
-     * tag. The option is a java.util.Map<java.lang.String,java.lang.String[]>
-     * type.
+     * tag.
      */
-    private String implicitCollections;
+    private Map<String, String[]> implicitCollections;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
@@ -153,27 +151,27 @@ public class XStreamDataFormatConfiguration
         this.converters = converters;
     }
 
-    public String getAliases() {
+    public Map<String, String> getAliases() {
         return aliases;
     }
 
-    public void setAliases(String aliases) {
+    public void setAliases(Map<String, String> aliases) {
         this.aliases = aliases;
     }
 
-    public String getOmitFields() {
+    public Map<String, String[]> getOmitFields() {
         return omitFields;
     }
 
-    public void setOmitFields(String omitFields) {
+    public void setOmitFields(Map<String, String[]> omitFields) {
         this.omitFields = omitFields;
     }
 
-    public String getImplicitCollections() {
+    public Map<String, String[]> getImplicitCollections() {
         return implicitCollections;
     }
 
-    public void setImplicitCollections(String implicitCollections) {
+    public void setImplicitCollections(Map<String, String[]> implicitCollections) {
         this.implicitCollections = implicitCollections;
     }
 
