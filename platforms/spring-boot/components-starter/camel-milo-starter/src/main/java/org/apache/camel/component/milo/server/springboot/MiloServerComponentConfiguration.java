@@ -18,6 +18,7 @@ package org.apache.camel.component.milo.server.springboot;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
@@ -72,11 +73,9 @@ public class MiloServerComponentConfiguration
      */
     private String hostname;
     /**
-     * Security policies. The option is a
-     * java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy>
-     * type.
+     * Security policies
      */
-    private String securityPolicies;
+    private Set<SecurityPolicy> securityPolicies;
     /**
      * Security policies by URI or name
      */
@@ -198,11 +197,11 @@ public class MiloServerComponentConfiguration
         this.hostname = hostname;
     }
 
-    public String getSecurityPolicies() {
+    public Set<SecurityPolicy> getSecurityPolicies() {
         return securityPolicies;
     }
 
-    public void setSecurityPolicies(String securityPolicies) {
+    public void setSecurityPolicies(Set<SecurityPolicy> securityPolicies) {
         this.securityPolicies = securityPolicies;
     }
 

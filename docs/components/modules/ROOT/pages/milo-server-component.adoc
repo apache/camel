@@ -147,7 +147,7 @@ The component supports 22 options, which are listed below.
 | *camel.component.milo-server.namespace-uri* | The URI of the namespace, defaults to urn:org:apache:camel |  | String
 | *camel.component.milo-server.product-uri* | The product URI |  | String
 | *camel.component.milo-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.milo-server.security-policies* | Security policies. The option is a java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy> type. |  | String
+| *camel.component.milo-server.security-policies* | Security policies |  | Set
 | *camel.component.milo-server.security-policies-by-id* | Security policies by URI or name |  | Collection
 | *camel.component.milo-server.server-certificate* | Server certificate. The option is a org.apache.camel.component.milo.KeyStoreLoader.Result type. |  | String
 | *camel.component.milo-server.server-name* | Server name |  | String

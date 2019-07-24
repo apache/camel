@@ -50,9 +50,9 @@ public class EhcacheConfiguration implements Cloneable {
     @UriParam
     private String configurationUri;
     @UriParam(label = "advanced")
-    private CacheConfiguration<?, ?> configuration;
+    private CacheConfiguration configuration;
     @UriParam(label = "advanced")
-    private Map<String, CacheConfiguration<?, ?>> configurations;
+    private Map<String, CacheConfiguration> configurations;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
     private Class<?> keyType;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
@@ -244,15 +244,15 @@ public class EhcacheConfiguration implements Cloneable {
     /**
      * A map of cache configuration to be used to create caches.
      */
-    public Map<String, CacheConfiguration<?, ?>> getConfigurations() {
+    public Map<String, CacheConfiguration> getConfigurations() {
         return configurations;
     }
 
-    public void setConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+    public void setConfigurations(Map<String, CacheConfiguration> configurations) {
         this.configurations = Map.class.cast(configurations);
     }
 
-    public void addConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+    public void addConfigurations(Map<String, CacheConfiguration> configurations) {
         if (this.configurations == null) {
             this.configurations = new HashMap<>();
         }

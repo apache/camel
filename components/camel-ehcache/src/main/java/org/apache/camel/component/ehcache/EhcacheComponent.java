@@ -165,26 +165,26 @@ public class EhcacheComponent extends DefaultComponent {
     /**
      * The default cache configuration to be used to create caches.
      */
-    public void setCacheConfiguration(CacheConfiguration<?, ?> cacheConfiguration) {
+    public void setCacheConfiguration(CacheConfiguration cacheConfiguration) {
         this.configuration.setConfiguration(cacheConfiguration);
     }
 
-    public CacheConfiguration<?, ?> getCacheConfiguration() {
+    public CacheConfiguration getCacheConfiguration() {
         return this.configuration.getConfiguration();
     }
 
-    public Map<String, CacheConfiguration<?, ?>> getCachesConfigurations() {
+    public Map<String, CacheConfiguration> getCachesConfigurations() {
         return configuration.getConfigurations();
     }
 
     /**
      * A map of caches configurations to be used to create caches.
      */
-    public void setCachesConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+    public void setCachesConfigurations(Map<String, CacheConfiguration> configurations) {
         configuration.setConfigurations(configurations);
     }
 
-    public void addCachesConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+    public void addCachesConfigurations(Map<String, CacheConfiguration> configurations) {
         configuration.addConfigurations(configurations);
     }
 

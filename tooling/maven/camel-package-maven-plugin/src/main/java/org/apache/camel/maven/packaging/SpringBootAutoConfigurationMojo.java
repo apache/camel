@@ -769,8 +769,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 type = "java.lang.String";
             }
 
+            // need to generate and load this class so the compiler can compile
             if (type.equals(packageName + "." + name + "$" + option.getShortJavaType() + INNER_TYPE_SUFFIX)) {
-                Class configClass = generateDummyClass(type);
+                generateDummyClass(type);
             }
 
             Property prop = javaClass.addProperty(type, option.getName());
@@ -1000,16 +1001,28 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private boolean isComplexType(ComponentOptionModel option) {
+        // we can configure map/list/set types from spring-boot so do not regard them as complex
+        if (option.getJavaType().startsWith("java.util.Map") || option.getJavaType().startsWith("java.util.List") || option.getJavaType().startsWith("java.util.Set")) {
+            return false;
+        }
         // all the object types are complex
         return "object".equals(option.getType());
     }
 
     private boolean isComplexType(DataFormatOptionModel option) {
+        // we can configure map/list/set types from spring-boot so do not regard them as complex
+        if (option.getJavaType().startsWith("java.util.Map") || option.getJavaType().startsWith("java.util.List") || option.getJavaType().startsWith("java.util.Set")) {
+            return false;
+        }
         // all the object types are complex
         return "object".equals(option.getType());
     }
 
     private boolean isComplexType(LanguageOptionModel option) {
+        // we can configure map/list/set types from spring-boot so do not regard them as complex
+        if (option.getJavaType().startsWith("java.util.Map") || option.getJavaType().startsWith("java.util.List") || option.getJavaType().startsWith("java.util.Set")) {
+            return false;
+        }
         // all the object types are complex
         return "object".equals(option.getType());
     }

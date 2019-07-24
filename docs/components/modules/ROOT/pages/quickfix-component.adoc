@@ -152,7 +152,7 @@ The component supports 8 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.quickfix.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.quickfix.configurations* | To use the given map of pre configured QuickFix configurations mapped to the key. The option is a java.util.Map<java.lang.String,org.apache.camel.component.quickfixj.QuickfixjConfiguration> type. |  | String
+| *camel.component.quickfix.configurations* | To use the given map of pre configured QuickFix configurations mapped to the key |  | Map
 | *camel.component.quickfix.enabled* | Enable quickfix component | true | Boolean
 | *camel.component.quickfix.lazy-create-engines* | If set to true, the engines will be created and started when needed (when first message is send) | false | Boolean
 | *camel.component.quickfix.log-factory* | To use the given LogFactory. The option is a quickfix.LogFactory type. |  | String

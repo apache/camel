@@ -135,7 +135,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.xslt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.xslt.saxon* | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | Boolean
 | *camel.component.xslt.saxon-configuration* | To use a custom Saxon configuration. The option is a java.lang.Object type. |  | String
-| *camel.component.xslt.saxon-configuration-properties* | To set custom Saxon configuration properties. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.xslt.saxon-configuration-properties* | To set custom Saxon configuration properties |  | Map
 | *camel.component.xslt.saxon-extension-functions* | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *camel.component.xslt.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String
 | *camel.component.xslt.uri-resolver-factory* | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. The option is a org.apache.camel.component.xslt.XsltUriResolverFactory type. |  | String

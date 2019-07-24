@@ -367,8 +367,7 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -382,8 +381,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -712,8 +710,7 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -727,8 +724,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -980,8 +976,7 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -995,8 +990,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */

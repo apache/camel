@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.springboot;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.AuthenticationType;
@@ -132,17 +133,15 @@ public class SalesforceComponentConfiguration
     /**
      * Used to set any properties that can be configured on the underlying HTTP
      * client. Have a look at properties of SalesforceHttpClient and the Jetty
-     * HttpClient for all available options. The option is a
-     * java.util.Map<java.lang.String,java.lang.Object> type.
+     * HttpClient for all available options.
      */
-    private String httpClientProperties;
+    private Map<String, Object> httpClientProperties;
     /**
      * Used to set any properties that can be configured on the
      * LongPollingTransport used by the BayeuxClient (CometD) used by the
-     * streaming api. The option is a
-     * java.util.Map<java.lang.String,java.lang.Object> type.
+     * streaming api
      */
-    private String longPollingTransportProperties;
+    private Map<String, Object> longPollingTransportProperties;
     /**
      * SSL parameters to use, see SSLContextParameters class for all available
      * options. The option is a
@@ -178,15 +177,13 @@ public class SalesforceComponentConfiguration
      */
     private Boolean isHttpProxySecure = true;
     /**
-     * A list of addresses for which HTTP proxy server should be used. The
-     * option is a java.util.Set<java.lang.String> type.
+     * A list of addresses for which HTTP proxy server should be used.
      */
-    private String httpProxyIncludedAddresses;
+    private Set<String> httpProxyIncludedAddresses;
     /**
-     * A list of addresses for which HTTP proxy server should not be used. The
-     * option is a java.util.Set<java.lang.String> type.
+     * A list of addresses for which HTTP proxy server should not be used.
      */
-    private String httpProxyExcludedAddresses;
+    private Set<String> httpProxyExcludedAddresses;
     /**
      * Used in authentication against the HTTP proxy server, needs to match the
      * URI of the proxy server in order for the httpProxyUsername and
@@ -319,20 +316,20 @@ public class SalesforceComponentConfiguration
         this.config = config;
     }
 
-    public String getHttpClientProperties() {
+    public Map<String, Object> getHttpClientProperties() {
         return httpClientProperties;
     }
 
-    public void setHttpClientProperties(String httpClientProperties) {
+    public void setHttpClientProperties(Map<String, Object> httpClientProperties) {
         this.httpClientProperties = httpClientProperties;
     }
 
-    public String getLongPollingTransportProperties() {
+    public Map<String, Object> getLongPollingTransportProperties() {
         return longPollingTransportProperties;
     }
 
     public void setLongPollingTransportProperties(
-            String longPollingTransportProperties) {
+            Map<String, Object> longPollingTransportProperties) {
         this.longPollingTransportProperties = longPollingTransportProperties;
     }
 
@@ -401,19 +398,21 @@ public class SalesforceComponentConfiguration
         this.isHttpProxySecure = isHttpProxySecure;
     }
 
-    public String getHttpProxyIncludedAddresses() {
+    public Set<String> getHttpProxyIncludedAddresses() {
         return httpProxyIncludedAddresses;
     }
 
-    public void setHttpProxyIncludedAddresses(String httpProxyIncludedAddresses) {
+    public void setHttpProxyIncludedAddresses(
+            Set<String> httpProxyIncludedAddresses) {
         this.httpProxyIncludedAddresses = httpProxyIncludedAddresses;
     }
 
-    public String getHttpProxyExcludedAddresses() {
+    public Set<String> getHttpProxyExcludedAddresses() {
         return httpProxyExcludedAddresses;
     }
 
-    public void setHttpProxyExcludedAddresses(String httpProxyExcludedAddresses) {
+    public void setHttpProxyExcludedAddresses(
+            Set<String> httpProxyExcludedAddresses) {
         this.httpProxyExcludedAddresses = httpProxyExcludedAddresses;
     }
 

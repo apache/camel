@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xquery.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -47,10 +48,9 @@ public class XQueryComponentConfiguration
      */
     private String configuration;
     /**
-     * To set custom Saxon configuration properties. The option is a
-     * java.util.Map<java.lang.String,java.lang.Object> type.
+     * To set custom Saxon configuration properties
      */
-    private String configurationProperties;
+    private Map<String, Object> configurationProperties;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -79,11 +79,12 @@ public class XQueryComponentConfiguration
         this.configuration = configuration;
     }
 
-    public String getConfigurationProperties() {
+    public Map<String, Object> getConfigurationProperties() {
         return configurationProperties;
     }
 
-    public void setConfigurationProperties(String configurationProperties) {
+    public void setConfigurationProperties(
+            Map<String, Object> configurationProperties) {
         this.configurationProperties = configurationProperties;
     }
 
