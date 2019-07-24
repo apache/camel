@@ -28,6 +28,8 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
+import com.amazonaws.services.s3.AmazonS3;
+
 @Component("aws-s3")
 public class S3Component extends DefaultComponent {
 
