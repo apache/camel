@@ -47,6 +47,8 @@ import ca.uhn.fhir.rest.gclient.ITransaction;
 import ca.uhn.fhir.rest.gclient.IUntypedQuery;
 import ca.uhn.fhir.rest.gclient.IUpdate;
 import ca.uhn.fhir.rest.gclient.IValidate;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
@@ -68,6 +70,12 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
     private static final String TEST_URI_CUSTOM_CLIENT_FACTORY = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&clientFactory=#customClientFactory&serverUrl=foobar";
 
+    @BindToRegistry("customClient")
+    private CustomClient client = new CustomClient();
+    
+    @BindToRegistry("customClientFactory")
+    private CustomClientFactory clientFactory = new CustomClientFactory();
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = new DefaultCamelContext(createRegistry());
@@ -77,14 +85,6 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         context.addComponent("fhir", component);
 
         return context;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("customClient", new CustomClient());
-        registry.bind("customClientFactory", new CustomClientFactory());
-        return registry;
     }
 
     @Test
