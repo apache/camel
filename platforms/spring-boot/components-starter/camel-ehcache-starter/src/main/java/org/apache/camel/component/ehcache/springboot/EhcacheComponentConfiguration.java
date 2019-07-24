@@ -65,11 +65,9 @@ public class EhcacheComponentConfiguration
      */
     private String cacheConfiguration;
     /**
-     * A map of caches configurations to be used to create caches. The option is
-     * a java.util.Map<java.lang.String,org.ehcache.config.CacheConfiguration<?,
-     * ?>> type.
+     * A map of caches configurations to be used to create caches.
      */
-    private String cachesConfigurations;
+    private Map<String, CacheConfiguration<?, ?>> cachesConfigurations;
     /**
      * URI pointing to the Ehcache XML configuration file's location
      */
@@ -114,11 +112,12 @@ public class EhcacheComponentConfiguration
         this.cacheConfiguration = cacheConfiguration;
     }
 
-    public String getCachesConfigurations() {
+    public Map<String, CacheConfiguration<?, ?>> getCachesConfigurations() {
         return cachesConfigurations;
     }
 
-    public void setCachesConfigurations(String cachesConfigurations) {
+    public void setCachesConfigurations(
+            Map<String, CacheConfiguration<?, ?>> cachesConfigurations) {
         this.cachesConfigurations = cachesConfigurations;
     }
 

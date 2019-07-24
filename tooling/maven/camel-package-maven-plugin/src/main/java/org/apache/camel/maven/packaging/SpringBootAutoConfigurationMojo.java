@@ -963,16 +963,28 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private boolean isComplexType(ComponentOptionModel option) {
+        // we can configure map/list/set types from spring-boot so do not regard them as complex
+        if (option.getJavaType().startsWith("java.util.Map") || option.getJavaType().startsWith("java.util.List") || option.getJavaType().startsWith("java.util.Set")) {
+            return false;
+        }
         // all the object types are complex
         return "object".equals(option.getType());
     }
 
     private boolean isComplexType(DataFormatOptionModel option) {
+        // we can configure map/list/set types from spring-boot so do not regard them as complex
+        if (option.getJavaType().startsWith("java.util.Map") || option.getJavaType().startsWith("java.util.List") || option.getJavaType().startsWith("java.util.Set")) {
+            return false;
+        }
         // all the object types are complex
         return "object".equals(option.getType());
     }
 
     private boolean isComplexType(LanguageOptionModel option) {
+        // we can configure map/list/set types from spring-boot so do not regard them as complex
+        if (option.getJavaType().startsWith("java.util.Map") || option.getJavaType().startsWith("java.util.List") || option.getJavaType().startsWith("java.util.Set")) {
+            return false;
+        }
         // all the object types are complex
         return "object".equals(option.getType());
     }

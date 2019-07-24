@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rabbitmq.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -199,16 +200,14 @@ public class RabbitMQComponentConfiguration
      * different prefix is required for each: Exchange: arg.exchange. Queue:
      * arg.queue. Binding: arg.binding. For example to declare a queue with
      * message ttl argument:
-     * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
-     * The option is a java.util.Map<java.lang.String,java.lang.Object> type.
+     * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000
      */
-    private String args;
+    private Map<String, Object> args;
     /**
      * Connection client properties (client info used in negotiating with the
-     * server). The option is a java.util.Map<java.lang.String,java.lang.Object>
-     * type.
+     * server)
      */
-    private String clientProperties;
+    private Map<String, Object> clientProperties;
     /**
      * Enables SSL on connection, accepted value are true, TLS and 'SSLv3
      */
@@ -535,19 +534,19 @@ public class RabbitMQComponentConfiguration
         this.immediate = immediate;
     }
 
-    public String getArgs() {
+    public Map<String, Object> getArgs() {
         return args;
     }
 
-    public void setArgs(String args) {
+    public void setArgs(Map<String, Object> args) {
         this.args = args;
     }
 
-    public String getClientProperties() {
+    public Map<String, Object> getClientProperties() {
         return clientProperties;
     }
 
-    public void setClientProperties(String clientProperties) {
+    public void setClientProperties(Map<String, Object> clientProperties) {
         this.clientProperties = clientProperties;
     }
 

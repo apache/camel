@@ -137,7 +137,7 @@ The component supports 17 options, which are listed below.
 | *camel.component.google-sheets-stream.configuration.client-secret* | Client secret of the sheets application |  | String
 | *camel.component.google-sheets-stream.configuration.include-grid-data* | True if grid data should be returned. | false | Boolean
 | *camel.component.google-sheets-stream.configuration.major-dimension* | Specifies the major dimension that results should use.. | ROWS | String
-| *camel.component.google-sheets-stream.configuration.max-results* | Specify the maximum number of returned results. This will limit the number of rows in a returned value range data set or the number of returned value ranges in a batch request. | 10 | Integer
+| *camel.component.google-sheets-stream.configuration.max-results* | Specify the maximum number of returned results. This will limit the number of rows in a returned value range data set or the number of returned value ranges in a batch request. | 0 | Integer
 | *camel.component.google-sheets-stream.configuration.range* | Specifies the range of rows and columns in a sheet to get data from. |  | String
 | *camel.component.google-sheets-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *camel.component.google-sheets-stream.configuration.scopes* | Specifies the level of permissions you want a sheets application to have to a user account. See https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
