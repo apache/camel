@@ -24,7 +24,6 @@ import com.google.common.truth.Truth;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.flink.annotations.AnnotatedDataSetCallback;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
