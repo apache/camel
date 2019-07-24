@@ -76,16 +76,16 @@ The component supports 31 options, which are listed below.
 | *camel.dataformat.json-xstream.unmarshal-type-name* | Class name of the java type to use when unarmshalling |  | String
 | *camel.dataformat.json-xstream.use-default-object-mapper* | Whether to lookup and use default Jackson ObjectMapper from the registry. | true | Boolean
 | *camel.dataformat.json-xstream.use-list* | To unarmshal to a List of Map or a List of Pojo. | false | Boolean
-| *camel.dataformat.xstream.aliases* | Alias a Class to a shorter name to be used in XML elements. The option is a java.util.Map<java.lang.String,java.lang.String> type. |  | String
+| *camel.dataformat.xstream.aliases* | Alias a Class to a shorter name to be used in XML elements. |  | Map
 | *camel.dataformat.xstream.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.xstream.converters* | List of class names for using custom XStream converters. The classes must be of type com.thoughtworks.xstream.converters.Converter |  | List
 | *camel.dataformat.xstream.driver* | To use a custom XStream driver. The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver |  | String
 | *camel.dataformat.xstream.driver-ref* | To refer to a custom XStream driver to lookup in the registry. The instance must be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver |  | String
 | *camel.dataformat.xstream.enabled* | Enable xstream dataformat | true | Boolean
 | *camel.dataformat.xstream.encoding* | Sets the encoding to use |  | String
-| *camel.dataformat.xstream.implicit-collections* | Adds a default implicit collection which is used for any unmapped XML tag. The option is a java.util.Map<java.lang.String,java.lang.String[]> type. |  | String
+| *camel.dataformat.xstream.implicit-collections* | Adds a default implicit collection which is used for any unmapped XML tag. |  | Map
 | *camel.dataformat.xstream.mode* | Mode for dealing with duplicate references The possible values are: NO_REFERENCES ID_REFERENCES XPATH_RELATIVE_REFERENCES XPATH_ABSOLUTE_REFERENCES SINGLE_NODE_XPATH_RELATIVE_REFERENCES SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES |  | String
-| *camel.dataformat.xstream.omit-fields* | Prevents a field from being serialized. To omit a field you must always provide the declaring type and not necessarily the type that is converted. The option is a java.util.Map<java.lang.String,java.lang.String[]> type. |  | String
+| *camel.dataformat.xstream.omit-fields* | Prevents a field from being serialized. To omit a field you must always provide the declaring type and not necessarily the type that is converted. |  | Map
 | *camel.dataformat.xstream.permissions* | Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow, and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The following default permission is always included: -,java.lang.,java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions. |  | String
 |===
 // spring-boot-auto-configure options: END

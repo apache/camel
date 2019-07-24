@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.websocket.springboot;
 
+import java.util.Map;
 import javax.annotation.Generated;
+import org.apache.camel.component.websocket.WebSocketFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -101,11 +103,9 @@ public class WebsocketComponentConfiguration
     /**
      * To configure a map which contains custom WebSocketFactory for sub
      * protocols. The key in the map is the sub protocol. The default key is
-     * reserved for the default implementation. The option is a
-     * java.util.Map<java
-     * .lang.String,org.apache.camel.component.websocket.WebSocketFactory> type.
+     * reserved for the default implementation.
      */
-    private String socketFactory;
+    private Map<String, WebSocketFactory> socketFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -210,11 +210,11 @@ public class WebsocketComponentConfiguration
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    public String getSocketFactory() {
+    public Map<String, WebSocketFactory> getSocketFactory() {
         return socketFactory;
     }
 
-    public void setSocketFactory(String socketFactory) {
+    public void setSocketFactory(Map<String, WebSocketFactory> socketFactory) {
         this.socketFactory = socketFactory;
     }
 
