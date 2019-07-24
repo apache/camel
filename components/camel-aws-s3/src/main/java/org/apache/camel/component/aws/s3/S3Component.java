@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.s3;
 import java.util.Map;
 import java.util.Set;
 
-import com.amazonaws.services.s3.AmazonS3;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;

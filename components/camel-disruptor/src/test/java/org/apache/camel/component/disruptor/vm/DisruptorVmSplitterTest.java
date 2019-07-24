@@ -25,9 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
-
-	@BindToRegistry("splitterBean")
-	private SplitWordsBean swb =  new SplitWordsBean();
+   
+    @BindToRegistry("splitterBean")
+    private SplitWordsBean swb =  new SplitWordsBean();
 
     @Test
     public void testSplitUsingMethodCall() throws Exception {
