@@ -286,7 +286,7 @@ shown below:
 </route>
 ----
 
-Notice that it still requires to use escape `&` as `&ampl;` in XML. Also you
+Notice that it still requires to use escape `&` as `&amp;` in XML. Also you
 can have multiple options in one line, eg this is the same:
 
 [source,xml]
