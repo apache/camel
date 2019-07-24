@@ -32,7 +32,7 @@ for this component:
 
 [source]
 ----
-ldap:ldapServerBean[?options]
+ldif:ldapServerBean[?options]
 ----
 
 The _ldapServerBean_ portion of the URI refers to a
@@ -168,6 +168,7 @@ The `LdapConnection` bean may be defined as follows in Spring XML:
 ----
 
 or in a OSGi blueprint.xml:
+[source,xml]
 ----
 <bean id="ldapConnectionOptions" class="org.apache.directory.ldap.client.api.LdapConnectionConfig">
   <property name="ldapHost" value="${ldap.host}"/>
@@ -196,7 +197,7 @@ Name is then extracted from the response.
 ----
 ProducerTemplate<Exchange> template = exchange.getContext().createProducerTemplate();
 
-List<?> results = (Collection<?>) template.sendBody("ldap:ldapConnection, "LDiff goes here");
+List<?> results = (Collection<?>) template.sendBody("ldif:ldapConnection, "LDiff goes here");
 
 if (results.size() > 0) {
   // Check for no errors
