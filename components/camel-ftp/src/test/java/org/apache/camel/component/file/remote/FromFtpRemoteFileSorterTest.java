@@ -30,12 +30,12 @@ import org.junit.Test;
  */
 public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
 
+    @BindToRegistry("mySorter")
+    private MyRemoteFileSorter sorter = new MyRemoteFileSorter();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/sorter?password=admin&sorter=#mySorter";
     }
-
-    @BindToRegistry("mySorter")
-    private MyRemoteFileSorter sorter = new MyRemoteFileSorter();
 
     @Override
     @Before
@@ -43,7 +43,7 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testFtpSorter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -53,8 +53,9 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool
         sendFile(getFtpUrl(), "Hello Paris", "paris.txt");
         sendFile(getFtpUrl(), "Hello London", "london.txt");
         sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.txt");

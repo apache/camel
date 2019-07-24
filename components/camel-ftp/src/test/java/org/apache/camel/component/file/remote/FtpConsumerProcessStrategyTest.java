@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
-	@BindToRegistry("myStrategy")
+    @BindToRegistry("myStrategy")
     private MyStrategy myStrategy = new MyStrategy();
 
     private String getFtpUrl() {
@@ -54,7 +54,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
         @Override
         public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -64,7 +64,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
         @Override
         public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -74,7 +74,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
         @Override
         public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         int getInvoked() {

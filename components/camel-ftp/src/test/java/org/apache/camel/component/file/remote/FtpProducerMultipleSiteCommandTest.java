@@ -25,8 +25,8 @@ import org.junit.Test;
 
 public class FtpProducerMultipleSiteCommandTest extends FtpServerTestSupport {
 
-	@BindToRegistry("site")
-	private String site = "help site\nhelp site";
+    @BindToRegistry("site")
+    private String site = "help site\nhelp site";
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=#site";
