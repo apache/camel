@@ -38,20 +38,20 @@ public class FlinkProducerTest extends CamelTestSupport {
     static ExecutionEnvironment executionEnvironment = Flinks.createExecutionEnvironment();
     static StreamExecutionEnvironment streamExecutionEnvironment = Flinks.createStreamExecutionEnvironment();
     
-    @BindToRegistry("myDataSet")
-    private DataSource<String> ds = executionEnvironment.readTextFile("src/test/resources/testds.txt");
-    
-    @BindToRegistry("myDataStream")
-    private DataStreamSource<String> dss = streamExecutionEnvironment.readTextFile("src/test/resources/testds.txt");
-
     String flinkDataSetUri = "flink:dataSet?dataSet=#myDataSet";
     String flinkDataStreamUri = "flink:dataStream?dataStream=#myDataStream";
 
     int numberOfLinesInTestFile = 19;
-    
+
+    @BindToRegistry("myDataSet")
+    private DataSource<String> ds = executionEnvironment.readTextFile("src/test/resources/testds.txt");
+
+    @BindToRegistry("myDataStream")
+    private DataStreamSource<String> dss = streamExecutionEnvironment.readTextFile("src/test/resources/testds.txt");
+
     @BindToRegistry("countLinesContaining")
     public DataSetCallback addDataSetCallback() {
-    	return new DataSetCallback() {
+        return new DataSetCallback() {
             @Override
             public Object onDataSet(DataSet ds, Object... payloads) {
                 try {
@@ -85,7 +85,7 @@ public class FlinkProducerTest extends CamelTestSupport {
             @Override
             public Object onDataSet(DataSet ds, Object... payloads) {
                 try {
-                    return ds.count() * (int) payloads[0];
+                    return ds.count() * (int)payloads[0];
                 } catch (Exception e) {
                     return null;
                 }
@@ -97,11 +97,11 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteDataSetCallbackWithPayloads() {
-        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer>asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
+        Long linesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer> asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, new DataSetCallback() {
             @Override
             public Object onDataSet(DataSet ds, Object... payloads) {
                 try {
-                    return ds.count() * (int) payloads[0] * (int) payloads[1];
+                    return ds.count() * (int)payloads[0] * (int)payloads[1];
                 } catch (Exception e) {
                     return null;
                 }
@@ -180,7 +180,8 @@ public class FlinkProducerTest extends CamelTestSupport {
             }
         });
 
-        long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer>asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback, Long.class);
+        long pomLinesCount = template.requestBodyAndHeader(flinkDataSetUri, Arrays.<Integer> asList(10, 10), FlinkConstants.FLINK_DATASET_CALLBACK_HEADER, dataSetCallback,
+                                                           Long.class);
         Truth.assertThat(pomLinesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
     }
 
