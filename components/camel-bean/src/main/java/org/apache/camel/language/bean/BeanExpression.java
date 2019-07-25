@@ -293,7 +293,8 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
             // force to use InOut to retrieve the result on the OUT message
             resultExchange.setPattern(ExchangePattern.InOut);
             processor.process(resultExchange);
-            result = resultExchange.getOut().getBody();
+            // the response is always stored in OUT
+            result = resultExchange.hasOut() ? resultExchange.getOut().getBody() : null;
 
             // propagate properties and headers from result
             if (resultExchange.hasProperties()) {

@@ -38,17 +38,22 @@ public final class CamelConverter {
     @Converter
     public static Processor toProcessor(final Predicate predicate) {
         return exchange -> {
+            // the response from a predicate should be set on OUT
             boolean answer = predicate.matches(exchange);
-            exchange.getMessage().setBody(answer);
+            Message out = exchange.getOut();
+            out.copyFrom(exchange.getIn());
+            out.setBody(answer);
         };
-
     }
 
     @Converter
     public static Processor toProcessor(final Expression expression) {
         return exchange -> {
+            // the response from a expression should be set on OUT
             Object answer = expression.evaluate(exchange, Object.class);
-            exchange.getMessage().setBody(answer);
+            Message out = exchange.getOut();
+            out.copyFrom(exchange.getIn());
+            out.setBody(answer);
         };
     }
 
