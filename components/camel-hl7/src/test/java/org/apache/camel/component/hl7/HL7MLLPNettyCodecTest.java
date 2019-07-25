@@ -33,7 +33,7 @@ import org.junit.Test;
  * Unit test for the HL7MLLPNetty Codec.
  */
 public class HL7MLLPNettyCodecTest extends HL7TestSupport {
-    
+
     @BindToRegistry("hl7decoder")
     public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
@@ -41,7 +41,7 @@ public class HL7MLLPNettyCodecTest extends HL7TestSupport {
         decoder.setCharset("iso-8859-1");
         decoder.setConvertLFtoCR(true);
         return decoder;
-        }
+    }
 
     @BindToRegistry("hl7encoder")
     public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
@@ -50,25 +50,23 @@ public class HL7MLLPNettyCodecTest extends HL7TestSupport {
         encoder.setCharset("iso-8859-1");
         encoder.setConvertLFtoCR(true);
         return encoder;
-     }
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Message input = exchange.getIn().getBody(Message.class);
+                from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message input = exchange.getIn().getBody(Message.class);
 
-                            assertEquals("2.4", input.getVersion());
-                            QRD qrd = (QRD)input.get("QRD");
-                            assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+                        assertEquals("2.4", input.getVersion());
+                        QRD qrd = (QRD)input.get("QRD");
+                        assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
-                            Message response = createHL7AsMessage();
-                            exchange.getOut().setBody(response);
-                        }
-                    })
-                    .to("mock:result");
+                        Message response = createHL7AsMessage();
+                        exchange.getOut().setBody(response);
+                    }
+                }).to("mock:result");
             }
         };
     }

@@ -36,17 +36,17 @@ import org.junit.Test;
  * Unit test for HL7 routing.
  */
 public class HL7NettyRouteTest extends HL7TestSupport {
-    
+
     @BindToRegistry("hl7service")
     MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
-    
+
     @BindToRegistry("hl7decoder")
     public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
         return decoder;
-        }
+    }
 
     @BindToRegistry("hl7encoder")
     public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
@@ -54,7 +54,7 @@ public class HL7NettyRouteTest extends HL7TestSupport {
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
         return encoder;
-     }
+    }
 
     @Test
     public void testSendA19() throws Exception {
@@ -126,25 +126,25 @@ public class HL7NettyRouteTest extends HL7TestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 DataFormat hl7 = new HL7DataFormat();
-                // we setup or HL7 listener on port 8888 (using the hl7codec) and in sync mode so we can return a response
+                // we setup or HL7 listener on port 8888 (using the hl7codec)
+                // and in sync mode so we can return a response
                 from("netty4:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder")
-                    // we use the HL7 data format to unmarshal from HL7 stream to the HAPI Message model
-                    // this ensures that the camel message has been enriched with hl7 specific headers to
+                    // we use the HL7 data format to unmarshal from HL7 stream
+                    // to the HAPI Message model
+                    // this ensures that the camel message has been enriched
+                    // with hl7 specific headers to
                     // make the routing much easier (see below)
                     .unmarshal(hl7)
                     // using choice as the content base router
                     .choice()
-                        // where we choose that A19 queries invoke the handleA19 method on our hl7service bean
-                        .when(header("CamelHL7TriggerEvent").isEqualTo("A19"))
-                            .bean("hl7service", "handleA19")
-                            .to("mock:a19")
-                        // and A01 should invoke the handleA01 method on our hl7service bean
-                        .when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("mock:a01")
-                            .bean("hl7service", "handleA01")
-                            .to("mock:a19")
-                        // other types should go to mock:unknown
-                        .otherwise()
-                            .to("mock:unknown")
+                    // where we choose that A19 queries invoke the handleA19
+                    // method on our hl7service bean
+                    .when(header("CamelHL7TriggerEvent").isEqualTo("A19")).bean("hl7service", "handleA19").to("mock:a19")
+                    // and A01 should invoke the handleA01 method on our
+                    // hl7service bean
+                    .when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("mock:a01").bean("hl7service", "handleA01").to("mock:a19")
+                    // other types should go to mock:unknown
+                    .otherwise().to("mock:unknown")
                     // end choice block
                     .end()
                     // marshal response back
@@ -158,7 +158,8 @@ public class HL7NettyRouteTest extends HL7TestSupport {
     public class MyHL7BusinessLogic {
 
         // This is a plain POJO that has NO imports whatsoever on Apache Camel.
-        // its a plain POJO only importing the HAPI library so we can much easier work with the HL7 format.
+        // its a plain POJO only importing the HAPI library so we can much
+        // easier work with the HL7 format.
 
         public Message handleA19(Message msg) throws Exception {
             // here you can have your business logic for A19 messages

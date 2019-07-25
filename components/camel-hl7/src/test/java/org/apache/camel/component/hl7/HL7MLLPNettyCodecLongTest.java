@@ -36,21 +36,21 @@ import org.junit.Test;
  */
 public class HL7MLLPNettyCodecLongTest extends HL7TestSupport {
 
-	@BindToRegistry("hl7decoder")
+    @BindToRegistry("hl7decoder")
     public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
         return decoder;
-	}
+    }
 
     @BindToRegistry("hl7encoder")
- public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
+    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
         return encoder;
-     }
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

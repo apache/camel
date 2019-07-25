@@ -31,18 +31,17 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
-
 /**
  * Unit test for the HL7MLLP Codec.
  */
 public class HL7MLLPCodecLongTest extends HL7TestSupport {
 
     @BindToRegistry("hl7codec")
-public HL7MLLPCodec addHl7MllpCodec() throws Exception {
-    HL7MLLPCodec codec = new HL7MLLPCodec();
-    codec.setCharset("iso-8859-1");
-    return codec;
-}
+    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
+        HL7MLLPCodec codec = new HL7MLLPCodec();
+        codec.setCharset("iso-8859-1");
+        return codec;
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
