@@ -17,8 +17,12 @@
 package org.apache.camel.component.aws.sns;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.sns.model.MessageAttributeValue;
@@ -107,7 +111,9 @@ public class SnsProducer extends DefaultProducer {
                     List<?> valueList = ((List<?>) value).stream().filter(Objects::nonNull).collect(Collectors.toList());
                     if (valueList.size() > 0) {
                         // Avoiding reliance on .toString()
-                        String delimiter = ", ", prefix = "[", suffix = "]";
+                        String delimiter = ", ";
+                        String prefix = "[";
+                        String suffix = "]";
                         if (String.class == valueList.get(0).getClass()) {
                             delimiter = "\", \"";
                             prefix = "[\"";
