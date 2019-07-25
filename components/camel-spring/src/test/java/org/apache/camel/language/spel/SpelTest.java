@@ -27,6 +27,7 @@ public class SpelTest extends LanguageTestSupport {
         assertExpression("#{exchange.getIn().body}", "<hello id='m123'>world!</hello>");
         assertExpression("#{getRequest().body}", "<hello id='m123'>world!</hello>");
         assertExpression("#{request.body}", "<hello id='m123'>world!</hello>");
+        assertExpression("#{message.body}", "<hello id='m123'>world!</hello>");
         assertExpression("#{request.Headers['foo']}", "abc");
         assertExpression("#{getRequest().Headers['foo']}", "abc");
         assertExpression("#{request.Headers['foo'] == 'abc'}", true);
@@ -48,6 +49,7 @@ public class SpelTest extends LanguageTestSupport {
         assertPredicate("#{request.headers.foo.startsWith('a')}");
         assertPredicate("#{request.headers.foo == 'abc'}");
         assertPredicateFails("#{request.headers.foo == 'badString'}");
+        assertPredicate("#{message.headers.foo == 'abc'}");
     }
     
     @Test

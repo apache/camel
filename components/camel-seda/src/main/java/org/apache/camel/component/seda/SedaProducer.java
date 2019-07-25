@@ -70,7 +70,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                     // check for timeout, which then already would have invoked the latch
                     if (latch.getCount() == 0) {
                         if (log.isTraceEnabled()) {
-                            log.trace("{}. Timeout occurred so response will be ignored: {}", this, response.hasOut() ? response.getOut() : response.getIn());
+                            log.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
                         }
                         return;
                     } else {

@@ -71,7 +71,7 @@ public class SpringComplexBlockWithEndTest extends ContextTestSupport {
     public static class SplitAggregate implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            newExchange.getOut().setBody("Cowboys");
+            newExchange.getMessage().setBody("Cowboys");
             return newExchange;
         }
 
