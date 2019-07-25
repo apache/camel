@@ -34,7 +34,7 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
 
-	@BindToRegistry("hl7codec")
+    @BindToRegistry("hl7codec")
     public HL7MLLPCodec addCodec() throws Exception {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
@@ -50,20 +50,18 @@ public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            Message input = exchange.getIn().getBody(Message.class);
+                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message input = exchange.getIn().getBody(Message.class);
 
-                            assertEquals("2.4", input.getVersion());
-                            QRD qrd = (QRD)input.get("QRD");
-                            assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+                        assertEquals("2.4", input.getVersion());
+                        QRD qrd = (QRD)input.get("QRD");
+                        assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
-                            Message response = createHL7AsMessage();
-                            exchange.getOut().setBody(response);
-                        }
-                    })
-                    .to("mock:result");
+                        Message response = createHL7AsMessage();
+                        exchange.getOut().setBody(response);
+                    }
+                }).to("mock:result");
             }
         };
     }

@@ -36,21 +36,21 @@ import org.junit.Test;
  */
 public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
 
-	@BindToRegistry("hl7decoder")
+    @BindToRegistry("hl7decoder")
     public HL7MLLPNettyDecoderFactory addNettyDecoder() throws Exception {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
-        
+
         return decoder;
 
     }
-	
+
     @BindToRegistry("hl7encoder")
     public HL7MLLPNettyEncoderFactory addNettyEncoder() throws Exception {
-    HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
-    encoder.setCharset("iso-8859-1");
-    return encoder;
+        HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
+        encoder.setCharset("iso-8859-1");
+        return encoder;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -66,7 +66,7 @@ public class HL7MLLPNettyCodecBoundaryTest extends HL7TestSupport {
         };
     }
 
-    @Test 
+    @Test
     public void testSendHL7Message() throws Exception {
         BufferedReader in = IOHelper.buffered(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02-1022.txt")));
         String line = "";

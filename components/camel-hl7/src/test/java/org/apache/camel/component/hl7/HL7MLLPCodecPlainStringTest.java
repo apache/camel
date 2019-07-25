@@ -24,8 +24,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
- * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't require the HAPI library).
- * The message format can be java.lang.String.
+ * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't
+ * require the HAPI library). The message format can be java.lang.String.
  */
 public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
 
@@ -60,18 +60,16 @@ public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // use plain String as message format
-                            String body = exchange.getIn().getBody(String.class);
-                            assertEquals("Hello World", body);
+                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // use plain String as message format
+                        String body = exchange.getIn().getBody(String.class);
+                        assertEquals("Hello World", body);
 
-                            // return the response as plain string
-                            exchange.getOut().setBody("Bye World");
-                        }
-                    })
-                    .to("mock:result");
+                        // return the response as plain string
+                        exchange.getOut().setBody("Bye World");
+                    }
+                }).to("mock:result");
                 // END SNIPPET: e2
             }
         };

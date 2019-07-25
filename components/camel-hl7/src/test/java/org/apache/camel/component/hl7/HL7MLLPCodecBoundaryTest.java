@@ -36,7 +36,7 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
 
-	@BindToRegistry("hl7codec")
+    @BindToRegistry("hl7codec")
     public HL7MLLPCodec addHl7MllpCodec() throws Exception {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
@@ -56,7 +56,7 @@ public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
         };
     }
 
-    @Test 
+    @Test
     public void testSendHL7Message() throws Exception {
         BufferedReader in = IOHelper.buffered(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02-1022.txt")));
         String line = "";
