@@ -32,11 +32,14 @@ import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerMachineClient;
 
 public class ConsulClusteredRoutePolicyFactoryTest {
 
@@ -52,7 +55,10 @@ public class ConsulClusteredRoutePolicyFactoryTest {
     // ************************************
     // Test
     // ************************************
-
+    @BeforeClass
+    public static void testDockerConfiguration() {
+        Assume.assumeTrue(DockerMachineClient.instance().isInstalled());
+    }
     @Test
     public void test() throws Exception {
         for (String id : CLIENTS) {

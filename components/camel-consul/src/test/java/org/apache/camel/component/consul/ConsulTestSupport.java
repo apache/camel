@@ -29,6 +29,7 @@ import org.apache.camel.test.testcontainers.Wait;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerMachineClient;
 
 public class ConsulTestSupport extends ContainerAwareTestSupport {
     public static final String CONTAINER_IMAGE = "consul:1.5.1";
@@ -86,7 +87,8 @@ public class ConsulTestSupport extends ContainerAwareTestSupport {
     }
 
     public static GenericContainer consulContainer() {
-        return new GenericContainer(CONTAINER_IMAGE)
+        if (DockerMachineClient.instance().isInstalled()) { 
+            GenericContainer genericContainer = new GenericContainer(CONTAINER_IMAGE)
             .withNetworkAliases(CONTAINER_NAME)
             .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
             .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
@@ -100,5 +102,8 @@ public class ConsulTestSupport extends ContainerAwareTestSupport {
                 "-log-level",
                 "trace"
             );
+            return genericContainer;
+        }
+        return null;
     }
 }

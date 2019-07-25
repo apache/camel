@@ -32,14 +32,18 @@ import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerMachineClient;
 
 public class ConsulClusteredRoutePolicyTest {
 
+    
     @ClassRule
     public static GenericContainer container = ConsulTestSupport.consulContainer();
 
@@ -48,11 +52,16 @@ public class ConsulClusteredRoutePolicyTest {
     private static final List<String> RESULTS = new ArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
+    
 
     // ************************************
     // Test
     // ************************************
 
+    @BeforeClass
+    public static void testDockerConfiguration() {
+        Assume.assumeTrue(DockerMachineClient.instance().isInstalled());
+    }
     @Test
     public void test() throws Exception {
         for (String id : CLIENTS) {

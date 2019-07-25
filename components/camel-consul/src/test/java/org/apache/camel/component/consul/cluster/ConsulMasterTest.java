@@ -31,11 +31,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerMachineClient;
+
 
 public class ConsulMasterTest {
 
@@ -52,6 +56,11 @@ public class ConsulMasterTest {
     // Test
     // ************************************
 
+    @BeforeClass
+    public static void testDockerConfiguration() {
+        Assume.assumeTrue(DockerMachineClient.instance().isInstalled());
+    }
+    
     @Test
     public void test() throws Exception {
         for (String id : CLIENTS) {
@@ -68,7 +77,7 @@ public class ConsulMasterTest {
     // ************************************
     // Run a Camel node
     // ************************************
-
+  
     private static void run(String id) {
         try {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
@@ -77,7 +86,7 @@ public class ConsulMasterTest {
             ConsulClusterService service = new ConsulClusterService();
             service.setId("node-" + id);
             service.setUrl(String.format("http://%s:%d", container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT)));
-
+            
             LOGGER.info("Consul URL {}", service.getUrl());
 
             DefaultCamelContext context = new DefaultCamelContext();

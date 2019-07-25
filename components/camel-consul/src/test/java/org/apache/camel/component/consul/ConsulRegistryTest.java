@@ -23,10 +23,14 @@ import java.util.Set;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.test.testcontainers.CustomIgnoreIfNoDocker;
+import org.apache.camel.test.testcontainers.CustomIgnoreRuleIfNoDocker;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.utility.DockerMachineClient;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -40,6 +44,8 @@ public class ConsulRegistryTest implements Serializable {
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
     private static GenericContainer container;
+    @Rule
+    public CustomIgnoreRuleIfNoDocker customIgnoreRule = new CustomIgnoreRuleIfNoDocker();
 
     public class ConsulTestClass implements Serializable {
         private static final long serialVersionUID = -4815945688487114891L;
@@ -49,19 +55,26 @@ public class ConsulRegistryTest implements Serializable {
         }
     }
 
+   
     @BeforeClass
     public static void setUp() {
-        container = ConsulTestSupport.consulContainer();
-        container.start();
+        if (DockerMachineClient.instance().isInstalled())  {
+            container = ConsulTestSupport.consulContainer();
+            container.start();
 
-        registry = new ConsulRegistry(container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
+            registry = new ConsulRegistry(container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
+        }
     }
 
+    
     @AfterClass
     public static void tearDown() {
-        container.stop();
+        if (DockerMachineClient.instance().isInstalled())  {
+            container.stop();
+        }
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void storeString() {
         registry.put("stringTestKey", "stringValue");
@@ -71,6 +84,7 @@ public class ConsulRegistryTest implements Serializable {
         assertEquals("stringValue", result);
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void overrideExistingKey() {
         registry.put("uniqueKey", "stringValueOne");
@@ -81,6 +95,7 @@ public class ConsulRegistryTest implements Serializable {
         assertEquals("stringValueTwo", result);
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void checkLookupByName() {
         registry.put("namedKey", "namedValue");
@@ -90,6 +105,7 @@ public class ConsulRegistryTest implements Serializable {
         assertEquals("namedValue", result);
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void checkFailedLookupByName() {
         registry.put("namedKey", "namedValue");
@@ -98,6 +114,7 @@ public class ConsulRegistryTest implements Serializable {
         assertNull(result);
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void checkLookupByNameAndType() {
         ConsulTestClass consulTestClass = new ConsulTestClass();
@@ -108,6 +125,7 @@ public class ConsulRegistryTest implements Serializable {
         assertEquals(consulTestClass.getClass(), consulTestClassClone.getClass());
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void checkFailedLookupByNameAndType() {
         ConsulTestClass consulTestClass = new ConsulTestClass();
@@ -117,6 +135,7 @@ public class ConsulRegistryTest implements Serializable {
         assertNull(consulTestClassClone);
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void checkFindByTypeWithName() {
         ConsulTestClass consulTestClassOne = new ConsulTestClass();
@@ -137,6 +156,7 @@ public class ConsulRegistryTest implements Serializable {
 
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void storeObject() {
         ConsulTestClass testObject = new ConsulTestClass();
@@ -146,6 +166,7 @@ public class ConsulRegistryTest implements Serializable {
         registry.remove("objectTestClass");
     }
 
+    @CustomIgnoreIfNoDocker
     @Test
     public void findByType() {
         ConsulTestClass classOne = new ConsulTestClass();
@@ -165,6 +186,7 @@ public class ConsulRegistryTest implements Serializable {
 
     }
 
+    @CustomIgnoreIfNoDocker
     @Test(expected = NoSuchBeanException.class)
     public void deleteNonExisting() {
         registry.remove("nonExisting");
