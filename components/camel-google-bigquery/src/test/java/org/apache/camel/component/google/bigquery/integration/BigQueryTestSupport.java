@@ -94,7 +94,7 @@ public class BigQueryTestSupport extends CamelTestSupport {
     }
 
     @BindToRegistry("prop")
-    protected Properties loadRegProperties() throws Exception {
+    public Properties loadRegProperties() throws Exception {
         return loadProperties();
     }
 
