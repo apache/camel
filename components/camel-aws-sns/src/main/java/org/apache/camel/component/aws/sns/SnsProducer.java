@@ -108,25 +108,13 @@ public class SnsProducer extends DefaultProducer {
                     mav.withStringValue(value.toString());
                     result.put(entry.getKey(), mav);
                 } else if (value instanceof List) {
-                    List<?> valueList = ((List<?>) value).stream().filter(Objects::nonNull).collect(Collectors.toList());
-                    if (valueList.size() > 0) {
-                        // Avoiding reliance on .toString()
-                        String delimiter = ", ";
-                        String prefix = "[";
-                        String suffix = "]";
-                        if (String.class == valueList.get(0).getClass()) {
-                            delimiter = "\", \"";
-                            prefix = "[\"";
-                            suffix = "\"]";
-                        }
-                        MessageAttributeValue mav = new MessageAttributeValue();
-                        mav.setDataType("String.Array");
-                        mav.withStringValue(valueList.stream().map(Object::toString).collect(Collectors.joining(delimiter, prefix, suffix)));
-                        result.put(entry.getKey(), mav);
-                    } else {
-                        log.warn("Either list is empty or has all null values for key={}, value={} . " +
-                                "Cannot put in Sns MessageAttribute", entry.getKey(), entry.getValue());
-                    }
+                    String resultString = ((List<?>) value).stream()
+                            .map(o -> o instanceof String ? String.format("\"%s\"", o) : Objects.toString(o))
+                            .collect(Collectors.joining(", "));
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("String.Array");
+                    mav.withStringValue("[" + resultString + "]");
+                    result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
                     log.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());

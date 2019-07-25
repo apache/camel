@@ -66,8 +66,8 @@ public class SnsProducerTest {
         assertThat(translateAttributes.get("key3").getStringValue(), is("value3"));
         assertThat(translateAttributes.get("key4").getDataType(), is("String.Array"));
         assertThat(translateAttributes.get("key4").getStringValue(), is("[\"Value4\", \"Value5\", \"Value6\"]"));
-        assertThat(translateAttributes.get("key5").getStringValue(), is("[\"Value7\", \"Value9\"]"));
-        assertThat(translateAttributes.get("key6").getStringValue(), is("[10, 12]"));
-        assertThat(translateAttributes.get("key7").getStringValue(), is("[true, false]"));
+        assertThat(translateAttributes.get("key5").getStringValue(), is("[\"Value7\", null, \"Value9\"]"));
+        assertThat(translateAttributes.get("key6").getStringValue(), is("[10, null, 12]"));
+        assertThat(translateAttributes.get("key7").getStringValue(), is("[true, null, false]"));
     }
 }
