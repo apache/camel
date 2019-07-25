@@ -59,13 +59,13 @@ public class PahoEndpoint extends DefaultEndpoint {
     @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
     private String filePersistenceDirectory;
     @UriParam(defaultValue = "true")
-    private boolean autoReconnect = true; 
+    private boolean autoReconnect = true;
     @UriParam @Metadata(secret = true)
-    private String userName; 
+    private String userName;
     @UriParam @Metadata(secret = true)
-    private String password; 
+    private String password;
     @UriParam(defaultValue = "true")
-    private boolean resolveMqttConnectOptions = true; 
+    private boolean resolveMqttConnectOptions = true;
 
     // Collaboration members
     @UriParam
@@ -127,7 +127,7 @@ public class PahoEndpoint extends DefaultEndpoint {
         if (connectOptions != null) {
             return connectOptions;
         }
-        
+
         if (resolveMqttConnectOptions) {
             Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
             if (connectOptions.size() == 1) {
@@ -138,10 +138,10 @@ public class PahoEndpoint extends DefaultEndpoint {
                          + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
             }
         }
-        
+
         MqttConnectOptions options = new MqttConnectOptions();
         options.setAutomaticReconnect(autoReconnect);
-        
+
         if (ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password)) {
             options.setUserName(userName);
             options.setPassword(password.toCharArray());
@@ -155,6 +155,7 @@ public class PahoEndpoint extends DefaultEndpoint {
         PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
         paho.setBody(mqttMessage.getPayload());
         paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
+        paho.setHeader(PahoConstants.MQTT_QOS, mqttMessage.getQos());
 
         exchange.setIn(paho);
         return exchange;
@@ -212,7 +213,7 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     /**
      * Retain option
-     * 
+     *
      * @param retained true/false
      */
     public void setRetained(boolean retained) {
@@ -268,9 +269,9 @@ public class PahoEndpoint extends DefaultEndpoint {
     public synchronized boolean isAutoReconnect() {
         return autoReconnect;
     }
-    
+
     /**
-     * Client will automatically attempt to reconnect to the server if the connection is lost 
+     * Client will automatically attempt to reconnect to the server if the connection is lost
      * @param autoReconnect
      */
     public synchronized void setAutoReconnect(boolean autoReconnect) {
