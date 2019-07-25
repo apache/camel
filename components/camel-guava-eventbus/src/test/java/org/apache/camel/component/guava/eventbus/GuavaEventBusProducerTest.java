@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class GuavaEventBusProducerTest extends CamelTestSupport {
 
-	@BindToRegistry("eventBus")
+    @BindToRegistry("eventBus")
     EventBus eventBus = new EventBus();
 
     Object receivedEvent;

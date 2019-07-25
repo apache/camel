@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class GuavaEventBusConsumerTest extends CamelTestSupport {
 
-	@BindToRegistry("eventBus")
+    @BindToRegistry("eventBus")
     EventBus eventBus = new EventBus();
 
     @Override
@@ -39,14 +39,11 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
                 from("guava-eventbus:eventBus").to("mock:allEvents");
                 from("guava-eventbus:eventBus").to("mock:multipliedConsumer");
 
-                from("guava-eventbus:eventBus?eventClass=org.apache.camel.component.guava.eventbus.MessageWrapper").
-                        to("mock:wrapperEvents");
+                from("guava-eventbus:eventBus?eventClass=org.apache.camel.component.guava.eventbus.MessageWrapper").to("mock:wrapperEvents");
 
-                from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomListener").
-                        to("mock:customListenerEvents");
+                from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomListener").to("mock:customListenerEvents");
 
-                from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomMultiEventListener").
-                        to("mock:customMultiEventListenerEvents");
+                from("guava-eventbus:eventBus?listenerInterface=org.apache.camel.component.guava.eventbus.CustomMultiEventListener").to("mock:customMultiEventListenerEvents");
             }
         };
     }
