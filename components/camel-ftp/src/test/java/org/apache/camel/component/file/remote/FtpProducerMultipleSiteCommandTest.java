@@ -20,7 +20,6 @@ import java.io.File;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class FtpProducerMultipleSiteCommandTest extends FtpServerTestSupport {

@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.IdempotentRepository;
 import org.junit.Test;
 
