@@ -19,6 +19,8 @@ package org.apache.camel.component.guava.eventbus;
 import java.util.Date;
 
 import com.google.common.eventbus.EventBus;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -26,6 +28,7 @@ import org.junit.Test;
 
 public class GuavaEventBusConsumerTest extends CamelTestSupport {
 
+	@BindToRegistry("eventBus")
     EventBus eventBus = new EventBus();
 
     @Override
@@ -46,13 +49,6 @@ public class GuavaEventBusConsumerTest extends CamelTestSupport {
                         to("mock:customMultiEventListenerEvents");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("eventBus", eventBus);
-        return registry;
     }
 
     @Test
