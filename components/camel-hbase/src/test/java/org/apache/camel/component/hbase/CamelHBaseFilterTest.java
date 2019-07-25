@@ -19,6 +19,7 @@ package org.apache.camel.component.hbase;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -26,20 +27,16 @@ import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.junit.Test;
 
 public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
 
-    List<Filter> filters = new LinkedList<>();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("myFilters")
+    public List<Filter> addFilters() throws Exception {
+        List<Filter> filters = new LinkedList<>();
         filters.add(new ModelAwareColumnMatchingFilter().getFilteredList()); //not used, filters need to be rethink
-        jndi.bind("myFilters", filters);
-        return jndi;
+        return filters;
     }
 
     @Test
