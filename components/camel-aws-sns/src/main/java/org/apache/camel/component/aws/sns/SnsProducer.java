@@ -17,10 +17,7 @@
 package org.apache.camel.component.aws.sns;
 
 import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -106,13 +103,24 @@ public class SnsProducer extends DefaultProducer {
                     mav.setDataType("String");
                     mav.withStringValue(value.toString());
                     result.put(entry.getKey(), mav);
-                } else if (value instanceof List && ((List) value).size()>0) {
-                    // Avoiding reliance on .toString()
-                    String delimiter = "\", \"", prefix = "[\"", suffix = "\"]";
-                    MessageAttributeValue mav = new MessageAttributeValue();
-                    mav.setDataType("String.Array");
-                    mav.withStringValue((String) ((List)value).stream().map(Object::toString).collect(Collectors.joining(delimiter, prefix, suffix)));
-                    result.put(entry.getKey(), mav);
+                } else if (value instanceof List) {
+                    List<?> valueList = ((List<?>) value).stream().filter(Objects::nonNull).collect(Collectors.toList());
+                    if (valueList.size() > 0) {
+                        // Avoiding reliance on .toString()
+                        String delimiter = ", ", prefix = "[", suffix = "]";
+                        if (String.class == valueList.get(0).getClass()) {
+                            delimiter = "\", \"";
+                            prefix = "[\"";
+                            suffix = "\"]";
+                        }
+                        MessageAttributeValue mav = new MessageAttributeValue();
+                        mav.setDataType("String.Array");
+                        mav.withStringValue(valueList.stream().map(Object::toString).collect(Collectors.joining(delimiter, prefix, suffix)));
+                        result.put(entry.getKey(), mav);
+                    } else {
+                        log.warn("Either list is empty or has all null values for key={}, value={} . " +
+                                "Cannot put in Sns MessageAttribute", entry.getKey(), entry.getValue());
+                    }
                 } else {
                     // cannot translate the message header to message attribute value
                     log.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());

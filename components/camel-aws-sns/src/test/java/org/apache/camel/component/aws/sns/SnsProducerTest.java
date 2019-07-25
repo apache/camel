@@ -55,13 +55,19 @@ public class SnsProducerTest {
         headers.put("key2", "");
         headers.put("key3", "value3");
         headers.put("key4", Arrays.asList("Value4", "Value5", "Value6"));
+        headers.put("key5", Arrays.asList("Value7", null, "Value9"));
+        headers.put("key6", Arrays.asList(10, null, 12));
+        headers.put("key7", Arrays.asList(true, null, false));
 
         Map<String, MessageAttributeValue> translateAttributes = producer.translateAttributes(headers, exchange);
 
-        assertThat(translateAttributes.size(), is(2));
+        assertThat(translateAttributes.size(), is(5));
         assertThat(translateAttributes.get("key3").getDataType(), is("String"));
         assertThat(translateAttributes.get("key3").getStringValue(), is("value3"));
         assertThat(translateAttributes.get("key4").getDataType(), is("String.Array"));
         assertThat(translateAttributes.get("key4").getStringValue(), is("[\"Value4\", \"Value5\", \"Value6\"]"));
+        assertThat(translateAttributes.get("key5").getStringValue(), is("[\"Value7\", \"Value9\"]"));
+        assertThat(translateAttributes.get("key6").getStringValue(), is("[10, 12]"));
+        assertThat(translateAttributes.get("key7").getStringValue(), is("[true, false]"));
     }
 }
