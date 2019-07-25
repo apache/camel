@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.junit.Before;
 import org.junit.Test;

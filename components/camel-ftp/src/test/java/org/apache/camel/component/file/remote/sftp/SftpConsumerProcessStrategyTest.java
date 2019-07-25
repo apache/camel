@@ -22,7 +22,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {

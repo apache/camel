@@ -27,7 +27,6 @@ import javax.net.SocketFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClient;
 import org.junit.Before;
 import org.junit.Test;

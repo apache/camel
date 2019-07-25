@@ -21,7 +21,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
 

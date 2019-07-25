@@ -22,7 +22,6 @@ import com.jcraft.jsch.ProxyHTTP;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 import org.littleshoot.proxy.DefaultHttpProxyServer;

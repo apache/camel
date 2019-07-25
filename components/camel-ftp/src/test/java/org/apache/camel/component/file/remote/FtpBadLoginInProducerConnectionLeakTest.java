@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.net.SocketFactory;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSupport {
