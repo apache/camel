@@ -45,7 +45,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             }
         });
 
-        assertEquals("TimeOut", exchange.getOut().getHeader("Status"));
+        assertEquals("TimeOut", exchange.getMessage().getHeader("Status"));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             }
         });
 
-        assertEquals("ExceptionGeneral", exchange.getOut().getHeader("Status"));
+        assertEquals("ExceptionGeneral", exchange.getMessage().getHeader("Status"));
     }
 
     protected JndiRegistry createRegistry() throws Exception {

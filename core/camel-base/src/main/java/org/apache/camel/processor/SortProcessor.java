@@ -43,18 +43,11 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            Message in = exchange.getIn();
-
             @SuppressWarnings("unchecked")
             List<T> list = expression.evaluate(exchange, List.class);
             list.sort(comparator);
 
-            if (exchange.getPattern().isOutCapable()) {
-                Message out = exchange.getOut();
-                out.copyFromWithNewBody(in, list);
-            } else {
-                in.setBody(list);
-            }
+            exchange.getMessage().setBody(list);
         } catch (Exception e) {
             exchange.setException(e);
         }

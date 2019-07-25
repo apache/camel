@@ -46,7 +46,7 @@ public class RoutingSlipPOJOTest extends ContextTestSupport {
                 
                 from("direct:b").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(exchange.getIn().getBody() + " is processed!");                        
+                        exchange.getMessage().setBody(exchange.getIn().getBody() + " is processed!");
                     }
                 });
             }

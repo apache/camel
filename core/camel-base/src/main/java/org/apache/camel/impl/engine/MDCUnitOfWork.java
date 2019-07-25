@@ -56,7 +56,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
         // must add exchange and message id in constructor
         MDC.put(MDC_EXCHANGE_ID, exchange.getExchangeId());
-        String msgId = exchange.hasOut() ? exchange.getOut().getMessageId() : exchange.getIn().getMessageId();
+        String msgId = exchange.getMessage().getMessageId();
         MDC.put(MDC_MESSAGE_ID, msgId);
         // the camel context id is from exchange
         MDC.put(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());

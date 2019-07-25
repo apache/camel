@@ -72,7 +72,7 @@ public class MDCResetTest extends ContextTestSupport {
                                 String body = exchange.getIn().getBody(String.class);
                                 // use a producer template to send to b, instead of in the route DSL
                                 body = template.requestBody("direct:b", body, String.class);
-                                exchange.getOut().setBody(body);
+                                exchange.getMessage().setBody(body);
                             }
                         })
                         .process(new Processor() {
@@ -89,7 +89,7 @@ public class MDCResetTest extends ContextTestSupport {
                                 assertEquals("route-b", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
 
-                                exchange.getOut().setBody("Good Afternoon World");
+                                exchange.getMessage().setBody("Good Afternoon World");
                             }
                         })
                         .to("log:bar");

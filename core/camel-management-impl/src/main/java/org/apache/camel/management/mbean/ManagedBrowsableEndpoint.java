@@ -75,12 +75,7 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         }
 
         // must use java type with JMX such as java.lang.String
-        String body;
-        if (exchange.hasOut()) {
-            body = exchange.getOut().getBody(String.class);
-        } else {
-            body = exchange.getIn().getBody(String.class);
-        }
+        String body = exchange.getMessage().getBody(String.class);
 
         return body;
     }
@@ -97,7 +92,7 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
             return null;
         }
 
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
         String xml = MessageHelper.dumpAsXml(msg, includeBody);
 
         return xml;
@@ -129,7 +124,7 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         sb.append("<messages>");
         for (int i = fromIndex; i < exchanges.size() && i <= toIndex; i++) {
             Exchange exchange = exchanges.get(i);
-            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            Message msg = exchange.getMessage();
             String xml = MessageHelper.dumpAsXml(msg, includeBody);
             sb.append("\n").append(xml);
         }

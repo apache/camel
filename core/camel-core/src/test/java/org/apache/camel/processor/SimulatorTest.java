@@ -58,7 +58,7 @@ public class SimulatorTest extends ContextTestSupport {
 
         assertNotNull("Should receive a response!", response);
 
-        String text = response.getOut().getMandatoryBody(String.class);
+        String text = response.getMessage().getMandatoryBody(String.class);
         assertStringContains(text, containedText);
     }
 

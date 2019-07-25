@@ -87,7 +87,7 @@ public class RestProducerBindingProcessorTest {
 
         that.done(false);
 
-        Assert.assertSame(response, exchange.getOut().getBody());
+        Assert.assertSame(response, exchange.getMessage().getBody());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class RestProducerBindingProcessorTest {
 
         that.done(false);
 
-        Assert.assertSame(response, exchange.getOut().getBody());
+        Assert.assertSame(response, exchange.getMessage().getBody());
     }
 
     @Test

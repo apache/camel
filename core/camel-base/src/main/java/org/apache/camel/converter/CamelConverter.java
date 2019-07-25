@@ -39,9 +39,7 @@ public final class CamelConverter {
     public static Processor toProcessor(final Predicate predicate) {
         return exchange -> {
             boolean answer = predicate.matches(exchange);
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            out.setBody(answer);
+            exchange.getMessage().setBody(answer);
         };
 
     }
@@ -50,9 +48,7 @@ public final class CamelConverter {
     public static Processor toProcessor(final Expression expression) {
         return exchange -> {
             Object answer = expression.evaluate(exchange, Object.class);
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            out.setBody(answer);
+            exchange.getMessage().setBody(answer);
         };
     }
 

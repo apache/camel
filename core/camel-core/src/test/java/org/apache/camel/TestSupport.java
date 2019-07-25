@@ -148,6 +148,7 @@ public abstract class TestSupport extends Assert {
     /**
      * Asserts the Out message on the exchange contains the expected value
      */
+    @Deprecated
     public static Object assertOutMessageHeader(Exchange exchange, String name, Object expected) {
         return assertMessageHeader(exchange.getOut(), name, expected);
     }
@@ -181,6 +182,7 @@ public abstract class TestSupport extends Assert {
      * @param expected the expected value of the OUT message
      * @throws InvalidPayloadException is thrown if the payload is not the expected class type
      */
+    @Deprecated
     public static void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
         assertNotNull("Should have a response exchange!", exchange);
 

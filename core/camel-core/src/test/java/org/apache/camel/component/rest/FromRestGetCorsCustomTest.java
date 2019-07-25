@@ -46,10 +46,10 @@ public class FromRestGetCorsCustomTest extends ContextTestSupport {
         });
         assertNotNull(out);
 
-        assertEquals(out.getOut().getHeader("Access-Control-Allow-Origin"), "myserver");
-        assertEquals(out.getOut().getHeader("Access-Control-Allow-Methods"), RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS);
-        assertEquals(out.getOut().getHeader("Access-Control-Allow-Headers"), RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS);
-        assertEquals(out.getOut().getHeader("Access-Control-Max-Age"), "180");
+        assertEquals(out.getMessage().getHeader("Access-Control-Allow-Origin"), "myserver");
+        assertEquals(out.getMessage().getHeader("Access-Control-Allow-Methods"), RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS);
+        assertEquals(out.getMessage().getHeader("Access-Control-Allow-Headers"), RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS);
+        assertEquals(out.getMessage().getHeader("Access-Control-Max-Age"), "180");
 
         assertMockEndpointsSatisfied();
     }

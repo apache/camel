@@ -106,7 +106,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
                             // specialized IOException
                             throw new ConnectException("Forced for testing - cannot connect to remote server");
                         }
-                        exchange.getOut().setBody("Hello World");
+                        exchange.getMessage().setBody("Hello World");
                     }
                 }).to("mock:result");
             }

@@ -245,7 +245,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
             result = (T)template().request(target, processorSupplier.get());
         } else if (type == Message.class) {
             Exchange exchange = template().request(target, processorSupplier.get());
-            result = exchange.hasOut() ? (T)exchange.getOut() : (T)exchange.getIn();
+            result = (T)exchange.getMessage();
         } else {
             Exchange exchange = template().send(
                 target,

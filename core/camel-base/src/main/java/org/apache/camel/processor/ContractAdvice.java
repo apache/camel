@@ -88,7 +88,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
             return;
         }
 
-        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message target = exchange.getMessage();
         if (!(target instanceof DataTypeAware)) {
             return;
         }

@@ -39,8 +39,7 @@ public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Tra
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            message.removeHeaders(pattern, excludePattern);
+            exchange.getMessage().removeHeaders(pattern, excludePattern);
         } catch (Exception e) {
             exchange.setException(e);
         }

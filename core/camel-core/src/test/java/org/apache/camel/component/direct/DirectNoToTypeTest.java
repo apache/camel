@@ -39,7 +39,7 @@ public class DirectNoToTypeTest extends ContextTestSupport {
                 from("direct:in").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody(body + " World");
+                        exchange.getMessage().setBody(body + " World");
                     }
                 });
             }

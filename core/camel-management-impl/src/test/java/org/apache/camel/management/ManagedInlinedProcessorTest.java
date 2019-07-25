@@ -56,7 +56,7 @@ public class ManagedInlinedProcessorTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("foo")
-                    .process(exchange -> exchange.getOut().setBody("Bye World")).id("custom")
+                    .process(exchange -> exchange.getMessage().setBody("Bye World")).id("custom")
                     .to("mock:result");
             }
         };

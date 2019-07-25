@@ -89,7 +89,7 @@ public class PipelineMEPTest extends ContextTestSupport {
                 // however the exchange will carry body IN and OUT when the route completes, as
                 // we operate on the original exchange in this processor
                 // (= we are the first node in the route after the from consumer)
-                exchange.getOut().setBody(number);
+                exchange.getMessage().setBody(number);
             }
         };
 
