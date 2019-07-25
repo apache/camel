@@ -53,6 +53,11 @@ public final class RootObject {
         return exchange.getIn();
     }
 
+    public Message getMessage() {
+        return exchange.getMessage();
+    }
+
+    @Deprecated
     public Message getResponse() {
         return exchange.getOut();
     }

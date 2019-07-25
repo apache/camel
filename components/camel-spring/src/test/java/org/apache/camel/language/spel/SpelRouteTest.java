@@ -46,7 +46,7 @@ public class SpelRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:test").setBody(spel("Hello #{request.body}! What a beautiful #{request.headers['dayOrNight']}")).to("mock:result");
+                from("direct:test").setBody(spel("Hello #{message.body}! What a beautiful #{request.headers['dayOrNight']}")).to("mock:result");
                 from("direct:loop").loop(4).setBody(spel("#{body + ':' + properties['CamelLoopIndex']}")).to("mock:loopResult");
             }
         };
