@@ -18,6 +18,7 @@ package org.apache.camel.component.hipchat;
 
 import java.io.IOException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -39,18 +40,14 @@ public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
     @EndpointInject("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
     private HipchatEndpoint hipchatEndpoint;
     
+    @BindToRegistry("myHttpClient")
+    private MyCustomHttpClient client = new MyCustomHttpClient();
+    
     @Test
     public void ensureCustomHttpClientIsDefined() {
         HttpClient httpClient = hipchatEndpoint.getConfiguration().getHttpClient();
         assertNotNull(httpClient);
         assertIsInstanceOf(MyCustomHttpClient.class, httpClient);
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("myHttpClient", new MyCustomHttpClient());
-        return reg;
     }
 
     @Override
