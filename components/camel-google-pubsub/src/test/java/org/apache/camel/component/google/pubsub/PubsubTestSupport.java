@@ -27,7 +27,6 @@ import com.google.api.services.pubsub.model.Topic;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class PubsubTestSupport extends CamelTestSupport {
