@@ -406,9 +406,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         if (subscriptionHelper == null) {
             // lazily create subscription helper
             subscriptionHelper = new SubscriptionHelper(this);
-
-            // also start the helper to connect to Salesforce
-            ServiceHelper.startService(subscriptionHelper);
         }
         return subscriptionHelper;
     }

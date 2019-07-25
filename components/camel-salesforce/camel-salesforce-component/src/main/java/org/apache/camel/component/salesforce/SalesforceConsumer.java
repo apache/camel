@@ -315,6 +315,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         }
 
         // subscribe to topic
+        ServiceHelper.startService(subscriptionHelper);
         subscriptionHelper.subscribe(topicName, this);
         subscribed = true;
     }
