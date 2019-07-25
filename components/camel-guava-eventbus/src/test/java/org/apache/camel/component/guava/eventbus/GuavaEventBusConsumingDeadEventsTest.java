@@ -20,6 +20,8 @@ import java.util.Date;
 
 import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -27,6 +29,7 @@ import org.junit.Test;
 
 public class GuavaEventBusConsumingDeadEventsTest extends CamelTestSupport {
 
+	@BindToRegistry("eventBus")
     EventBus eventBus = new EventBus();
 
     @Override
@@ -41,13 +44,6 @@ public class GuavaEventBusConsumingDeadEventsTest extends CamelTestSupport {
                         to("mock:deadEvents");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("eventBus", eventBus);
-        return registry;
     }
 
     @Test
