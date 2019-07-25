@@ -24,6 +24,8 @@ import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -34,23 +36,25 @@ import org.junit.Test;
  * Unit test for HL7 routing.
  */
 public class HL7NettyRouteTest extends HL7TestSupport {
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    
+    @BindToRegistry("hl7service")
+    MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
+    
+    @BindToRegistry("hl7decoder")
+    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
-        jndi.bind("hl7decoder", decoder);
+        return decoder;
+        }
+
+    @BindToRegistry("hl7encoder")
+    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
-        decoder.setCharset("iso-8859-1");
-        jndi.bind("hl7encoder", encoder);
-
-        MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
-        jndi.bind("hl7service", logic);
-
-        return jndi;
-    }
+        encoder.setCharset("iso-8859-1");
+        return encoder;
+     }
 
     @Test
     public void testSendA19() throws Exception {

@@ -24,6 +24,8 @@ import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -36,21 +38,20 @@ import org.junit.Test;
  */
 public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+	@BindToRegistry("hl7encoder")
+	private HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
+	
+    @BindToRegistry("hl7service")
+    private MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
+	
+	@BindToRegistry("hl7decoder")
+    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setProduceString(false);
-        jndi.bind("hl7decoder", decoder);
+        return decoder;
+	}
 
-        HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
-        jndi.bind("hl7encoder", encoder);
-
-        MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
-        jndi.bind("hl7service", logic);
-
-        return jndi;
-    }
 
     @Test
     public void testSendA19() throws Exception {

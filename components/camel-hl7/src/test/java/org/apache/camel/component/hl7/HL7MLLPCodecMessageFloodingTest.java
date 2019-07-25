@@ -26,6 +26,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import ca.uhn.hl7v2.model.Message;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,14 +39,12 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
     
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("hl7codec")
+    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("ISO-8859-1");
         codec.setConvertLFtoCR(false);
-        jndi.bind("hl7codec", codec);
-        return jndi;
+        return codec;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
