@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.hl7;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
@@ -29,15 +29,13 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("hl7codec")
+    public HL7MLLPCodec addCodec() throws Exception {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
 
-        jndi.bind("hl7codec", codec);
-
-        return jndi;
+        return codec;
     }
 
     @Test
