@@ -24,10 +24,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assume;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.utility.DockerMachineClient;
 
 public class ContainerAwareTestSupport extends CamelTestSupport {
     private List<GenericContainer<?>> containers = new CopyOnWriteArrayList<>();
@@ -38,7 +36,6 @@ public class ContainerAwareTestSupport extends CamelTestSupport {
 
     @Override
     protected void setupResources() throws Exception {
-        Assume.assumeTrue("Skipping test because docker not installed", DockerMachineClient.instance().isInstalled());
         super.setupResources();
 
         containers.clear();
