@@ -50,7 +50,7 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
         private boolean started;
 
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody("Bye World");
+            exchange.getMessage().setBody("Bye World");
         }
 
         public void start() {

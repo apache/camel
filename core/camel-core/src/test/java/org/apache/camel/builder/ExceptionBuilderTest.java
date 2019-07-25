@@ -225,7 +225,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                         } else if ("I am not allowed to access this".equals(s)) {
                             throw new IllegalAccessException();
                         }
-                        exchange.getOut().setBody("Hello World");
+                        exchange.getMessage().setBody("Hello World");
                     }
                 }).to("mock:result");
             }

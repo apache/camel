@@ -55,7 +55,7 @@ public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // mutate the message
-                                exchange.getOut().setBody("Hi Camel");
+                                exchange.getMessage().setBody("Hi Camel");
                                 exchange.setException(new IOException("Forced exception for test"));
                             }
                         });
@@ -64,7 +64,7 @@ public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
                         .to("mock:failover2")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody("Bye Camel");
+                                exchange.getMessage().setBody("Bye Camel");
                             }
                         });
             }

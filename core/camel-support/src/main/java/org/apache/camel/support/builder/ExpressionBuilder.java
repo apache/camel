@@ -174,6 +174,7 @@ public class ExpressionBuilder {
      * @param headerName the name of the header the expression will return
      * @return an expression object which will return the header value
      */
+    @Deprecated
     public static Expression outHeaderExpression(final String headerName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -204,6 +205,7 @@ public class ExpressionBuilder {
      * @return an expression object which will return the headers, will be <tt>null</tt> if the
      * exchange is not out capable.
      */
+    @Deprecated
     public static Expression outHeadersExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -866,6 +868,7 @@ public class ExpressionBuilder {
     /**
      * Returns the expression for the out messages body
      */
+    @Deprecated
     public static Expression outBodyExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -887,6 +890,7 @@ public class ExpressionBuilder {
      * Returns the expression for the exchanges outbound message body converted
      * to the given type
      */
+    @Deprecated
     public static <T> Expression outBodyExpression(final Class<T> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -985,6 +989,7 @@ public class ExpressionBuilder {
     /**
      * Returns the expression for the OUT message
      */
+    @Deprecated
     public static Expression outMessageExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -1001,6 +1006,7 @@ public class ExpressionBuilder {
     /**
      * Returns a functional expression for the OUT message
      */
+    @Deprecated
     public static Expression outMessageExpression(final Function<Message, Object> function) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

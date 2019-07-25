@@ -141,7 +141,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
             } else if ("Dublin".equals(body)) {
                 throw new ValidationException(exchange, "Dublin have good beer");
             }
-            exchange.getOut().setBody("Hello " + body);
+            exchange.getMessage().setBody("Hello " + body);
         }
     }
     

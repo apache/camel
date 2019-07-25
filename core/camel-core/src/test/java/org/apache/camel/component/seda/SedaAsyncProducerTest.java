@@ -76,7 +76,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
 
         assertEquals("Send should occur before processor", "processsend", route);
 
-        String response = exchange.getOut().getBody(String.class);
+        String response = exchange.getMessage().getBody(String.class);
         assertEquals("Bye World", response);
     }
 
@@ -92,7 +92,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
                         public void process(Exchange exchange) throws Exception {
                             route = route + "process";
                             // set the response
-                            exchange.getOut().setBody("Bye World");
+                            exchange.getMessage().setBody("Bye World");
                         }
                     })
                     .to("mock:result");

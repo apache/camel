@@ -68,7 +68,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
         answer.getIn().setHeader("birthday", cal.getTime());
 
         cal.set(2008, Calendar.AUGUST, 8);
-        answer.getOut().setHeader("special", cal.getTime());
+        answer.getMessage().setHeader("special", cal.getTime());
         return answer;
     }
 

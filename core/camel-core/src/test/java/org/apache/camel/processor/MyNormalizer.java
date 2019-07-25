@@ -22,11 +22,11 @@ import org.apache.camel.language.xpath.XPath;
 // START SNIPPET: example   
 public class MyNormalizer {
     public void employeeToPerson(Exchange exchange, @XPath("/employee/name/text()") String name) {
-        exchange.getOut().setBody(createPerson(name));            
+        exchange.getMessage().setBody(createPerson(name));
     }
 
     public void customerToPerson(Exchange exchange, @XPath("/customer/@name") String name) {
-        exchange.getOut().setBody(createPerson(name));
+        exchange.getMessage().setBody(createPerson(name));
     }        
     
     private String createPerson(String name) {

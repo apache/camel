@@ -96,7 +96,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
                         if ("Hello Camel".equals(s)) {
                             throw new CamelExchangeException("Forced for testing", exchange);
                         }
-                        exchange.getOut().setBody("Hello World");
+                        exchange.getMessage().setBody("Hello World");
                     }
                 }).to("mock:result");
             }

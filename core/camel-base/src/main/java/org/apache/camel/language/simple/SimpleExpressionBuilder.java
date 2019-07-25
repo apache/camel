@@ -432,7 +432,7 @@ public final class SimpleExpressionBuilder {
                     }
                 } else if (command.startsWith("out.header.")) {
                     String key = command.substring(command.lastIndexOf('.') + 1);
-                    date = exchange.getOut().getHeader(key, Date.class);
+                    date = exchange.getMessage().getHeader(key, Date.class);
                     if (date == null) {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }

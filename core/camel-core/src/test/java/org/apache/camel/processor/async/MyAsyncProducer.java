@@ -56,9 +56,7 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
                 } else {
                     String reply = getEndpoint().getReply();
                     reply = getEndpoint().isAppend() ? exchange.getIn().getBody() + " " + reply : reply;
-                    exchange.getOut().setBody(reply);
-                    // propagate headers
-                    exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                    exchange.getMessage().setBody(reply);
                     LOG.info("Setting reply " + reply);
                 }
 

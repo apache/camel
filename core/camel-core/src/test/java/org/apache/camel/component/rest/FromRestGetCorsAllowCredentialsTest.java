@@ -46,11 +46,11 @@ public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
         });
         assertNotNull(out);
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN, out.getOut().getHeader("Access-Control-Allow-Origin"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS, out.getOut().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS, out.getOut().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getOut().getHeader("Access-Control-Max-Age"));
-        assertEquals("true", out.getOut().getHeader("Access-Control-Allow-Credentials"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_ORIGIN, out.getMessage().getHeader("Access-Control-Allow-Origin"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS, out.getMessage().getHeader("Access-Control-Allow-Methods"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS, out.getMessage().getHeader("Access-Control-Allow-Headers"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
+        assertEquals("true", out.getMessage().getHeader("Access-Control-Allow-Credentials"));
 
         assertMockEndpointsSatisfied();
     }
@@ -69,11 +69,11 @@ public class FromRestGetCorsAllowCredentialsTest extends ContextTestSupport {
         });
         assertNotNull(out);
 
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS, out.getOut().getHeader("Access-Control-Allow-Methods"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS, out.getOut().getHeader("Access-Control-Allow-Headers"));
-        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getOut().getHeader("Access-Control-Max-Age"));
-        assertEquals("true", out.getOut().getHeader("Access-Control-Allow-Credentials"));
-        assertEquals("mydomain", out.getOut().getHeader("Access-Control-Allow-Origin"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_METHODS, out.getMessage().getHeader("Access-Control-Allow-Methods"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_ALLOW_HEADERS, out.getMessage().getHeader("Access-Control-Allow-Headers"));
+        assertEquals(RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE, out.getMessage().getHeader("Access-Control-Max-Age"));
+        assertEquals("true", out.getMessage().getHeader("Access-Control-Allow-Credentials"));
+        assertEquals("mydomain", out.getMessage().getHeader("Access-Control-Allow-Origin"));
 
         assertMockEndpointsSatisfied();
     }

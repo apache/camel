@@ -100,7 +100,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
             cos.close();
             InputStream is = (InputStream) cos.newStreamCache();
 
-            exchange.getOut().setBody(is);
+            exchange.getMessage().setBody(is);
         }
     }
 

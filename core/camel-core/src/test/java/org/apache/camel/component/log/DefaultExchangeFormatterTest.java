@@ -51,10 +51,6 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showBodyType=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showBody=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showOut=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showOut=true&showHeaders=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showOut=true&showBodyType=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showOut=true&showBody=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showAll=true", "Hello World");
 
         template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(new Callable<String>() {
@@ -71,8 +67,8 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     @Test
     public void testSendMessageToLogMultiOptions() throws Exception {
-        template.sendBody("log:org.apache.camel.TEST?showHeaders=true&showOut=true", "Hello World");
-        template.sendBody("log:org.apache.camel.TEST?showProperties=true&showHeaders=true&showOut=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showHeaders=true", "Hello World");
+        template.sendBody("log:org.apache.camel.TEST?showProperties=true&showHeaders=true", "Hello World");
     }
 
     @Test
@@ -100,19 +96,6 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
         template.sendBody("log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true",
                 "Hello World this is a very long string that is going to be chopped by maxchars");
-    }
-
-    @Test
-    public void testSendExchangeWithOut() throws Exception {
-        Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showAll=true&multiline=true");
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello World");
-        exchange.getOut().setBody(22);
-
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
     }
 
     @Test
@@ -189,7 +172,6 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         assertFalse(formatter.isShowHeaders());
         assertTrue(formatter.isShowBodyType());
         assertTrue(formatter.isShowBody());
-        assertFalse(formatter.isShowOut());
         assertFalse(formatter.isShowException());
         assertFalse(formatter.isShowCaughtException());
         assertFalse(formatter.isShowStackTrace());

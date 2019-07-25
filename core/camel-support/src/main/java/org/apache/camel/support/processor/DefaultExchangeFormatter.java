@@ -57,8 +57,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showBody = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the body Java type.")
     private boolean showBodyType = true;
-    @UriParam(label = "formatting", description = "If the exchange has an out message, show the out message.")
-    private boolean showOut;
     @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
     @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)." 
@@ -166,39 +164,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     exception.printStackTrace(new PrintWriter(sw));
                     sb.append(style("StackTrace")).append(sw.toString());
                 }
-            }
-        }
-
-        if (showAll || showOut) {
-            if (exchange.hasOut()) {
-                Message out = exchange.getOut();
-                if (showAll || showHeaders) {
-                    if (multiline) {
-                        sb.append(SEPARATOR);
-                    }
-                    sb.append(style("OutHeaders")).append(sortMap(filterHeaderAndProperties(out.getHeaders())));
-                }
-                if (showAll || showBodyType) {
-                    if (multiline) {
-                        sb.append(SEPARATOR);
-                    }
-                    sb.append(style("OutBodyType")).append(getBodyTypeAsString(out));
-                }
-                if (showAll || showBody) {
-                    if (multiline) {
-                        sb.append(SEPARATOR);
-                    }
-                    String body = getBodyAsString(out);
-                    if (skipBodyLineSeparator) {
-                        body = StringHelper.replaceAll(body, LS, "");
-                    }
-                    sb.append(style("OutBody")).append(body);
-                }
-            } else {
-                if (multiline) {
-                    sb.append(SEPARATOR);
-                }
-                sb.append(style("Out: null"));
             }
         }
 
@@ -311,17 +276,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
      */
     public void setShowBody(boolean showBody) {
         this.showBody = showBody;
-    }
-
-    public boolean isShowOut() {
-        return showOut;
-    }
-
-    /**
-     * If the exchange has an out message, show the out message.
-     */
-    public void setShowOut(boolean showOut) {
-        this.showOut = showOut;
     }
 
     public boolean isShowAll() {

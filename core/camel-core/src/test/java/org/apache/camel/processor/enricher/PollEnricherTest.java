@@ -118,7 +118,7 @@ public class PollEnricherTest extends ContextTestSupport {
         });
         assertEquals("bar", exchange.getIn().getHeader("foo"));
         assertEquals("test:blah", exchange.getIn().getBody());
-        assertEquals("seda://foo4", exchange.getOut().getHeader(Exchange.TO_ENDPOINT));
+        assertEquals("seda://foo4", exchange.getMessage().getHeader(Exchange.TO_ENDPOINT));
         assertNull(exchange.getException());
     }
 

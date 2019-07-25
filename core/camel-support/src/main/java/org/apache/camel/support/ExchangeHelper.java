@@ -452,7 +452,7 @@ public final class ExchangeHelper {
             // if we are out capable then set out and response as well
             // however only grab OUT if it exists, otherwise reuse IN
             // this prevents side effects to alter the Exchange if we force creating an OUT message
-            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            Message msg = exchange.getMessage();
             map.put("out", msg);
             map.put("response", msg);
         }
@@ -806,7 +806,7 @@ public final class ExchangeHelper {
      * @return a log message with both the messageId and exchangeId
      */
     public static String logIds(Exchange exchange) {
-        String msgId = exchange.hasOut() ? exchange.getOut().getMessageId() : exchange.getIn().getMessageId();
+        String msgId = exchange.getMessage().getMessageId();
         return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId()  + ")";
     }
 
@@ -854,7 +854,7 @@ public final class ExchangeHelper {
      * @param outOnly    whether to replace the message as OUT message
      */
     public static void replaceMessage(Exchange exchange, Message newMessage, boolean outOnly) {
-        Message old = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message old = exchange.getMessage();
         if (outOnly || exchange.hasOut()) {
             exchange.setOut(newMessage);
         } else {

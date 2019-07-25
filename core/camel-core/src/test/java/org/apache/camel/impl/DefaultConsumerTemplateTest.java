@@ -320,7 +320,7 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
     @Test
     public void testReceiveOut() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getOut().setBody("Bye World");
+        exchange.getMessage().setBody("Bye World");
         template.send("seda:foo", exchange);
 
         String out = consumer.receiveBody("seda:foo", String.class);

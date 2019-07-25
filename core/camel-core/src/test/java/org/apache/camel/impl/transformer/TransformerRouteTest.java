@@ -84,7 +84,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals(AOrderResponse.class, answerEx.getOut().getBody().getClass());
+        assertEquals(AOrderResponse.class, answerEx.getMessage().getBody().getClass());
         assertMockEndpointsSatisfied();
     }
 
@@ -106,7 +106,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals("{name:XOrderResponse}", answerEx.getOut().getBody(String.class));
+        assertEquals("{name:XOrderResponse}", answerEx.getMessage().getBody(String.class));
         assertMockEndpointsSatisfied();
     }
 
@@ -128,7 +128,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals("<XOrderResponse/>", answerEx.getOut().getBody(String.class));
+        assertEquals("<XOrderResponse/>", answerEx.getMessage().getBody(String.class));
         assertMockEndpointsSatisfied();
     }
 
@@ -150,7 +150,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals("name=XOrderResponse", answerEx.getOut().getBody(String.class));
+        assertEquals("name=XOrderResponse", answerEx.getMessage().getBody(String.class));
         assertMockEndpointsSatisfied();
     }
 

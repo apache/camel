@@ -452,12 +452,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
      * Returns the outbound message if available. Otherwise return the inbound message.
      */
     private Message getResultMessage(Exchange exchange) {
-        if (exchange.hasOut()) {
-            return exchange.getOut();
-        } else {
-            // if this endpoint had no out (like a mock endpoint) just take the in
-            return exchange.getIn();
-        }
+        return exchange.getMessage();
     }
 
     /**

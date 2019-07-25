@@ -57,7 +57,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         try {
             Future<Boolean> asyncFuture = executorService.submit(new ExchangeSubmitter(startEndpoint, asyncSender));
             Assert.assertFalse(asyncFuture.get(5, TimeUnit.SECONDS));
-            innerExchange.getOut().setBody("Bye Camel");
+            innerExchange.getMessage().setBody("Bye Camel");
             innerCallback.done(false);
 
             assertMockEndpointsSatisfied();

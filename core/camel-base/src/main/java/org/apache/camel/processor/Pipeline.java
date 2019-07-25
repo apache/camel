@@ -95,10 +95,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
                 && (first || continueProcessing(exchange, "so breaking out of pipeline", log))) {
 
             // prepare for next run
-            if (exchange.hasOut()) {
-                exchange.setIn(exchange.getOut());
-                exchange.setOut(null);
-            }
+            ExchangeHelper.prepareOutToIn(exchange);
 
             // get the next processor
             AsyncProcessor processor = processors.next();

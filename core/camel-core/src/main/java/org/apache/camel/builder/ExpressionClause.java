@@ -121,6 +121,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * A functional expression of an outbound message
      */
+    @Deprecated
     public T outMessage(final Function<Message, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -212,6 +213,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * A functional expression of an outbound message body
      */
+    @Deprecated
     public T outBody(final Function<Object, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -223,6 +225,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * A functional expression of an outbound message body and headers
      */
+    @Deprecated
     public T outBody(final BiFunction<Object, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -243,6 +246,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * A functional expression of an outbound message body converted to the expected type
      */
+    @Deprecated
     public <B> T outBody(Class<B> expectedType, final Function<B, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -254,6 +258,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * A functional expression of an outbound message body converted to the expected type and headers
      */
+    @Deprecated
     public <B> T outBody(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
         return delegate.expression(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

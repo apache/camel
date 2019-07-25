@@ -69,7 +69,7 @@ public class AsyncEndpointRecipientListBean4Test extends ContextTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             afterThreadName = Thread.currentThread().getName();
-                            exchange.getOut().setBody("Bye Camel");
+                            exchange.getMessage().setBody("Bye Camel");
                         }
                     })
                     .to("log:after")

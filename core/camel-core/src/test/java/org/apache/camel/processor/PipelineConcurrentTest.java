@@ -78,7 +78,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody("Bye " + body);
+                            exchange.getMessage().setBody("Bye " + body);
                         }
                     });
             }
