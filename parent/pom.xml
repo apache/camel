@@ -527,7 +527,7 @@
         <qpid-jms-client-version>0.44.0</qpid-jms-client-version>
         <quartz2-version>2.3.1</quartz2-version>
         <quickfixj-version>2.1.1</quickfixj-version>
-        <rabbitmq-amqp-client-version>5.7.2</rabbitmq-amqp-client-version>
+        <rabbitmq-amqp-client-version>5.7.3</rabbitmq-amqp-client-version>
         <reactive-streams-version>1.0.2</reactive-streams-version>
         <reactor-version>3.2.10.RELEASE</reactor-version>
         <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
