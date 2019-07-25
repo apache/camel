@@ -21,6 +21,8 @@ import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,8 +34,8 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+	@BindToRegistry("hl7codec")
+    public HL7MLLPCodec addCodec() throws Exception {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
@@ -42,10 +44,7 @@ public class HL7MLLPCodecStandAndEndBytesTest extends HL7TestSupport {
         codec.setEndByte1('#');
         codec.setEndByte2('*');
         codec.setConvertLFtoCR(false);
-
-        jndi.bind("hl7codec", codec);
-
-        return jndi;
+        return codec;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

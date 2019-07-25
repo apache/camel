@@ -21,6 +21,8 @@ import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,24 +33,24 @@ import org.junit.Test;
  * Unit test for the HL7MLLPNetty Codec.
  */
 public class HL7MLLPNettyCodecTest extends HL7TestSupport {
+    
+    @BindToRegistry("hl7decoder")
+    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        // START SNIPPET: e1
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
         decoder.setConvertLFtoCR(true);
-        jndi.bind("hl7decoder", decoder);
+        return decoder;
+        }
+
+    @BindToRegistry("hl7encoder")
+    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
-        decoder.setCharset("iso-8859-1");
-        decoder.setConvertLFtoCR(true);
-        jndi.bind("hl7encoder", encoder);
-        // END SNIPPET: e1
-
-        return jndi;
-    }
+        encoder.setCharset("iso-8859-1");
+        encoder.setConvertLFtoCR(true);
+        return encoder;
+     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

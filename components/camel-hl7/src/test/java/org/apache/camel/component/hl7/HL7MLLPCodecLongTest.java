@@ -22,6 +22,8 @@ import java.io.InputStreamReader;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,18 +37,12 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecLongTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        // START SNIPPET: e1
-        HL7MLLPCodec codec = new HL7MLLPCodec();
-        codec.setCharset("iso-8859-1");
-
-        jndi.bind("hl7codec", codec);
-        // END SNIPPET: e1
-
-        return jndi;
-    }
+    @BindToRegistry("hl7codec")
+public HL7MLLPCodec addHl7MllpCodec() throws Exception {
+    HL7MLLPCodec codec = new HL7MLLPCodec();
+    codec.setCharset("iso-8859-1");
+    return codec;
+}
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

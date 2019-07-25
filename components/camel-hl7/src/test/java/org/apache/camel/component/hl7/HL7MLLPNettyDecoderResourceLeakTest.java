@@ -17,6 +17,8 @@
 package org.apache.camel.component.hl7;
 import ca.uhn.hl7v2.model.Message;
 import io.netty.util.ResourceLeakDetector;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,20 +28,17 @@ import org.junit.Test;
 
 public class HL7MLLPNettyDecoderResourceLeakTest extends HL7TestSupport {
 
+	@BindToRegistry("hl7decoder")
+	HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
+	
+    @BindToRegistry("hl7encoder")
+    HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
+    
     @BeforeClass
     // As the ResourceLeakDetector just write error log when it find the leak,  
     // We need to check the log file to see if there is a leak. 
     public static void enableNettyResourceLeakDetector() {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-    }
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        jndi.bind("hl7decoder", new HL7MLLPNettyDecoderFactory());
-        jndi.bind("hl7encoder", new HL7MLLPNettyEncoderFactory());
-
-        return jndi;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

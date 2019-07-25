@@ -21,6 +21,8 @@ import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,9 +33,9 @@ import org.junit.Test;
  * Unit test for the HL7MLLP Codec using different start and end bytes.
  */
 public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    
+    @BindToRegistry("hl7decoder")
+    public HL7MLLPNettyDecoderFactory addDecoder() throws Exception {
 
         HL7MLLPNettyDecoderFactory decoder = new HL7MLLPNettyDecoderFactory();
         decoder.setCharset("iso-8859-1");
@@ -42,8 +44,11 @@ public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
         decoder.setEndByte1('#');
         decoder.setEndByte2('*');
         decoder.setConvertLFtoCR(false);
+        return decoder;
+        }
 
-        jndi.bind("hl7decoder", decoder);
+    @BindToRegistry("hl7encoder")
+    public HL7MLLPNettyEncoderFactory addEncoder() throws Exception {
 
         HL7MLLPNettyEncoderFactory encoder = new HL7MLLPNettyEncoderFactory();
         encoder.setCharset("iso-8859-1");
@@ -52,11 +57,8 @@ public class HL7MLLPNettyCodecStandAndEndBytesTest extends HL7TestSupport {
         encoder.setEndByte1('#');
         encoder.setEndByte2('*');
         encoder.setConvertLFtoCR(false);
-
-        jndi.bind("hl7encoder", encoder);
-
-        return jndi;
-    }
+        return encoder;
+     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

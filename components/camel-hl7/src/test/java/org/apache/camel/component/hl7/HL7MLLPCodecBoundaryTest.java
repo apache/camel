@@ -20,6 +20,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,12 +36,11 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+	@BindToRegistry("hl7codec")
+    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
-        jndi.bind("hl7codec", codec);
-        return jndi;
+        return codec;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

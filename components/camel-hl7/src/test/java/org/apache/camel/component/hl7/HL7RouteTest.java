@@ -24,6 +24,8 @@ import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -34,19 +36,16 @@ import org.junit.Test;
  * Unit test for HL7 routing.
  */
 public class HL7RouteTest extends HL7TestSupport {
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("hl7service")
+	MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
+    
+    @BindToRegistry("hl7codec")
+    public HL7MLLPCodec addCodec() throws Exception {
 
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
 
-        jndi.bind("hl7codec", codec);
-
-        MyHL7BusinessLogic logic = new MyHL7BusinessLogic();
-        jndi.bind("hl7service", logic);
-
-        return jndi;
+        return codec;
     }
 
     @Test
