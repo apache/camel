@@ -72,7 +72,7 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
                             if ("Damn".equals(body)) {
                                 throw new IllegalArgumentException("Damn");
                             }
-                            exchange.getOut().setBody("Bye World");
+                            exchange.getMessage().setBody("Bye World");
                         }
                     })
                     .to("mock:result");

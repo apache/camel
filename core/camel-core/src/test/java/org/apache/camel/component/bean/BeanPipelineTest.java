@@ -77,8 +77,8 @@ public class BeanPipelineTest extends ContextTestSupport {
             String body = exchange.getIn().getBody(String.class);
             assertEquals("Hello World", body);
             assertEquals("Claus", exchange.getIn().getHeader("from"));
-            exchange.getOut().setHeader("from", "James");
-            exchange.getOut().setBody("Hello World from James");
+            exchange.getMessage().setHeader("from", "James");
+            exchange.getMessage().setBody("Hello World from James");
         }
     }
 

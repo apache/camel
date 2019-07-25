@@ -234,13 +234,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             }
 
             // okay no fault then return the response
-            if (result.hasOut()) {
-                // use OUT as the response
-                answer = result.getOut().getBody();
-            } else {
-                // use IN as the response
-                answer = result.getIn().getBody();
-            }
+            answer = result.getMessage().getBody();
         }
         return answer;
     }

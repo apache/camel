@@ -101,7 +101,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
                         if ("Hello Camel".equals(s)) {
                             throw new MyUserException("Forced for testing");
                         }
-                        exchange.getOut().setBody("Hello World");
+                        exchange.getMessage().setBody("Hello World");
                     }
                 }).to("mock:result");
             }

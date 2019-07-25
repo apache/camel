@@ -112,7 +112,7 @@ public class MyServiceProxyTest extends ContextTestSupport {
                         response.id = request.id;
                         response.response = "Hi " + request.request;
                         // we need to setup the body as a response
-                        exchange.getOut().setBody(response);
+                        exchange.getMessage().setBody(response);
                     }
 
                 });

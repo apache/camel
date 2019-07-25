@@ -90,7 +90,7 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
                 exchange.getIn().setBody(HELLO_WORLD);
             }
             // set the out message
-            exchange.getOut().setBody("Error body");
+            exchange.getMessage().setBody("Error body");
             throw new IllegalArgumentException("Get a wrong message");
         }
     }

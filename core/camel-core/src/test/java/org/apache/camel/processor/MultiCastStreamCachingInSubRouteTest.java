@@ -91,7 +91,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
             cos.write(s.getBytes(Charset.forName("UTF-8")));
             cos.close();
             InputStream is = (InputStream) cos.newStreamCache();
-            exchange.getOut().setBody(is);
+            exchange.getMessage().setBody(is);
 
         }
     }

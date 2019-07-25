@@ -288,34 +288,18 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
 
                 // preserve the redelivery stats
                 if (redeliveried != null) {
-                    if (exchange.hasOut()) {
-                        exchange.getOut().setHeader(Exchange.REDELIVERED, redeliveried);
-                    } else {
-                        exchange.getIn().setHeader(Exchange.REDELIVERED, redeliveried);
-                    }
+                    exchange.getMessage().setHeader(Exchange.REDELIVERED, redeliveried);
                 }
                 if (redeliveryCounter != null) {
-                    if (exchange.hasOut()) {
-                        exchange.getOut().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-                    } else {
-                        exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-                    }
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
                 }
                 if (redeliveryMaxCounter != null) {
-                    if (exchange.hasOut()) {
-                        exchange.getOut().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
-                    } else {
-                        exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
-                    }
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
                 }
             }
 
             // set header with the uri of the endpoint enriched so we can use that for tracing etc
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
-            } else {
-                exchange.getIn().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
-            }
+            exchange.getMessage().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
         } catch (Throwable e) {
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
             callback.done(true);

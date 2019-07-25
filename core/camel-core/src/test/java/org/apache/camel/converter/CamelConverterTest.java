@@ -43,7 +43,7 @@ public class CamelConverterTest extends ContextTestSupport {
 
         pro.process(exchange);
 
-        assertEquals("bar", exchange.getOut().getBody());
+        assertEquals("bar", exchange.getMessage().getBody());
     }
 
     @Test
@@ -58,6 +58,6 @@ public class CamelConverterTest extends ContextTestSupport {
 
         pro.process(exchange);
 
-        assertEquals(true, exchange.getOut().getBody());
+        assertEquals(true, exchange.getMessage().getBody());
     }
 }

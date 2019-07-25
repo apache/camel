@@ -48,7 +48,7 @@ public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
         });
         
         assertNull(response.getException());
-        assertNull(response.getOut().getHeader("Header2"));
+        assertNull(response.getMessage().getHeader("Header2"));
         
         response = template.request("direct-vm:start.nofilter", exchange -> {
             exchange.getIn().setBody("Hello World");
@@ -56,7 +56,7 @@ public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
         });
         
         assertNull(response.getException());
-        assertEquals("Value2", response.getOut().getHeader("Header2", String.class));
+        assertEquals("Value2", response.getMessage().getHeader("Header2", String.class));
         
     }
 

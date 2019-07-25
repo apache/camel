@@ -64,7 +64,7 @@ public class AsyncEndpointRoutingSlip3Test extends ContextTestSupport {
                             afterThreadName = Thread.currentThread().getName();
                             String body = exchange.getIn().getBody(String.class);
                             assertEquals("Hi World", body);
-                            exchange.getOut().setBody("Bye Camel");
+                            exchange.getMessage().setBody("Bye Camel");
                         }
                     })
                     .to("log:after")

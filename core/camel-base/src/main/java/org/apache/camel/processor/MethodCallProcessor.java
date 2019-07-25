@@ -52,8 +52,7 @@ public class MethodCallProcessor extends AsyncProcessorSupport implements Tracea
             // if null/empty response its due to void / no-response, then dont change the body
             if (newBody != null) {
 
-                boolean out = exchange.hasOut();
-                Message old = out ? exchange.getOut() : exchange.getIn();
+                Message old = exchange.getMessage();
 
                 // create a new message container so we do not drag specialized message objects along
                 // but that is only needed if the old message is a specialized message

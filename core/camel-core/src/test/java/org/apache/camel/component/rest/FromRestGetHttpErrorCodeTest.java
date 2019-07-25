@@ -44,8 +44,8 @@ public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
             }
         });
         assertNotNull(reply);
-        assertEquals(404, reply.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("text/plain", reply.getOut().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals(404, reply.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("text/plain", reply.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
     @Override

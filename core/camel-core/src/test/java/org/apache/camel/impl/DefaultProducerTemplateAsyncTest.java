@@ -297,7 +297,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                assertEquals("HelloHello", exchange.getOut().getBody());
+                assertEquals("HelloHello", exchange.getMessage().getBody());
                 ORDER.addAndGet(2);
                 latch.countDown();
             }
@@ -347,7 +347,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Exchange> future = template.asyncCallback("direct:echo", exchange, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                assertEquals("HelloHello", exchange.getOut().getBody());
+                assertEquals("HelloHello", exchange.getMessage().getBody());
                 ORDER.addAndGet(2);
             }
         });
@@ -358,7 +358,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         assertEquals(7, ORDER.get());
         assertNotNull(reply);
-        assertEquals("HelloHello", reply.getOut().getBody());
+        assertEquals("HelloHello", reply.getMessage().getBody());
     }
 
     @Test
@@ -395,7 +395,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                assertEquals("HelloHello", exchange.getOut().getBody());
+                assertEquals("HelloHello", exchange.getMessage().getBody());
                 ORDER.addAndGet(2);
                 latch.countDown();
             }
@@ -439,7 +439,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         Future<Object> future = template.asyncCallbackRequestBody("direct:echo", "Hello", new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                assertEquals("HelloHello", exchange.getOut().getBody());
+                assertEquals("HelloHello", exchange.getMessage().getBody());
                 ORDER.addAndGet(2);
             }
         });
@@ -495,7 +495,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                assertEquals("HelloHello", exchange.getOut().getBody());
+                assertEquals("HelloHello", exchange.getMessage().getBody());
                 ORDER.addAndGet(2);
                 latch.countDown();
             }
@@ -522,7 +522,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }, new SynchronizationAdapter() {
             @Override
             public void onDone(Exchange exchange) {
-                assertEquals("ByeBye", exchange.getOut().getBody());
+                assertEquals("ByeBye", exchange.getMessage().getBody());
                 ORDER.addAndGet(2);
                 latch.countDown();
             }

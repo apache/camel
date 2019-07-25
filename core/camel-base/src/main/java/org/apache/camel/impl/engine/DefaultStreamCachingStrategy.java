@@ -175,7 +175,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
     }
 
     public StreamCache cache(Exchange exchange) {
-        Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message message = exchange.getMessage();
         StreamCache cache = message.getBody(StreamCache.class);
         if (cache != null) {
             if (log.isTraceEnabled()) {

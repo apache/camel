@@ -82,7 +82,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
             if (body instanceof InputStream) {
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
                 IOHelper.copy((InputStream) body, output);
-                exchange.getOut().setBody(output.toByteArray());
+                exchange.getMessage().setBody(output.toByteArray());
             } else if (body instanceof Reader) {
                 Reader reader = (Reader) body;
                 StringBuilder sb = new StringBuilder();
@@ -90,13 +90,13 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                     sb.append((char) i);
                 }
                 reader.close();
-                exchange.getOut().setBody(sb.toString());
+                exchange.getMessage().setBody(sb.toString());
             } else if (body instanceof StreamSource) {
                 StreamSource ss = (StreamSource) body;
                 if (ss.getInputStream() != null) {
                     ByteArrayOutputStream output = new ByteArrayOutputStream();
                     IOHelper.copy(ss.getInputStream(), output);
-                    exchange.getOut().setBody(output.toByteArray());
+                    exchange.getMessage().setBody(output.toByteArray());
                 } else if (ss.getReader() != null) {
                     Reader reader = ss.getReader();
                     StringBuilder sb = new StringBuilder();
@@ -104,7 +104,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                         sb.append((char) i);
                     }
                     reader.close();
-                    exchange.getOut().setBody(sb.toString());
+                    exchange.getMessage().setBody(sb.toString());
                 } else {
                     throw new RuntimeException("StreamSource without InputStream and without Reader not supported");
                 }

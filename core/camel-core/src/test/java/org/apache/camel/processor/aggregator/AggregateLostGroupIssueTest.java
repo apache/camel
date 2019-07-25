@@ -51,8 +51,8 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                 from("timer://foo?period=10&delay=0").startupOrder(2)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setBody(messageIndex++);
-                                exchange.getOut().setHeader("aggregateGroup", "group1");
+                                exchange.getMessage().setBody(messageIndex++);
+                                exchange.getMessage().setHeader("aggregateGroup", "group1");
                             }
                         }).to("direct:aggregator");
 

@@ -25,7 +25,7 @@ public class BodyOutAggregatingStrategy implements AggregationStrategy {
         if (oldExchange != null) {
             String oldBody = oldExchange.getIn().getBody(String.class);
             String newBody = newExchange.getIn().getBody(String.class);
-            newExchange.getOut().setBody(oldBody + "+" + newBody);
+            newExchange.getMessage().setBody(oldBody + "+" + newBody);
         }
 
         return newExchange;

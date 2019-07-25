@@ -207,7 +207,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             if (!isValidOrAcceptedContentType(consumes, contentType)) {
                 LOG.trace("Consuming content type does not match contentType header {}. Stopping routing.", contentType);
                 // the content-type is not something we can process so its a HTTP_ERROR 415
-                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;
@@ -217,7 +217,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             if (!isValidOrAcceptedContentType(produces, accept)) {
                 LOG.trace("Produced content type does not match accept header {}. Stopping routing.", contentType);
                 // the response type is not accepted by the client so its a HTTP_ERROR 406
-                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;
@@ -271,8 +271,8 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 }
                 if (body == null) {
                     // this is a bad request, the client did not include a message body
-                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                    exchange.getOut().setBody("The request body is missing.");
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                    exchange.getMessage().setBody("The request body is missing.");
                     // stop routing and return
                     exchange.setProperty(Exchange.ROUTE_STOP, true);
                     return;
@@ -280,16 +280,16 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             }
             if (requiredQueryParameters != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
                 // this is a bad request, the client did not include some of the required query parameters
-                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                exchange.getOut().setBody("Some of the required query parameters are missing.");
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getMessage().setBody("Some of the required query parameters are missing.");
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;
             }
             if (requiredHeaders != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredHeaders)) {
                 // this is a bad request, the client did not include some of the required http headers
-                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
-                exchange.getOut().setBody("Some of the required HTTP headers are missing.");
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getMessage().setBody("Some of the required HTTP headers are missing.");
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;
@@ -336,7 +336,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         }
 
         if (skipBindingOnErrorCode) {
-            Integer code = exchange.hasOut() ? exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class) : exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+            Integer code = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
             // if there is a custom http error code then skip binding
             if (code != null && code >= 300) {
                 return;
@@ -402,7 +402,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         }
 
         // is the body empty
-        if ((exchange.hasOut() && exchange.getOut().getBody() == null) || (!exchange.hasOut() && exchange.getIn().getBody() == null)) {
+        if (exchange.getMessage().getBody() == null) {
             return;
         }
 
@@ -441,7 +441,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     }
 
     private void setOutputDataType(Exchange exchange, DataType type) {
-        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message target = exchange.getMessage();
         if (target instanceof DataTypeAware) {
             ((DataTypeAware)target).setDataType(type);
         }
@@ -474,7 +474,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
 
     private void setCORSHeaders(Exchange exchange, Map<String, Object> state) {
         // add the CORS headers after routing, but before the consumer writes the response
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
 
         // use default value if none has been configured
         String allowOrigin = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Origin") : null;

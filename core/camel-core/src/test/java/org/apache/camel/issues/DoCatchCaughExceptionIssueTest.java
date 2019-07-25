@@ -48,7 +48,7 @@ public class DoCatchCaughExceptionIssueTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 Exception error = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                                 assertEquals("Forced by me", error.getMessage());
-                                exchange.getOut().setBody(error.getMessage() + " but I fixed it");
+                                exchange.getMessage().setBody(error.getMessage() + " but I fixed it");
                             }
                         })
                     .end();

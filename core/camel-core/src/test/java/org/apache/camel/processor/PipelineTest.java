@@ -60,7 +60,7 @@ public class PipelineTest extends ContextTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        assertEquals("Result body", 4, results.getOut().getBody());
+        assertEquals("Result body", 4, results.getMessage().getBody());
     }
 
     
@@ -72,8 +72,8 @@ public class PipelineTest extends ContextTestSupport {
             }
         });
         
-        assertEquals("Hello World", exchange.getOut().getBody());
-        assertEquals(3, exchange.getOut().getHeader("copy-counter"));        
+        assertEquals("Hello World", exchange.getMessage().getBody());
+        assertEquals(3, exchange.getMessage().getHeader("copy-counter"));
     }
 
     @Test
@@ -84,8 +84,8 @@ public class PipelineTest extends ContextTestSupport {
             }
         });
         
-        assertEquals("headerValue", exchange.getOut().getHeader("header"));
-        assertEquals(3, exchange.getOut().getHeader("copy-counter"));  
+        assertEquals("headerValue", exchange.getMessage().getHeader("header"));
+        assertEquals(3, exchange.getMessage().getHeader("copy-counter"));
     }
     
     @Override
@@ -103,7 +103,7 @@ public class PipelineTest extends ContextTestSupport {
                     number = 0;
                 }
                 number = number + 1;
-                exchange.getOut().setBody(number);
+                exchange.getMessage().setBody(number);
             }
         };
 

@@ -85,7 +85,7 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
         assertEquals("Roman", out.getBody());
         assertMessageHeader(out, "foo", "bar");
         assertProperty(result, Exchange.SPLIT_INDEX, 4);
@@ -150,7 +150,7 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
         assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
@@ -171,7 +171,7 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
         assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
@@ -192,7 +192,7 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
         // we aggregate parallel and therefore its not thread-safe when setting values

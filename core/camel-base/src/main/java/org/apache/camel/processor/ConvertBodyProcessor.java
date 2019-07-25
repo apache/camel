@@ -66,8 +66,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     }
 
     public void process(Exchange exchange) throws Exception {
-        boolean out = exchange.hasOut();
-        Message old = out ? exchange.getOut() : exchange.getIn();
+        Message old = exchange.getMessage();
 
         if (old.getBody() == null) {
             // only convert if there is a body

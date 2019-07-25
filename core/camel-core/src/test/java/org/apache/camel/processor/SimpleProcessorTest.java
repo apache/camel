@@ -37,7 +37,7 @@ public class SimpleProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody("Bye World");
+                        exchange.getMessage().setBody("Bye World");
                     }
                 });
             }
