@@ -28,7 +28,6 @@ import ca.uhn.hl7v2.model.v24.segment.QRD;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 import org.junit.Test;
 
