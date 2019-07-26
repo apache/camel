@@ -18,7 +18,6 @@ package org.apache.camel.component.http4;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;

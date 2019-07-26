@@ -20,7 +20,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
