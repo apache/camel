@@ -636,15 +636,19 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Will use the original input message when an {@link org.apache.camel.Exchange} is moved to the dead letter queue.
+     * Will use the original input {@link org.apache.camel.Message} when an {@link org.apache.camel.Exchange}
+     * is moved to the dead letter queue.
      * <p/>
-     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange} is doomed for failure.
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange}
+     * is doomed for failure.
      * <br/>
-     * Instead of using the current in-progress {@link org.apache.camel.Exchange} IN body we use the original IN body instead. This allows
-     * you to store the original input in the dead letter queue instead of the in-progress snapshot of the IN body.
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original
+     * IN message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message.
      * For instance if you route transform the IN body during routing and then failed. With the original exchange
-     * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange} again as the IN body
-     * is the same as when Camel received it. So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
+     * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange}
+     * again as the IN message is the same as when Camel received it.
+     * So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
      * By default this feature is off.
      *
