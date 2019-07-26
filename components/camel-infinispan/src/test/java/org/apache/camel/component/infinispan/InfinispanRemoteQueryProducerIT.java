@@ -53,8 +53,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%abc%")
-                .toBuilder().build();
+                .having("name").like("%abc%").build();
         }
     };
 
@@ -63,8 +62,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         @Override
         public Query build(QueryFactory queryFactory) {
             return queryFactory.from(User.class)
-                .having("name").like("%A")
-                .toBuilder().build();
+                .having("name").like("%A").build();
         }
     };
 
