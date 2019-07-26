@@ -58,7 +58,7 @@ public class DozerProducer extends DefaultProducer {
                 endpoint.getConfiguration().getTargetModel());
         
         // If an unmarshaller was used, the unmarshalled message is the OUT message.
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
         
         // Convert to source model, if specified
         String sourceType = endpoint.getConfiguration().getSourceModel();

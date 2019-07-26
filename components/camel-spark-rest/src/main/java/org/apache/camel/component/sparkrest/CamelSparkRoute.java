@@ -48,7 +48,7 @@ public class CamelSparkRoute implements Route {
             exchange.setException(e);
         }
 
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
 
         try {
             endpoint.getSparkBinding().toSparkResponse(msg, response, endpoint.getSparkConfiguration());

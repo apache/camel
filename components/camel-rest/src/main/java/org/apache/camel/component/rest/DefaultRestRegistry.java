@@ -111,7 +111,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 Exchange dummy = apiProducer.getEndpoint().createExchange();
                 apiProducer.process(dummy);
 
-                String json = dummy.hasOut() ? dummy.getOut().getBody(String.class) : dummy.getIn().getBody(String.class);
+                String json = dummy.getMessage().getBody(String.class);
                 return json;
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);

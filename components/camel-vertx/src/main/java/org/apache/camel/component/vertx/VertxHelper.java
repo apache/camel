@@ -27,7 +27,7 @@ public final class VertxHelper {
     }
 
     public static Object getVertxBody(Exchange exchange) {
-        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message msg = exchange.getMessage();
         Object body = msg.getBody(JsonObject.class);
         if (body == null) {
             body = msg.getBody(JsonArray.class);

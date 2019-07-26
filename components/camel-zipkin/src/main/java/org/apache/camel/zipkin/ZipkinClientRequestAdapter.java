@@ -50,7 +50,7 @@ final class ZipkinClientRequestAdapter {
         if (eventNotifier.isIncludeMessageBody() || eventNotifier.isIncludeMessageBodyStreams()) {
             boolean streams = eventNotifier.isIncludeMessageBodyStreams();
             StreamCache cache = prepareBodyForLogging(exchange, streams);
-            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "", streams, streams);
+            String body = MessageHelper.extractBodyForLogging(exchange.getMessage(), "", streams, streams);
             span.tag("camel.client.exchange.message.request.body", body);
             if (cache != null) {
                 cache.reset();

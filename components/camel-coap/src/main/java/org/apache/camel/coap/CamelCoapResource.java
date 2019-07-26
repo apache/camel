@@ -132,7 +132,7 @@ final class CamelCoapResource extends CoapResource {
             camelExchange.getIn().setBody(bytes);
 
             consumer.getProcessor().process(camelExchange);
-            Message target = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
+            Message target = camelExchange.getMessage();
             
             int format = MediaTypeRegistry.parse(target.getHeader(org.apache.camel.Exchange.CONTENT_TYPE, String.class));
             cexchange.respond(ResponseCode.CONTENT, target.getBody(byte[].class), format);

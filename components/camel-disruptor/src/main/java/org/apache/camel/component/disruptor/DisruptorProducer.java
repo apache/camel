@@ -88,12 +88,12 @@ public class DisruptorProducer extends DefaultAsyncProducer {
                     if (latch.getCount() == 0) {
                         if (log.isTraceEnabled()) {
                             log.trace("{}. Timeout occurred so response will be ignored: {}", this,
-                                    response.hasOut() ? response.getOut() : response.getIn());
+                                    response.getMessage());
                         }
                     } else {
                         if (log.isTraceEnabled()) {
                             log.trace("{} with response: {}", this,
-                                    response.hasOut() ? response.getOut() : response.getIn());
+                                    response.getMessage());
                         }
                         try {
                             ExchangeHelper.copyResults(exchange, response);

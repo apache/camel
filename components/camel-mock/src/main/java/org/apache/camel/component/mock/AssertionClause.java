@@ -100,7 +100,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
         for (Predicate predicate : predicates) {
             currentIndex = index;
 
-            Object value = exchange.hasOut() ? exchange.getOut().getBody() : exchange.getIn().getBody();
+            Object value = exchange.getMessage().getBody();
             // if the value is StreamCache then ensure its readable before evaluating any predicates
             // by resetting it (this is also what StreamCachingAdvice does)
             if (value instanceof StreamCache) {
