@@ -54,12 +54,12 @@ public class InfinispanConsumer extends DefaultConsumer {
 
     public void processEvent(String eventType, boolean isPre, String cacheName, Object key, Object eventData) {
         Exchange exchange = getEndpoint().createExchange();
-        exchange.getOut().setHeader(InfinispanConstants.EVENT_TYPE, eventType);
-        exchange.getOut().setHeader(InfinispanConstants.IS_PRE, isPre);
-        exchange.getOut().setHeader(InfinispanConstants.CACHE_NAME, cacheName);
-        exchange.getOut().setHeader(InfinispanConstants.KEY, key);
+        exchange.getMessage().setHeader(InfinispanConstants.EVENT_TYPE, eventType);
+        exchange.getMessage().setHeader(InfinispanConstants.IS_PRE, isPre);
+        exchange.getMessage().setHeader(InfinispanConstants.CACHE_NAME, cacheName);
+        exchange.getMessage().setHeader(InfinispanConstants.KEY, key);
         if (eventData != null) {
-            exchange.getOut().setHeader(InfinispanConstants.EVENT_DATA, eventData);
+            exchange.getMessage().setHeader(InfinispanConstants.EVENT_DATA, eventData);
         }
 
         try {
