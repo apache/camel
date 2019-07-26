@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (28 parameters):
+==== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +122,6 @@ with the following path and query parameters:
 | *showFiles* (formatting) | If enabled Camel will output files | false | boolean
 | *showFuture* (formatting) | If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged. | false | boolean
 | *showHeaders* (formatting) | Show the message headers. | false | boolean
-| *showOut* (formatting) | If the exchange has an out message, show the out message. | false | boolean
 | *showProperties* (formatting) | Show the exchange properties. | false | boolean
 | *showStackTrace* (formatting) | Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled. | false | boolean
 | *showStreams* (formatting) | Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching. | false | boolean
