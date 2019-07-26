@@ -663,8 +663,16 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * body and headers, where as the latter only includes the original body. You can use the latter to enrich
      * the message with custom headers and include the original message body. The former wont let you do this, as its
      * using the original message body and headers as they are.
-     * <p/>
      * You cannot enable both useOriginalMessage and useOriginalBody.
+     * <p/>
+     * <b>Important:</b> The original input means the input message that are bounded by the current {@link org.apache.camel.spi.UnitOfWork}.
+     * An unit of work typically spans one route, or multiple routes if they are connected using internal
+     * endpoints such as direct or seda. When messages is passed via external endpoints such as JMS or HTTP
+     * then the consumer will create a new unit of work, with the message it received as input as the
+     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work
+     * boundary for the messages in their sub-route (eg the splitted message); however these EIPs have
+     * an option named <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in
+     * regard to error handling and therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
@@ -695,8 +703,16 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * body and headers, where as the latter only includes the original body. You can use the latter to enrich
      * the message with custom headers and include the original message body. The former wont let you do this, as its
      * using the original message body and headers as they are.
-     * <p/>
      * You cannot enable both useOriginalMessage and useOriginalBody.
+     * <p/>
+     * <b>Important:</b> The original input means the input message that are bounded by the current {@link org.apache.camel.spi.UnitOfWork}.
+     * An unit of work typically spans one route, or multiple routes if they are connected using internal
+     * endpoints such as direct or seda. When messages is passed via external endpoints such as JMS or HTTP
+     * then the consumer will create a new unit of work, with the message it received as input as the
+     * original input. Also some EIP patterns such as splitter, multicast, will create a new unit of work
+     * boundary for the messages in their sub-route (eg the splitted message); however these EIPs have
+     * an option named <tt>shareUnitOfWork</tt> which allows to combine with the parent unit of work in
+     * regard to error handling and therefore use the parent original message.
      * <p/>
      * By default this feature is off.
      *
