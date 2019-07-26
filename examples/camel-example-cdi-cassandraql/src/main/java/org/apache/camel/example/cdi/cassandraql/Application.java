@@ -63,7 +63,7 @@ public class Application {
     static class DeltaSpikeParser extends DefaultPropertiesParser {
 
         @Override
-        public String parseProperty(String key, String value, PropertiesLookup properties) {
+        public String parseProperty(String key, String value) {
             return ConfigResolver.getPropertyValue(key);
         }
     }

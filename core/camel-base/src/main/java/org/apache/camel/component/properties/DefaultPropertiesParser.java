@@ -60,7 +60,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
     }
 
     @Override
-    public String parseProperty(String key, String value, PropertiesLookup properties) {
+    public String parseProperty(String key, String value) {
         return value;
     }
 
@@ -253,7 +253,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
          */
         private String doGetPropertyValue(String key) {
             if (ObjectHelper.isEmpty(key)) {
-                return parseProperty(key, null, properties);
+                return parseProperty(key, null);
             }
 
             String value = null;
@@ -296,7 +296,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 }
             }
 
-            return parseProperty(key, value, properties);
+            return parseProperty(key, value);
         }
     }
 

@@ -50,7 +50,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     }
 
     @Override
-    public String parseProperty(String key, String value, PropertiesLookup properties) {
+    public String parseProperty(String key, String value) {
         log.trace(format("Parsing property '%s=%s'", key, value));
         if (value != null) {
             initEncryptor();

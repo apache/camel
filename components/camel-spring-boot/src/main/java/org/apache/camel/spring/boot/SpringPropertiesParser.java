@@ -31,7 +31,7 @@ class SpringPropertiesParser extends DefaultPropertiesParser {
     // Overridden
 
     @Override
-    public String parseProperty(String key, String value, PropertiesLookup properties) {
+    public String parseProperty(String key, String value) {
         return propertyResolver.getProperty(key);
     }
 

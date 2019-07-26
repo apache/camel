@@ -39,8 +39,7 @@ public interface PropertiesParser {
      *
      * @param key        the key
      * @param value      the value
-     * @param properties the properties resolved which values should be looked up
      * @return the value to use
      */
-    String parseProperty(String key, String value, PropertiesLookup properties);
+    String parseProperty(String key, String value);
 }

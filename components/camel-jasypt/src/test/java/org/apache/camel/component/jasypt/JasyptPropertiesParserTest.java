@@ -48,14 +48,14 @@ public class JasyptPropertiesParserTest {
     @Test
     public void testNullPropertyIsUntouched() {
         String expected = null;
-        String result = jasyptPropertiesParser.parseProperty(KEY, expected, null);
+        String result = jasyptPropertiesParser.parseProperty(KEY, expected);
         assertThat(result, is(expected));
     }
 
     @Test
     public void testPlainPropertyIsUntouched() {
         String expected = "http://somehost?1=someval1&2=someval2";
-        String result = jasyptPropertiesParser.parseProperty(KEY, expected, null);
+        String result = jasyptPropertiesParser.parseProperty(KEY, expected);
         assertThat(result, is(expected));
     }
 
@@ -63,7 +63,7 @@ public class JasyptPropertiesParserTest {
     public void testDecryptsEncryptedProperty() {
         String decrypted = "tiger";
         String encrypted = format("%s%s%s", JASYPT_PREFIX_TOKEN, encryptor.encrypt(decrypted), JASYPT_SUFFIX_TOKEN);
-        String result = jasyptPropertiesParser.parseProperty(KEY, encrypted, null);
+        String result = jasyptPropertiesParser.parseProperty(KEY, encrypted);
         assertThat(result, is(decrypted));
     }
 
@@ -75,7 +75,7 @@ public class JasyptPropertiesParserTest {
         String expected = format("http://somehost:port/?param1=%s&param2=somethingelse", parmValue);
         String propertyValue = format("http://somehost:port/?param1=%s&param2=somethingelse", encParmValue);
 
-        String result = jasyptPropertiesParser.parseProperty(KEY, propertyValue, null);
+        String result = jasyptPropertiesParser.parseProperty(KEY, propertyValue);
         assertThat(result, is(expected));
     }
 
@@ -89,7 +89,7 @@ public class JasyptPropertiesParserTest {
                     JASYPT_PREFIX_TOKEN, encryptor.encrypt("tiger" + i), JASYPT_SUFFIX_TOKEN));
             expected.append(format("param%s=tiger%s()&", i, i));
         }
-        String result = jasyptPropertiesParser.parseProperty(KEY, propertyValue.toString(), null);
+        String result = jasyptPropertiesParser.parseProperty(KEY, propertyValue.toString());
         assertThat(result, is(expected.toString()));
     }
 
@@ -98,7 +98,7 @@ public class JasyptPropertiesParserTest {
         jasyptPropertiesParser.setEncryptor(null);
         jasyptPropertiesParser.setPassword(KNOWN_PASSWORD);
 
-        assertEquals(KNOW_DECRYPTED, jasyptPropertiesParser.parseProperty(KEY, KNOWN_ENCRYPTED, null));
+        assertEquals(KNOW_DECRYPTED, jasyptPropertiesParser.parseProperty(KEY, KNOWN_ENCRYPTED));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class JasyptPropertiesParserTest {
         jasyptPropertiesParser.setEncryptor(null);
         jasyptPropertiesParser.setPassword("sys:myfoo");
 
-        assertEquals(KNOW_DECRYPTED, jasyptPropertiesParser.parseProperty(KEY, KNOWN_ENCRYPTED, null));
+        assertEquals(KNOW_DECRYPTED, jasyptPropertiesParser.parseProperty(KEY, KNOWN_ENCRYPTED));
 
         System.clearProperty("myfoo");
     }

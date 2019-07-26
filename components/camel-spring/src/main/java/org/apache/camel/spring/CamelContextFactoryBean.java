@@ -332,8 +332,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
             // get properties component
             PropertiesComponent pc = (PropertiesComponent) getContext().getPropertiesComponent();
-            // use the spring system properties mode which has a different value than Camel may have
-            pc.setSystemPropertiesMode(configurer.getSystemPropertiesMode());
 
             // replace existing resolver with us
             configurer.setParser(pc.getPropertiesParser());

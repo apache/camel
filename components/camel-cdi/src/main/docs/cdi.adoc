@@ -245,7 +245,7 @@ PropertiesComponent properties(PropertiesParser parser) {
 // PropertiesParser bean that uses DeltaSpike to resolve properties
 static class DeltaSpikeParser extends DefaultPropertiesParser {
     @Override
-    public String parseProperty(String key, String value, Properties properties) {
+    public String parseProperty(String key, String value) {
         return ConfigResolver.getPropertyValue(key);
     }
 }
