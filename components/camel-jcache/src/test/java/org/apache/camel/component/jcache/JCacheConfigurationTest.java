@@ -31,6 +31,7 @@ import javax.cache.integration.CacheLoaderException;
 import javax.cache.integration.CacheWriter;
 import javax.cache.integration.CacheWriterException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,30 +39,20 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class JCacheConfigurationTest extends JCacheComponentTestSupport {
+
+    @BindToRegistry("myExpiryPolicyFactory")
     private static final Factory<ExpiryPolicy> EXPIRY_POLICY_FACTORY = AccessedExpiryPolicy.factoryOf(Duration.ONE_MINUTE);
+    @BindToRegistry("myCacheWriterFactory")
     private static final Factory<CacheWriter<Object, Object>> CACHE_WRITER_FACTORY = MyCacheWriter.factory();
+    @BindToRegistry("myCacheLoaderFactory")
     private static final Factory<CacheLoader<Object, Object>> CACHE_LOADER_FACTORY = MyCacheLoader.factory();
 
-    @EndpointInject(
-        value = "jcache://test-cache"
-            + "?expiryPolicyFactory=#myExpiryPolicyFactory"
-            + "&cacheWriterFactory=#myCacheWriterFactory"
-            + "&cacheLoaderFactory=#myCacheLoaderFactory"
-    )
+    @EndpointInject(value = "jcache://test-cache" + "?expiryPolicyFactory=#myExpiryPolicyFactory" + "&cacheWriterFactory=#myCacheWriterFactory"
+                            + "&cacheLoaderFactory=#myCacheLoaderFactory")
     JCacheEndpoint from;
 
     @EndpointInject("mock:to")
     MockEndpoint to;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myExpiryPolicyFactory", EXPIRY_POLICY_FACTORY);
-        registry.bind("myCacheWriterFactory", CACHE_WRITER_FACTORY);
-        registry.bind("myCacheLoaderFactory", CACHE_LOADER_FACTORY);
-
-        return registry;
-    }
 
     @Test
     public void testConfigurations() throws Exception {
@@ -87,6 +78,7 @@ public class JCacheConfigurationTest extends JCacheComponentTestSupport {
         public Object load(Object key) throws CacheLoaderException {
             return null;
         }
+
         @Override
         public Map<Object, Object> loadAll(Iterable<?> keys) throws CacheLoaderException {
             return null;
@@ -101,12 +93,15 @@ public class JCacheConfigurationTest extends JCacheComponentTestSupport {
         @Override
         public void write(Cache.Entry<?, ?> entry) throws CacheWriterException {
         }
+
         @Override
         public void writeAll(Collection<Cache.Entry<?, ?>> entries) throws CacheWriterException {
         }
+
         @Override
         public void delete(Object key) throws CacheWriterException {
         }
+
         @Override
         public void deleteAll(Collection<?> keys) throws CacheWriterException {
         }
