@@ -147,6 +147,19 @@ To use this API you can get it via the `getMessage` method on `Exchange`:
 
 The fault API has been removed from `org.apache.camel.Message` as it was only used for SOAP-WS fault message. The `camel-cxf` and `camel-spring-ws` components for SOAP-WS has been modified to support fault messages from their components. The option `handleFault` has also been removed and you now need to turn this on as endpoint or component option on `camel-cxf` or `camel-spring-ws`.
 
+### getOut on Message
+
+The `hasOut` and `getOut` methods on `Message` has been deprecated in favour of using `getMessage` instead. (sidenote: The camel-core are still using these methods in a few places to be backwards compatible and rely on this logic as Camel was initially designed with the concepts of IN and OUT message inspired from the JBI and SOAP-WS specifications).
+
+### OUT message removed from Simple language and Mock component
+
+The simple language has removed the OUT message concepts eg `${out.body}`.
+Also the mock component has removed OUT message from its assertion API, eg
+
+    mock.message(0).outBody()...
+
+Also the `@OutHeaders` annotation for bean parameter binding has been removed, instead use `@Headers` instead.
+
 ### Mock component
 
 The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. 

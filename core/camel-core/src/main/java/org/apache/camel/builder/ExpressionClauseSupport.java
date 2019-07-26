@@ -107,13 +107,6 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * An expression of an inbound message
-     */
-    public T outMessage() {
-        return expression(ExpressionBuilder.outMessageExpression());
-    }
-
-    /**
      * An expression of an inbound message body
      */
     public T body() {
@@ -129,20 +122,6 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * An expression of an outbound message body
-     */
-    public T outBody() {
-        return expression(ExpressionBuilder.outBodyExpression());
-    }
-
-    /**
-     * An expression of an outbound message body converted to the expected type
-     */
-    public T outBody(Class<?> expectedType) {
-        return expression(ExpressionBuilder.outBodyExpression(expectedType));
-    }
-
-    /**
      * An expression of an inbound message header of the given name
      */
     public T header(String name) {
@@ -154,20 +133,6 @@ public class ExpressionClauseSupport<T> {
      */
     public T headers() {
         return expression(ExpressionBuilder.headersExpression());
-    }
-
-    /**
-     * An expression of an outbound message header of the given name
-     */
-    public T outHeader(String name) {
-        return expression(ExpressionBuilder.outHeaderExpression(name));
-    }
-
-    /**
-     * An expression of the outbound headers
-     */
-    public T outHeaders() {
-        return expression(ExpressionBuilder.outHeadersExpression());
     }
 
     /**

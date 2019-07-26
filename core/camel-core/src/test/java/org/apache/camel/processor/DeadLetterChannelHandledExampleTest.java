@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Headers;
-import org.apache.camel.OutHeaders;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -100,33 +99,31 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         /**
          * This method handle our order input and return the order
          *
-         * @param in      the in headers
+         * @param headers      the in headers
          * @param payload the in payload
-         * @param out     the out headers
          * @return the out payload
          * @throws OrderFailedException is thrown if the order cannot be processed
          */
-        public Object handleOrder(@Headers Map<?, ?> in, @Body String payload, @OutHeaders Map<String, Object> out)
+        public Object handleOrder(@Headers Map headers, @Body String payload)
             throws OrderFailedException {
-            out.put("customerid", in.get("customerid"));
+            headers.put("customerid", headers.get("customerid"));
             if ("Order: kaboom".equals(payload)) {
                 throw new OrderFailedException("Cannot order: kaboom");
             } else {
-                out.put("orderid", "123");
+                headers.put("orderid", "123");
                 return "Order OK";
             }
         }
 
         /**
          * This method creates the response to the caller if the order could not be processed
-         * @param in      the in headers
+         * @param headers      the in headers
          * @param payload the in payload
-         * @param out     the out headers
          * @return the out payload
          */
-        public Object orderFailed(@Headers Map<?, ?> in, @Body String payload, @OutHeaders Map<String, Object> out) {
-            out.put("customerid", in.get("customerid"));
-            out.put("orderid", "failed");
+        public Object orderFailed(@Headers Map headers, @Body String payload) {
+            headers.put("customerid", headers.get("customerid"));
+            headers.put("orderid", "failed");
             return "Order ERROR";
         }
     }
