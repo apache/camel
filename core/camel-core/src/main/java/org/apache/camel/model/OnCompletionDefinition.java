@@ -196,7 +196,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     }
 
     /**
-     * Will use the original input body when an {@link org.apache.camel.Exchange} for this on completion.
+     * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
      * By default this feature is off.
      *
@@ -313,7 +313,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     }
 
     /**
-     * Will use the original input body when an {@link org.apache.camel.Exchange} for this on completion.
+     * Will use the original input message body when an {@link org.apache.camel.Exchange} for this on completion.
      * <p/>
      * By default this feature is off.
      */
