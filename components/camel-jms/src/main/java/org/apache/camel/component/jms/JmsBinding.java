@@ -374,7 +374,7 @@ public class JmsBinding {
     public void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
                                   String headerName, Object headerValue) throws JMSException {
         if (isStandardJMSHeader(headerName)) {
-            if (headerName.equals("JMSCorrelationID") && !endpoint.isUseMessageIDAsCorrelationID()) {
+            if (headerName.equals("JMSCorrelationID") && (endpoint == null || !endpoint.isUseMessageIDAsCorrelationID())) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
                 if (headerValue instanceof String) {
@@ -405,7 +405,7 @@ public class JmsBinding {
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
             // if the value was null, then it may be allowed as an additional header
-            if (value == null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null) {
+            if (value == null && (endpoint != null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null)) {
                 Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
                 while (it.hasNext()) {
                     String pattern = (String) it.next();
