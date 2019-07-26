@@ -476,10 +476,8 @@ route first, before it will continue routing in the original route.
 [[ExceptionClause-UsinguseOriginalMessage]]
 ==== Using `useOriginalMessage`
 
-*Available as of Camel 2.0*
-
 The option *`useOriginalMessage`* is used for routing the original input
-body instead of the current body that potential is modified during routing.
+message instead of the current message that potential is modified during routing.
 
 For example: if you have this route:
 
@@ -504,7 +502,7 @@ sure we want to move the original input message we received from
 
 [source,java]
 ----
-// will use original input body
+// will use original input message (body and headers)
 onException(MyOrderException.class)
     .useOriginalMessage()
     .handled(true)
@@ -531,6 +529,41 @@ would be:
     <to uri="jms:queue:order:failed"/>
 </onException>
 ----
+
+==== Boundary of original message
+
+The original input means the input message that are bounded by the current unit of work. An unit of work typically spans one route, or multiple routes if they are connected 
+using internal endpoints such as direct or seda. When messages is passed via external
+endpoints such as JMS or HTT then the consumer will create a new unit of work, with the
+message it received as input as the original input. Also some EIP patterns such as splitter,
+multicast, will create a new unit of work boundary for the messages in their sub-route
+(eg the splitted message); however these EIPs have an option named shareUnitOfWork which
+allows to combine with the parent unit of work in regard to error handling and therefore use
+the parent original message.
+
+==== Using `useOriginalBody`
+
+The useOriginalBody is similar to useOriginalMessage as documented above. You may want to use useOriginalBody when you want to be able to enrich the message with custom headers and preserve the original message body before sending to an error handler or dead letter channel.
+
+For example: if you have this route:
+
+[source,java]
+----
+// will use original input body
+onException(MyOrderException.class)
+    .useOriginalBody()
+    .handled(true)
+    .to("jms:queue:order:failed");
+
+from("jms:queue:order:input")
+    .setHeader("application", constant("OrderApp"))
+    .to("bean:validateOrder");
+    .to("bean:transformOrder")
+    .to("bean:handleOrder");
+----
+
+Then the message has been enriched with a header named application after the original message was recieved in the JMS endpoint. And in case of an error then the `onException`
+will handle the exception and use the original message body and the headers from the current message as-is, which means the headers will include the application header.
 
 [[ExceptionClause-AdvancedUsageofExceptionClause]]
 === Advanced Usage of xref:exception-clause.adoc[Exception Clause]
