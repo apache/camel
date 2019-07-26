@@ -22,6 +22,8 @@ import javax.cache.CacheManager;
 import javax.cache.Caching;
 
 import com.hazelcast.instance.HazelcastInstanceFactory;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.After;
@@ -30,15 +32,19 @@ import org.junit.Test;
 //This test requires a registered CacheManager, but the others do not.
 public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
 
-    //Register cacheManager in CamelContext. Set cacheName
+    @BindToRegistry("cachemanager-hzsecond")
+    private CacheManager cc = Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null);
+
+    // Register cacheManager in CamelContext. Set cacheName
     @Test
     public void testCacheManagerFromContext() throws Exception {
         final String key = randomString();
 
-        //Send exchange
+        // Send exchange
         Object responseBody = this.template().requestBody("direct:policy-context-manager", key);
 
-        //Verify the cacheManager "hzsecond" registered in the CamelContext was used
+        // Verify the cacheManager "hzsecond" registered in the CamelContext was
+        // used
         assertNull(lookupCache("contextCacheManager"));
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null);
         Cache cache = cacheManager.getCache("contextCacheManager");
@@ -54,26 +60,16 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
             @Override
             public void configure() throws Exception {
 
-                //Use the cacheManager registered in CamelContext. See createRegistry(). Set cacheName
-                //During the test JndiRegistry is used, so we add the cacheManager to JNDI. In Spring context a bean works.
+                // Use the cacheManager registered in CamelContext. See
+                // createRegistry(). Set cacheName
+                // During the test JndiRegistry is used, so we add the
+                // cacheManager to JNDI. In Spring context a bean works.
                 JCachePolicy jcachePolicy = new JCachePolicy();
                 jcachePolicy.setCacheName("contextCacheManager");
 
-                from("direct:policy-context-manager")
-                        .policy(jcachePolicy)
-                        .to("mock:value");
+                from("direct:policy-context-manager").policy(jcachePolicy).to("mock:value");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        //Register another CacheManager in registry
-        registry.bind("cachemanager-hzsecond", Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null));
-
-        return registry;
     }
 
     @After
@@ -83,7 +79,8 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
         cacheManager.getCacheNames().forEach((s) -> cacheManager.destroyCache(s));
         Caching.getCachingProvider().close(URI.create("hzsecond"), null);
 
-        //We need to shutdown the second instance using the Hazelcast api. close(URI,ClassLoader) doesn't do that.
+        // We need to shutdown the second instance using the Hazelcast api.
+        // close(URI,ClassLoader) doesn't do that.
         HazelcastInstanceFactory.getHazelcastInstance("hzsecond").shutdown();
     }
 

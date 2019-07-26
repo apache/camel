@@ -22,6 +22,7 @@ import javax.cache.event.CacheEntryEventFilter;
 import javax.cache.event.CacheEntryListenerException;
 import javax.cache.event.EventType;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,10 +32,9 @@ import org.junit.Test;
 
 public class JCacheConsumerTest extends JCacheComponentTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myFilter", new CacheEntryEventFilter<Object, Object>() {
+    @BindToRegistry("myFilter")
+    public CacheEntryEventFilter addCacheEntryEventFilter() throws Exception {
+        return new CacheEntryEventFilter<Object, Object>() {
             @Override
             public boolean evaluate(CacheEntryEvent<?, ?> event) throws CacheEntryListenerException {
                 if (event.getEventType() == EventType.REMOVED) {
@@ -43,16 +43,14 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
 
                 return !event.getValue().toString().startsWith("to-filter-");
             }
-        });
-
-        return registry;
+        };
     }
 
     @Test
     public void testFilters() throws Exception {
         final Cache<Object, Object> cache = getCacheFromEndpoint("jcache://test-cache");
 
-        final String key  = randomString();
+        final String key = randomString();
         final String val1 = "to-filter-" + randomString();
         final String val2 = randomString();
 
@@ -107,14 +105,10 @@ public class JCacheConsumerTest extends JCacheComponentTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jcache://test-cache?filteredEvents=UPDATED,REMOVED,EXPIRED")
-                    .to("mock:created");
-                from("jcache://test-cache?filteredEvents=CREATED,REMOVED,EXPIRED")
-                    .to("mock:updated");
-                from("jcache://test-cache?filteredEvents=CREATED,UPDATED,EXPIRED")
-                    .to("mock:removed");
-                from("jcache://test-cache?eventFilters=#myFilter")
-                    .to("mock:my-filter");
+                from("jcache://test-cache?filteredEvents=UPDATED,REMOVED,EXPIRED").to("mock:created");
+                from("jcache://test-cache?filteredEvents=CREATED,REMOVED,EXPIRED").to("mock:updated");
+                from("jcache://test-cache?filteredEvents=CREATED,UPDATED,EXPIRED").to("mock:removed");
+                from("jcache://test-cache?eventFilters=#myFilter").to("mock:my-filter");
             }
         };
     }
