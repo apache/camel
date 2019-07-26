@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 296 in 233 JAR artifacts (0 deprecated)
+Number of Components: 298 in 235 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -114,6 +114,9 @@ Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 
 | link:camel-aws-sns/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws-sns) +
 `aws-sns:topicNameOrArn` | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| link:camel-aws-sqs/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws-sqs) +
+`aws-sqs:queueNameOrArn` | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | link:camel-aws-swf/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws-swf) +
 `aws-swf:type` | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
@@ -381,6 +384,9 @@ Number of Components: 296 in 233 JAR artifacts (0 deprecated)
 
 | link:camel-hipchat/src/main/docs/hipchat-component.adoc[Hipchat] (camel-hipchat) +
 `hipchat:protocol:host:port` | 2.15 | The hipchat component supports producing and consuming messages from/to Hipchat service.
+
+| link:camel-http4/src/main/docs/http4-component.adoc[HTTP4] (camel-http4) +
+`http4:httpUri` | 2.3 | For calling out to external HTTP servers using Apache HTTP Client 4.x.
 
 | link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
 `iec60870-client:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
