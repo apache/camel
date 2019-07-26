@@ -43,7 +43,8 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param deadLetter                    the failure processor to send failed exchanges to
      * @param deadLetterUri                 an optional uri for logging purpose
      * @param deadLetterHandleException     whether dead letter channel should handle (and ignore) exceptions which may be thrown during sending the message to the dead letter endpoint
-     * @param useOriginalBodyPolicy         should the original IN body be moved to the dead letter queue or the current exchange IN body?
+     * @param useOriginalMessagePolicy      should the original IN message be moved to the dead letter queue or the current exchange IN message?
+     * @param useOriginalBodyPolicy         should the original IN message body be moved to the dead letter queue or the current exchange IN message body?
      * @param retryWhile                    retry while
      * @param executorService               the {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
      * @param onPrepareProcessor            a custom {@link org.apache.camel.Processor} to prepare the {@link org.apache.camel.Exchange} before
@@ -52,10 +53,10 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      */
     public DeadLetterChannel(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
             ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter, String deadLetterUri, boolean deadLetterHandleException,
-            boolean useOriginalBodyPolicy, Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor, Processor onExceptionOccurredProcessor) {
+            boolean useOriginalMessagePolicy, boolean useOriginalBodyPolicy, Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor, Processor onExceptionOccurredProcessor) {
 
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, deadLetter, deadLetterUri, deadLetterHandleException,
-                useOriginalBodyPolicy, retryWhile, executorService, onPrepareProcessor, onExceptionOccurredProcessor);
+                useOriginalMessagePolicy, useOriginalBodyPolicy, retryWhile, executorService, onPrepareProcessor, onExceptionOccurredProcessor);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 

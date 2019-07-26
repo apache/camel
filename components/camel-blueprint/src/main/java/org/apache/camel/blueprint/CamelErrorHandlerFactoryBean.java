@@ -47,6 +47,8 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private Boolean useOriginalMessage;
     @XmlAttribute
+    private Boolean useOriginalBody;
+    @XmlAttribute
     private String onRedeliveryRef;
     @XmlAttribute
     private String onPrepareFailureRef;
@@ -76,6 +78,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             }
             if (useOriginalMessage != null) {
                 handler.setUseOriginalMessage(useOriginalMessage);
+            }
+            if (useOriginalBody != null) {
+                handler.setUseOriginalBody(useOriginalBody);
             }
             if (redeliveryPolicy != null) {
                 handler.setRedeliveryPolicy(ErrorHandlerReifier.createRedeliveryPolicy(redeliveryPolicy, getCamelContext(), null));

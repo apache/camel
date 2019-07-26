@@ -84,6 +84,15 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return redelivery.isUseOriginalMessagePolicy();
     }
 
+    public boolean isDeadLetterUseOriginalBody() {
+        if (!isSupportRedelivery()) {
+            return false;
+        }
+
+        RedeliveryErrorHandler redelivery = (RedeliveryErrorHandler) errorHandler;
+        return redelivery.isUseOriginalBodyPolicy();
+    }
+
     public boolean isDeadLetterHandleNewException() {
         if (!isSupportRedelivery()) {
             return false;

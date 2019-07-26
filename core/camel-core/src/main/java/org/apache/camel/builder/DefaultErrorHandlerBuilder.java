@@ -49,6 +49,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected String deadLetterUri;
     protected boolean deadLetterHandleNewException = true;
     protected boolean useOriginalMessage;
+    protected boolean useOriginalBody;
     protected boolean asyncDelayedRedelivery;
     protected String executorServiceRef;
     protected ScheduledExecutorService executorService;
@@ -113,6 +114,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         }
         other.setDeadLetterHandleNewException(deadLetterHandleNewException);
         other.setUseOriginalMessage(useOriginalMessage);
+        other.setUseOriginalBody(useOriginalBody);
         other.setAsyncDelayedRedelivery(asyncDelayedRedelivery);
         other.setExecutorServiceRef(executorServiceRef);
     }
@@ -338,7 +340,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Message} when an {@link org.apache.camel.Exchange}
+     * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an {@link org.apache.camel.Exchange}
      * is moved to the dead letter queue.
      * <p/>
      * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange}
@@ -352,12 +354,52 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * again as the IN message is the same as when Camel received it.
      * So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original
+     * body and headers, where as the latter only includes the original body. You can use the latter to enrich
+     * the message with custom headers and include the original message body. The former wont let you do this, as its
+     * using the original message body and headers as they are.
+     * <p/>
+     * You cannot enable both useOriginalMessage and useOriginalBody.
+     * <p/>
      * By default this feature is off.
      *
      * @return the builder
+     * @see #useOriginalBody()
      */
     public DefaultErrorHandlerBuilder useOriginalMessage() {
         setUseOriginalMessage(true);
+        return this;
+    }
+
+    /**
+     * Will use the original input {@link org.apache.camel.Message} body (original body only) when an {@link org.apache.camel.Exchange}
+     * is moved to the dead letter queue.
+     * <p/>
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange}
+     * is doomed for failure.
+     * <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original
+     * IN message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message.
+     * For instance if you route transform the IN body during routing and then failed. With the original exchange
+     * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange}
+     * again as the IN message is the same as when Camel received it.
+     * So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
+     * <p/>
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original
+     * body and headers, where as the latter only includes the original body. You can use the latter to enrich
+     * the message with custom headers and include the original message body. The former wont let you do this, as its
+     * using the original message body and headers as they are.
+     * <p/>
+     * You cannot enable both useOriginalMessage and useOriginalBody.
+     * <p/>
+     * By default this feature is off.
+     *
+     * @return the builder
+     * @see #useOriginalMessage()
+     */
+    public DefaultErrorHandlerBuilder useOriginalBody() {
+        setUseOriginalBody(true);
         return this;
     }
 
@@ -511,6 +553,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setUseOriginalMessage(boolean useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
+    }
+
+    public boolean isUseOriginalBody() {
+        return useOriginalBody;
+    }
+
+    public void setUseOriginalBody(boolean useOriginalBody) {
+        this.useOriginalBody = useOriginalBody;
     }
 
     public boolean isAsyncDelayedRedelivery() {

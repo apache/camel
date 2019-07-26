@@ -32,6 +32,7 @@ public class ExceptionPolicy {
     private String id;
     private String routeId;
     private boolean useOriginalInMessage;
+    private boolean useOriginalInBody;
     private boolean hasOutputs;
 
     private Predicate handledPolicy;
@@ -43,13 +44,14 @@ public class ExceptionPolicy {
     private Map<RedeliveryOption, String> redeliveryPolicy;
     private List<String> exceptions;
 
-    public ExceptionPolicy(String id, String routeId, boolean useOriginalInMessage, 
+    public ExceptionPolicy(String id, String routeId, boolean useOriginalInMessage, boolean useOriginalInBody,
            boolean hasOutputs, Predicate handledPolicy, Predicate continuedPolicy, 
            Predicate retryWhilePolicy, Processor onRedelivery, Processor onExceptionOccurred, 
            String redeliveryPolicyRef, Map<RedeliveryOption, String> redeliveryPolicy, List<String> exceptions) {
         this.id = id;
         this.routeId = routeId;
         this.useOriginalInMessage = useOriginalInMessage;
+        this.useOriginalInBody = useOriginalInBody;
         this.hasOutputs = hasOutputs;
         this.handledPolicy = handledPolicy;
         this.continuedPolicy = continuedPolicy;
@@ -69,8 +71,12 @@ public class ExceptionPolicy {
         return routeId;
     }
 
-    public boolean getUseOriginalInMessage() {
+    public boolean isUseOriginalInMessage() {
         return useOriginalInMessage;
+    }
+
+    public boolean isUseOriginalInBody() {
+        return useOriginalInBody;
     }
 
     public List<String> getExceptions() {

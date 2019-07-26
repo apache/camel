@@ -38,7 +38,7 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
                 definition.getLogger(), definition.getOnRedelivery(),
                 definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(),
                 definition.getFailureProcessor(), definition.getDeadLetterUri(),
-                definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
+                definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(), definition.isUseOriginalBody(),
                 definition.getRetryWhilePolicy(routeContext.getCamelContext()),
                 getExecutorService(routeContext.getCamelContext()),
                 definition.getOnPrepareFailure(), definition.getOnExceptionOccurred());
