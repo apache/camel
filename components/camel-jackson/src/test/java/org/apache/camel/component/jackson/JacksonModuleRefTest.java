@@ -22,8 +22,8 @@ import org.apache.camel.impl.JndiRegistry;
 
 public class JacksonModuleRefTest extends JacksonModuleTest {
 
-	@BindToRegistry("myJacksonModule")
-	private MyModule module = new MyModule();
+    @BindToRegistry("myJacksonModule")
+    private MyModule module = new MyModule();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
