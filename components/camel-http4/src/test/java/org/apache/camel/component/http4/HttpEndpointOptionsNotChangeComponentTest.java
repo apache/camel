@@ -29,11 +29,12 @@ import org.junit.Test;
  */
 public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport {
 
-	@BindToRegistry("other")
-	private MyOtherBinding binding = new MyOtherBinding();
-	
-	@BindToRegistry("myStrategy")
-	private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
+    @BindToRegistry("other")
+    private MyOtherBinding binding = new MyOtherBinding();
+
+    @BindToRegistry("myStrategy")
+    private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
