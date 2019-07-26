@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
@@ -31,6 +32,12 @@ import org.junit.Test;
 public class HttpsGetTest extends BaseHttpsTest {
 
     private HttpServer localServer;
+    
+    @BindToRegistry("x509HostnameVerifier")
+    private NoopHostnameVerifier hostnameVerifier = new NoopHostnameVerifier();
+    
+    @BindToRegistry("sslContextParameters")
+    private SSLContextParameters sslContextParameters = new SSLContextParameters();
     
     @Before
     @Override
@@ -55,15 +62,6 @@ public class HttpsGetTest extends BaseHttpsTest {
         if (localServer != null) {
             localServer.stop();
         }
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("x509HostnameVerifier", new NoopHostnameVerifier());
-        registry.bind("sslContextParameters", new SSLContextParameters());
-
-        return registry;
     }
 
     @Test

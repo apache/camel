@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -28,12 +29,8 @@ import org.junit.Test;
  */
 public class UrlRewriteTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("fooRewrite", new GoogleUrlRewrite());
-        return jndi;
-    }
+	@BindToRegistry("fooRewrite")
+	private GoogleUrlRewrite googleUrlRewrite = new GoogleUrlRewrite();
 
     @Test
     @Ignore

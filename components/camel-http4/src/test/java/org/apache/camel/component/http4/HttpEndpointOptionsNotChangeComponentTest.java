@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
@@ -28,6 +29,11 @@ import org.junit.Test;
  */
 public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport {
 
+	@BindToRegistry("other")
+	private MyOtherBinding binding = new MyOtherBinding();
+	
+	@BindToRegistry("myStrategy")
+	private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -43,14 +49,6 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
         http.start();
 
         return context;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("other", new MyOtherBinding());
-        jndi.bind("myStrategy", new MyHeaderFilterStrategy());
-        return jndi;
     }
 
     @Test
