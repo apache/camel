@@ -66,6 +66,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     private String onExceptionOccurredRef;
     @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
+    @XmlAttribute(name = "useOriginalBody")
+    private Boolean useOriginalBodyPolicy;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
@@ -148,6 +150,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             throw new IllegalArgumentException("Only one of handled or continued is allowed to be configured on: " + this);
         }
 
+        // you cannot turn on both of them
+        if (useOriginalMessagePolicy != null && useOriginalMessagePolicy
+                && useOriginalBodyPolicy != null && useOriginalBodyPolicy) {
+            throw new IllegalArgumentException("Cannot set both useOriginalMessage and useOriginalBody on: " + this);
+        }
+
         // validate that at least some option is set as you cannot just have onException(Exception.class);
         if (outputs == null || getOutputs().isEmpty()) {
             // no outputs so there should be some sort of configuration
@@ -157,6 +165,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
                     retryWhilePolicy,
                     redeliveryPolicyType,
                     useOriginalMessagePolicy,
+                    useOriginalBodyPolicy,
                     onRedeliveryRef,
                     onRedelivery,
                     onExceptionOccurred)
@@ -636,7 +645,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Will use the original input {@link org.apache.camel.Message} when an {@link org.apache.camel.Exchange}
+     * Will use the original input {@link org.apache.camel.Message} (original body and headers) when an {@link org.apache.camel.Exchange}
      * is moved to the dead letter queue.
      * <p/>
      * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange}
@@ -650,12 +659,52 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * again as the IN message is the same as when Camel received it.
      * So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
      * <p/>
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original
+     * body and headers, where as the latter only includes the original body. You can use the latter to enrich
+     * the message with custom headers and include the original message body. The former wont let you do this, as its
+     * using the original message body and headers as they are.
+     * <p/>
+     * You cannot enable both useOriginalMessage and useOriginalBody.
+     * <p/>
      * By default this feature is off.
      *
      * @return the builder
+     * @see #useOriginalBody()
      */
     public OnExceptionDefinition useOriginalMessage() {
         setUseOriginalMessagePolicy(Boolean.TRUE);
+        return this;
+    }
+
+    /**
+     * Will use the original input {@link org.apache.camel.Message} body (original body only) when an {@link org.apache.camel.Exchange}
+     * is moved to the dead letter queue.
+     * <p/>
+     * <b>Notice:</b> this only applies when all redeliveries attempt have failed and the {@link org.apache.camel.Exchange}
+     * is doomed for failure.
+     * <br/>
+     * Instead of using the current inprogress {@link org.apache.camel.Exchange} IN message we use the original
+     * IN message instead. This allows you to store the original input in the dead letter queue instead of the inprogress
+     * snapshot of the IN message.
+     * For instance if you route transform the IN body during routing and then failed. With the original exchange
+     * store in the dead letter queue it might be easier to manually re submit the {@link org.apache.camel.Exchange}
+     * again as the IN message is the same as when Camel received it.
+     * So you should be able to send the {@link org.apache.camel.Exchange} to the same input.
+     * <p/>
+     * The difference between useOriginalMessage and useOriginalBody is that the former includes both the original
+     * body and headers, where as the latter only includes the original body. You can use the latter to enrich
+     * the message with custom headers and include the original message body. The former wont let you do this, as its
+     * using the original message body and headers as they are.
+     * <p/>
+     * You cannot enable both useOriginalMessage and useOriginalBody.
+     * <p/>
+     * By default this feature is off.
+     *
+     * @return the builder
+     * @see #useOriginalMessage()
+     */
+    public OnExceptionDefinition useOriginalBody() {
+        setUseOriginalBodyPolicy(Boolean.TRUE);
         return this;
     }
 
@@ -840,6 +889,14 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     public void setUseOriginalMessagePolicy(Boolean useOriginalMessagePolicy) {
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+    }
+
+    public Boolean getUseOriginalBodyPolicy() {
+        return useOriginalBodyPolicy;
+    }
+
+    public void setUseOriginalBodyPolicy(Boolean useOriginalBodyPolicy) {
+        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
     }
 
     // Implementation methods

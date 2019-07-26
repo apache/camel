@@ -92,6 +92,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
                 def.getId(),
                 CamelContextHelper.getRouteId(def),
                 def.getUseOriginalMessagePolicy() != null && def.getUseOriginalMessagePolicy(),
+                def.getUseOriginalBodyPolicy() != null && def.getUseOriginalBodyPolicy(),
                 ObjectHelper.isNotEmpty(def.getOutputs()),
                 def.getHandledPolicy(),
                 def.getContinuedPolicy(),
@@ -255,7 +256,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerBuilderSupport> 
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
-            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy();
+            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy() || ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy();
             if (original) {
                 // ensure allow original is turned on
                 routeContext.setAllowUseOriginalMessage(true);

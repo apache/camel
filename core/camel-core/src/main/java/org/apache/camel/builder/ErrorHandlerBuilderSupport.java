@@ -64,8 +64,12 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
             }
         }
         if (handler instanceof RedeliveryErrorHandler) {
-            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy();
+            RedeliveryErrorHandler reh = (RedeliveryErrorHandler) handler;
+            boolean original = reh.isUseOriginalMessagePolicy() || reh.isUseOriginalBodyPolicy();;
             if (original) {
+                if (reh.isUseOriginalMessagePolicy() && reh.isUseOriginalBodyPolicy()) {
+                    throw new IllegalArgumentException("Cannot set both useOriginalMessage and useOriginalBody on the error handler");
+                }
                 // ensure allow original is turned on
                 routeContext.setAllowUseOriginalMessage(true);
             }

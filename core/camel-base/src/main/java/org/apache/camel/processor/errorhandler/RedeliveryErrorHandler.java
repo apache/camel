@@ -77,6 +77,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final Predicate retryWhilePolicy;
     protected final CamelLogger logger;
     protected final boolean useOriginalMessagePolicy;
+    protected final boolean useOriginalBodyPolicy;
     protected boolean redeliveryEnabled;
     protected volatile boolean preparingShutdown;
     protected final ExchangeFormatter exchangeFormatter;
@@ -86,7 +87,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
                                   Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
-                                  String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
+                                  String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy, boolean useOriginalBodyPolicy,
                                   Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor, Processor onExceptionProcessor) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
@@ -103,6 +104,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.deadLetterUri = deadLetterUri;
         this.deadLetterHandleNewException = deadLetterHandleNewException;
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
         this.retryWhilePolicy = retryWhile;
         this.executorService = executorService;
         this.onPrepareProcessor = onPrepareProcessor;
@@ -315,6 +317,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return useOriginalMessagePolicy;
     }
 
+    public boolean isUseOriginalBodyPolicy() {
+        return useOriginalBodyPolicy;
+    }
+
     public boolean isDeadLetterHandleNewException() {
         return deadLetterHandleNewException;
     }
@@ -353,6 +359,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Predicate handledPredicate;
         Predicate continuedPredicate;
         boolean useOriginalInMessage;
+        boolean useOriginalInBody;
 
         public RedeliveryState(Exchange exchange, AsyncCallback callback) {
             // init with values from the error handler
@@ -360,6 +367,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             this.currentRedeliveryPolicy = redeliveryPolicy;
             this.handledPredicate = getDefaultHandledPredicate();
             this.useOriginalInMessage = useOriginalMessagePolicy;
+            this.useOriginalInBody = useOriginalBodyPolicy;
             this.onRedeliveryProcessor = redeliveryProcessor;
             this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
 
@@ -667,7 +675,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 handledPredicate = exceptionPolicy.getHandledPolicy();
                 continuedPredicate = exceptionPolicy.getContinuedPolicy();
                 retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
-                useOriginalInMessage = exceptionPolicy.getUseOriginalInMessage();
+                useOriginalInMessage = exceptionPolicy.isUseOriginalInMessage();
+                useOriginalInBody = exceptionPolicy.isUseOriginalInBody();
 
                 // route specific failure handler?
                 Processor processor = null;
@@ -794,11 +803,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             if (allowFailureProcessor && processor != null) {
 
-                // prepare original IN body if it should be moved instead of current body
-                if (useOriginalInMessage) {
-                    log.trace("Using the original IN message instead of current");
+                // prepare original IN message/body if it should be moved instead of current message/body
+                if (useOriginalInMessage || useOriginalInBody) {
                     Message original = ExchangeHelper.getOriginalInMessage(exchange);
-                    exchange.setIn(original);
+                    if (useOriginalInMessage) {
+                        log.trace("Using the original IN message instead of current");
+                        exchange.setIn(original);
+                    } else {
+                        log.trace("Using the original IN message body instead of current");
+                        exchange.getIn().setBody(original.getBody());
+                    }
                     if (exchange.hasOut()) {
                         log.trace("Removing the out message to avoid some uncertain behavior");
                         exchange.setOut(null);

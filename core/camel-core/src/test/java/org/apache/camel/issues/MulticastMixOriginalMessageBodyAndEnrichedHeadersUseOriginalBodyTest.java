@@ -18,11 +18,9 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ClaimCheckOperation;
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalMessageTest extends ContextTestSupport {
+public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalBodyTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -30,7 +28,6 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalMessage
     }
 
     @Test
-    @Ignore("CAMEL-13175")
     public void testMulticastMixOriginalAndHeaders() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -38,7 +35,7 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalMessage
                 context.setAllowUseOriginalMessage(true);
 
                 onException(Exception.class)
-                        .useOriginalMessage()
+                        .useOriginalBody()
                         .handled(true)
                         .to("mock:b");
 

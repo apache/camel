@@ -145,6 +145,11 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             throw new IllegalArgumentException("Attribute useOriginalMessage is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
+        String useOriginalBody = element.getAttribute("useOriginalBody");
+        if (ObjectHelper.isNotEmpty(useOriginalBody) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+            throw new IllegalArgumentException("Attribute useOriginalBody is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
         String onRedeliveryRef = element.getAttribute("onRedeliveryRef");
         if (ObjectHelper.isNotEmpty(onRedeliveryRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute onRedeliveryRef is not supported by error handler type: "
