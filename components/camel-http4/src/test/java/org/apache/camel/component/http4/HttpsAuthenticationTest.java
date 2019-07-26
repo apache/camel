@@ -23,7 +23,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.AuthenticationValidationHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
