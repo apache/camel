@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.impl.JndiRegistry;
@@ -37,8 +38,13 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     private HttpEndpoint endpoint1;
     private HttpEndpoint endpoint2;
 
+    @BindToRegistry("customBinding")
     private TestHttpBinding testBinding;
+    
+    @BindToRegistry("customConfigurer")
     private TestClientConfigurer testConfigurer;
+    
+    @BindToRegistry("customContext")
     private HttpContext testHttpContext;
 
     @Override
@@ -68,15 +74,6 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     public void testHttpContext() {
         assertSame(testHttpContext, endpoint1.getHttpContext());
         assertSame(testHttpContext, endpoint2.getHttpContext());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("customBinding", testBinding);
-        registry.bind("customConfigurer", testConfigurer);
-        registry.bind("customContext", testHttpContext);
-        return registry;
     }
 
     @Override

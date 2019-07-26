@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -32,6 +33,15 @@ import org.junit.Test;
 public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest {
   
     private HttpServer localServer;
+    
+    @BindToRegistry("x509HostnameVerifier")
+    private NoopHostnameVerifier hostnameVerifier = new NoopHostnameVerifier();
+    
+    @BindToRegistry("sslContextParameters")
+    private SSLContextParameters sslContextParameters = new SSLContextParameters();
+    
+    @BindToRegistry("sslContextParameters2")
+    private SSLContextParameters sslContextParameters2 = new SSLContextParameters();
     
     @Before
     @Override
@@ -56,15 +66,6 @@ public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest 
         if (localServer != null) {
             localServer.stop();
         }
-    }
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("x509HostnameVerifier", new NoopHostnameVerifier());
-        registry.bind("sslContextParameters", new SSLContextParameters());
-        registry.bind("sslContextParameters2", new SSLContextParameters());
-
-        return registry;
     }
 
     @Override
