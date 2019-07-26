@@ -882,7 +882,6 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     @Deprecated
     protected Context createJndiContext() throws Exception {
-        LOG.warn("The method createJndiContext() in camel-test is deprecated. You can add beans directly to the registry with the bind method on org.apache.camel.spi.Registry");
         Properties properties = new Properties();
 
         // jndi.properties is optional
