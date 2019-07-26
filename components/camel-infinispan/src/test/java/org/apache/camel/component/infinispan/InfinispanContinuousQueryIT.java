@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan;
 
 import java.io.IOException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -43,6 +44,7 @@ import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
 
 public class InfinispanContinuousQueryIT extends CamelTestSupport {
 
+	@BindToRegistry("continuousQueryBuilder")
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
@@ -51,6 +53,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         }
     };
 
+	@BindToRegistry("continuousQueryBuilderNoMatch")
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_NO_MATCH = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
@@ -59,6 +62,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         }
     };
 
+	@BindToRegistry("continuousQueryBuilderAll")
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_ALL = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
@@ -67,19 +71,11 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         }
     };
 
+    @BindToRegistry("myCustomContainer")
     private RemoteCacheManager manager;
+    
+    @BindToRegistry("continuousQueryBuilder")
     private RemoteCache<Object, Object> cache;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myCustomContainer", manager);
-        registry.bind("continuousQueryBuilder", CONTINUOUS_QUERY_BUILDER);
-        registry.bind("continuousQueryBuilderNoMatch", CONTINUOUS_QUERY_BUILDER_NO_MATCH);
-        registry.bind("continuousQueryBuilderAll", CONTINUOUS_QUERY_BUILDER_ALL);
-
-        return registry;
-    }
 
     @Override
     protected void doPreSetup() throws IOException {
