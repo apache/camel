@@ -44,7 +44,7 @@ import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
 
 public class InfinispanContinuousQueryIT extends CamelTestSupport {
 
-	@BindToRegistry("continuousQueryBuilder")
+    @BindToRegistry("continuousQueryBuilder")
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
@@ -53,7 +53,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         }
     };
 
-	@BindToRegistry("continuousQueryBuilderNoMatch")
+    @BindToRegistry("continuousQueryBuilderNoMatch")
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_NO_MATCH = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
@@ -62,7 +62,7 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         }
     };
 
-	@BindToRegistry("continuousQueryBuilderAll")
+    @BindToRegistry("continuousQueryBuilderAll")
     private static final InfinispanQueryBuilder CONTINUOUS_QUERY_BUILDER_ALL = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
