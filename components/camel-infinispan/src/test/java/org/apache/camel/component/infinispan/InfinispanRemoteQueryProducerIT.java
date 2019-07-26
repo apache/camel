@@ -49,7 +49,7 @@ import static org.apache.camel.component.infinispan.util.UserUtils.hasUser;
 
 public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
-	@BindToRegistry("noResultQueryBuilder")
+    @BindToRegistry("noResultQueryBuilder")
     private static final InfinispanQueryBuilder NO_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {

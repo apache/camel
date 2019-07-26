@@ -98,7 +98,7 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
     
     @BindToRegistry("cacheContainer")
     public EmbeddedCacheManager loadContainer() {
-    	return clusteredCacheContainers.get(0);
+        return clusteredCacheContainers.get(0);
     }
 
     @Override
