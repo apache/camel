@@ -121,15 +121,15 @@ public class InfinispanContinuousQueryIT extends CamelTestSupport {
         continuousQuery.expectedMessageCount(4);
 
         for (int i = 0; i < 4; i++) {
-            continuousQuery.message(i).outHeader(InfinispanConstants.KEY).isEqualTo(createKey(CQ_USERS[i % 2]));
-            continuousQuery.message(i).outHeader(InfinispanConstants.CACHE_NAME).isEqualTo(cache.getName());
+            continuousQuery.message(i).header(InfinispanConstants.KEY).isEqualTo(createKey(CQ_USERS[i % 2]));
+            continuousQuery.message(i).header(InfinispanConstants.CACHE_NAME).isEqualTo(cache.getName());
             if (i >= 2) {
-                continuousQuery.message(i).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
-                continuousQuery.message(i).outHeader(InfinispanConstants.EVENT_DATA).isNull();
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE).isEqualTo(InfinispanConstants.CACHE_ENTRY_LEAVING);
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNull();
             } else {
-                continuousQuery.message(i).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo(InfinispanConstants.CACHE_ENTRY_JOINING);
-                continuousQuery.message(i).outHeader(InfinispanConstants.EVENT_DATA).isNotNull();
-                continuousQuery.message(i).outHeader(InfinispanConstants.EVENT_DATA).isInstanceOf(User.class);
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_TYPE).isEqualTo(InfinispanConstants.CACHE_ENTRY_JOINING);
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isNotNull();
+                continuousQuery.message(i).header(InfinispanConstants.EVENT_DATA).isInstanceOf(User.class);
             }
         }
 
