@@ -208,6 +208,8 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 LOG.trace("Consuming content type does not match contentType header {}. Stopping routing.", contentType);
                 // the content-type is not something we can process so its a HTTP_ERROR 415
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
+                // set empty response body as http error code indicate the problem
+                exchange.getMessage().setBody(null);
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;
@@ -218,6 +220,8 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 LOG.trace("Produced content type does not match accept header {}. Stopping routing.", contentType);
                 // the response type is not accepted by the client so its a HTTP_ERROR 406
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
+                // set empty response body as http error code indicate the problem
+                exchange.getMessage().setBody(null);
                 // stop routing and return
                 exchange.setProperty(Exchange.ROUTE_STOP, true);
                 return;
