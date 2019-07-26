@@ -86,8 +86,6 @@ classname, and expects the body to be not null.
 |mandatoryBodyAs(_type_).*OGNL* |Object |Converts the body to the given type determined by its
 classname and then invoke methods using a Camel OGNL expression.
 
-|out.body |Object |*deprecated* the output body
-
 |header.foo |Object |refer to the input foo header
 
 |header:foo |Object |refer to the input foo header
@@ -129,18 +127,6 @@ Camel OGNL expression.
 
 |in.headers.foo.*OGNL* |Object |*deprecated* refer to the input foo header and invoke its value using a
 Camel OGNL expression.
-
-|out.header.foo |Object |*deprecated* refer to the out header foo
-
-|out.header:foo |Object |*deprecated* refer to the out header foo
-
-|out.header[foo] |Object |*deprecated* refer to the out header foo
-
-|out.headers.foo |Object |*deprecated* refer to the out header foo
-
-|out.headers:foo |Object |*deprecated* refer to the out header foo
-
-|out.headers[foo] |Object |*deprecated* refer to the out header foo
 
 |headerAs(_key_,_type_) |Type |converts the header to the given type determined by its
 classname

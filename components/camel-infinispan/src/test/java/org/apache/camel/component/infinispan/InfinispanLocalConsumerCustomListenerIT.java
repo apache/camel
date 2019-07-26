@@ -53,9 +53,9 @@ public class InfinispanLocalConsumerCustomListenerIT extends InfinispanTestSuppo
 
         basicCacheContainer.getCache(CUSTOM_CACHE_NAME).put("newKey", "newValue");
 
-        mockResult.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(true);
-        mockResult.message(0).outHeader(InfinispanConstants.KEY).isEqualTo("newKey");
-        mockResult.message(1).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
+        mockResult.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(true);
+        mockResult.message(0).header(InfinispanConstants.KEY).isEqualTo("newKey");
+        mockResult.message(1).header(InfinispanConstants.IS_PRE).isEqualTo(false);
 
         mockResult.assertIsSatisfied();
     }
