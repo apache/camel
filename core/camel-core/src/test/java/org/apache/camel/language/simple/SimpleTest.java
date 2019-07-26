@@ -243,17 +243,6 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testSimpleOutExpressions() throws Exception {
-        exchange.getOut().setBody("Bye World");
-        exchange.getOut().setHeader("quote", "Camel rocks");
-        assertExpression("${out.body}", "Bye World");
-        assertExpression("${out.header.quote}", "Camel rocks");
-        assertExpression("${out.header:quote}", "Camel rocks");
-        assertExpression("${out.headers.quote}", "Camel rocks");
-        assertExpression("${out.headers:quote}", "Camel rocks");
-    }
-
-    @Test
     public void testSimpleExchangePropertyExpressions() throws Exception {
         exchange.setProperty("medal", "gold");
         assertExpression("${exchangeProperty.medal}", "gold");
@@ -575,10 +564,6 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${date:in.header.birthday}", inHeaderCalendar.getTime());
         assertExpression("${date:in.header.birthday:yyyyMMdd}", "19740420");
         assertExpression("${date:in.header.birthday+24h:yyyyMMdd}", "19740421");
-
-        assertExpression("${date:out.header.birthday}", outHeaderCalendar.getTime());
-        assertExpression("${date:out.header.birthday:yyyyMMdd}", "19750521");
-        assertExpression("${date:out.header.birthday+24h:yyyyMMdd}", "19750522");
 
         assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime());
         assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19760622");

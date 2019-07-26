@@ -41,7 +41,6 @@ import org.apache.camel.Handler;
 import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
-import org.apache.camel.OutHeaders;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.IntrospectionSupport;
@@ -973,8 +972,6 @@ public class BeanInfo {
             return ExpressionBuilder.headerExpression(headerAnnotation.value());
         } else if (annotation instanceof Headers) {
             return ExpressionBuilder.headersExpression();
-        } else if (annotation instanceof OutHeaders) {
-            return ExpressionBuilder.outHeadersExpression();
         } else if (annotation instanceof ExchangeException) {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
         } else if (annotation instanceof PropertyInject) {

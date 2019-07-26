@@ -167,64 +167,6 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression for the out header value with the given name
-     * <p/>
-     * Will fallback and look in properties if not found in headers.
-     *
-     * @param headerName the name of the header the expression will return
-     * @return an expression object which will return the header value
-     */
-    @Deprecated
-    public static Expression outHeaderExpression(final String headerName) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                if (!exchange.hasOut()) {
-                    return null;
-                }
-
-                String text = simpleExpression(headerName).evaluate(exchange, String.class);
-                Message out = exchange.getOut();
-                Object header = out.getHeader(text);
-                if (header == null) {
-                    // let's try the exchange header
-                    header = exchange.getProperty(text);
-                }
-                return header;
-            }
-
-            @Override
-            public String toString() {
-                return "outHeader(" + headerName + ")";
-            }
-        };
-    }
-
-    /**
-     * Returns an expression for the outbound message headers
-     *
-     * @return an expression object which will return the headers, will be <tt>null</tt> if the
-     * exchange is not out capable.
-     */
-    @Deprecated
-    public static Expression outHeadersExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                // only get out headers if the MEP is out capable
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    return exchange.getOut().getHeaders();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "outHeaders";
-            }
-        };
-    }
-
-    /**
      * Returns an expression for the exchange pattern
      *
      * @see Exchange#getPattern()
@@ -866,49 +808,6 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the out messages body
-     */
-    @Deprecated
-    public static Expression outBodyExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                if (exchange.hasOut()) {
-                    return exchange.getOut().getBody();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "outBody";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for the exchanges outbound message body converted
-     * to the given type
-     */
-    @Deprecated
-    public static <T> Expression outBodyExpression(final Class<T> type) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                if (exchange.hasOut()) {
-                    return exchange.getOut().getBody(type);
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "outBodyAs[" + type.getName() + "]";
-            }
-        };
-    }
-
-    /**
      * Returns the expression for the exchange
      */
     public static Expression exchangeExpression() {
@@ -982,40 +881,6 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "inMessageExpression";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for the OUT message
-     */
-    @Deprecated
-    public static Expression outMessageExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return exchange.getOut();
-            }
-
-            @Override
-            public String toString() {
-                return "outMessage";
-            }
-        };
-    }
-
-    /**
-     * Returns a functional expression for the OUT message
-     */
-    @Deprecated
-    public static Expression outMessageExpression(final Function<Message, Object> function) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut());
-            }
-
-            @Override
-            public String toString() {
-                return "outMessageExpression";
             }
         };
     }

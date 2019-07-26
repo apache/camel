@@ -368,29 +368,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
 
-        // out header function
-        remainder = ifStartsWithReturnRemainder("out.header.", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("out.header:", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("out.headers.", function);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("out.headers:", function);
-        }
-        if (remainder != null) {
-            return ExpressionBuilder.outHeaderExpression(remainder);
-        }
-
         return null;
     }
 
     private Expression createSimpleExpressionDirectly(String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
-        } else if (ObjectHelper.equal(expression, "out.body")) {
-            return ExpressionBuilder.outBodyExpression();
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return ExpressionBuilder.bodyOneLine();
         } else if (ObjectHelper.equal(expression, "id")) {
