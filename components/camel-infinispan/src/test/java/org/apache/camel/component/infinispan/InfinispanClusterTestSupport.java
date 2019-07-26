@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan;
 
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.Cache;
@@ -94,6 +95,11 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
 
         super.setUp();
     }
+    
+    @BindToRegistry("cacheContainer")
+    public EmbeddedCacheManager loadContainer() {
+    	return clusteredCacheContainers.get(0);
+    }
 
     @Override
     public void tearDown() throws Exception {
@@ -103,13 +109,6 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
         for (BasicCacheContainer container: clusteredCacheContainers) {
             container.stop();
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cacheContainer", clusteredCacheContainers.get(0));
-        return registry;
     }
 
     protected Cache<Object, Object> defaultCache() {

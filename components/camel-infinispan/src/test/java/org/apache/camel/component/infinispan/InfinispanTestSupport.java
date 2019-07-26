@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.infinispan;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.commons.api.BasicCache;
@@ -33,6 +34,7 @@ public class InfinispanTestSupport extends CamelTestSupport {
     protected static final String KEY_TWO = "keyTwo";
     protected static final String VALUE_TWO = "valueTwo";
 
+    @BindToRegistry("cacheContainer")
     protected BasicCacheContainer basicCacheContainer;
     protected ControlledTimeService ts;
 
@@ -48,13 +50,6 @@ public class InfinispanTestSupport extends CamelTestSupport {
     public void tearDown() throws Exception {
         basicCacheContainer.stop();
         super.tearDown();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cacheContainer", basicCacheContainer);
-        return registry;
     }
 
     protected BasicCache<Object, Object> currentCache() {

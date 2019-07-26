@@ -19,6 +19,7 @@ package org.apache.camel.component.infinispan;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -48,6 +49,7 @@ import static org.apache.camel.component.infinispan.util.UserUtils.hasUser;
 
 public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
 
+	@BindToRegistry("noResultQueryBuilder")
     private static final InfinispanQueryBuilder NO_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
@@ -57,6 +59,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         }
     };
 
+    @BindToRegistry("withResultQueryBuilder")
     private static final InfinispanQueryBuilder WITH_RESULT_QUERY_BUILDER = new InfinispanQueryBuilder() {
         @Override
         public Query build(QueryFactory queryFactory) {
@@ -66,17 +69,8 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         }
     };
 
+    @BindToRegistry("myCustomContainer")
     private RemoteCacheManager manager;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("myCustomContainer", manager);
-        registry.bind("noResultQueryBuilder", NO_RESULT_QUERY_BUILDER);
-        registry.bind("withResultQueryBuilder", WITH_RESULT_QUERY_BUILDER);
-
-        return registry;
-    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
