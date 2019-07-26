@@ -29,8 +29,8 @@ import org.junit.Test;
  */
 public class UrlRewriteTest extends CamelTestSupport {
 
-	@BindToRegistry("fooRewrite")
-	private GoogleUrlRewrite googleUrlRewrite = new GoogleUrlRewrite();
+    @BindToRegistry("fooRewrite")
+    private GoogleUrlRewrite googleUrlRewrite = new GoogleUrlRewrite();
 
     @Test
     @Ignore
