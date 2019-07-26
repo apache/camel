@@ -137,9 +137,11 @@ transformOrder or after? So to be sure we want to move the original
 input message we received from `jms:queue:order:input`. So we can do
 this by enabling the *useOriginalMessage* option as shown below:
 
+NOTE: There is also a *useOriginalBody* option.
+
 [source,java]
 ----
-// will use original body
+// will use original message (body and headers)
 errorHandler(deadLetterChannel("jms:queue:dead")
    .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000);
 ----
@@ -148,6 +150,17 @@ Then the messages routed to the `jms:queue:dead` is the original input.
 If we want to manually retry we can move the JMS message from the failed
 to the input queue, with no problem as the message is the same as the
 original we received.
+
+==== Boundary of original message
+
+The original input means the input message that are bounded by the current unit of work. An unit of work typically spans one route, or multiple routes if they are connected 
+using internal endpoints such as direct or seda. When messages is passed via external
+endpoints such as JMS or HTT then the consumer will create a new unit of work, with the
+message it received as input as the original input. Also some EIP patterns such as splitter,
+multicast, will create a new unit of work boundary for the messages in their sub-route
+(eg the splitted message); however these EIPs have an option named shareUnitOfWork which
+allows to combine with the parent unit of work in regard to error handling and therefore use
+the parent original message.
 
 [[deadLetterChannel-OnRedelivery]]
 === OnRedelivery
@@ -179,11 +192,11 @@ The default redeliver policy will use the following values:
 * And the exponential backoff and collision avoidance is turned off.
 * The retriesExhaustedLogLevel are set to LoggingLevel.ERROR
 * The retryAttemptedLogLevel are set to LoggingLevel.DEBUG
-* Stack traces is logged for exhausted messages from Camel 2.2 onwards.
-* Handled exceptions is not logged from Camel 2.3 onwards
+* Stack traces is logged for exhausted messages
+* Handled exceptions is not logged
 * logExhaustedMessageHistory is true for default error handler, and
 false for dead letter channel.
-* logExhaustedMessageBody *Camel 2.17:* is disabled by default to avoid
+* logExhaustedMessageBody is disabled by default to avoid
 logging sensitive message body/header details. If this option is true,
 then logExhaustedMessageHistory must also be true.
 
