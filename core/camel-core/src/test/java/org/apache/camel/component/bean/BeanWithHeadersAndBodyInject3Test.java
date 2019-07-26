@@ -23,7 +23,6 @@ import javax.naming.Context;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Headers;
-import org.apache.camel.OutHeaders;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.jndi.JndiContext;
@@ -44,7 +43,6 @@ public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
     public void testInOnly() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:finish");
         end.expectedBodiesReceived("Hello!");
-        end.message(0).header("out").isNull();
 
         sendBody("direct:start", "Test Input");
 
@@ -79,12 +77,8 @@ public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
 
     public static class MyBean {
 
-        public String doSomething(@Body String body, @Headers Map<?, ?> headers,
-                                  @OutHeaders Map<String, Object> outHeaders) {
-            if (outHeaders != null) {
-                outHeaders.put("out", 123);
-            }
-
+        public String doSomething(@Body String body, @Headers Map headers) {
+            headers.put("out", 123);
             return "Hello!";
         }
     }

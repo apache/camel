@@ -49,22 +49,6 @@ public class MockPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testOutBodyType() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:foo");
-        mock.message(0).outBody(String.class).isEqualTo("Bye World");
-        mock.expectedMessageCount(1);
-
-        template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-                exchange.getOut().setBody("Bye World");
-            }
-        });
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

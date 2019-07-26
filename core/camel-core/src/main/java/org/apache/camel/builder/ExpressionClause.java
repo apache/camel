@@ -112,25 +112,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * An expression of an outbound message
-     */
-    public T outMessage() {
-        return delegate.outMessage();
-    }
-
-    /**
-     * A functional expression of an outbound message
-     */
-    @Deprecated
-    public T outMessage(final Function<Message, Object> function) {
-        return delegate.expression(new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut());
-            }
-        });
-    }
-
-    /**
      * An expression of an inbound message body
      */
     public T body() {
@@ -204,72 +185,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * An expression of an outbound message body
-     */
-    public T outBody() {
-        return delegate.outBody();
-    }
-
-    /**
-     * A functional expression of an outbound message body
-     */
-    @Deprecated
-    public T outBody(final Function<Object, Object> function) {
-        return delegate.expression(new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut().getBody());
-            }
-        });
-    }
-
-    /**
-     * A functional expression of an outbound message body and headers
-     */
-    @Deprecated
-    public T outBody(final BiFunction<Object, Map<String, Object>, Object> function) {
-        return delegate.expression(new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return function.apply(
-                    exchange.getOut().getBody(),
-                    exchange.getOut().getHeaders());
-            }
-        });
-    }
-
-    /**
-     * An expression of an outbound message body converted to the expected type
-     */
-    public T outBody(Class<?> expectedType) {
-        return delegate.outBody(expectedType);
-    }
-
-    /**
-     * A functional expression of an outbound message body converted to the expected type
-     */
-    @Deprecated
-    public <B> T outBody(Class<B> expectedType, final Function<B, Object> function) {
-        return delegate.expression(new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut().getBody(expectedType));
-            }
-        });
-    }
-
-    /**
-     * A functional expression of an outbound message body converted to the expected type and headers
-     */
-    @Deprecated
-    public <B> T outBody(Class<B> expectedType, final BiFunction<B, Map<String, Object>, Object> function) {
-        return delegate.expression(new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return function.apply(
-                    exchange.getOut().getBody(expectedType),
-                    exchange.getOut().getHeaders());
-            }
-        });
-    }
-
-    /**
      * An expression of an inbound message header of the given name
      */
     public T header(String name) {
@@ -281,20 +196,6 @@ public class ExpressionClause<T> implements Expression, Predicate {
      */
     public T headers() {
         return delegate.headers();
-    }
-
-    /**
-     * An expression of an outbound message header of the given name
-     */
-    public T outHeader(String name) {
-        return delegate.outHeader(name);
-    }
-
-    /**
-     * An expression of the outbound headers
-     */
-    public T outHeaders() {
-        return delegate.outHeaders();
     }
 
     /**
