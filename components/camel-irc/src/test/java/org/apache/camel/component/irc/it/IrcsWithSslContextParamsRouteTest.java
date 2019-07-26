@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc.it;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -36,8 +37,8 @@ public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
     //    to slow the route creation down enough for the event listener to be in place
     //    when camel-con joins the room.
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("sslContextParameters")
+    protected SSLContextParameters loadSslContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource("localhost.ks");
         ksp.setPassword("changeit");
@@ -47,12 +48,8 @@ public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
         
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setTrustManagers(tmp);
-        
-        
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", sslContextParameters);
 
-        return registry;
+        return sslContextParameters;
     }
 
     @Override
