@@ -19,7 +19,6 @@ package org.apache.camel.component.infinispan;
 import java.util.List;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCacheContainer;
