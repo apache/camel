@@ -25,7 +25,6 @@ import com.hazelcast.instance.HazelcastInstanceFactory;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.After;
 import org.junit.Test;
 
@@ -60,10 +59,6 @@ public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
             @Override
             public void configure() throws Exception {
 
-                // Use the cacheManager registered in CamelContext. See
-                // createRegistry(). Set cacheName
-                // During the test JndiRegistry is used, so we add the
-                // cacheManager to JNDI. In Spring context a bean works.
                 JCachePolicy jcachePolicy = new JCachePolicy();
                 jcachePolicy.setCacheName("contextCacheManager");
 
