@@ -75,7 +75,7 @@ public class SedaProducer extends DefaultAsyncProducer {
                         return;
                     } else {
                         if (log.isTraceEnabled()) {
-                            log.trace("{} with response: {}", this, response.hasOut() ? response.getOut() : response.getIn());
+                            log.trace("{} with response: {}", this, response.getMessage());
                         }
                         try {
                             ExchangeHelper.copyResults(exchange, response);

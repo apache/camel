@@ -67,7 +67,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
     @Override
     public void filterConsumer(Exchange exchange, WebServiceMessage webServiceMessage) {
         if (exchange != null) {
-            Message responseMessage = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            Message responseMessage = exchange.getMessage();
             processHeader(exchange.getContext(), responseMessage, webServiceMessage);
         }
     }

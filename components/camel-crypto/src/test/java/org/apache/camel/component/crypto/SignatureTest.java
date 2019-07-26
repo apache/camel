@@ -190,7 +190,7 @@ public class SignatureTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         Exchange e = mock.getExchanges().get(0);
-        Message result = e == null ? null : e.hasOut() ? e.getOut() : e.getIn();
+        Message result = e == null ? null : e.getMessage();
         assertNull(result.getHeader(DigitalSignatureConstants.SIGNATURE));
     }
 
@@ -347,7 +347,7 @@ public class SignatureTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         Exchange e = mock.getExchanges().get(0);
-        Message result = e == null ? null : e.hasOut() ? e.getOut() : e.getIn();
+        Message result = e == null ? null : e.getMessage();
         assertNotNull(result.getHeader(DigitalSignatureConstants.SIGNATURE));
     }
 

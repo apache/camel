@@ -62,7 +62,7 @@ public class RabbitMQMessagePublisher {
     }
 
     private Message resolveMessageFrom(final Exchange camelExchange) {
-        Message message = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
+        Message message = camelExchange.getMessage();
 
         // Remove the SERIALIZE_HEADER in case it was previously set
         if (message.getHeaders() != null && message.getHeaders().containsKey(RabbitMQEndpoint.SERIALIZE_HEADER)) {

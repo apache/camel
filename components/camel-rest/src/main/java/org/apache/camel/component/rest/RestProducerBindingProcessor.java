@@ -268,7 +268,7 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             }
 
             if (skipBindingOnErrorCode) {
-                Integer code = exchange.hasOut() ? exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class) : exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+                Integer code = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
                 // if there is a custom http error code then skip binding
                 if (code != null && code >= 300) {
                     return;
