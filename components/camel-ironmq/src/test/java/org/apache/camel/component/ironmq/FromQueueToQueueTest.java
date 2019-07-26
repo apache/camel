@@ -43,7 +43,7 @@ public class FromQueueToQueueTest extends CamelTestSupport {
     private IronMQEndpoint queue2;
     
     @BindToRegistry("ironMock")
-    IronMQClientMock mock = new IronMQClientMock("dummy", "dummy");
+    private IronMQClientMock mock = new IronMQClientMock("dummy", "dummy");
     
     @Test
     public void shouldDeleteMessageFromQueue1() throws Exception {
