@@ -459,28 +459,6 @@ public interface LogEndpointBuilderFactory {
             return this;
         }
         /**
-         * If the exchange has an out message, show the out message.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: formatting
-         */
-        default LogEndpointBuilder showOut(boolean showOut) {
-            setProperty("showOut", showOut);
-            return this;
-        }
-        /**
-         * If the exchange has an out message, show the out message.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: formatting
-         */
-        default LogEndpointBuilder showOut(String showOut) {
-            setProperty("showOut", showOut);
-            return this;
-        }
-        /**
          * Show the exchange properties.
          * 
          * The option is a: <code>boolean</code> type.
