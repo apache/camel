@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -29,14 +31,8 @@ import org.junit.Test;
 public class JacksonObjectMapperRegistryTest extends CamelTestSupport {
 
     private JacksonDataFormat df = new JacksonDataFormat();
+    @BindToRegistry("myMapper")
     private ObjectMapper objectMapper = new ObjectMapper();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myMapper", objectMapper);
-        return jndi;
-    }
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
