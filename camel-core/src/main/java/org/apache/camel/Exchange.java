@@ -415,7 +415,9 @@ public interface Exchange {
      *
      * @return the response
      * @see #getIn()
+     * @deprecated use {@link #getMessage()}
      */
+    @Deprecated
     Message getOut();
 
     /**
@@ -433,7 +435,9 @@ public interface Exchange {
      * @param type the given type
      * @return the message as the given type or <tt>null</tt> if not possible to covert to given type
      * @see #getIn(Class)
+     * @deprecated use {@link #getMessage(Class)}
      */
+    @Deprecated
     <T> T getOut(Class<T> type);
 
     /**
@@ -447,7 +451,9 @@ public interface Exchange {
      * Sets the outbound message
      *
      * @param out the outbound message
+     * @deprecated use {@link #setMessage(Message)}
      */
+    @Deprecated
     void setOut(Message out);
 
     /**
