@@ -327,7 +327,7 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
-        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message target = exchange.getMessage();
         if (exchange.isFailed()) {
             if (exchange.getException() != null) {
                 doWriteExceptionResponse(exchange.getException(), response);

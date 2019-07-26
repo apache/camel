@@ -111,7 +111,7 @@ public class NettyHttpProducer extends NettyProducer {
             try {
                 // only handle when we are done asynchronous as then the netty producer is done sending, and we have a response
                 if (!doneSync) {
-                    NettyHttpMessage nettyMessage = exchange.hasOut() ? exchange.getOut(NettyHttpMessage.class) : exchange.getIn(NettyHttpMessage.class);
+                    NettyHttpMessage nettyMessage = exchange.getMessage(NettyHttpMessage.class);
                     if (nettyMessage != null) {
                         final FullHttpResponse response = nettyMessage.getHttpResponse();
                         // Need to retain the ByteBuffer for producer to consumer

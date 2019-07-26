@@ -86,7 +86,7 @@ public class FastjsonDataFormat extends ServiceSupport implements DataFormat, Da
                 config.getSerializerFeatures());
 
         if (contentTypeHeader) {
-            Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            Message message = exchange.getMessage();
             message.setHeader(Exchange.CONTENT_TYPE, "application/json");
             message.setHeader(Exchange.CONTENT_LENGTH, len);
         }

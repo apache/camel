@@ -99,7 +99,7 @@ public class HystrixProcessorCommand extends HystrixCommand {
             exchange.setException(e);
         }
 
-        return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        return exchange.getMessage();
     }
 
     @Override
@@ -154,7 +154,7 @@ public class HystrixProcessorCommand extends HystrixCommand {
             // special for HystrixBadRequestException which should not trigger fallback
             if (camelExchangeException instanceof HystrixBadRequestException) {
                 LOG.debug("Running processor: {} with exchange: {} done as bad request", processor, exchange);
-                return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                return exchange.getMessage();
             }
 
             // copy the result before its regarded as success
@@ -168,7 +168,7 @@ public class HystrixProcessorCommand extends HystrixCommand {
             }
 
             LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);
-            return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            return exchange.getMessage();
         }
     }
 

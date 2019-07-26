@@ -164,7 +164,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * @return
      */
     protected Object buildResponse(org.apache.camel.Exchange camelExchange, Object base) {
-        Message m = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
+        Message m = camelExchange.getMessage();
         ResponseBuilder response;
 
         // if the body is different to Response, it's an entity; therefore, check 

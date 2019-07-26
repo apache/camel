@@ -129,7 +129,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         log.trace("process({}) [{}] - entering", exchange.getExchangeId(), socket);
         getEndpoint().updateLastConnectionActivityTicks();
 
-        Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message message = exchange.getMessage();
 
         getEndpoint().checkBeforeSendProperties(exchange, socket, log);
 
