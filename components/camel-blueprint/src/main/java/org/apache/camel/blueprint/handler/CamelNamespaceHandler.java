@@ -841,23 +841,23 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 Field[] fields = clazz.getDeclaredFields();
                 for (Field field : fields) {
                     PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
-                    if (propertyInject != null && matchContext(propertyInject.context())) {
+                    if (propertyInject != null) {
                         injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
                     }
 
                     BeanInject beanInject = field.getAnnotation(BeanInject.class);
-                    if (beanInject != null && matchContext(beanInject.context())) {
+                    if (beanInject != null) {
                         injectFieldBean(field, beanInject.value(), bean, beanName);
                     }
 
                     EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-                    if (endpointInject != null && matchContext(endpointInject.context())) {
+                    if (endpointInject != null) {
                         String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
                         injectField(field, uri, endpointInject.property(), bean, beanName);
                     }
 
                     Produce produce = field.getAnnotation(Produce.class);
-                    if (produce != null && matchContext(produce.context())) {
+                    if (produce != null) {
                         String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
                         injectField(field, uri, produce.property(), bean, beanName);
                     }
@@ -910,23 +910,23 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         protected void setterInjection(Method method, Object bean, String beanName) {
             PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
-            if (propertyInject != null && matchContext(propertyInject.context())) {
+            if (propertyInject != null) {
                 setterPropertyInjection(method, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
             }
 
             BeanInject beanInject = method.getAnnotation(BeanInject.class);
-            if (beanInject != null && matchContext(beanInject.context())) {
+            if (beanInject != null) {
                 setterBeanInjection(method, beanInject.value(), bean, beanName);
             }
 
             EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
-            if (endpointInject != null && matchContext(endpointInject.context())) {
+            if (endpointInject != null) {
                 String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
                 setterInjection(method, bean, beanName, uri, endpointInject.property());
             }
 
             Produce produce = method.getAnnotation(Produce.class);
-            if (produce != null && matchContext(produce.context())) {
+            if (produce != null) {
                 String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
                 setterInjection(method, bean, beanName, uri, produce.property());
             }
@@ -934,39 +934,33 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         protected void setterPropertyInjection(Method method, String propertyValue, String propertyDefaultValue, Object bean, String beanName) {
             Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes != null) {
-                if (parameterTypes.length != 1) {
-                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
-                } else {
-                    String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-                    Object value = getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
-                    ObjectHelper.invokeMethod(method, bean, value);
-                }
+            if (parameterTypes.length != 1) {
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
+            } else {
+                String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
+                Object value = getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
+                ObjectHelper.invokeMethod(method, bean, value);
             }
         }
 
         protected void setterBeanInjection(Method method, String name, Object bean, String beanName) {
             Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes != null) {
-                if (parameterTypes.length != 1) {
-                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
-                } else {
-                    Object value = getInjectionBeanValue(parameterTypes[0], name);
-                    ObjectHelper.invokeMethod(method, bean, value);
-                }
+            if (parameterTypes.length != 1) {
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
+            } else {
+                Object value = getInjectionBeanValue(parameterTypes[0], name);
+                ObjectHelper.invokeMethod(method, bean, value);
             }
         }
 
         protected void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointProperty) {
             Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes != null) {
-                if (parameterTypes.length != 1) {
-                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
-                } else {
-                    String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-                    Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointProperty, propertyName, bean, beanName);
-                    ObjectHelper.invokeMethod(method, bean, value);
-                }
+            if (parameterTypes.length != 1) {
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
+            } else {
+                String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
+                Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointProperty, propertyName, bean, beanName);
+                ObjectHelper.invokeMethod(method, bean, value);
             }
         }
 

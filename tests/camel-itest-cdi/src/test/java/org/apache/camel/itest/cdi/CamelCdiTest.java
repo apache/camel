@@ -27,7 +27,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.CamelContextHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -52,20 +51,6 @@ public class CamelCdiTest {
     @Inject
     @ContextName("contextA")
     RoutesContextA routesA;
-    @Inject
-    @ContextName("contextB")
-    RoutesContextB routesB;
-    @Inject
-    @ContextName("contextC")
-    RoutesContextC routesC;
-    @Inject
-    @ContextName("contextD")
-    RoutesContextD routesD;
-    
-    @Inject
-    @ContextName("contextD")
-    @Uri(value = "seda:foo")
-    ProducerTemplate producerD;
 
     @Deployment
     public static JavaArchive createDeployment() {
@@ -75,10 +60,7 @@ public class CamelCdiTest {
             .withoutTransitivity()
             .asSingle(JavaArchive.class)
             .addClasses(
-                RoutesContextA.class,
-                RoutesContextB.class,
-                RoutesContextC.class,
-                RoutesContextD.class
+                RoutesContextA.class
             );
     }
 
@@ -98,40 +80,6 @@ public class CamelCdiTest {
         mockEndpoint.expectedBodiesReceived(Constants.EXPECTED_BODIES_A);
         routesA.sendMessages();
         mockEndpoint.assertIsSatisfied();
-
-        CamelContext contextB = assertCamelContext("contextB");
-        assertHasEndpoints(contextB, "seda://B.a", "mock://B.b");
-
-        MockEndpoint mockEndpointB = routesB.b;
-        mockEndpointB.expectedBodiesReceived(Constants.EXPECTED_BODIES_B);
-        routesB.sendMessages();
-        mockEndpointB.assertIsSatisfied();
-
-        CamelContext contextC = assertCamelContext("contextC");
-        assertHasEndpoints(contextC, "seda://C.a", "mock://C.b");
-
-        MockEndpoint mockEndpointC = routesC.b;
-        mockEndpointC.expectedBodiesReceived(Constants.EXPECTED_BODIES_C);
-        routesC.sendMessages();
-        mockEndpointC.assertIsSatisfied();
-
-        CamelContext contextD = assertCamelContext("contextD");
-        assertHasEndpoints(contextD, "seda://D.a", "mock://D.b");
-
-        MockEndpoint mockEndpointD = routesD.b;
-        mockEndpointD.expectedBodiesReceived(Constants.EXPECTED_BODIES_D);
-        routesD.sendMessages();
-        mockEndpointD.assertIsSatisfied();
-
-        CamelContext contextE = assertCamelContext("contextD");
-        assertHasEndpoints(contextE, "seda://D.a", "mock://D.b");
-        MockEndpoint mockDb = CamelContextHelper.getMandatoryEndpoint(contextE, "mock://D.b", MockEndpoint.class);
-        mockDb.reset();
-        mockDb.expectedBodiesReceived(Constants.EXPECTED_BODIES_D_A);
-        for (Object body : Constants.EXPECTED_BODIES_D_A) {
-            producerD.sendBody("seda:D.a", body);
-        }
-        mockDb.assertIsSatisfied();
     }
 
     public static void assertHasEndpoints(CamelContext context, String... uris) {

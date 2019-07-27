@@ -41,16 +41,4 @@
      <property name="location" value="classpath:org/apache/camel/test/spring/test.properties"/>
   </bean>
 
-  <camelContext id="camelContext2" xmlns="http://camel.apache.org/schema/spring" trace="true" autoStartup="true">
-    <route>
-      <from uri="direct:start2"/>
-      <to uri="mock:c"/>
-      <transform>
-        <simple>Hello ${body}</simple>
-      </transform>
-      <to uri="log:org.apache.camel.test.junit4.spring"/>
-      <to uri="seda:context2.seda"/>
-    </route>
-  </camelContext>
-
 </beans>

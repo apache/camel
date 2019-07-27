@@ -39,8 +39,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-// START SNIPPET: e1
-// tag::example[]
 @RunWith(CamelSpringRunner.class)
 // must tell Spring to bootstrap with Camel
 @BootstrapWith(CamelTestContextBootstrapper.class)
@@ -54,38 +52,25 @@ public class CamelSpringRunnerPlainTest {
     @Autowired
     protected CamelContext camelContext;
     
-    @Autowired
-    protected CamelContext camelContext2;
-    
-    @EndpointInject(value = "mock:a", context = "camelContext")
+    @EndpointInject(value = "mock:a")
     protected MockEndpoint mockA;
     
-    @EndpointInject(value = "mock:b", context = "camelContext")
+    @EndpointInject(value = "mock:b")
     protected MockEndpoint mockB;
     
-    @EndpointInject(value = "mock:c", context = "camelContext2")
-    protected MockEndpoint mockC;
-    
-    @Produce(value = "direct:start", context = "camelContext")
+    @Produce(value = "direct:start")
     protected ProducerTemplate start;
-    
-    @Produce(value = "direct:start2", context = "camelContext2")
-    protected ProducerTemplate start2;
     
     @Test
     public void testPositive() throws Exception {
         assertEquals(ServiceStatus.Started, camelContext.getStatus());
-        assertEquals(ServiceStatus.Started, camelContext2.getStatus());
-        
+
         mockA.expectedBodiesReceived("David");
         mockB.expectedBodiesReceived("Hello David");
-        mockC.expectedBodiesReceived("David");
-        
+
         start.sendBody("David");
-        start2.sendBody("David");
-        
+
         MockEndpoint.assertIsSatisfied(camelContext);
-        MockEndpoint.assertIsSatisfied(camelContext2);
     }
     
     @Test
@@ -115,7 +100,6 @@ public class CamelSpringRunnerPlainTest {
     @Test
     public void testProvidesBreakpoint() {
         assertNull(camelContext.getDebugger());
-        assertNull(camelContext2.getDebugger());
     }
 
     @Test
@@ -124,5 +108,3 @@ public class CamelSpringRunnerPlainTest {
     }
 
 }
-// end::example[]
-// END SNIPPET: e1
