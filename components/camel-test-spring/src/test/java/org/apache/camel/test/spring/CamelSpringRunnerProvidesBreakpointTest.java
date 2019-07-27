@@ -39,8 +39,7 @@ public class CamelSpringRunnerProvidesBreakpointTest
     @Override
     public void testProvidesBreakpoint() {
         assertNotNull(camelContext.getDebugger());
-        assertNotNull(camelContext2.getDebugger());
-        
+
         start.sendBody("David");
         
         assertNotNull(camelContext.getDebugger());
