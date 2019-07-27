@@ -48,6 +48,9 @@ public final class MessageHelper {
     private static final String MESSAGE_HISTORY_HEADER = "%-20s %-20s %-80s %-12s";
     private static final String MESSAGE_HISTORY_OUTPUT = "[%-18.18s] [%-18.18s] [%-78.78s] [%10.10s]";
 
+    private static final String TRACING_HEADER = "%-8s %-20s %-20s %-40s %-12s";
+    private static final String TRACING_OUTPUT = "[%-6.6s] [%-18.18s] [%-18.18s] [%-38.38s] [%10.10s]";
+
     /**
      * Utility classes should not have a public constructor.
      */
@@ -553,9 +556,9 @@ public final class MessageHelper {
         sb.append("\n");
         sb.append("Message History\n");
         sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
-        String goMessageHistoryHeaeder = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
+        String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(
-                         goMessageHistoryHeaeder == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeaeder,
+                         goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
                          "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
         sb.append("\n");
 
@@ -564,7 +567,7 @@ public final class MessageHelper {
         String id = routeId;
         String label = "";
         if (exchange.getFromEndpoint() != null) {
-            label = URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+            label = "from[" + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri() + "]");
         }
         long elapsed = 0;
         Date created = exchange.getCreated();
@@ -603,6 +606,89 @@ public final class MessageHelper {
             sb.append("\nStacktrace\n");
             sb.append("---------------------------------------------------------------------------------------------------------------------------------------");
         }
+        return sb.toString();
+    }
+
+    /**
+     * Dumps the tracing via {@link MessageHistory} from the {@link Exchange} in a human readable format.
+     *
+     * @param exchange           the exchange
+     * @param exchangeFormatter  if provided then information about the exchange is included in the dump
+     * @return a human readable message history as a table
+     */
+    public static String dumpTracing(Exchange exchange, ExchangeFormatter exchangeFormatter) {
+        // must not cause new exceptions so run this in a try catch block
+        try {
+            return doDumpTracing(exchange, exchangeFormatter);
+        } catch (Throwable e) {
+            // ignore as the body is for logging purpose
+            return "";
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static String doDumpTracing(Exchange exchange, ExchangeFormatter exchangeFormatter) {
+        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        sb.append("Tracing Message\n");
+        sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+        String goTracingHeader = exchange.getContext().getGlobalOption(Exchange.TRACING_HEADER_FORMAT);
+        sb.append(String.format(
+                goTracingHeader == null ? TRACING_HEADER : goTracingHeader,
+                "Trace", "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
+        sb.append("\n");
+
+        // add incoming origin of message on the top
+        String step = "";
+        String routeId = exchange.getFromRouteId();
+        String id = routeId;
+        String label = "";
+        if (exchange.getFromEndpoint() != null) {
+            label = "from[" + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri() + "]");
+        }
+        String elapsed = "";
+        Date created = exchange.getCreated();
+        if (created != null) {
+            elapsed = "" + new StopWatch(created).taken();
+        }
+
+        String goTracingOutput = exchange.getContext().getGlobalOption(Exchange.TRACING_OUTPUT_FORMAT);
+        goTracingOutput = goTracingOutput == null ? TRACING_OUTPUT : goTracingOutput;
+        sb.append(String.format(goTracingOutput, step, routeId, id, label, elapsed));
+        sb.append("\n");
+
+        // and then each history
+        for (int i = 0; i < list.size(); i++) {
+            MessageHistory history = list.get(i);
+            routeId = history.getRouteId() != null ? history.getRouteId() : "";
+            id = history.getNode().getId();
+            // we need to avoid leak the sensible information here
+            // the sanitizeUri takes a very long time for very long string and the format cuts this to
+            // 38 characters, anyway. Cut this to 60 characters. This will give enough space for removing
+            // characters in the sanitizeUri method and will be reasonably fast
+            label =  URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 60));
+            elapsed = "" + history.getElapsed();
+            if (i == list.size() - 1) {
+                step = " >>>> ";
+                elapsed = "";
+            }
+
+            sb.append(String.format(goTracingOutput, step, routeId, id, label, elapsed));
+            sb.append("\n");
+        }
+
+        if (exchangeFormatter != null) {
+            sb.append("\nExchange\n");
+            sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+            sb.append(exchangeFormatter.format(exchange));
+            sb.append("\n");
+        }
+
         return sb.toString();
     }
 

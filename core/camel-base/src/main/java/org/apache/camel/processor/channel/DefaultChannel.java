@@ -186,12 +186,10 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        // then wrap the output with the tracer and debugger (debugger first,
-        // as we do not want regular tracer to trace the debugger)
-        if (routeContext.isTracing()) {
-            BacklogTracer tracer = getOrCreateBacklogTracer();
-            camelContext.setExtension(BacklogTracer.class, tracer);
-            addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
+        if (routeContext.isMessageHistory()) {
+            // add message history advice
+            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
+            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
 
         // add debugger as well so we have both tracing and debugging out of the box
@@ -208,10 +206,15 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
         }
 
-        if (routeContext.isMessageHistory()) {
-            // add message history advice
-            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
-            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
+        // then wrap the output with the tracer and debugger (debugger first,
+        // as we do not want regular tracer to trace the debugger)
+        if (routeContext.isTracing()) {
+            BacklogTracer tracer = getOrCreateBacklogTracer();
+            camelContext.setExtension(BacklogTracer.class, tracer);
+            // add jmx backlog tracer
+            addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
+            // add logging tracing too
+            addAdvice(new TracingAdvice());
         }
 
         // sort interceptors according to ordered

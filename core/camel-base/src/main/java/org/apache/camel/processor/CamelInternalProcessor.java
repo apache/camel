@@ -38,6 +38,7 @@ import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
@@ -50,6 +51,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.UnitOfWorkHelper;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -757,6 +759,40 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 log.debug("Sleep interrupted");
                 Thread.currentThread().interrupt();
                 throw e;
+            }
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            // noop
+        }
+    }
+
+    /**
+     * Advice for tracing
+     */
+    public static class TracingAdvice implements CamelInternalProcessorAdvice {
+
+        private final Logger log = LoggerFactory.getLogger("org.apache.camel.Tracing");
+        private final ExchangeFormatter exchangeFormatter;
+
+        public TracingAdvice() {
+            // TODO: Allow to plugin a trace formatter
+            // setup exchange formatter to be used for tracing dump
+            DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
+            formatter.setShowExchangeId(true);
+            formatter.setMultiline(true);
+            formatter.setShowHeaders(true);
+            formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
+            this.exchangeFormatter = formatter;
+        }
+
+        @Override
+        public Object before(Exchange exchange) throws Exception {
+            String s = MessageHelper.dumpTracing(exchange, exchangeFormatter);
+            if (s != null) {
+                log.info(s);
             }
             return null;
         }

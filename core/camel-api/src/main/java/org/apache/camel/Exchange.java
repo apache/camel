@@ -234,6 +234,8 @@ public interface Exchange {
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
+    String TRACING_HEADER_FORMAT      = "CamelTracingHeaderFormat";
+    String TRACING_OUTPUT_FORMAT      = "CamelTracingOutputFormat";
     String TRY_ROUTE_BLOCK       = "TryRouteBlock";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 

@@ -2399,8 +2399,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         }
 
         if (isTracing()) {
-            // tracing is added in the DefaultChannel so we can enable it on the
-            // fly
+            // tracing is added in the DefaultChannel so we can enable it on the fly
             log.info("Tracing is enabled on CamelContext: {}", getName());
         }
 
