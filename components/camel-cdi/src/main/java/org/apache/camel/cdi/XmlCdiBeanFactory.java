@@ -406,6 +406,11 @@ final class XmlCdiBeanFactory {
             throw attributeNotSupported("useOriginalMessage", type, definition.getId());
         }
 
+        if (isNotEmpty(definition.getUseOriginalBody())
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+            throw attributeNotSupported("useOriginalBody", type, definition.getId());
+        }
+
         if (isNotEmpty(definition.getOnRedeliveryRef())
             && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("onRedeliveryRef", type, definition.getId());

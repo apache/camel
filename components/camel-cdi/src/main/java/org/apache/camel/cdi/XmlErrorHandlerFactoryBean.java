@@ -89,6 +89,9 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
         if (nonNull(handler.getUseOriginalMessage())) {
             builder.setUseOriginalMessage(handler.getUseOriginalMessage());
         }
+        if (nonNull(handler.getUseOriginalBody())) {
+            builder.setUseOriginalBody(handler.getUseOriginalBody());
+        }
 
         if (isNotEmpty(handler.getOnExceptionOccurredRef())) {
             Processor processor = getReferenceByName(manager, handler.getOnExceptionOccurredRef(), Processor.class)
