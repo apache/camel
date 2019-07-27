@@ -39,11 +39,6 @@ public @interface BindToRegistry {
     String value() default "";
 
     /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
-
-    /**
      * Whether to perform bean post processing (dependency injection) on the bean
      */
     boolean beanPostProcess() default false;

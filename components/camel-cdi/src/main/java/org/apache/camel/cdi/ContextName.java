@@ -36,33 +36,7 @@ import javax.inject.Qualifier;
  * }
  * </code></pre>
  *
- * Camel resources like route builders, endpoints and producer templates can be annotated with
- * the {@code @ContextName} qualifier as well so that they are associated with the
- * corresponding Camel context, e.g.:
- *
- * <pre><code>
- * {@literal @}ContextName("foo")
- * public class FooRouteBuilder extends RouteBuilder {
- *
- *     {@literal @}Override
- *     public void configure() {
- *         from("direct:bar").to("mock:bar");
- *     }
- * }
- *
- * {@literal @}Inject
- * {@literal @}ContextName("foo")
- * {@literal @}Uri("direct:bar")
- * ProducerTemplate barProducer;
- *
- * {@literal @}Inject
- * {@literal @}ContextName("foo")
- * {@literal @}Uri("mock:bar")
- * MockEndpoint barMockEndpoint;
- * </code></pre>
- *
  * @see org.apache.camel.CamelContext
- *
  */
 @Qualifier
 @Repeatable(ContextNames.class)

@@ -54,7 +54,7 @@ public class RoutingSlipPOJOTest extends ContextTestSupport {
     }
     
     public class MyRoutingSlipPOJO {
-        @RoutingSlip(context = "camel-1")
+        @RoutingSlip
         public String[] doSomething(String body) {
             return new String[]{"mock:foo", "direct:b", "mock:result"};
         }

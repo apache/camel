@@ -165,24 +165,24 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     protected void injectFields(final Object bean, final String beanName) {
         ReflectionHelper.doWithFields(bean.getClass(), field -> {
             PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
-            if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
+            if (propertyInject != null) {
                 injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
             }
 
             BeanInject beanInject = field.getAnnotation(BeanInject.class);
-            if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
+            if (beanInject != null) {
                 injectFieldBean(field, beanInject.value(), bean, beanName);
             }
 
             EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-            if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
+            if (endpointInject != null) {
                 @SuppressWarnings("deprecation")
                 String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
                 injectField(field, uri, endpointInject.property(), bean, beanName);
             }
 
             Produce produce = field.getAnnotation(Produce.class);
-            if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
+            if (produce != null) {
                 @SuppressWarnings("deprecation")
                 String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
                 injectField(field, uri, produce.property(), bean, beanName, produce.binding());
@@ -193,7 +193,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     protected void injectBindToRegistryFields(final Object bean, final String beanName) {
         ReflectionHelper.doWithFields(bean.getClass(), field -> {
             BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
-            if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
+            if (bind != null) {
                 bindToRegistry(field, bind.value(), bean, beanName, bind.beanPostProcess());
             }
         });
@@ -235,7 +235,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         final List<Method> methods = new ArrayList<Method>();
         ReflectionHelper.doWithMethods(bean.getClass(), method -> {
             BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
-            if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
+            if (bind != null) {
                 methods.add(method);
             }
         });
@@ -281,7 +281,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     protected void injectClass(final Object bean, final String beanName) {
         Class<?> clazz = bean.getClass();
         BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
-        if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
+        if (ann != null) {
             bindToRegistry(clazz, ann.value(), bean, beanName, ann.beanPostProcess());
         }
     }
@@ -289,7 +289,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     protected void injectNestedClasses(final Object bean, final String beanName) {
         ReflectionHelper.doWithClasses(bean.getClass(), clazz -> {
             BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
-            if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
+            if (ann != null) {
                 // its a nested class so we dont have a bean instance for it
                 bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());
             }
@@ -298,23 +298,23 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
     protected void setterInjection(Method method, Object bean, String beanName) {
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
-        if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
+        if (propertyInject != null) {
             setterPropertyInjection(method, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
         }
 
         BeanInject beanInject = method.getAnnotation(BeanInject.class);
-        if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
+        if (beanInject != null) {
             setterBeanInjection(method, beanInject.value(), bean, beanName);
         }
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
-        if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
+        if (endpointInject != null) {
             String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
             setterInjection(method, bean, beanName, uri, endpointInject.property());
         }
 
         Produce produce = method.getAnnotation(Produce.class);
-        if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
+        if (produce != null) {
             String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
             setterInjection(method, bean, beanName, uri, produce.property());
         }

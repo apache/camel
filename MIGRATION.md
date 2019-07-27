@@ -4,11 +4,10 @@ Apache Camel 3 Migration Guide
 This document is intended for helping you migrate your Apache Camel applications
 from version 2.x to 3.0.
 
-Before you start
-----------------
+Java versions
+-------------
 
-// TODO when we drop Java8
-// TODO Apache Camel 3 requires Java 11. Java 8 are no longer supported.
+Camel 3 supports Java 11. Support for Java 8 is best effort for the earlier versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
 
 Modularization of camel-core
 ----------------------------
@@ -62,14 +61,20 @@ We have also modularized many of the core components and moved them out of `came
 - camel-zip-deflater
 
 
+Multiple CamelContexts per application not supported
+----------------------------------------------------
+
+Support for multiple CamelContext's has been deprecated and only 1 CamelContext per deployment is supported.
+The latter was not recommended anyway and was also not 100% implemented (for example in camel-cdi). For Camel 3 only 1 CamelContext per deployment is recommended and supported.
+
+The `context` attribute on the various Camel annotations such as `@EndpointInject`, `@Produce`, `@Consume` etc has therefore been removed.
+
 Migrating custom components
 ---------------------------
 
 You should depend on `camel-support` and not `camel-core` directly.
 
 The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is necessary.
-
-// TODO: Should we create a camel2-support JAR with an adapter to bridge between 2.x and 3.0
 
 Migrating custom languages
 --------------------------

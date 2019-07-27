@@ -73,21 +73,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         this.camelContext = camelContext;
     }
 
-    /**
-     * Does the given context match this camel context
-     */
-    public boolean matchContext(String context) {
-        if (ObjectHelper.isNotEmpty(context)) {
-            if (!getCamelContext().getName().equals(context)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public void consumerInjection(Method method, Object bean, String beanName) {
         Consume consume = method.getAnnotation(Consume.class);
-        if (consume != null && matchContext(consume.context())) {
+        if (consume != null) {
             LOG.debug("Creating a consumer for: {}", consume);
             String uri = consume.value().isEmpty() ? consume.uri() : consume.value();
             subscribeMethod(method, bean, beanName, uri, consume.property(), consume.predicate());

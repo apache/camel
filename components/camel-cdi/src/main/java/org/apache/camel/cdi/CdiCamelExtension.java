@@ -353,11 +353,11 @@ public class CdiCamelExtension implements Extension {
             .flatMap(Set::stream)
             .map(Annotated::getAnnotations)
             .flatMap(Set::stream)
-            .anyMatch(isAnnotationType(Consume.class).and(a -> ((Consume) a).context().isEmpty())
-                .or(isAnnotationType(BeanInject.class).and(a -> ((BeanInject) a).context().isEmpty()))
-                .or(isAnnotationType(EndpointInject.class).and(a -> ((EndpointInject) a).context().isEmpty()))
-                .or(isAnnotationType(Produce.class).and(a -> ((Produce) a).context().isEmpty()))
-                .or(isAnnotationType(PropertyInject.class).and(a -> ((PropertyInject) a).context().isEmpty())))
+            .anyMatch(isAnnotationType(Consume.class)
+                .or(isAnnotationType(BeanInject.class))
+                .or(isAnnotationType(EndpointInject.class))
+                .or(isAnnotationType(Produce.class))
+                .or(isAnnotationType(PropertyInject.class)))
             // Or an injection point for Camel primitives?
             || beans.stream()
             // Excluding internal components...

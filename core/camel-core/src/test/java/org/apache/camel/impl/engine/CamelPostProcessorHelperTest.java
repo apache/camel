@@ -86,13 +86,6 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
     }
 
     @Test
-    public void testMatchContext() {
-        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
-        assertTrue(helper.matchContext(context.getName()));
-        assertFalse(helper.matchContext("foo"));
-    }
-
-    @Test
     public void testConsume() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 

@@ -30,6 +30,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface InvokeOnHeaders {
 
+    // TODO: Move to spi as its more for component developers
+    
     /**
      * Name of headers
      */

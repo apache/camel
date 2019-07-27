@@ -36,18 +36,11 @@ import java.lang.annotation.Target;
  * to an {@link org.apache.camel.Endpoint} or {@link String}.
  *
  * Then for each endpoint or URI the message is routed in a pipes and filter fashion.
- *
- * @see org.apache.camel.RoutingSlip
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface DynamicRouter {
-
-    /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
 
     /**
      * Sets the uri delimiter to use

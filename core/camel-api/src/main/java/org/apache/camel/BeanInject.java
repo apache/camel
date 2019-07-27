@@ -37,8 +37,4 @@ public @interface BeanInject {
      */
     String value() default "";
 
-    /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
 }

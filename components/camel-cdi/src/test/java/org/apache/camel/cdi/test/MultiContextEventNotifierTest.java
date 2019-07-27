@@ -64,6 +64,7 @@ import static org.hamcrest.Matchers.isOneOf;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
+@Deprecated
 public class MultiContextEventNotifierTest {
 
     @Inject
