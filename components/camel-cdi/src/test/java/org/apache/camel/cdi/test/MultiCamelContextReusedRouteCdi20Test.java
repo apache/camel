@@ -41,6 +41,7 @@ import static org.apache.camel.cdi.expression.ExchangeExpression.fromCamelContex
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
 @RunWith(Arquillian.class)
+@Deprecated
 public class MultiCamelContextReusedRouteCdi20Test {
 
     @Inject

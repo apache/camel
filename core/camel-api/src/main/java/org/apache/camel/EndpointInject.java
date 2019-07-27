@@ -55,8 +55,4 @@ public @interface EndpointInject {
      */
     String property() default "";
 
-    /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
 }

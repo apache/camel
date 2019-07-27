@@ -42,6 +42,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
+@Deprecated
 public class MultiContextConsumerTemplateTest {
 
     @Inject

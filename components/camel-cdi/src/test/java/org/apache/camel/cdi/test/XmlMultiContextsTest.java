@@ -49,6 +49,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 @ImportResource("imported-context.xml")
+@Deprecated
 public class XmlMultiContextsTest {
 
     @Inject

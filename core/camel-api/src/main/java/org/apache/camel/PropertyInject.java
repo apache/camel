@@ -41,8 +41,4 @@ public @interface PropertyInject {
      */
     String defaultValue() default "";
 
-    /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
 }

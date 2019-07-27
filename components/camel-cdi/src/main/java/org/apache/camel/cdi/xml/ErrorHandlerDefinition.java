@@ -47,6 +47,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private Boolean useOriginalMessage;
 
+    // TODO: add useOriginalBody
+
     @XmlAttribute
     private String transactionTemplateRef;
 

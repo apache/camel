@@ -53,6 +53,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
+@Deprecated
 public class MultiContextEventEndpointTest {
 
     @Inject

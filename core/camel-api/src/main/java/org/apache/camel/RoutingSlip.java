@@ -45,11 +45,6 @@ import java.lang.annotation.Target;
 public @interface RoutingSlip {
 
     /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
-
-    /**
      * Sets the uri delimiter to use
      */
     String delimiter() default ",";
