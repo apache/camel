@@ -154,6 +154,7 @@ The following headers are recognized by the Paho component:
 |Header |Java constant |Endpoint type |Value type |Description
 
 |CamelMqttTopic |PahoConstants.MQTT_TOPIC |Consumer |String |The name of the topic
+|CamelMqttQoS |PahoConstants.MQTT_QOS |Consumer |Integer |QualityOfService of the incoming message
 |CamelPahoOverrideTopic |PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC |Producer |String |Name of topic to override and send to instead of topic specified on endpoint
 |===
 
