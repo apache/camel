@@ -65,7 +65,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         }
         if (handler instanceof RedeliveryErrorHandler) {
             RedeliveryErrorHandler reh = (RedeliveryErrorHandler) handler;
-            boolean original = reh.isUseOriginalMessagePolicy() || reh.isUseOriginalBodyPolicy();;
+            boolean original = reh.isUseOriginalMessagePolicy() || reh.isUseOriginalBodyPolicy();
             if (original) {
                 if (reh.isUseOriginalMessagePolicy() && reh.isUseOriginalBodyPolicy()) {
                     throw new IllegalArgumentException("Cannot set both useOriginalMessage and useOriginalBody on the error handler");
