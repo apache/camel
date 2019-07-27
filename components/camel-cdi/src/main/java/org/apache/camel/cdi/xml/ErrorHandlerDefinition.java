@@ -47,7 +47,8 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private Boolean useOriginalMessage;
 
-    // TODO: add useOriginalBody
+    @XmlAttribute
+    private Boolean useOriginalBody;
 
     @XmlAttribute
     private String transactionTemplateRef;
@@ -114,6 +115,14 @@ public class ErrorHandlerDefinition extends IdentifiedType {
 
     public void setUseOriginalMessage(Boolean useOriginalMessage) {
         this.useOriginalMessage = useOriginalMessage;
+    }
+
+    public Boolean getUseOriginalBody() {
+        return useOriginalBody;
+    }
+
+    public void setUseOriginalBody(Boolean useOriginalBody) {
+        this.useOriginalBody = useOriginalBody;
     }
 
     public String getTransactionTemplateRef() {
