@@ -18,7 +18,6 @@ package org.apache.camel.component.crypto.cms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
