@@ -35,13 +35,19 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default {@link Tracer} implementation that will log traced messages
+ * to the logger named <tt>org.apache.camel.Tracing</tt>.
+ */
 public class DefaultTracer extends ServiceSupport implements Tracer {
 
-    // TODO: Register this in JMX so it can be managed and turned on|off there
-    // TODO: Have operations to turn on|off routes on route mbean etc
     // TODO: Custom exchange formatter
+    // TODO: Allow to configure exchange formatter options more easily
+    // TODO: Expose these options in Tracer API / Main Configuration
+    // TODO: Add options for spring-boot configuration too
+    // TODO: Trace intercept, onCompletion (not routes)
 
-    private static final String TRACING_OUTPUT = "%-6.6s [%-18.18s] [%-18.18s] [%-38.38s]";
+    private static final String TRACING_OUTPUT = "%-4.4s [%-12.12s] [%-33.33s]";
 
     // use a fixed logger name so its easy to spot
     private static final Logger LOG = LoggerFactory.getLogger("org.apache.camel.Tracing");
@@ -82,16 +88,15 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
         if (shouldTrace(node)) {
             traceCounter++;
             String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
-            String id = node.getId();
 
             // we need to avoid leak the sensible information here
             // the sanitizeUri takes a very long time for very long string and the format cuts this to
-            // 38 characters, anyway. Cut this to 60 characters. This will give enough space for removing
+            // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
             // characters in the sanitizeUri method and will be reasonably fast
-            String label = URISupport.sanitizeUri(StringHelper.limitLength(node.getLabel(), 60));
+            String label = URISupport.sanitizeUri(StringHelper.limitLength(node.getLabel(), 50));
 
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format(TRACING_OUTPUT, "     ", routeId, id, label));
+            sb.append(String.format(TRACING_OUTPUT, "   ", routeId, label));
             sb.append(" ");
             String data = exchangeFormatter.format(exchange);
             sb.append(data);
@@ -107,13 +112,17 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
 
         // we need to avoid leak the sensible information here
         // the sanitizeUri takes a very long time for very long string and the format cuts this to
-        // 38 characters, anyway. Cut this to 60 characters. This will give enough space for removing
+        // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
         // characters in the sanitizeUri method and will be reasonably fast
         String uri = route.getEndpointUrl();
-        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 60) + "]");
+        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 50) + "]");
+
+        // the arrow has a * if its a new exchange that is starting
+        boolean original = route.getRouteId().equals(exchange.getFromRouteId());
+        String arrow = original ? "*-->" : "--->";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format(TRACING_OUTPUT, " ---> ", route.getRouteId(), route.getRouteId(), label));
+        sb.append(String.format(TRACING_OUTPUT, arrow, route.getRouteId(), label));
         sb.append(" ");
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
@@ -128,13 +137,17 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
 
         // we need to avoid leak the sensible information here
         // the sanitizeUri takes a very long time for very long string and the format cuts this to
-        // 38 characters, anyway. Cut this to 60 characters. This will give enough space for removing
+        // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
         // characters in the sanitizeUri method and will be reasonably fast
         String uri = route.getConsumer().getEndpoint().getEndpointUri();
-        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 60) + "]");
+        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 50) + "]");
+
+        // the arrow has a * if its an exchange that is done
+        boolean original = route.getId().equals(exchange.getFromRouteId());
+        String arrow = original ? "*<--" : "<---";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format(TRACING_OUTPUT, " <--- ", route.getId(), route.getId(), label));
+        sb.append(String.format(TRACING_OUTPUT, arrow, route.getId(), label));
         sb.append(" ");
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
@@ -242,8 +255,9 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
         if (exchangeFormatter == null) {
             DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
             formatter.setShowExchangeId(true);
+            formatter.setShowExchangePattern(false);
             formatter.setMultiline(false);
-            formatter.setShowHeaders(true);
+            formatter.setShowHeaders(false);
             formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
             exchangeFormatter = formatter;
         }

@@ -49,6 +49,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
+    private boolean backlogTracing;
     private boolean tracing;
     private boolean messageHistory = true;
     private boolean logMask;
@@ -396,6 +397,19 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracing(boolean tracing) {
         this.tracing = tracing;
+    }
+
+    public boolean isBacklogTracing() {
+        return backlogTracing;
+    }
+
+    /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    public void setBacklogTracing(boolean backlogTracing) {
+        this.backlogTracing = backlogTracing;
     }
 
     public boolean isMessageHistory() {
@@ -876,6 +890,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withTracing(boolean tracing) {
         this.tracing = tracing;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    public T withBacklogTracing(boolean backlogTracing) {
+        this.backlogTracing = backlogTracing;
         return (T) this;
     }
 
