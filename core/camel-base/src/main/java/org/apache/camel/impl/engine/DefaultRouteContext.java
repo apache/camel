@@ -59,6 +59,7 @@ public class DefaultRouteContext implements RouteContext {
     private ManagementInterceptStrategy managementInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
+    private Boolean backlogTrace;
     private Boolean debug;
     private Boolean messageHistory;
     private Boolean logMask;
@@ -266,6 +267,21 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             // fallback to the option from camel context
             return getCamelContext().isTracing();
+        }
+    }
+
+    @Override
+    public void setBacklogTracing(Boolean backlogTrace) {
+        this.backlogTrace = backlogTrace;
+    }
+
+    @Override
+    public Boolean isBacklogTracing() {
+        if (backlogTrace != null) {
+            return backlogTrace;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isBacklogTracing();
         }
     }
 

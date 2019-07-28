@@ -86,6 +86,7 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
+                context.setBacklogTracing(true);
 
                 from("direct:start").routeId("coolRoute")
                         .to("direct:beer")

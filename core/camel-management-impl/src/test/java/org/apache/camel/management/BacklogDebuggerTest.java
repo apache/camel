@@ -684,6 +684,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
+                context.setDebugging(true);
 
                 from("seda:start?concurrentConsumers=2")
                         .to("log:foo").id("foo")

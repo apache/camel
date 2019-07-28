@@ -22,6 +22,8 @@ import org.junit.Test;
 
 public class InterceptFromWhenTest extends ContextTestSupport {
 
+    // TODO: Look at tracer and see if we can get this nicely
+
     @Test
     public void testInterceptorWhen() throws Exception {
         getMockEndpoint("mock:goofy").expectedMessageCount(0);

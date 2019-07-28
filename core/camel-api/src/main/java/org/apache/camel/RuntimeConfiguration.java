@@ -37,7 +37,7 @@ public interface RuntimeConfiguration {
     Boolean isStreamCaching();
 
     /**
-     * Sets whether tracing is enabled or not (default is enabled).
+     * Sets whether tracing is enabled or not (default is disabled).
      *
      * @param tracing whether to enable tracing.
      */
@@ -49,6 +49,21 @@ public interface RuntimeConfiguration {
      * @return <tt>true</tt> if tracing is enabled
      */
     Boolean isTracing();
+
+    /**
+     * Sets whether backlog tracing is enabled or not (default is disabled).
+     *
+     * @param backlogTrace whether to enable backlog tracing.
+     * @see #setTracing(Boolean)
+     */
+    void setBacklogTracing(Boolean backlogTrace);
+
+    /**
+     * Returns whether backlog tracing enabled
+     *
+     * @return <tt>true</tt> if backlog tracing is enabled
+     */
+    Boolean isBacklogTracing();
 
     /**
      * Sets whether debugging is enabled or not (default is enabled).

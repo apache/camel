@@ -195,7 +195,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
 
-        // add debugger as well so we have both tracing and debugging out of the box
+        // then wrap the output with the tracer and debugger (debugger first,
+        // as we do not want regular tracer to trace the debugger)
         if (routeContext.isDebugging()) {
             if (camelContext.getDebugger() != null) {
                 // use custom debugger
@@ -209,13 +210,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
         }
 
-        // then wrap the output with the tracer and debugger (debugger first,
-        // as we do not want regular tracer to trace the debugger)
-        if (routeContext.isTracing()) {
-            BacklogTracer backlogTracer = getOrCreateBacklogTracer();
+        if (routeContext.isBacklogTracing()) {
             // add jmx backlog tracer
+            BacklogTracer backlogTracer = getOrCreateBacklogTracer();
             addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
-
+        }
+        if (routeContext.isTracing()) {
             // add logger tracer
             Tracer tracer = getOrCreateDefaultTracer();
             addAdvice(new TracingAdvice(tracer, targetOutputDef, route, first));

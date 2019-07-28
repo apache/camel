@@ -789,13 +789,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
             this.first = first;
-            this.tracingAfterRoute = new TracingAfterRoute(tracer, routeDefinition.getRouteId());
+            this.tracingAfterRoute = routeDefinition != null ? new TracingAfterRoute(tracer, routeDefinition.getRouteId()) : null;
         }
 
         @Override
         public Object before(Exchange exchange) throws Exception {
             // first time add before route and after route tracing
-            if (first) {
+            if (first && tracingAfterRoute != null) {
+                // TODO: should we trace interceptors
+                // only do this for routes, as interceptors are not route based and we dont trace those
                 tracer.traceBeforeRoute(routeDefinition, exchange);
                 exchange.addOnCompletion(tracingAfterRoute);
             }
