@@ -143,6 +143,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
         return "route";
     }
 
+    @Override
+    public String getLabel() {
+        return input.getLabel();
+    }
+
     // Fluent API
     // -----------------------------------------------------------------------
 

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -39,20 +40,20 @@ import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
 import org.apache.camel.processor.interceptor.DefaultTracer;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -777,14 +778,26 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final DefaultTracer tracer;
         private final NamedNode processorDefinition;
+        private final NamedNode routeDefinition;
+        private final boolean first;
+        private final Synchronization tracingAfterRoute;
 
-        public TracingAdvice(DefaultTracer tracer, NamedNode processorDefinition) {
+        public TracingAdvice(DefaultTracer tracer, NamedNode processorDefinition, NamedNode routeDefinition, boolean first) {
             this.tracer = tracer;
             this.processorDefinition = processorDefinition;
+            this.routeDefinition = routeDefinition;
+            this.first = first;
+            this.tracingAfterRoute = new TracingAfterRoute(tracer, routeDefinition.getId());
         }
 
         @Override
         public Object before(Exchange exchange) throws Exception {
+            // first time add before route and after route tracing
+            if (first) {
+                tracer.traceBeforeRoute(routeDefinition, exchange);
+                exchange.addOnCompletion(tracingAfterRoute);
+            }
+
             tracer.trace(processorDefinition, exchange);
             return null;
         }
@@ -792,6 +805,41 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
             // noop
+        }
+
+        private static final class TracingAfterRoute extends SynchronizationAdapter {
+
+            private final DefaultTracer tracer;
+            private final String routeId;
+
+            private TracingAfterRoute(DefaultTracer tracer, String routeId) {
+                this.tracer = tracer;
+                this.routeId = routeId;
+            }
+
+            @Override
+            public void onAfterRoute(Route route, Exchange exchange) {
+                if (routeId.equals(route.getId())) {
+                    tracer.traceAfterRoute(route, exchange);
+                }
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                TracingAfterRoute that = (TracingAfterRoute) o;
+                return routeId.equals(that.routeId);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(routeId);
+            }
         }
     }
 

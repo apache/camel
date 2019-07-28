@@ -70,6 +70,11 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         return "DynamicTo[" + getLabel() + "]";
     }
 
+    @Override
+    public String getLabel() {
+        return uri;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 

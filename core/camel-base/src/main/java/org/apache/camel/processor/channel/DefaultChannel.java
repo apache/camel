@@ -216,7 +216,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
             // add logger tracer
             DefaultTracer tracer = getOrCreateDefaultTracer();
-            addAdvice(new TracingAdvice(tracer, targetOutputDef));
+            addAdvice(new TracingAdvice(tracer, targetOutputDef, route, first));
         }
 
         // sort interceptors according to ordered

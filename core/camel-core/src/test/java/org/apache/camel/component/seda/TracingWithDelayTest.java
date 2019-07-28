@@ -50,9 +50,11 @@ public class TracingWithDelayTest extends ContextTestSupport {
                                 LOG.info("This is the processor being invoked between mock:a and mock:b");
                             }
                         })
-                        .to("mock:b").to("direct:c");
+                        .to("mock:b").toD("direct:c")
+                        .to("mock:result")
+                        .transform(simple("${body}${body}"));
 
-                from("direct:c").transform(constant("Bye World")).to("mock:result");
+                from("direct:c").transform(constant("Bye World")).to("mock:c");
             }
         };
     }
