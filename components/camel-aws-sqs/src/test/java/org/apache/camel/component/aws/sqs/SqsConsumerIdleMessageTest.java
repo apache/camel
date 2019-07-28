@@ -28,7 +28,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SqsConsumerIdleMessageTest extends CamelTestSupport {
-	
+
     @BindToRegistry("amazonSQSClient")
     private AmazonSQSClientMock client = new AmazonSQSClientMock();
     
