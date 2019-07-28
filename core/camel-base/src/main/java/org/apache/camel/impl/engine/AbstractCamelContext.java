@@ -191,8 +191,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
-    private Boolean trace = Boolean.TRUE;
-    private Boolean debug = Boolean.TRUE;
+    private Boolean trace = Boolean.FALSE;
+    private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.TRUE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;

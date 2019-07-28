@@ -27,6 +27,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WrapProcessor;
@@ -39,6 +40,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -161,7 +163,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                             NamedNode childDefinition,
                             List<InterceptStrategy> interceptors,
                             Processor nextProcessor,
-                            NamedNode route,
+                            NamedRoute route,
                             boolean first,
                             boolean routeScoped) throws Exception {
         this.routeContext = routeContext;
@@ -215,7 +217,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
 
             // add logger tracer
-            DefaultTracer tracer = getOrCreateDefaultTracer();
+            Tracer tracer = getOrCreateDefaultTracer();
             addAdvice(new TracingAdvice(tracer, targetOutputDef, route, first));
         }
 
@@ -301,21 +303,21 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         return tracer;
     }
 
-    private DefaultTracer getOrCreateDefaultTracer() {
-        DefaultTracer tracer = null;
+    private Tracer getOrCreateDefaultTracer() {
+        Tracer tracer = null;
         if (camelContext.getRegistry() != null) {
             // lookup in registry
-            Map<String, DefaultTracer> map = camelContext.getRegistry().findByTypeWithName(DefaultTracer.class);
+            Map<String, Tracer> map = camelContext.getRegistry().findByTypeWithName(Tracer.class);
             if (map.size() == 1) {
                 tracer = map.values().iterator().next();
             }
         }
         if (tracer == null) {
-            tracer = camelContext.getExtension(DefaultTracer.class);
+            tracer = camelContext.getExtension(Tracer.class);
         }
         if (tracer == null) {
             tracer = DefaultTracer.createTracer(camelContext);
-            camelContext.setExtension(DefaultTracer.class, tracer);
+            camelContext.setExtension(Tracer.class, tracer);
         }
         return tracer;
     }

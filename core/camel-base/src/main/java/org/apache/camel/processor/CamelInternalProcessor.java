@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -47,6 +48,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.CamelContextHelper;
@@ -413,11 +415,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final BacklogTracer backlogTracer;
         private final NamedNode processorDefinition;
-        private final NamedNode routeDefinition;
+        private final NamedRoute routeDefinition;
         private final boolean first;
 
         public BacklogTracerAdvice(BacklogTracer backlogTracer, NamedNode processorDefinition,
-                                   NamedNode routeDefinition, boolean first) {
+                                   NamedRoute routeDefinition, boolean first) {
             this.backlogTracer = backlogTracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
@@ -434,7 +436,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                         backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(), backlogTracer.getBodyMaxChars());
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
-                String routeId = routeDefinition != null ? routeDefinition.getId() : null;
+                String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
@@ -776,18 +778,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static class TracingAdvice implements CamelInternalProcessorAdvice {
 
-        private final DefaultTracer tracer;
+        private final Tracer tracer;
         private final NamedNode processorDefinition;
-        private final NamedNode routeDefinition;
+        private final NamedRoute routeDefinition;
         private final boolean first;
         private final Synchronization tracingAfterRoute;
 
-        public TracingAdvice(DefaultTracer tracer, NamedNode processorDefinition, NamedNode routeDefinition, boolean first) {
+        public TracingAdvice(Tracer tracer, NamedNode processorDefinition, NamedRoute routeDefinition, boolean first) {
             this.tracer = tracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
             this.first = first;
-            this.tracingAfterRoute = new TracingAfterRoute(tracer, routeDefinition.getId());
+            this.tracingAfterRoute = new TracingAfterRoute(tracer, routeDefinition.getRouteId());
         }
 
         @Override
@@ -809,10 +811,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private static final class TracingAfterRoute extends SynchronizationAdapter {
 
-            private final DefaultTracer tracer;
+            private final Tracer tracer;
             private final String routeId;
 
-            private TracingAfterRoute(DefaultTracer tracer, String routeId) {
+            private TracingAfterRoute(Tracer tracer, String routeId) {
                 this.tracer = tracer;
                 this.routeId = routeId;
             }

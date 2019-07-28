@@ -18,13 +18,72 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
+import org.apache.camel.Route;
+import org.apache.camel.StaticService;
 
-// TODO: Should we make an API
+/**
+ * SPI for tracing messages.
+ */
+public interface Tracer extends StaticService {
 
-public interface Tracer {
+    /**
+     * Whether or not to trace the given processor definition.
+     *
+     * @param definition the processor definition
+     * @return <tt>true</tt> to trace, <tt>false</tt> to skip tracing
+     */
+    boolean shouldTrace(NamedNode definition);
 
-    boolean shouldTrace(NamedNode node);
+    /**
+     * Trace before the route (eg input to route)
+     *
+     * @param route     the route
+     * @param exchange  the exchange
+     */
+    void traceBeforeRoute(NamedRoute route, Exchange exchange);
 
-    void trace(Exchange exchange);
+    /**
+     * Trace at the given node
+     *
+     * @param node      the node EIP
+     * @param exchange  the exchange
+     */
+    void trace(NamedNode node, Exchange exchange);
 
+    /**
+     * Trace after the route (eg output from route)
+     *
+     * @param route     the route
+     * @param exchange  the exchange
+     */
+    void traceAfterRoute(Route route, Exchange exchange);
+
+    /**
+     * Number of traced messages
+     */
+    long getTraceCounter();
+
+    /**
+     * Reset trace counter
+     */
+    void resetTraceCounter();
+
+    // TODO: Add javadoc
+
+    boolean isEnabled();
+
+    void setEnabled(boolean enabled);
+
+    String getTracePattern();
+
+    void setTracePattern(String tracePattern);
+
+    boolean isTraceBeforeAfterRoute();
+
+    void setTraceBeforeAfterRoute(boolean traceBeforeAfterRoute);
+
+    ExchangeFormatter getExchangeFormatter();
+
+    void setExchangeFormatter(ExchangeFormatter exchangeFormatter);
 }
