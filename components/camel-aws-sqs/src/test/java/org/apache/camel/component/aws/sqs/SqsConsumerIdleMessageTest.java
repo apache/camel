@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import org.apache.camel.BindToRegistry;
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
  * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
@@ -27,6 +28,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SqsConsumerIdleMessageTest extends CamelTestSupport {
+	
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new AmazonSQSClientMock();
     
     @Test
     public void testConsumeIdleMessages() throws Exception {
@@ -36,16 +40,6 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonSQSClientMock clientMock = new AmazonSQSClientMock();        
-        registry.bind("amazonSQSClient", clientMock);
-        
-        return registry;
     }
     
     @Override

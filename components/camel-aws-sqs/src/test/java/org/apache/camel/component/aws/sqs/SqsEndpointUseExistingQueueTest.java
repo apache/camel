@@ -31,6 +31,7 @@ import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.SetQueueAttributesResult;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,22 +43,15 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
+    
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new SqsEndpointUseExistingQueueTest.AmazonSQSClientMock();
 
     @Test
     public void defaultsToDisabled() throws Exception {
         this.mock.expectedMessageCount(1);
 
         assertMockEndpointsSatisfied(); // Wait for message to arrive.
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonSQSClientMock clientMock = new SqsEndpointUseExistingQueueTest.AmazonSQSClientMock();
-        registry.bind("amazonSQSClient", clientMock);
-        
-        return registry;
     }
 
     @Override

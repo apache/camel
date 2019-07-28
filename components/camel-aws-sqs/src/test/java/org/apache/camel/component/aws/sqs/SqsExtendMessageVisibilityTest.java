@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.Message;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,7 +37,8 @@ public class SqsExtendMessageVisibilityTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint mock;
     
-    private AmazonSQSClientMock clientMock;
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new AmazonSQSClientMock();
 
     @Test
     public void longReceiveExtendsMessageVisibility() throws Exception {
@@ -53,25 +56,17 @@ public class SqsExtendMessageVisibilityTest extends CamelTestSupport {
         message.setMD5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
         message.setMessageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
         message.setReceiptHandle(RECEIPT_HANDLE);
-        this.clientMock.messages.add(message);
+        this.client.messages.add(message);
 
         assertMockEndpointsSatisfied(); // Wait for message to arrive.
 
-        assertTrue("Expected at least one changeMessageVisibility request.", this.clientMock.changeMessageVisibilityRequests.size() >= 1);
-        for (ChangeMessageVisibilityRequest req : this.clientMock.changeMessageVisibilityRequests) {
+        assertTrue("Expected at least one changeMessageVisibility request.", this.client.changeMessageVisibilityRequests.size() >= 1);
+        for (ChangeMessageVisibilityRequest req : this.client.changeMessageVisibilityRequests) {
             assertEquals("https://queue.amazonaws.com/541925086079/MyQueue", req.getQueueUrl());
             assertEquals(RECEIPT_HANDLE, req.getReceiptHandle());
             Integer expectedTimeout = new Integer(6); // Should be 1.5 x TIMEOUT as takes into account the delay period
             assertEquals(expectedTimeout, req.getVisibilityTimeout());
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        this.clientMock = new AmazonSQSClientMock();
-        registry.bind("amazonSQSClient", this.clientMock);
-        return registry;
     }
 
     @Override
