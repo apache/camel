@@ -546,7 +546,7 @@ public final class MessageHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static String doDumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
+    private static String doDumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
         List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
         if (list == null || list.isEmpty()) {
             return null;
@@ -616,19 +616,13 @@ public final class MessageHelper {
      * @param exchangeFormatter  if provided then information about the exchange is included in the dump
      * @return a human readable message history as a table
      */
+    @SuppressWarnings("unchecked")
     public static String dumpTracing(Exchange exchange, ExchangeFormatter exchangeFormatter) {
-        // must not cause new exceptions so run this in a try catch block
-        try {
-            return doDumpTracing(exchange, exchangeFormatter);
-        } catch (Throwable e) {
-            // ignore as the body is for logging purpose
-            return "";
-        }
+        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        return doDumpTracing(exchange, exchangeFormatter, list);
     }
 
-    @SuppressWarnings("unchecked")
-    public static String doDumpTracing(Exchange exchange, ExchangeFormatter exchangeFormatter) {
-        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+    private static String doDumpTracing(Exchange exchange, ExchangeFormatter exchangeFormatter, List<MessageHistory> list) {
         if (list == null || list.isEmpty()) {
             return null;
         }

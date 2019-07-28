@@ -33,6 +33,7 @@ import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.processor.interceptor.DefaultTracer;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
@@ -209,12 +210,13 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // then wrap the output with the tracer and debugger (debugger first,
         // as we do not want regular tracer to trace the debugger)
         if (routeContext.isTracing()) {
-            BacklogTracer tracer = getOrCreateBacklogTracer();
-            camelContext.setExtension(BacklogTracer.class, tracer);
+            BacklogTracer backlogTracer = getOrCreateBacklogTracer();
             // add jmx backlog tracer
-            addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
-            // add logging tracing too
-            addAdvice(new TracingAdvice());
+            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
+
+            // add logger tracer
+            DefaultTracer tracer = getOrCreateDefaultTracer();
+            addAdvice(new TracingAdvice(tracer, targetOutputDef));
         }
 
         // sort interceptors according to ordered
@@ -294,6 +296,26 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
         if (tracer == null) {
             tracer = BacklogTracer.createTracer(camelContext);
+            camelContext.setExtension(BacklogTracer.class, tracer);
+        }
+        return tracer;
+    }
+
+    private DefaultTracer getOrCreateDefaultTracer() {
+        DefaultTracer tracer = null;
+        if (camelContext.getRegistry() != null) {
+            // lookup in registry
+            Map<String, DefaultTracer> map = camelContext.getRegistry().findByTypeWithName(DefaultTracer.class);
+            if (map.size() == 1) {
+                tracer = map.values().iterator().next();
+            }
+        }
+        if (tracer == null) {
+            tracer = camelContext.getExtension(DefaultTracer.class);
+        }
+        if (tracer == null) {
+            tracer = DefaultTracer.createTracer(camelContext);
+            camelContext.setExtension(DefaultTracer.class, tracer);
         }
         return tracer;
     }

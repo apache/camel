@@ -36,6 +36,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
+import org.apache.camel.processor.interceptor.DefaultTracer;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -774,26 +775,17 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static class TracingAdvice implements CamelInternalProcessorAdvice {
 
-        private final Logger log = LoggerFactory.getLogger("org.apache.camel.Tracing");
-        private final ExchangeFormatter exchangeFormatter;
+        private final DefaultTracer tracer;
+        private final NamedNode processorDefinition;
 
-        public TracingAdvice() {
-            // TODO: Allow to plugin a trace formatter
-            // setup exchange formatter to be used for tracing dump
-            DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
-            formatter.setShowExchangeId(true);
-            formatter.setMultiline(true);
-            formatter.setShowHeaders(true);
-            formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
-            this.exchangeFormatter = formatter;
+        public TracingAdvice(DefaultTracer tracer, NamedNode processorDefinition) {
+            this.tracer = tracer;
+            this.processorDefinition = processorDefinition;
         }
 
         @Override
         public Object before(Exchange exchange) throws Exception {
-            String s = MessageHelper.dumpTracing(exchange, exchangeFormatter);
-            if (s != null) {
-                log.info(s);
-            }
+            tracer.trace(processorDefinition, exchange);
             return null;
         }
 
