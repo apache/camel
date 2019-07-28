@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.services.sqs.model.Message;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
@@ -53,13 +55,11 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         }
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
+    @BindToRegistry("client")
+    public AmazonSQSClientMock addClient() throws Exception {
         AmazonSQSClientMock client = new AmazonSQSClientMock();
         createDummyMessages(client, NUM_MESSAGES);
-        reg.bind("client", client);
-        return reg;
+        return client;
     }
 
     private void createDummyMessages(AmazonSQSClientMock client, int numMessages) {

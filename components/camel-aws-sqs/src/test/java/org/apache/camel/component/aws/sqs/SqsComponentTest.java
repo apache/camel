@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -34,6 +35,9 @@ public class SqsComponentTest extends CamelTestSupport {
     
     @EndpointInject("mock:result")
     private MockEndpoint result;
+    
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new AmazonSQSClientMock();
     
     @Test
     public void sendInOnly() throws Exception {
@@ -83,14 +87,6 @@ public class SqsComponentTest extends CamelTestSupport {
         assertEquals("This is my message text.", exchange.getOut().getBody());
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("amazonSQSClient", new AmazonSQSClientMock());
-        
-        return registry;
     }
 
     @Override

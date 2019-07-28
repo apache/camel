@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.model.Message;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,9 +51,8 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 5);
     }
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry("amazonSQSClient")
+    public AmazonSQSClientMock addClient() throws Exception {
         
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
         // add 6 messages, one more we will poll
@@ -66,9 +66,7 @@ public class SqsBatchConsumerTest extends CamelTestSupport {
             clientMock.messages.add(message);
         }
         
-        registry.bind("amazonSQSClient", clientMock);
-        
-        return registry;
+        return clientMock;
     }
 
     @Override

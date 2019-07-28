@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.sqs;
 
 import com.amazonaws.services.sqs.model.Message;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,7 +36,8 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
-    private AmazonSQSClientMock clientMock;
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new AmazonSQSClientMock();
 
     @Test
     public void defaultsToDisabled() throws Exception {
@@ -52,18 +55,10 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
         message.setMD5OfBody("6a1559560f67c5e7a7d5d838bf0272ee");
         message.setMessageId("f6fb6f99-5eb2-4be4-9b15-144774141458");
         message.setReceiptHandle(RECEIPT_HANDLE);
-        this.clientMock.messages.add(message);
+        this.client.messages.add(message);
 
         assertMockEndpointsSatisfied(); // Wait for message to arrive.
-        assertTrue("Expected no changeMessageVisibility requests.", this.clientMock.changeMessageVisibilityRequests.size() == 0);
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        this.clientMock = new AmazonSQSClientMock();
-        registry.bind("amazonSQSClient", this.clientMock);
-        return registry;
+        assertTrue("Expected no changeMessageVisibility requests.", this.client.changeMessageVisibilityRequests.size() == 0);
     }
 
     @Override
