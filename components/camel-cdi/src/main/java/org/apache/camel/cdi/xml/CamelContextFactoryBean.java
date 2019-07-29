@@ -77,6 +77,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String trace;
 
     @XmlAttribute
+    private String tracePattern;
+
+    @XmlAttribute
     private String messageHistory;
 
     @XmlAttribute
@@ -525,6 +528,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         this.trace = trace;
     }
 
+    public String getTracePattern() {
+        return tracePattern;
+    }
+
+    public void setTracePattern(String tracePattern) {
+        this.tracePattern = tracePattern;
+    }
+
     public String getMessageHistory() {
         return messageHistory;
     }
@@ -638,7 +649,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         this.threadNamePattern = threadNamePattern;
     }
 
-    @Override
     public Boolean getLoadTypeConverters() {
         return loadTypeConverters;
     }

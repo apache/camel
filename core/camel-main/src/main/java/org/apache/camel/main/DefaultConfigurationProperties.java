@@ -51,7 +51,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean streamCachingStatisticsEnabled;
     private boolean backlogTracing;
     private boolean tracing;
-    private String tracingPatterns;
+    private String tracingPattern;
     private boolean messageHistory = true;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
@@ -400,8 +400,8 @@ public abstract class DefaultConfigurationProperties<T> {
         this.tracing = tracing;
     }
 
-    public String getTracingPatterns() {
-        return tracingPatterns;
+    public String getTracingPattern() {
+        return tracingPattern;
     }
 
     /**
@@ -410,8 +410,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * The pattern matches by node and route id's
      * Multiple patterns can be separated by comma.
      */
-    public void setTracingPatterns(String tracingPatterns) {
-        this.tracingPatterns = tracingPatterns;
+    public void setTracingPattern(String tracingPattern) {
+        this.tracingPattern = tracingPattern;
     }
 
     public boolean isBacklogTracing() {

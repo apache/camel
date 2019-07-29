@@ -42,9 +42,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultTracer extends ServiceSupport implements CamelContextAware, Tracer {
 
-    // TODO: Expose these options in Tracer API / Main Configuration
-    // TODO: Add options for spring-boot configuration too
-
     private static final String TRACING_OUTPUT = "%-4.4s [%-12.12s] [%-33.33s]";
 
     // use a fixed logger name so its easy to spot
@@ -59,6 +56,13 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
     private boolean traceBeforeAndAfterRoute = true;
 
     public DefaultTracer() {
+        DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
+        formatter.setShowExchangeId(true);
+        formatter.setShowExchangePattern(false);
+        formatter.setMultiline(false);
+        formatter.setShowHeaders(false);
+        formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
+        setExchangeFormatter(formatter);
     }
 
     @Override
@@ -249,15 +253,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
     @Override
     protected void doStart() throws Exception {
-        if (exchangeFormatter == null) {
-            DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
-            formatter.setShowExchangeId(true);
-            formatter.setShowExchangePattern(false);
-            formatter.setMultiline(false);
-            formatter.setShowHeaders(false);
-            formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
-            setExchangeFormatter(formatter);
-        }
+        // noop
     }
 
     @Override

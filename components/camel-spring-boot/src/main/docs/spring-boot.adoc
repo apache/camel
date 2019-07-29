@@ -89,7 +89,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 124 options, which are listed below.
+The component supports 126 options, which are listed below.
 
 
 
@@ -145,6 +145,7 @@ The component supports 124 options, which are listed below.
 | *camel.language.enabled* | Global option to enable/disable language auto-configuration, default is true. | true | Boolean
 | *camel.springboot.allow-use-original-message* | Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false. | false | Boolean
 | *camel.springboot.auto-startup* | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using Camelcontext.getRouteController().startRoute(String). Default is true to always start up. | true | Boolean
+| *camel.springboot.backlog-tracing* | Sets whether backlog tracing is enabled or not. Default is false. | false | Boolean
 | *camel.springboot.consumer-template-cache-size* | Consumer template endpoints cache size. | 1000 | Integer
 | *camel.springboot.duration-max-idle-seconds* | To specify for how long time in seconds Camel can be idle before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
 | *camel.springboot.duration-max-messages* | To specify how many messages to process by Camel before automatic terminating the JVM. You can use this to run Spring Boot for a short while. | 0 | Integer
@@ -185,6 +186,7 @@ The component supports 124 options, which are listed below.
 | *camel.springboot.stream-caching-statistics-enabled* | Sets whether stream caching statistics is enabled. | false | Boolean
 | *camel.springboot.thread-name-pattern* | Sets the thread name pattern used for creating the full thread name. The default pattern is: Camel (#camelId#) thread ##counter# - #name# Where #camelId# is the name of the CamelContext. and #counter# is a unique incrementing counter. and #name# is the regular thread name. You can also use #longName# which is the long thread name which can includes endpoint parameters etc. |  | String
 | *camel.springboot.tracing* | Sets whether tracing is enabled or not. Default is false. | false | Boolean
+| *camel.springboot.tracing-pattern* | Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern matches by node and route id's Multiple patterns can be separated by comma. |  | String
 | *camel.springboot.use-breadcrumb* | Set whether breadcrumb is enabled. The default value is false. | false | Boolean
 | *camel.springboot.use-data-type* | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | Boolean
 | *camel.springboot.use-mdc-logging* | To turn on MDC logging | false | Boolean

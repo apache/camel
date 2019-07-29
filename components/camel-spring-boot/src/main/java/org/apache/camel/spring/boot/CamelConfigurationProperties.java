@@ -304,11 +304,26 @@ public class CamelConfigurationProperties extends DefaultConfigurationProperties
     private boolean streamCachingStatisticsEnabled;
 
     /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    private boolean backlogTracing;
+
+    /**
      * Sets whether tracing is enabled or not.
      *
      * Default is false.
      */
     private boolean tracing;
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    private String tracingPattern;
 
     /**
      * Sets whether message history is enabled or not.
