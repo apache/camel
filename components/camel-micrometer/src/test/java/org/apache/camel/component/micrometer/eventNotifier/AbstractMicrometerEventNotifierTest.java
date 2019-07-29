@@ -21,6 +21,8 @@ import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 import io.micrometer.jmx.JmxMeterRegistry;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
@@ -29,7 +31,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
-
+	
+    @BindToRegistry(MicrometerConstants.METRICS_REGISTRY_NAME)
     protected CompositeMeterRegistry meterRegistry;
 
     @Override
@@ -37,19 +40,16 @@ abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
         return true;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        meterRegistry = new CompositeMeterRegistry();
+    public void addRegistry() throws Exception {
+    	meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
-        registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
-        return registry;
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+        addRegistry();
         AbstractMicrometerEventNotifier<?> eventNotifier = getEventNotifier();
         eventNotifier.setMeterRegistry(meterRegistry);
         eventNotifier.setPrettyPrint(true);
@@ -58,5 +58,4 @@ abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
     }
 
     protected abstract AbstractMicrometerEventNotifier<?> getEventNotifier();
-
 }

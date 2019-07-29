@@ -21,6 +21,8 @@ import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 import io.micrometer.jmx.JmxMeterRegistry;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
@@ -36,14 +38,12 @@ public class AbstractMicrometerRoutePolicyTest extends CamelTestSupport {
         return true;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry(MicrometerConstants.METRICS_REGISTRY_NAME)
+    public CompositeMeterRegistry addRegistry() throws Exception {
         meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
-        registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
-        return registry;
+        return meterRegistry;
     }
 
     @Override
