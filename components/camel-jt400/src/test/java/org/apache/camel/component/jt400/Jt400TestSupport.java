@@ -32,7 +32,7 @@ import org.junit.Before;
  */
 public abstract class Jt400TestSupport extends CamelTestSupport {
 
-	@BindToRegistry("mockPool")
+    @BindToRegistry("mockPool")
     private AS400ConnectionPool connectionPool;
 
     protected Jt400TestSupport() {
