@@ -17,6 +17,8 @@
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400ConnectionPool;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -30,6 +32,7 @@ import org.junit.Before;
  */
 public abstract class Jt400TestSupport extends CamelTestSupport {
 
+	@BindToRegistry("mockPool")
     private AS400ConnectionPool connectionPool;
 
     protected Jt400TestSupport() {
@@ -47,14 +50,6 @@ public abstract class Jt400TestSupport extends CamelTestSupport {
         if (connectionPool != null) {
             connectionPool.close();
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        ObjectHelper.notNull(connectionPool, "connectionPool");
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("mockPool", connectionPool);
-        return registry;
     }
 
     /**
