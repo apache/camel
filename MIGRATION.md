@@ -122,6 +122,8 @@ We have also renamed `camel-jetty9` to `camel-jetty`.
 A new tracer has been implemented and the old tracer has been removed.
 The new tracer logs messages at the `org.apache.camel.Tracing` logger name which is hardcoded. The format of the output is also updated to make it better. The tracer can be customized.
 
+In JMX the `BacklogTracer` is no longer enabled by default, which you need to enable by setting `backlogTracing=true` on CamelContext. The backlog tracer and tracer are not the same. The former is used for capturing a backlog of traced messages which you can poll via JMX (needed for 3rd party tooling), where as tracer is writing to the log. Neither of them are enabled by default, and they must be enabled to be in use.
+
 ### <setHeader> and <setProperty> in XML DSL
 
 We have renamed the attribute `headerName` and `propertyName` in the XML DSL for the `<setHeader>` and `<setProperty`> EIPs, to be just `name`.
