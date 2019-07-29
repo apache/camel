@@ -99,6 +99,7 @@ The `properties` component has configuring custom prefix and suffix tokens remov
 
 The `properties` component has some advanced options removed: `propertyPrefix`, `propertySuffix`, and `fallbackToUnaugmented`; these options was never really useable for end users anyway. The option `propertiesResolver` has also been removed as you should use `PropertiesSource` instead.
 
+The properties component will now use OS environment variables as perferred value. This means you can set an OS environment variable which will override any property values that has been set in property files, JVM system properties etc. You can configure this with the `environmentVariableMode` option on the properties component.
 
 ### Removed components
 
@@ -116,9 +117,10 @@ The `test` component has been renamed to `dataset-test` and moved out of `camel-
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
-### Properties component
+### Tracing
 
-The properties component will now use OS environment variables as perferred value. This means you can set an OS environment variable which will override any property values that has been set in property files, JVM system properties etc. You can configure this with the `environmentVariableMode` option on the properties component.
+A new tracer has been implemented and the old tracer has been removed.
+The new tracer logs messages at the `org.apache.camel.Tracing` logger name which is hardcoded. The format of the output is also updated to make it better. The tracer can be customized.
 
 ### <setHeader> and <setProperty> in XML DSL
 
