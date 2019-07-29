@@ -31,7 +31,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
-	
+
     @BindToRegistry(MicrometerConstants.METRICS_REGISTRY_NAME)
     protected CompositeMeterRegistry meterRegistry;
 
@@ -41,7 +41,7 @@ abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
     }
 
     public void addRegistry() throws Exception {
-    	meterRegistry = new CompositeMeterRegistry();
+        meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
     }
