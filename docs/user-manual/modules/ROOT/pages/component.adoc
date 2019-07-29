@@ -1,5 +1,5 @@
 [[Component-Components]]
-=== Components
+= Components
 
 A Component is essentially a factory of xref:endpoint.adoc[Endpoint] instances.
 
@@ -9,7 +9,7 @@ container like Spring or Guice, or they can be auto-discovered using
 xref:uris.adoc[URIs].
 
 [[Component-ComponentsIncluded]]
-==== Components Included
+== Components Included
 
 Camel includes the following Component implementations via xref:uris.adoc[URIs].
 
@@ -23,7 +23,7 @@ xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
 
 [[Component-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:endpoint.adoc[Endpoint]
 * xref:uris.adoc[URIs]

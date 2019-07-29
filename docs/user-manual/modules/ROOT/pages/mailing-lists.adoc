@@ -1,5 +1,5 @@
 [[MailingLists-MailingLists]]
-=== Mailing Lists
+= Mailing Lists
 
 The following mailing lists are available. Before posting you might want
 to read the xref:support.adoc[Support] page before posting to the
@@ -65,7 +65,7 @@ http://www.nabble.com/forum/Search.jtp?forum=2354&local=y&query=%5Bcamel%5D[thes
 threads].
 
 [[MailingLists-DiscussionForums]]
-==== Discussion Forums
+== Discussion Forums
 
 If you prefer you could use our
 http://camel.465427.n5.nabble.com/[Discussion Forums]

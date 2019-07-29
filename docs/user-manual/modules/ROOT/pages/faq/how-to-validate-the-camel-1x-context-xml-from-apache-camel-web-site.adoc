@@ -1,5 +1,5 @@
 [[Howtovalidatethecamel1xcontextxmlfromApacheCamelwebsite-Howtovalidatethecamel1xcontextxmlfromApacheCamelwebsite]]
-=== How to validate the camel 1.x context xml from Apache Camel web site?
+= How to validate the camel 1.x context xml from Apache Camel web site?
 
 Since Camel became to be Apache Top Level Project for a while, and all
 the request to the camel old web site

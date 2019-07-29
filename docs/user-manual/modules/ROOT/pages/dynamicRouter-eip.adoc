@@ -1,5 +1,5 @@
 [[dynamicRouter-eip]]
-== Dynamic Router EIP
+= Dynamic Router EIP
 
 The http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic Router] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you to route messages while avoiding the dependency of the router on all possible destinations while maintaining its efficiency.
 
@@ -11,9 +11,9 @@ _on-the-fly_.
 
 [IMPORTANT]
 .Avoid endless looping
-====
+===
 You must ensure the expression used for the `dynamicRouter` such as a bean, will return `null` to indicate the end. Otherwise the `dynamicRouter` will keep repeating endlessly.
-====
+===
 
 == Options
 
@@ -32,7 +32,7 @@ The Dynamic Router EIP supports 3 options which are listed below:
 The Dynamic Router will set the property `Exchange.SLIP_ENDPOINT` on the Exchange which contains the current endpoint as it advanced though the slip. This allows you to know how far we have processed in the slip.
 (It's a slip because the Dynamic Router implementation is based on top of Routing Slip).
 
-=== Samples
+== Samples
 
 In Java DSL you can use the `dynamicRouter` as shown below:
 
@@ -114,7 +114,7 @@ public String slip(String body, @Properties Map<String, Object> properties) {
 
 You could also store state as message headers, but they are not guaranteed to be preserved during routing, where as properties on the Exchange are. Although there was a bug in the method call expression, see the warning below.
 
-==== Spring XML
+=== Spring XML
 The same example in Spring XML would be:
 
 [source,xml]
@@ -138,7 +138,7 @@ The same example in Spring XML would be:
 </camelContext>
 ----
 
-=== @DynamicRouter annotation
+== @DynamicRouter annotation
 You can also use the `@DynamicRouter` annotation. The `route` method would then be invoked repeatedly as the message is processed dynamically.
 The idea is to return the next endpoint uri where to go. Return `null` to indicate the end. You can return multiple endpoints if you like, just as the Routing Slip, where each endpoint is separated by a delimiter.
 

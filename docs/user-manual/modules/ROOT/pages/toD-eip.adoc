@@ -1,5 +1,5 @@
 [[toD-eip]]
-== To D EIP
+= To D EIP
 
 There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
 computed xref:endpoint.adoc[Endpoint] using one or
@@ -7,7 +7,7 @@ more xref:expression.adoc[Expression] that are concat together. By
 default the xref:simple-language.adoc[Simple] language is used to compute
 the endpoint.
 
-=== Options
+== Options
 
 // eip options: START
 The To D EIP supports 5 options which are listed below:
@@ -23,7 +23,7 @@ The To D EIP supports 5 options which are listed below:
 |===
 // eip options: END
 
-=== Samples
+== Samples
 
 For example to send a message to a endpoint defined by a
 header you can do as shown below:
@@ -116,7 +116,7 @@ from("direct:start")
 You can concat as many languages as you want, just separate them with
 the plus sign
 
-=== Avoid creating endless dynamic endpoints which takes up resources
+== Avoid creating endless dynamic endpoints which takes up resources
 
 When using dynamic computed endpoints with `toD` then you may compute a lot of dynamic endpoints,
 which results in an overhead of resources in use, by each dynamic endpoint uri, and its associated producer.
@@ -143,7 +143,7 @@ of being reused in case a message is routed with the same `userName` header. The
 will not solve the _endless dynamic endoints_ problem. Instead you should use static endpoints with `to` and
 provide the dynamic parts in Camel message headers (if possible).
 
-==== Using static endpoints
+=== Using static endpoints
 
 In the example above then the parameter `userid` is dynamic computed, and would result in one instance of endpoint and producer
 for each different userid. To avoid having too dynamic endpoints you use a single static endpoint and use headers to provide the dynamic parts:
@@ -159,7 +159,7 @@ from("direct:login")
 However, you can use its optimised components for `toD` that can _solve_ this out of the box,
 as documented next.
 
-=== Using optimised components
+== Using optimised components
 
 But a better solution would be if the HTTP component could be optimised to handle the variations of dynamic computed endpoint uris.
 This is with the following components, which have been optimised for `toD`:

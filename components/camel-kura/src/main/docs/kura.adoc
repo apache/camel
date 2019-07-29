@@ -1,5 +1,5 @@
 [[Kura-EclipseKuracomponent]]
-== Eclipse Kura component
+= Eclipse Kura component
 
 *Available as of Camel 2.15*
 
@@ -13,7 +13,7 @@ services and finally forward the current temperature value to your data
 center service using Camel EIP and components.
 
 [[Kura-KuraRouteractivator]]
-=== KuraRouter activator
+== KuraRouter activator
 
 Bundles deployed to the Eclipse Kura are usually
 http://eclipse.github.io/kura/doc/hello-example.html#create-java-class[developed
@@ -46,7 +46,7 @@ every class extending `KuraRouter`, there will be a dedicated
 per OSGi bundle.
 
 [[Kura-DeployingKuraRouter]]
-==== Deploying KuraRouter
+=== Deploying KuraRouter
 
 Bundle containing your Kura router class should import the following
 packages in the OSGi manifest:
@@ -94,13 +94,13 @@ start <your-bundle-id>
 ----------------------------------------------------------------------------------
 
 [[Kura-KuraRouterutilities]]
-==== KuraRouter utilities 
+=== KuraRouter utilities 
 
  Kura router base class provides many useful utilities. This section
 explores each of them.
 
 [[Kura-SLF4Jlogger]]
-===== SLF4J logger
+==== SLF4J logger
 
 Kura uses SLF4J facade for logging purposes. Protected member `log`
 returns SLF4J logger instance associated with the given Kura router.
@@ -119,7 +119,7 @@ public class MyKuraRouter extends KuraRouter {
 ----------------------------------------------
 
 [[Kura-BundleContext]]
-===== BundleContext
+==== BundleContext
 
 Protected member `bundleContext` returns bundle context associated with
 the given Kura router.
@@ -139,7 +139,7 @@ public class MyKuraRouter extends KuraRouter {
 ---------------------------------------------------------------------------------------------------------------
 
 [[Kura-CamelContext]]
-===== CamelContext
+==== CamelContext
 
 Protected member `camelContext` is the `CamelContext` associated with
 the given Kura router.
@@ -158,7 +158,7 @@ public class MyKuraRouter extends KuraRouter {
 ----------------------------------------------
 
 [[Kura-ProducerTemplate]]
-===== ProducerTemplate
+==== ProducerTemplate
 
 Protected member `producerTemplate` is the `ProducerTemplate` instance
 associated with the given Camel context.
@@ -177,7 +177,7 @@ public class MyKuraRouter extends KuraRouter {
 -----------------------------------------------------------
 
 [[Kura-ConsumerTemplate]]
-===== ConsumerTemplate
+==== ConsumerTemplate
 
 Protected member `consumerTemplate` is the `ConsumerTemplate` instance
 associated with the given Camel context.
@@ -196,7 +196,7 @@ public class MyKuraRouter extends KuraRouter {
 --------------------------------------------------------------------------------------------------
 
 [[Kura-OSGiserviceresolver]]
-===== OSGi service resolver
+==== OSGi service resolver
 
 OSGi service resolver (`service(Class<T> serviceType)`) can be used to
 easily retrieve service by type from the OSGi bundle context.
@@ -233,7 +233,7 @@ public class MyKuraRouter extends KuraRouter {
 ---------------------------------------------------------------
 
 [[Kura-KuraRouteractivatorcallbacks]]
-==== KuraRouter activator callbacks
+=== KuraRouter activator callbacks
 
 Kura router comes with the lifecycle callbacks that can be used to
 customize the way the Camel router works. For example to configure the
@@ -256,7 +256,7 @@ public class MyKuraRouter extends KuraRouter {
 --------------------------------------------------------------------------
 
 [[Kura-LoadingXMLroutesfromConfigurationAdmin]]
-==== Loading XML routes from ConfigurationAdmin
+=== Loading XML routes from ConfigurationAdmin
 
 Sometimes it is desired to read the XML definition of the routes from
 the server configuration. This a common scenario for IoT gateways where
@@ -283,7 +283,7 @@ Camel XML route file, for example:
  
 
 [[Kura-DeployingKurarouterasadeclarativeOSGiservice]]
-==== Deploying Kura router as a declarative OSGi service
+=== Deploying Kura router as a declarative OSGi service
 
 If you would like to deploy your Kura router as a declarative OSGi
 service, you can use `activate` and `deactivate` methods provided by
@@ -297,7 +297,7 @@ service, you can use `activate` and `deactivate` methods provided by
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
 [[Kura-SeeAlso]]
-==== See Also
+=== See Also
 
 * Configuring Camel
 * Component

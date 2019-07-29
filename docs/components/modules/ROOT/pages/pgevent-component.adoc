@@ -1,5 +1,5 @@
 [[pgevent-component]]
-== PostgresSQL Event Component
+= PostgresSQL Event Component
 
 *Available as of Camel version 2.15*
 
@@ -34,7 +34,7 @@ pgevent://host:port/database/channel[?parameters]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -61,7 +61,7 @@ pgevent:host:port/database/channel
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -122,7 +122,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

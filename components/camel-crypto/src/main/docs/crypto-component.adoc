@@ -1,5 +1,5 @@
 [[crypto-component]]
-== Crypto (JCE) Component
+= Crypto (JCE) Component
 
 *Available as of Camel version 2.3*
 
@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Introduction
+== Introduction
 
 Digital signatures make use of Asymmetric Cryptographic techniques to
 sign messages. From a (very) high level, the algorithms use pairs of
@@ -48,7 +48,7 @@ and how to leverage them with the JCE.
 * The ever insightful Wikipedia
 http://en.wikipedia.org/wiki/Digital_signature[Digital_signatures]
 
-### URI format
+== URI format
 
 As mentioned Camel provides a pair of crypto endpoints to create and
 verify signatures
@@ -78,7 +78,7 @@ complimentary `crypto:verify` in another, though for simplicity in the
 examples they appear one after the other. It goes without saying that
 both signing and verifying should be configured identically.
 
-### Options
+== Options
 
 // component options: START
 The Crypto (JCE) component supports 3 options, which are listed below.
@@ -103,7 +103,7 @@ crypto:cryptoOperation:name
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,7 +114,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -144,7 +144,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -206,9 +206,9 @@ The component supports 34 options, which are listed below.
 
 
 
-### Using
+== Using
 
-#### Raw keys
+=== Raw keys
 
 The most basic way to way to sign and verify an exchange is with a
 KeyPair as follows.
@@ -216,7 +216,7 @@ KeyPair as follows.
 The same can be achieved with the xref:manual::spring-xml-extensions.adoc[Spring
 XML Extensions] using references to keys
 
-#### KeyStores and Aliases.
+=== KeyStores and Aliases.
 
 The JCE provides a very versatile keystore concept for housing pairs of
 private keys and certificates, keeping them encrypted and password
@@ -236,7 +236,7 @@ also shows how to load and initialize the keystore.
 
 Again in Spring a ref is used to lookup an actual keystore instance.
 
-#### Changing JCE Provider and Algorithm
+=== Changing JCE Provider and Algorithm
 
 Changing the Signature algorithm or the Security provider is a simple
 matter of specifying their names. You will need to also use Keys that
@@ -244,7 +244,7 @@ are compatible with the algorithm you choose.
 
 or
 
-#### Changing the Signature Message Header
+=== Changing the Signature Message Header
 
 It may be desirable to change the message header used to store the
 signature. A different header name can be specified in the route
@@ -252,13 +252,13 @@ definition as follows
 
 or
 
-#### Changing the buffersize
+=== Changing the buffersize
 
 In case you need to update the size of the buffer...
 
 or
 
-#### Supplying Keys dynamically.
+=== Supplying Keys dynamically.
 
 When using a Recipient list or similar EIP the recipient of an exchange
 can vary dynamically. Using the same key across all recipients may be
@@ -295,7 +295,7 @@ signed.getIn().setHeader(KEYSTORE_ALIAS, "bob");
 template.send("direct:alias-verify", signed);
 -------------------------------------------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

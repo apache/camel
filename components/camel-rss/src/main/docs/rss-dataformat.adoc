@@ -1,5 +1,5 @@
 [[rss-dataformat]]
-== RSS DataFormat
+= RSS DataFormat
 
 *Available as of Camel version 2.1*
 
@@ -21,7 +21,7 @@ understand them as well, for example if the feed uses `alt=rss`, then
 you can for example do 
 `from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&consumer.delay=1000").to("bean:rss");`
 
-### Options
+== Options
 
 // dataformat options: START
 The RSS dataformat supports 1 options, which are listed below.
@@ -35,7 +35,7 @@ The RSS dataformat supports 1 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

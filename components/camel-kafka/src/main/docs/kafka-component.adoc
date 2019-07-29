@@ -1,5 +1,5 @@
 [[kafka-component]]
-== Kafka Component
+= Kafka Component
 
 *Available as of Camel version 2.13*
 
@@ -20,7 +20,7 @@ for this component.
 ------------------------------------------------------------
 
 
-=== URI format
+== URI format
 
 [source,java]
 ---------------------------
@@ -29,7 +29,7 @@ kafka:topic[?options]
 ---------------------------
 
 
-=== Options
+== Options
 
 
 // component options: START
@@ -63,7 +63,7 @@ kafka:topic
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (97 parameters):
+=== Query Parameters (97 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -179,7 +179,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -310,9 +310,9 @@ For more information about Producer/Consumer configuration:
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-=== Message headers
+== Message headers
 
-==== Consumer headers
+=== Consumer headers
 
 The following headers are available when consuming messages from Kafka.
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -327,7 +327,7 @@ The following headers are available when consuming messages from Kafka.
 | KafkaConstants.MANUAL_COMMIT             | "CamelKafkaManualCommit"          | KafkaManualCommit | Can be used for forcing manual offset commit when using Kafka consumer. |
 |===
 
-==== Producer headers
+=== Producer headers
 
 Before sending a message to Kafka you can configure the following headers.
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -346,9 +346,9 @@ After the message is sent to Kafka, the following headers are available
 |===
 
 
-=== Samples
+== Samples
 
-==== Consuming messages from Kafka
+=== Consuming messages from Kafka
 
 Here is the minimal route you need in order to read messages from Kafka.
 
@@ -407,7 +407,7 @@ camelContext.addRoutes(new RouteBuilder() {
 ----
  
 
-==== Producing messages to Kafka
+=== Producing messages to Kafka
 
 Here is the minimal route you need in order to write messages to Kafka.
 
@@ -419,7 +419,7 @@ from("direct:start")
     .to("kafka:test?brokers=localhost:9092");
 ----
 
-=== SSL configuration
+== SSL configuration
 
 You have 2 different ways to configure the SSL communication on the Kafka` component.
 
@@ -472,7 +472,7 @@ camelContext.addRoutes(new RouteBuilder() {
 });
 ----
 
-=== Using the Kafka idempotent repository
+== Using the Kafka idempotent repository
 *Available from Camel 2.19*
 
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
@@ -546,7 +546,7 @@ In XML:
 </bean>
 ----
 
-=== Using manual commit with Kafka consumer
+== Using manual commit with Kafka consumer
 *Available as of Camel 2.21*
 
 By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
@@ -578,7 +578,7 @@ This will force a synchronous commit which will block until the commit is acknow
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
 
-=== Kafka Headers propagation
+== Kafka Headers propagation
 *Available as of Camel 2.22*
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.

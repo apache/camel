@@ -1,4 +1,4 @@
-==== Enterprise Integration Patterns
+= Enterprise Integration Patterns
 
 Camel supports most of the link:http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns] from the excellent book by link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Gregor%20Hohpe[Gregor Hohpe] and link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Bobby%20Woolf[Bobby Woolf].
 

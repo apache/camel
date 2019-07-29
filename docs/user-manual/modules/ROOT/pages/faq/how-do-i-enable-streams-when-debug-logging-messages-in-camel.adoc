@@ -1,5 +1,5 @@
 [[HowdoIenablestreamswhendebugloggingmessagesinCamel-HowdoIenablestreamswhendebugloggingmessagesinCamel]]
-=== How do I enable streams when debug logging messages in Camel
+= How do I enable streams when debug logging messages in Camel
 
 *Available as of Camel 2.1*
 
@@ -27,7 +27,7 @@ Here we have a message which is XML stream based.
 You can customize whether Camel should log the payload anyway.
 
 [[HowdoIenablestreamswhendebugloggingmessagesinCamel-CustomizingfromJavaDSL]]
-==== Customizing from Java DSL
+== Customizing from Java DSL
 
 You add to the Camel properties the flag to log streams.
 
@@ -39,7 +39,7 @@ You add to the Camel properties the flag to log streams.
 Notice default is `false`.
 
 [[HowdoIenablestreamswhendebugloggingmessagesinCamel-CustomizingfromSpringDSL]]
-==== Customizing from Spring DSL
+== Customizing from Spring DSL
 
 You add to the Camel properties the flag to log streams.
 

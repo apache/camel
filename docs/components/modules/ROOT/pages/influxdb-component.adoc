@@ -1,5 +1,5 @@
 [[influxdb-component]]
-== InfluxDB Component
+= InfluxDB Component
 
 *Available as of Camel version 2.18*
 
@@ -27,14 +27,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------
 influxdb://beanName?[options]
 -------------------------------
 
-### URI Options
+== URI Options
 
 The producer allows sending messages to a influxdb
 configured in the registry, using the native java driver.
@@ -66,7 +66,7 @@ influxdb:connectionBean
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +93,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -122,7 +122,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Example
+== Example
 
 Below is an example route that stores a point into the db (taking the db name from the URI)
 specific key:
@@ -142,7 +142,7 @@ from("direct:start")
 
 For more information, see these resources...
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

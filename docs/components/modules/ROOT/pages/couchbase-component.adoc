@@ -1,5 +1,5 @@
 [[couchbase-component]]
-== Couchbase Component
+= Couchbase Component
 
 *Available as of Camel version 2.19*
 
@@ -20,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------
 couchbase:url
 -------------------------------------------------
 
-### Options
+== Options
 
 // component options: START
 The Couchbase component supports 2 options, which are listed below.
@@ -51,7 +51,7 @@ couchbase:protocol:hostname:port
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -63,7 +63,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (49 parameters):
+=== Query Parameters (49 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -121,7 +121,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -149,7 +149,7 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Couchbase SDK compatibility
+== Couchbase SDK compatibility
 This component is currently using a "Legacy SDK" version of couchbase-client.
 
 In order to authenticate with newer versions of Couchbase Server 5.0 and beyond, as per instructions on the  https://docs.couchbase.com/java-sdk/2.7/sdk-authentication-overview.html/[CouchBase Java SDK Authentication]:

@@ -9,7 +9,7 @@ ifndef::env-github[]
 endif::[]
 
 [[Testing-Testing]]
-=== Testing
+= Testing
 
 Testing is a crucial activity in any piece of software development or
 integration. Typically Camel Riders use various different
@@ -27,7 +27,7 @@ However the Camel project has tried to make the testing of Camel as easy
 and powerful as possible so we have introduced the following features.
 
 [[Testing-Testingmechanisms]]
-==== Testing mechanisms
+== Testing mechanisms
 
 The following mechanisms are supported
 
@@ -85,7 +85,7 @@ they all reuse the xref:bean-integration.adoc[Camel binding and
 injection annotations].
 
 [[Testing-CamelTestExample]]
-===== Camel Test Example
+=== Camel Test Example
 
 Here is the Camel Test
 https://github.com/apache/camel/blob/master/core/camel-core/src/test/java/org/apache/camel/processor/FilterTest.java[example]:
@@ -100,7 +100,7 @@ has no CDI, Spring or Guice dependency injection configuration but instead
 overrides the `createRouteBuilder()` method.
 
 [[Testing-CdiTestExample]]
-===== CDI Test Example
+=== CDI Test Example
 
 Here is the CDI Testing
 https://github.com/apache/camel/blob/master/components/camel-test-cdi/src/test/java/org/apache/camel/test/cdi/FilterTest.java[example]:
@@ -114,7 +114,7 @@ You can find more testing patterns illustrated in the `camel-example-cdi-test` e
 and the test classes that come with it.
 
 [[Testing-SpringTestwithXMLConfigExample]]
-===== Spring Test with XML Config Example
+=== Spring Test with XML Config Example
 
 Here is the Spring Testing
 https://github.com/apache/camel/blob/master/components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[example
@@ -142,7 +142,7 @@ include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/cam
 ----
 
 [[Testing-SpringTestwithJavaConfigExample]]
-===== Spring Test with Java Config Example
+=== Spring Test with Java Config Example
 
 Here is the Spring Testing
 https://github.com/apache/camel/blob/master/components/camel-spring-javaconfig/src/test/java/org/apache/camel/spring/javaconfig/patterns/FilterTest.java[example
@@ -182,7 +182,7 @@ include::{examplesdir}/components/camel-spring-javaconfig/src/test/java/org/apac
 ----
 
 [[Testing-SpringTestwithXMLConfigandDeclarativeConfigurationExample]]
-===== Spring Test with XML Config and Declarative Configuration Example
+=== Spring Test with XML Config and Declarative Configuration Example
 
 Here is a Camel test support enhanced xref:spring-testing.adoc[Spring
 Testing] https://github.com/apache/camel/blob/master/components/camel-test-spring/src/test/java/org/apache/camel/test/spring/CamelSpringRunnerPlainTest.java[example
@@ -200,7 +200,7 @@ the test class.  See Spring Testing for a list
 of annotations you can use in your tests.
 
 [[Testing-BlueprintTest]]
-===== Blueprint Test
+=== Blueprint Test
 
 Here is the Blueprint Testing
 https://github.com/apache/camel/blob/master/components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/DebugBlueprintTest.java[example
@@ -222,7 +222,7 @@ include::{examplesdir}/components/camel-test-blueprint/src/test/resources/org/ap
 ----
 
 [[Testing-Testingendpoints]]
-==== Testing endpoints
+== Testing endpoints
 
 Camel provides a number of endpoints which can make testing easier.
 
@@ -247,7 +247,7 @@ expectations to be added to different endpoints; you can then run your
 tests and assert that your expectations are met at the end.
 
 [[Testing-Stubbingoutphysicaltransporttechnologies]]
-==== Stubbing out physical transport technologies
+== Stubbing out physical transport technologies
 
 If you wish to test out a route but want to avoid actually using a real
 physical transport (for example to unit test a transformation route
@@ -271,7 +271,7 @@ validate the endpoint URI, which makes stubbing much easier.
 |=======================================================================
 
 [[Testing-Testingexistingroutes]]
-==== Testing existing routes
+== Testing existing routes
 
 Camel provides some features to aid during testing of existing routes
 where you cannot or will not use xref:components::mock-component.adoc[Mock] etc. For example

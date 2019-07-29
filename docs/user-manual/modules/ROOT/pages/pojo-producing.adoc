@@ -1,8 +1,10 @@
+= POJO producing
+
 There are two different ways to send messages to any Camel
 xref:endpoint.adoc[Endpoint] from a POJO.
 
 [[POJOProducing-@EndpointInject]]
-=== `@EndpointInject`
+= Via `@EndpointInject`
 
 To allow sending of messages from POJOs you can use the
 `org.apache.camel.EndpointInject`
@@ -40,7 +42,7 @@ attribute on *`@Produce`*, *`@EndpointInject`*.
 ====
 
 [[POJOProducing-HidingtheCamelAPIsFromYourCodeUsing@Produce]]
-=== Hiding the Camel APIs From Your Code Using `@Produce`
+== Hiding the Camel APIs From Your Code Using `@Produce`
 
 We recommend xref:hiding-middleware.adoc[Hiding Middleware] APIs from
 your application code so the next option might be more suitable. You can

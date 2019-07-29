@@ -1,5 +1,5 @@
 [[transactionalClient-eip]]
-== Transactional Client
+= Transactional Client
 
 Camel recommends supporting the
 http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactional
@@ -13,7 +13,7 @@ transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
 
-=== Configuration of Redelivery
+== Configuration of Redelivery
 
 The redelivery in transacted mode is *not* handled by Camel but by the
 backing system (the transaction manager). In such cases you should
@@ -55,7 +55,7 @@ Then you look them up and use them to create the JmsComponent.
 ----
 
 [[TransactionalClient-TransactionPolicies]]
-=== Transaction Policies
+== Transaction Policies
 
 Outbound endpoints will automatically enlist in the current transaction
 context. But what if you do not want your outbound endpoint to enlist in
@@ -107,7 +107,7 @@ from("activemq:queue:foo").policy(notsupported)
 ----
 
 [[TransactionalClient-OSGiBlueprint]]
-=== OSGi Blueprint
+== OSGi Blueprint
 
 If you are using
 xref:using-osgi-blueprint-with-camel.adoc[OSGi Blueprint]
@@ -134,7 +134,7 @@ And then refer to "required" from the route:
 ----
 
 [[TransactionalClient-DatabaseSample]]
-=== Database Sample
+== Database Sample
 
 In this sample we want to ensure that two endpoints is under transaction
 control. These two endpoints inserts data into a database.
@@ -221,7 +221,7 @@ Just remember to use the *transacted* DSL. The rest is standard Spring
 XML to setup the transaction manager.
 
 [[TransactionalClient-JMSSample]]
-=== JMS Sample
+== JMS Sample
 
 In this sample we want to listen for messages on a queue and process the
 messages with our business logic java code and send them along. Since
@@ -285,7 +285,7 @@ route as transacted using the *transacted* tag.
     <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionalClientTest$MyProcessor"/>
 ----
 
-==== Transaction error handler
+=== Transaction error handler
 
 When a route is marked as transacted using *transacted* Camel will
 automatic use the
@@ -298,7 +298,7 @@ xref:exception-clause.adoc[Exception Clause]
 as well.
 
 [[TransactionalClient-IntegrationTestingwithSpring]]
-=== Integration Testing with Spring
+== Integration Testing with Spring
 
 An Integration Test here means a test runner class annotated
 `@RunWith(SpringJUnit4ClassRunner.class).`
@@ -326,7 +326,7 @@ to be participate, which it cannot. You can, in your test, mock the
 parts that cause separate threads to avoid this issue.
 
 [[TransactionalClient-Usingmultiplerouteswithdifferentpropagationbehaviors]]
-=== Using multiple routes with different propagation behaviors
+== Using multiple routes with different propagation behaviors
 
 *Available as of Camel 2.2*
 
@@ -384,7 +384,7 @@ transaction. This is done using the `markRollbackOnlyLast` which tells
 Camel to only do it for the current transaction and not globally.
 
 [[TransactionalClient-SeeAlso]]
-=== See Also
+== See Also
 
 * xref:error-handling-in-camel.adoc[Error handling in Camel]
 * xref:transactionerrorhandler.adoc[TransactionErrorHandler]

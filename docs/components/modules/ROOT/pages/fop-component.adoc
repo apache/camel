@@ -1,5 +1,5 @@
 [[fop-component]]
-== FOP Component
+= FOP Component
 
 *Available as of Camel version 2.10*
 
@@ -19,14 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------------
 fop://outputFormat?[options]
 ----------------------------
 
-### Output Formats
+== Output Formats
 
 The primary output format is PDF but other output
 http://xmlgraphics.apache.org/fop/0.95/output.html[formats] are also
@@ -60,7 +60,7 @@ supported:
 The complete list of valid output formats can be found
 http://svn.apache.org/repos/asf/xmlgraphics/commons/trunk/src/java/org/apache/xmlgraphics/util/MimeConstants.java[here]
 
-### Endpoint Options
+== Endpoint Options
 
 // component options: START
 The FOP component supports 2 options, which are listed below.
@@ -86,7 +86,7 @@ fop:outputType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,7 +96,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +110,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -154,7 +154,7 @@ fopFactory
 Allows to use a custom configured or implementation of
 `org.apache.fop.apps.FopFactory`.
 
-### Message Operations
+== Message Operations
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -189,7 +189,7 @@ Allows to use a custom configured or implementation of
 |CamelFop.Render.keywords |  | Set of keywords applicable to this document
 |=======================================================================
 
-### Example
+== Example
 
 Below is an example route that renders PDFs from xml data and xslt
 template and saves the PDF files in target folder:
@@ -204,7 +204,7 @@ from("file:source/data/xml")
 
 For more information, see these resources...
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

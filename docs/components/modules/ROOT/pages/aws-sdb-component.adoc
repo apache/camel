@@ -1,5 +1,5 @@
 [[aws-sdb-component]]
-== AWS SimpleDB Component
+= AWS SimpleDB Component
 
 *Available as of Camel version 2.9*
 
@@ -12,7 +12,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SDB. More information is available at
 https://aws.amazon.com/sdb[Amazon SDB].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -22,7 +22,7 @@ aws-sdb://domainName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -50,7 +50,7 @@ aws-sdb:domainName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +81,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -118,9 +118,9 @@ You have to provide the amazonSDBClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sdb[Amazon's SDB].
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the SDB producer
+=== Message headers evaluated by the SDB producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -156,7 +156,7 @@ to 100.
 specified attributes will be updated/deleted or not.
 |=======================================================================
 
-#### Message headers set during DomainMetadata operation
+=== Message headers set during DomainMetadata operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -177,7 +177,7 @@ specified attributes will be updated/deleted or not.
 |`CamelAwsSdbItemNameSize` |`Long` |The total size of all item names in the domain, in bytes.
 |=======================================================================
 
-#### Message headers set during GetAttributes operation
+=== Message headers set during GetAttributes operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -186,7 +186,7 @@ specified attributes will be updated/deleted or not.
 |`CamelAwsSdbAttributes` |`List<Attribute>` |The list of attributes returned by the operation.
 |=======================================================================
 
-#### Message headers set during ListDomains operation
+=== Message headers set during ListDomains operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -198,7 +198,7 @@ specified attributes will be updated/deleted or not.
 specified MaxNumberOfDomains still available.
 |=======================================================================
 
-#### Message headers set during Select operation
+=== Message headers set during Select operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -211,7 +211,7 @@ matched, the response size exceeded 1 megabyte, or the execution time
 exceeded 5 seconds.
 |=======================================================================
 
-#### Advanced AmazonSimpleDB configuration
+=== Advanced AmazonSimpleDB configuration
 
 If you need more control over the `AmazonSimpleDB` instance
 configuration you can create your own instance and refer to it from the
@@ -240,7 +240,7 @@ AmazonSimpleDB client = new AmazonSimpleDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -257,7 +257,7 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

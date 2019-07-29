@@ -1,5 +1,5 @@
 [[Async-Async]]
-=== Async
+= Async
 
 *Available as of Camel 2.0*
 
@@ -23,7 +23,7 @@ distill the difference. +
 *threads* DSL and what it can be used for.
 
 [[Async-Background]]
-=== Background
+== Background
 
 The new Async API in Camel 2.0 leverages in much
 greater detail the Java Concurrency API and its support for executing
@@ -32,7 +32,7 @@ tasks asynchronous. +
 users with knowledge of the Java Concurrency API.
 
 [[Async-Afewconceptstomaster]]
-==== A few concepts to master
+== A few concepts to master
 
 When doing messaging there are a few aspects to keep in mind.
 
@@ -63,7 +63,7 @@ For all message exchange they can be executed either:
 * asynchronous
 
 [[Async-SynchronousRequestReply]]
-===== Synchronous Request Reply
+=== Synchronous Request Reply
 
 A synchronous exchange is defined as the caller sends a message and
 waits until its complete before continuing. This is illustrated in the
@@ -80,7 +80,7 @@ application still waits for the response. +
  3. The response is send back to the client.
 
 [[Async-AsynchronousRequestReply]]
-===== Asynchronous Request Reply
+=== Asynchronous Request Reply
 
 On the other hand the asynchronous version is where the caller sends a
 message to an Endpoint and then returns immediately
@@ -103,7 +103,7 @@ got as _response_ from step 1. With this handle it retrieves the reply,
 wait if necessary if the reply is not ready.
 
 [[Async-SynchronousRequestOnly]]
-==== Synchronous Request Only
+== Synchronous Request Only
 
 You can also do synchronous Request only with
 Camel. The client sends a message to Camel in which a reply is not
@@ -130,7 +130,7 @@ In case of failure the client can detect this as an exception is thrown.
 (and `exchange.isFailed()` returns `true`).
 
 [[Async-AsynchronousRequestOnly]]
-==== Asynchronous Request Only
+== Asynchronous Request Only
 
 As opposed to the synchronous Request Only the
 Async counter part will *not* wait for the processing
@@ -169,7 +169,7 @@ With these diagrams in mind lets turn out attention to the
 Async API and how to use it with Camel.
 
 [[Async1TheClientAPI]]
-=== The Async Client API
+== The Async Client API
 
 Camel provides the Async Client API in the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/ProducerTemplate.html[ProducerTemplate]
@@ -206,7 +206,7 @@ response. You can do this by using the `extractFutureBody` method, or
 just use plain Java but invoke `get()` on the `Future` handle.
 
 [[Async-TheClientAPIwithcallbacks]]
-==== The Async Client API with callbacks
+== The Async Client API with callbacks
 
 In addition to the Client API from above Camel provides a variation that
 uses callbacks when the message
@@ -233,7 +233,7 @@ difference is that they invokes the callback as well when the
 Exchange is done being routed.
 
 [[Async-TheFutureAPI]]
-===== The Future API
+=== The Future API
 
 The `java.util.concurrent.Future` API have among others the following
 methods:
@@ -251,7 +251,7 @@ exception.
 |=======================================================================
 
 [[Async-Example:AsynchronousRequestReply]]
-==== Example: Asynchronous Request Reply
+== Example: Asynchronous Request Reply
 
 Suppose we want to call a xref:components::http4-component.adoc[HTTP] service but it is usually
 slow and thus we do not want to block and wait for the response, as we
@@ -320,7 +320,7 @@ All together it should give you the basic idea how to use this
 Async API and what it can do.
 
 [[Async-Example:SynchronousRequestReply]]
-==== Example: Synchronous Request Reply
+== Example: Synchronous Request Reply
 
 This example is just a pure synchronous version of the async based example above.
 
@@ -345,7 +345,7 @@ assertMockEndpointsSatisfied();
 ---------------------------------------------------------------------------
 
 [[Async-UsingtheAPIwithcallbacks]]
-==== Using the Async API with callbacks
+== Using the Async API with callbacks
 
 Suppose we want to call a xref:components::http4-component.adoc[HTTP] service but it is usually
 slow and thus we do not want to block and wait for the response, but
@@ -425,7 +425,7 @@ template.asyncCallbackRequestBody(url, "Willem", callback);
 ---------------------------------------------------------------------------
 
 [[Async-UsingtheAPIwiththeCamelclassicAPI]]
-==== Using the Async API with the Camel classic API
+== Using the Async API with the Camel classic API
 
 When using the Camel API to create a producer and send an
 Exchange we do it like this:
@@ -462,12 +462,12 @@ Exchange response = future.get();
 ------------------------------------------------------------------------------------------------------------------------------
 
 [[Async2UsingtheThreadsDSL]]
-=== Using the Threads DSL
+== Using the Threads DSL
 
 In Camel 2.0 the `threads` DSL replaces the old `thread` DSL.
 
 [[Async-Camel2.0to2.3behavior]]
-==== Camel 2.0 to 2.3 behavior
+== Camel 2.0 to 2.3 behavior
 
 The `threads` DSL leverages the JDK concurrency framework for multi
 threading. It can be used to turn a synchronous route into
@@ -479,7 +479,7 @@ will complete as well if no reply was expected such as
 Request Only messaging.
 
 [[Async-Camel2.4onwardsbehavior]]
-==== Camel 2.4 onwards behavior
+== Camel 2.4 onwards behavior
 
 The `threads` DSL leverages the JDK concurrency framework for multi
 threading. It can be used to turn a synchronous route into
@@ -540,7 +540,7 @@ based. The default option is *IfReplyExpected*.
 |=======================================================================
 
 [[Async-Aboutrejectedtasks]]
-===== About rejected tasks
+=== About rejected tasks
 
 The `threads` DSL uses a thread pool which has a worker queue for tasks.
 When the worker queue gets full, the task is rejected. You can customize
@@ -568,7 +568,7 @@ so we discourage you from using these options in those Camel releases.
 This has been fixed in Camel 2.10 onwards.
 
 [[Async-Example:threadsDSL]]
-==== Example: threads DSL
+== Example: threads DSL
 
 Suppose we receive orders on a JMS queue. Some of the orders expect a
 reply while other do not (either a `JMSReplyTo` exists or not). And lets
@@ -621,7 +621,7 @@ Exchange that does not participate in the same
 transaction.
 
 [[Async-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:async.adoc[Asynchronous Processing]
 * xref:requestReply-eip.adoc[Request Reply]

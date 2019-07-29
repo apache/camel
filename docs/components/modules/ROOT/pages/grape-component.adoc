@@ -1,5 +1,5 @@
 [[grape-component]]
-== Grape Component
+= Grape Component
 
 *Available as of Camel version 2.16*
 
@@ -10,7 +10,7 @@ can add new components, data formats and beans to your `CamelContext`
 without the restart of the router.
 
 
-### Grape options
+== Grape options
 
 // component options: START
 The Grape component supports 3 options, which are listed below.
@@ -36,7 +36,7 @@ grape:defaultCoordinates
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -46,7 +46,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (3 parameters):
+=== Query Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 
 
 
-### Setting up class loader
+== Setting up class loader
 
 Grape requires using Groovy class loader with the `CamelContext`. You
 can enable Groovy class loading on the existing Camel Context using the
@@ -81,7 +81,7 @@ yourself:
 camelContext.setApplicationContextClassLoader(new GroovyClassLoader(myClassLoader));
 ------------------------------------------------------------------------------------
 
-### URI format
+== URI format
 
 Grape component supports only producer endpoints.
 
@@ -108,7 +108,7 @@ from("direct:loadCamelFTP").
   to("grape:defaultMavenCoordinates");
 ----------------------------------------------------------
 
-### Adding the Grape component to the project
+== Adding the Grape component to the project
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -123,7 +123,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Default payload type
+== Default payload type
 
 By default Camel Grape component operates on the String payloads:
 
@@ -144,7 +144,7 @@ String:
 producerTemplate.sendBody("grape:defaultMavenCoordinates", "org.apache.camel/camel-ftp/2.15.2".getBytes());
 -----------------------------------------------------------------------------------------------------------
 
-### Headers
+== Headers
 
 The following headers are recognized by the Grape component:
 
@@ -155,7 +155,7 @@ The following headers are recognized by the Grape component:
 |`CamelGrapeCommand` |`GrapeConstants.GRAPE_COMMAND` |Producer |`org.apache.camel.component.grape.GrapeCommand` |The command to be performed by the Grape endpoint. Default to `grab`.
 |=======================================================================
 
-### Loading components at runtime
+== Loading components at runtime
 
 In order to load the new component at the router runtime, just grab the
 jar containing the given component:
@@ -167,7 +167,7 @@ template.sendBody("grape:grape", "org.apache.camel/camel-stream/2.15.2");
 template.sendBody("stream:out", "msg");
 -------------------------------------------------------------------------
 
-### Loading processors bean at runtime
+== Loading processors bean at runtime
 
 In order to load the new processor bean  with your custom business login
 at the router runtime, just grab the jar containing the required bean:
@@ -182,7 +182,7 @@ int price = template.requestBody("bean:com.example.PricingBean?method=currentPro
 
  
 
-### Loading deployed jars after Camel context restart
+== Loading deployed jars after Camel context restart
 
 After you download new jar, you usually would like to have it loaded by
 the Camel again after the restart of the `CamelContext`. It is certainly
@@ -211,7 +211,7 @@ camelContext.addRoutes(
 
  
 
-### Managing the installed jars
+== Managing the installed jars
 
 If you would like to check what jars have been installed into the given
 `CamelContext`, send message to the grape endpoint with
@@ -245,7 +245,7 @@ command:
         setBody().constant("Installed patches have been deleted."); 
 -----------------------------------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

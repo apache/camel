@@ -1,5 +1,5 @@
 [[DSL-DSL]]
-=== DSL
+= DSL
 
 Camel uses a Java _Domain Specific Language_ or DSL for creating
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -31,7 +31,7 @@ rulebase
 routes using the routing DSL
 
 [[DSL-SeeAlso]]
-==== See Also
+== See Also
 
 For more examples of the DSL in action see
 

@@ -1,5 +1,5 @@
 [[Streamcaching-Streamcaching]]
-=== Stream caching
+= Stream caching
 
 While stream types (like `StreamSource`, `InputStream` and `Reader`) are commonly used in messaging for performance reasons, they also have an important drawback: they can only be read once. In order to be able to work with message content multiple times, the stream needs to be cached.
 
@@ -21,7 +21,7 @@ However to not change the payload under the covers without the end user really k
 TIP: If using Camel 2.12 onwards then see xref:stream-caching.adoc[Using StreamCachingStrategy] further below which is the recommended way to configure stream caching options.
 
 [[Streamcaching-Enablingstreamcaching]]
-==== Enabling stream caching
+== Enabling stream caching
 
 In Apache Camel, you can explicitly enable stream caching for a single route with the `streamCaching` DSL method:
 
@@ -43,7 +43,7 @@ In Spring XML you enable it by setting the `streamCache="true"` attribute on the
 ----
 
 [[Streamcaching-Scopes]]
-===== Scopes
+=== Scopes
 
 `StreamCache` supports the global and per route scope. So by setting the `streamCache` attribute on `camelContext` you can enable/disable it globally:
 
@@ -82,7 +82,7 @@ You can mix and match for instance you can enable it globally and disable it on 
 ----
 
 [[Streamcaching-EnablingfromJavaDSL]]
-===== Enabling from Java DSL
+=== Enabling from Java DSL
 
 You can enable stream cache by setting the property on `CamelContext`, for instance in a `RouteBuilder` class:
 
@@ -95,7 +95,7 @@ from("jbi:service:http://foo.bar.org/MyService")
 ----
 
 [[Streamcaching-Disablestreamcachingexplicitly]]
-===== Disable stream caching explicitly
+=== Disable stream caching explicitly
 
 If you have enabled stream caching globally on the `CamelContext` and you want to disable it for certain routes in a selective manner, you can use the following syntax.
 
@@ -122,7 +122,7 @@ from("jetty:http://0.0.0.0:9090").noStreamCaching()
 ----
 
 [[Streamcaching-Streamingcachetofiles]]
-==== Streaming cache to files
+== Streaming cache to files
 
 When stream cache is enabled it will by default spool big streams to files instead of keeping them in memory. The default threshold is 64 KB but you can configure it with the following properties:
 
@@ -169,7 +169,7 @@ And in XML you do:
 ----
 
 [[Streamcaching-Disablingspoolingtodisk]]
-===== Disabling spooling to disk
+=== Disabling spooling to disk
 
 You can disable spooling to disk by setting a threshold of 0 or a negative value.
 
@@ -192,7 +192,7 @@ And in XML you do:
 ----
 
 [[Streamcaching-UsingStreamCachingStrategy]]
-==== Using StreamCachingStrategy
+== Using StreamCachingStrategy
 
 *Available as of Camel 2.12*
 
@@ -234,7 +234,7 @@ The strategy has the following options:
 |=======================================================================
 
 [[Streamcaching-SpoolDirectorynamingpattern]]
-===== SpoolDirectory naming pattern
+=== SpoolDirectory naming pattern
 
 The following patterns is supported:
 
@@ -265,7 +265,7 @@ context.getStreamCachingStrategy().setSpoolDirectory"${env:KARAF_HOME}/tmp/bundl
 ----
 
 [[Streamcaching-UsingStreamCachingStrategyinJava]]
-===== Using StreamCachingStrategy in Java
+=== Using StreamCachingStrategy in Java
 
 You can configure the StreamCachingStrategy in Java as shown below:
 
@@ -286,7 +286,7 @@ context.setStreamCaching(true);
 ----
 
 [[Streamcaching-UsingStreamCachingStrategyinXML]]
-===== Using StreamCachingStrategy in XML
+=== Using StreamCachingStrategy in XML
 
 In XML you do:
 
@@ -320,7 +320,7 @@ You can also define a `<bean>` instead of using the `<streamCaching>` tag:
 ----
 
 [[Streamcaching-UsingspoolUsedHeapMemoryThreshold]]
-===== Using spoolUsedHeapMemoryThreshold
+=== Using spoolUsedHeapMemoryThreshold
 
 By default stream caching will spool only big payloads (128 KB or bigger) to disk. However you can also set the `spoolUsedHeapMemoryThreshold` option which is a percentage of used heap memory. This can be used to also spool to disk when running low on memory.
 
@@ -357,7 +357,7 @@ By default the upper limit of the used heap memory is based on the maximum heap 
 ----
 
 [[Streamcaching-UsingcustomSpoolRuleimplementations]]
-===== Using custom SpoolRule implementations
+=== Using custom SpoolRule implementations
 
 You can implement your custom rules to determine if the stream should be spooled to disk. This can be done by implementing the interface `org.apache.camel.spi.StreamCachingStrategy.SpoolRule` which has a single method:
 
@@ -392,6 +392,6 @@ Using the spoolRules attribute on `<streamCaching>`. if you have more rules, the
 ----
 
 [[Streamcaching-Howitworks]]
-==== How it works
+== How it works
 
 In order to determine if a type requires caching, we leverage the type converter feature. Any type that requires stream caching can be converted into an `org.apache.camel.StreamCache` instance.

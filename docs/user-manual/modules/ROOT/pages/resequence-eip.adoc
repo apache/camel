@@ -1,12 +1,12 @@
 [[resequence-eip]]
-== Resequence EIP
+= Resequence EIP
 
 The http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer] from the https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] allows you to reorganise messages based on some comparator. +
 By default in Camel we use an Expression to create the comparator; so that you can compare by a message header or the body or a piece of a message etc.
 
 image:http://www.enterpriseintegrationpatterns.com/img/Resequencer.gif[image]
 
-=== Options
+== Options
 
 // eip options: START
 The Resequence EIP supports 1 options which are listed below:
@@ -25,7 +25,7 @@ Camel supports two resequencing algorithms:
 
 By default the Resequencer does not support duplicate messages and will only keep the last message, in case a message arrives with the same message expression. However in the batch mode you can enable it to allow duplicates.
 
-=== Batch Resequencing
+== Batch Resequencing
 The following example shows how to use the batch-processing resequencer so that messages are sorted in order of the *body()* expression. That is messages are collected into a batch (either by a maximum number of messages per batch or using a timeout) then they are sorted in order and then sent out to their output.
 
 [source,java]
@@ -90,14 +90,14 @@ And an example in XML
 </camelContext>
 ----
 
-=== Allow Duplicates
+== Allow Duplicates
 In the `batch` mode, you can now allow duplicates. In Java DSL there is a `allowDuplicates()` method and in Spring XML there is an `allowDuplicates=true` attribute on the `<batch-config/>` you can use to enable it.
 
-=== Reverse
+== Reverse
 In the `batch` mode, you can now reverse the expression ordering. By default the order is based on 0..9,A..Z, which would let messages with low numbers be ordered first, and thus also also outgoing first. In some cases you want to reverse order, which is now possible. +
 In Java DSL there is a `reverse()` method and in Spring XML there is an `reverse=true` attribute on the `<batch-config/>` you can use to enable it.
 
-=== Resequence JMS messages based on JMSPriority
+== Resequence JMS messages based on JMSPriority
 It's now much easier to use the Resequencer to resequence messages from JMS queues based on JMSPriority. For that to work you need to use the two new options `allowDuplicates` and `reverse`.
 
 [source,java]
@@ -112,7 +112,7 @@ from("jms:queue:foo")
 
 Notice this is *only* possible in the `batch` mode of the Resequencer.
 
-=== Ignore invalid exchanges
+== Ignore invalid exchanges
 *Available as of Camel 2.9*
 
 The Resequencer EIP throws a `CamelExchangeException` if the incoming Exchange is not valid for the resequencer - ie. the expression cannot be evaluated, such as a missing header.
@@ -129,7 +129,7 @@ from("direct:start")
 
 This option is available for both batch and stream resequencer.
 
-=== Reject Old Exchanges
+== Reject Old Exchanges
 *Available as of Camel 2.11*
 
 This option can be used to prevent out of order messages from being sent regardless of the event that delivered messages downstream (capacity, timeout, etc). If enabled using `rejectOld()`, the Resequencer will throw a `MessageRejectedException` when an incoming Exchange is "older" (based on the Comparator) than the last delivered message. This provides an extra level of control with regards to delayed message ordering.
@@ -144,7 +144,7 @@ from("direct:start")
 
 This option is available for the stream resequencer only.
 
-=== Stream Resequencing
+== Stream Resequencing
 The next example shows how to use the stream-processing resequencer. Messages are re-ordered based on their sequence numbers given by a seqnum header using gap detection and timeouts on the level of individual messages.
 
 [source,java]

@@ -1,5 +1,5 @@
 [[serviceCall-eip]]
-== Service Call EIP
+= Service Call EIP
 *Available as of Camel 2.18*
 
 The Service Call EIP allows to call remote services in a distributed system.
@@ -41,7 +41,7 @@ By default the Service Call EIP uses camel-http4 so assuming that the selected s
 http4:myhost.com:80
 ----
 
-=== Service Name to Camel URI Examples
+== Service Name to Camel URI Examples
 
 It is often needed to build more complex Camel URI which may include options or paths which is possible through different options:name: value
 
@@ -91,7 +91,7 @@ from("direct:start")
             .simple("undertow:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello");
 ----
 
-=== Options
+== Options
 // eip options: START
 The Service Call EIP supports 14 options which are listed below:
 
@@ -117,7 +117,7 @@ The Service Call EIP supports 14 options which are listed below:
 
 In addition to ref/binding configuration style you can leverage specific configuration DSL to customize specific options:
 
-=== Static Service Discovery
+== Static Service Discovery
 
 This service discovery implementation does not query any external services to find out the list of services associated to a named service but keep them in memory. Each service should be provided in the following form:
 
@@ -165,7 +165,7 @@ from("direct:start")
 </camelContext>
 ----
 
-=== Consul Service Discovery
+== Consul Service Discovery
 
 To leverage Consul for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
@@ -207,7 +207,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-=== DNS Service Discovery
+== DNS Service Discovery
 
 To leverage DNS for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
@@ -255,7 +255,7 @@ And in XML:
 </camelContext>
 ----
 
-=== Etcd Service Discovery
+== Etcd Service Discovery
 
 To leverage Etcd for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
@@ -307,7 +307,7 @@ And in XML
 </camelContext>
 ----
 
-=== Kubernetes Service Discovery
+== Kubernetes Service Discovery
 
 To leverage Kubernetes for Service Discovery, maven users will need to add the following dependency to their pom.xml
 
@@ -371,7 +371,7 @@ And in XML
 </camelContext>
 ----
 
-=== Blacklist Service Filter
+== Blacklist Service Filter
 
 This service filter implementation removes the listed services from those found by the service discovery.
 Each service should be provided in the following form:
@@ -428,7 +428,7 @@ And in XML
 </camelContext>
 ----
 
-=== Load Balancer
+== Load Balancer
 
 The Service Call EIP comes with its own Load Balancer which is istantiated by default if a custom is not configured and
 glues Service Discovery, Service Filer, Service Chooser and Service Expression together to load balance requests among the available services.
@@ -511,7 +511,7 @@ Or leveraging XML specific configuration:
 </camelContext>
 ----
 
-=== Shared configurations
+== Shared configurations
 
 The Service Call EIP can be configured straight on the route definition or through shared configurations,
 here an example with two configurations registered in the Camel Context:
@@ -564,7 +564,7 @@ from("direct:start")
     .to("mock:result");
 ----
 
-=== Spring Boot support
+== Spring Boot support
 
 In a Spring-Boot application you can externalize most of the configuration options:
 
@@ -596,7 +596,7 @@ public class MyRouteBuilder implements RouteBuilder {
 }
 ----
 
-=== Spring Cloud support
+== Spring Cloud support
 
 If you are using Camel in an application based on Spring Cloud, you can leverage Spring Cloud service discovery and load balancing capabilities by adding the Spring Cloud related dependencies (i.e. spring-cloud-consul, spring-cloud-kubernetes) as any Spring Boot/Cloud application in addition to Camel's own camel-spring-cloud dependency.
 

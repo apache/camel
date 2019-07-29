@@ -1,5 +1,5 @@
 [[amqp-component]]
-== AMQP Component
+= AMQP Component
 
 *Available as of Camel version 1.2*
 
@@ -20,14 +20,14 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source,java]
 ----
 amqp:[queue:|topic:]destinationName[?options]
 ----
 
-### AMQP Options
+== AMQP Options
 
 You can specify all of the various configuration options of the
 xref:jms-component.adoc[JMS] component after the destination name.
@@ -141,7 +141,7 @@ amqp:destinationType:destinationName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -152,7 +152,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (92 parameters):
+=== Query Parameters (92 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -253,7 +253,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -363,7 +363,7 @@ The component supports 81 options, which are listed below.
 
 
 
-### Usage
+== Usage
 
 As AMQP component is inherited from JMS component, the usage of the
 former is almost identical to the latter:
@@ -381,7 +381,7 @@ from(...).
   to("amqp:topic:notify");
 ----
 
-### Configuring AMQP component
+== Configuring AMQP component
 
 *Creating AMQP 1.0 component*
 
@@ -457,7 +457,7 @@ AMQPComponent amqp = AMQPComponent.amqpComponent("amqp://localhost:5672?amqp.tra
 
 For reference take a look at the https://qpid.apache.org/releases/qpid-jms-0.29.0/docs/index.html[QPID JMS client configuration]
 
-### Using topics
+== Using topics
 
 To have using topics working with `camel-amqp` you need to configure the
 component to use `topic://` as topic prefix, as shown below:
@@ -478,7 +478,7 @@ Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
 `AMQPConnectionDetails` pre-configure the component with the topic
 prefix, so you don't have to configure it explicitly.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

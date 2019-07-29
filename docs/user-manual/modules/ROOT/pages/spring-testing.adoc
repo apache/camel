@@ -1,5 +1,5 @@
 [[SpringTesting-SpringTesting]]
-=== Spring Testing
+= Spring Testing
 
 Testing is a crucial part of any development or
 integration work. The Spring Framework offers a number of features that
@@ -54,7 +54,7 @@ as *@Autowired*, *@DirtiesContext*, and *@ContextConfiguration*. |* JUnit 3.x 
 |=======================================================================
 
 [[SpringTesting-CamelSpringTestSupport]]
-==== CamelSpringTestSupport
+== CamelSpringTestSupport
 
 org.apache.camel.test.CamelSpringTestSupport,
 org.apache.camel.test.junit4.CamelSpringTestSupport, and
@@ -79,7 +79,7 @@ aware counterparts from Camel Test are available
 in your test.
 
 [[SpringTesting-PlainSpringTest]]
-==== Plain Spring Test
+== Plain Spring Test
 
 In this approach, your test classes directly inherit from the Spring
 Test abstract test classes or use the JUnit 4.x test runner provided in
@@ -88,7 +88,7 @@ class and the full suite of Spring Test annotations but does not support
 the features provided by the CamelSpringTestSupport classes.
 
 [[SpringTesting-PlainSpringTestusingJUnit3.xwithXMLConfigExample]]
-===== Plain Spring Test using JUnit 3.x with XML Config Example
+=== Plain Spring Test using JUnit 3.x with XML Config Example
 
 Here is a simple unit test using JUnit 3.x support from Spring Test
 using http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/java/org/apache/camel/spring/patterns/FilterTest.java[XML
@@ -120,7 +120,7 @@ src/test/resources/org/apache/camel/spring/patterns/FilterTest-context.xml
 --------------------------------------------------------------------------
 
 [[SpringTesting-PlainSpringTestusingJUnit4.xwithJavaConfigExample]]
-===== Plain Spring Test using JUnit 4.x with Java Config Example
+=== Plain Spring Test using JUnit 4.x with Java Config Example
 
 You can completely avoid using an XML configuration file by using
 Spring Java Config.  Here is a unit test
@@ -137,7 +137,7 @@ http://jira.springframework.org/browse/SJC-238[SJC-238] to address this
 and make Spring Test work more cleanly with Spring JavaConfig.
 
 [[SpringTesting-PlainSpringTestusingJUnit4.0.xRunnerwithXMLConfig]]
-===== Plain Spring Test using JUnit 4.0.x Runner with XML Config
+=== Plain Spring Test using JUnit 4.0.x Runner with XML Config
 
 You can avoid extending Spring classes by using the
 SpringJUnit4ClassRunner provided by Spring Test.  This custom JUnit
@@ -173,7 +173,7 @@ public class MyCamelTest {
 ------------------------------------------------------
 
 [[SpringTesting-PlainSpringTestusingJUnit4.1.xRunnerwithXMLConfig]]
-===== Plain Spring Test using JUnit 4.1.x Runner with XML Config
+=== Plain Spring Test using JUnit 4.1.x Runner with XML Config
 
 You can avoid extending Spring classes by using the
 SpringJUnit4ClassRunner provided by Spring Test.  This custom JUnit
@@ -210,7 +210,7 @@ public class MyCamelTest {
 ------------------------------------------------------
 
 [[SpringTesting-CamelEnhancedSpringTest]]
-==== Camel Enhanced Spring Test
+== Camel Enhanced Spring Test
 
 Using org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner runner
 with the *@RunWith* annotation or extending
@@ -319,7 +319,7 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
 ----------------------------------------------------------------------------------------------------
 
 [[SpringTesting-AddingmoreMockexpectations]]
-==== Adding more Mock expectations
+== Adding more Mock expectations
 
 If you wish to programmatically add any new assertions to your test you
 can easily do so with the following. Notice how we use @EndpointInject
@@ -347,7 +347,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
 --------------------------------------------------------------------
 
 [[SpringTesting-Furtherprocessingthereceivedmessages]]
-==== Further processing the received messages
+== Further processing the received messages
 
 Sometimes once a xref:components::mock-component.adoc[Mock] endpoint has received some
 messages you want to then process them further to add further assertions
@@ -382,7 +382,7 @@ public class MyCamelTest extends AbstractJUnit38SpringContextTests {
 --------------------------------------------------------------------
 
 [[SpringTesting-Sendingandreceivingmessages]]
-==== Sending and receiving messages
+== Sending and receiving messages
 
 It might be that the
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -420,7 +420,7 @@ public class Foo {
 --------------------------------------------------
 
 [[SpringTesting-SeeAlso]]
-==== See Also
+== See Also
 
 * A
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/java/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.java[real

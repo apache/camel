@@ -1,4 +1,4 @@
-== Camel Example Main
+= Camel Example Main
 
 This example shows how to run Camel standalone via the built-in Main class.
 The example also demonstrates how you can configure the Camel application
@@ -7,19 +7,19 @@ via Camel built-in dependency-injection that supports binding via the
 
 Also notice how you can configure Camel in the `application.properties` file.
 
-=== Alternative example
+== Alternative example
 
 The class `StandaloneCamel` is an alternative example that uses a
 _public static void main_ class and where you manually setup Camel without
 any help from Camel's built-in Main class. However it shows how to do this
 in a _raw style_ without using any _magic_.
 
-=== How to run
+== How to run
 
 You can run this example using
 
     mvn camel:run   
 
-=== More information
+== More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/

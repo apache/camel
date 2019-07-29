@@ -1,5 +1,5 @@
 [[ftps-component]]
-== FTPS Component
+= FTPS Component
 
 *Available as of Camel version 2.2*
 
@@ -21,7 +21,7 @@ for this component:
 
 For more information you can look at xref:ftp-component.adoc[FTP component]
 
-### URI Options
+== URI Options
 
 The options below are exclusive for the FTPS component.
 
@@ -49,7 +49,7 @@ ftps:host:port/directoryName
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -61,7 +61,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (122 parameters):
+=== Query Parameters (122 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -192,7 +192,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

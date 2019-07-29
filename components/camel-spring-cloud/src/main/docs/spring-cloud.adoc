@@ -1,5 +1,5 @@
 [[SpringCloud-SpringCloud]]
-== Spring Cloud
+= Spring Cloud
 
 *Available as of Camel 2.19*
 
@@ -22,7 +22,7 @@ soon as you add that dependency into your classpath, Spring Boot will
 automatically auto-configure Camel for you.
 
 [[SpringCloud-CamelSpringCloudStarter]]
-=== Camel Spring Cloud Starter
+== Camel Spring Cloud Starter
 
 *Available as of Camel 2.19*
 

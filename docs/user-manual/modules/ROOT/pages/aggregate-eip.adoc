@@ -1,5 +1,5 @@
 [[aggregate-eip]]
-== Aggregate EIP
+= Aggregate EIP
 
 The
 http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]
@@ -14,7 +14,7 @@ all messages into a single message, just use a constant expression. An
 AggregationStrategy is used to combine all the message exchanges for a
 single correlation key into a single message exchange.
 
-=== Aggregator options
+== Aggregator options
 
 // eip options: START
 The Aggregate EIP supports 24 options which are listed below:
@@ -49,7 +49,7 @@ The Aggregate EIP supports 24 options which are listed below:
 |===
 // eip options: END
 
-=== About AggregationStrategy
+== About AggregationStrategy
 
 The `AggregationStrategy` is used for aggregating the old (lookup by its
 correlation id) and the new exchanges together into a single exchange.
@@ -102,7 +102,7 @@ class ArrayListAggregationStrategy implements AggregationStrategy {
 }
 ----
 
-=== About completion
+== About completion
 
 When aggregation xref:exchange.adoc[Exchange]s at some point you need to
 indicate that the aggregated exchanges is complete, so they can be send
@@ -142,7 +142,7 @@ be used at the same time.
 Notice the completion is a mandatory option and must be provided to the
 aggregator. If not provided Camel will thrown an Exception on startup.
 
-=== Pre-completion mode
+== Pre-completion mode
 
 *available as of Camel 2.16*
 
@@ -182,14 +182,14 @@ completions
 consumer etc)
 * eagerCheckCompletion is implied as true, but the option has no effect
 
-=== Persistent AggregationRepository
+== Persistent AggregationRepository
 
 The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
 xref:components::leveldb.adoc[LevelDB], or xref:components::sql-component.adoc[SQL Component] components.
 
-=== Using TimeoutAwareAggregationStrategy
+== Using TimeoutAwareAggregationStrategy
 
 *Available as of Camel 2.9.2*
 
@@ -200,7 +200,7 @@ total parameters will be -1, and the timeout parameter will be provided
 only if configured as a fixed value. You must *not* throw any exceptions
 from the `timeout` method.
 
-=== Using CompletionAwareAggregationStrategy
+== Using CompletionAwareAggregationStrategy
 
 *Available as of Camel 2.9.3*
 
@@ -211,7 +211,7 @@ allows you to do any last minute custom logic such as to cleanup some
 resources, or additional work on the exchange as it's now completed. +
  You must *not* throw any exceptions from the `onCompletion` method.
 
-=== Completing current group decided from the AggregationStrategy
+== Completing current group decided from the AggregationStrategy
 
 *Available as of Camel 2.15*
 
@@ -244,7 +244,7 @@ the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 ----
 
 
-=== Completing all previous group decided from the AggregationStrategy
+== Completing all previous group decided from the AggregationStrategy
 
 *Available as of Camel 2.21*
 
@@ -280,7 +280,7 @@ setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
 
  
 
-=== Manually Force the Completion of All Aggregated Exchanges Immediately
+== Manually Force the Completion of All Aggregated Exchanges Immediately
 
 *Available as of Camel 2.9*
 
@@ -296,7 +296,7 @@ You can alternatively set the header
 `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE` to `true` to trigger
 completion of all groups after processing the current message.
 
-=== Using a List<V> in AggregationStrategy
+== Using a List<V> in AggregationStrategy
 
 *Available as of Camel 2.11*
 
@@ -310,7 +310,7 @@ the message body.
 For example to aggregate a `List<Integer>` you can extend this class as
 shown below, and implement the `getValue` method:
 
-=== Using AggregateController
+== Using AggregateController
 
 *Available as of Camel 2.16*
 
@@ -377,7 +377,7 @@ To configure this from XML DSL
 There is also JMX API on the aggregator which is available under the
 processors node in the Camel JMX tree.
 
-=== Using GroupedExchanges
+== Using GroupedExchanges
 
 In the route below we group all the exchanges together using
 `groupExchanges()`:
@@ -406,7 +406,7 @@ together in a list as shown below:
 List<Exchange> grouped = exchange.getIn().getBody(List.class);
 ----
 
-=== Using POJOs as AggregationStrategy
+== Using POJOs as AggregationStrategy
 
 *Available as of Camel 2.12*
 
@@ -563,7 +563,7 @@ to call:
 
 When using XML DSL you must define the POJO as a <bean>.
 
-=== Aggregating when no data
+== Aggregating when no data
 
 By default when using POJOs as AggregationStrategy, then the method is
 *only* invoked when there is data to be aggregated (by default). You can
@@ -660,7 +660,7 @@ set it to true as shown below:
 </camelContext>
 ----
 
-=== Different body types
+== Different body types
 
 When for example using `strategyMethodAllowNull` as true, then the
 parameter types of the message bodies does not have to be the same. For

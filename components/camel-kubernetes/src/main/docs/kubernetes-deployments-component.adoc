@@ -1,5 +1,5 @@
 [[kubernetes-deployments-component]]
-== Kubernetes Deployments Component
+= Kubernetes Deployments Component
 
 *Available as of Camel version 2.20*
 
@@ -8,7 +8,7 @@ provides a producer to execute kubernetes secret operations.
 
 
 
-### Component Options
+== Component Options
 
 // component options: START
 The Kubernetes Deployments component supports 2 options, which are listed below.
@@ -24,7 +24,7 @@ The Kubernetes Deployments component supports 2 options, which are listed below.
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Kubernetes Deployments endpoint is configured using URI syntax:
@@ -35,7 +35,7 @@ kubernetes-deployments:masterUrl
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -45,7 +45,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +84,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

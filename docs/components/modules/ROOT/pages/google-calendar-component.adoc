@@ -1,5 +1,5 @@
 [[google-calendar-component]]
-== Google Calendar Component
+= Google Calendar Component
 
 *Available as of Camel version 2.15*
 
@@ -31,7 +31,7 @@ for this component:
         
 ----------------------------------------------------------
 
-### 1. Google Calendar Options
+== 1. Google Calendar Options
 
 
 
@@ -67,7 +67,7 @@ google-calendar:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +103,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -145,7 +145,7 @@ The component supports 15 options, which are listed below.
 
 
 
-### URI Format
+== URI Format
 
 The GoogleCalendar Component uses the following URI format:
 
@@ -165,7 +165,7 @@ Endpoint prefix can be one of:
 * list
 * settings
 
-### Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -184,7 +184,7 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleCalendar.option` header.
 
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -194,12 +194,12 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleCalendar.` prefix.
 
-### Message Body
+== Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleCalendarComponent. Producer endpoints can specify

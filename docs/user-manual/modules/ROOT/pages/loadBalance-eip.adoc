@@ -1,5 +1,5 @@
 [[loadBalance-eip]]
-== Load Balance EIP
+= Load Balance EIP
 
 The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
 
@@ -21,7 +21,7 @@ Camel provides the following policies out-of-the-box:
 | Circuit Breaker |Implements the Circuit Breaker pattern as described in "Release it!" book.
 |=======================================================================
 
-=== Options
+== Options
 
 // eip options: START
 The Load Balance EIP supports 2 options which are listed below:
@@ -35,7 +35,7 @@ The Load Balance EIP supports 2 options which are listed below:
 // eip options: END
 
 
-=== Round Robin
+== Round Robin
 
 The round robin load balancer is not meant to work with failover, for that you should use the dedicated *failover* load balancer. The round robin load balancer will only change to next endpoint per message.
 The round robin load balancer is stateful as it keeps state of which endpoint to use next time.
@@ -70,7 +70,7 @@ And in XML:
 
 The above example loads balance requests from *direct:start* to one of the available *mock endpoint* instances, in this case using a round robin policy.
 
-=== Failover
+== Failover
 
 The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing.
 You can constrain the failover to activate only when one exception of a list you specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same strategy for matching exceptions as the Exception Clause does for the `onException`.
@@ -122,7 +122,7 @@ Failover can also be used from Spring DSL and you configure it as:
  </route>
 ----
 
-=== Using failover in round robin mode
+== Using failover in round robin mode
 
 An example using Java DSL:
 [source,java]
@@ -161,7 +161,7 @@ TIP: *Disabled inheritErrorHandler*: You can configure `inheritErrorHandler=fals
 By disabling the Error Handler you ensure it does not _intervene_ which allows the `failover` load balancer to handle failover asap.
 By also enabling `roundRobin` mode, then it will keep retrying until it success. You can then configure the `maximumFailoverAttempts` option to a high value to let it eventually exhaust (give up) and fail.
 
-=== Weighted Round-Robin and Random Load Balancing
+== Weighted Round-Robin and Random Load Balancing
 
 *Available as of Camel 2.5*
 
@@ -178,7 +178,7 @@ The parameters that can be used are
 | distributionRatioDelimiter | String | , | The distributionRatioDelimiter is the delimiter used to specify the distributionRatio. If this attribute is not specified a default delimiter "," is expected as the delimiter used for specifying the distributionRatio.
 |=======================================================================
 
-=== Using Weighted round-robin & random load balancing
+== Using Weighted round-robin & random load balancing
 
 *Available as of Camel 2.5*
 

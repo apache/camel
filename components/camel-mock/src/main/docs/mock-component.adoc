@@ -1,5 +1,5 @@
 [[mock-component]]
-== Mock Component
+= Mock Component
 
 *Available as of Camel version 1.0*
 
@@ -57,7 +57,7 @@ There are two new options `retainFirst`, and
 endpoints keep in memory.
 
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -70,7 +70,7 @@ endpoint.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -102,7 +102,7 @@ mock:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,7 +112,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -135,7 +135,7 @@ with the following path and query parameters:
 
 
 
-=== Simple Example
+== Simple Example
 
 Here's a simple example of Mock endpoint in use. First, the endpoint is
 resolved on the context. Then we set an expectation, and then, after the
@@ -162,7 +162,7 @@ Camel will by default wait 10 seconds when the `assertIsSatisfied()` is
 invoked. This can be configured by setting the
 `setResultWaitTime(millis)` method.
 
-=== Using assertPeriod
+== Using assertPeriod
 
 *Available as of Camel 2.7* +
 When the assertion is satisfied then Camel will stop waiting and
@@ -184,7 +184,7 @@ resultEndpoint.expectedMessageCount(2);
 resultEndpoint.assertIsSatisfied();
 ----
 
-=== Setting expectations
+== Setting expectations
 
 You can see from the Javadoc of
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html[MockEndpoint]
@@ -228,7 +228,7 @@ Here's another example:
 resultEndpoint.expectedBodiesReceived("firstMessageBody", "secondMessageBody", "thirdMessageBody");
 ----
 
-=== Adding expectations to specific messages
+== Adding expectations to specific messages
 
 In addition, you can use the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#message(int)[`message(int
@@ -248,7 +248,7 @@ There are some examples of the Mock endpoint in use in the
 https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
 processor tests].
 
-=== Mocking existing endpoints
+== Mocking existing endpoints
 
 *Available as of Camel 2.7*
 
@@ -314,7 +314,7 @@ That means Camel will use more memory. This may not be suitable when you
 send in a lot of messages.
 
 
-=== Mocking existing endpoints using the `camel-test` component
+== Mocking existing endpoints using the `camel-test` component
 
 Instead of using the `adviceWith` to instruct Camel to mock endpoints,
 you can easily enable this behavior when using the `camel-test` Test
@@ -334,7 +334,7 @@ include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test
 ----
 
 
-=== Mocking existing endpoints with XML DSL
+== Mocking existing endpoints with XML DSL
 
 If you do not use the `camel-test` component for unit testing (as shown
 above) you can use a different approach when using XML files for
@@ -374,7 +374,7 @@ in the constructor for the bean:
 </bean>
 ----
 
-=== Mocking endpoints and skip sending to original endpoint
+== Mocking endpoints and skip sending to original endpoint
 
 *Available as of Camel 2.10*
 
@@ -400,7 +400,7 @@ The same example using the Test Kit
 include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
 ----
 
-=== Limiting the number of messages to keep
+== Limiting the number of messages to keep
 
 *Available as of Camel 2.10*
 
@@ -435,7 +435,7 @@ methods that work on message bodies, headers, etc. will only operate on
 the retained messages. In the example above they can test only the
 expectations on the 10 retained messages.
 
-=== Testing with arrival times
+== Testing with arrival times
 
 *Available as of Camel 2.7*
 
@@ -491,7 +491,7 @@ In the example above we use `seconds` as the time unit, but Camel offers
 `milliseconds`, and `minutes` as well.
 
 
-=== See Also
+== See Also
 
 * Spring Testing
 * Testing

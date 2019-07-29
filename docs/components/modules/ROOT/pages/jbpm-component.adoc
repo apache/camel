@@ -1,5 +1,5 @@
 [[jbpm-component]]
-== JBPM Component
+= JBPM Component
 
 *Available as of Camel version 2.6*
 
@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------
 
-## Consumer
+== Consumer
 
 jBPM Consumer allows to attach routes to 
 
@@ -28,14 +28,14 @@ jBPM Consumer allows to attach routes to
 * TaskEventListners
 * CaseEventListeners
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------
 jbpm::events:type:[classifier][?options]
 ---------------------------------------------
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -55,12 +55,12 @@ Consumers are configured via KieServerExtension that is a pluggable interface to
 jBPM with additional capabilities. It reacts to different life cycle phases of the KIE Server
 and by that is able to configure individual endpoints properly.
 
-### KJAR routes
+== KJAR routes
 
 Create file named `camel-routes.xml` in the root folder of your KJAR (src/main/resources) so it will be automatically 
 discovered and Camel Context for given KJAR will be created.
 
-### Global routes
+== Global routes
 
 Create file name `global-camel-routes` in the root of the class path of KIE Server. It will be automatically found and registered
 on every KJAR deployed to KIE Server.
@@ -91,7 +91,7 @@ Example camel-routes.xml file that can be placed in the KJAR
 ----
 
 
-### Use of jBPM Component in KIE Server
+== Use of jBPM Component in KIE Server
 
 To make use of camel-jbpm component in a KIE Server it is as simple as just adding two jars into KIE Server application
 
@@ -120,19 +120,19 @@ To make use of jBPM Consumer jBPM deployment descriptor must also define camel s
 These must be set in either server level of kjar deployment descriptor (use MVEL as resolver type) - see jbpm docs for more details about
 deployment descriptors.
 
-## Producer
+== Producer
 
 Producer is dedicated to interact with jBPM via kie-server-client that uses exposed REST api of 
 jBPM (KIE Server).
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------
 jbpm::hostName[:port][/resourceUri][?options]
 ---------------------------------------------
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -161,7 +161,7 @@ jbpm:connectionURL
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -172,7 +172,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (32 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -213,7 +213,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -245,7 +245,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -293,7 +293,7 @@ org.infinispan.notifications.cachelistener.event.Event.Type
 |CamelJBPMStatusList |null |List<String> |The list of status to use when filtering tasks
 |=======================================================================
 
-### Example
+== Example
 
 Below is an example route that starts a business process with id
 evaluation. To run this example you need jBPM to run locally, easiest is to use single zip 
@@ -313,7 +313,7 @@ from("direct:start")
         &deploymentId=evaluation");
 ----------------------------------------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

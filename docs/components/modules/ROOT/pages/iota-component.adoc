@@ -1,5 +1,5 @@
 [[iota-component]]
-== IOTA Component
+= IOTA Component
 
 *Available as of Camel version 2.23*
 
@@ -18,14 +18,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
 iota:name?url=nodeurl[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-=== Options
+== Options
 
 // component options: START
 The IOTA component supports 2 options, which are listed below.
@@ -49,7 +49,7 @@ iota:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -59,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +81,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -109,7 +109,7 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Sample route
+== Sample route
 
 The following route defined in Spring XML send a message to tangle
 
@@ -183,7 +183,7 @@ The following route defined in Spring XML retrieve transfers data
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
 
-=== See also
+== See also
 
 * https://www.iota.org/[IOTA website]
 * https://github.com/iotaledger/iota.lib.java[IOTA java lib]

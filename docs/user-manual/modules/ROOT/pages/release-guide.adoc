@@ -1,8 +1,8 @@
 [[ReleaseGuide-ReleaseGuide]]
-=== How to Create and Announce a Camel Release
+= How to Create and Announce a Camel Release
 
 [[ReleaseGuide-Prequisites]]
-==== Prequisites
+== Prequisites
 
 To prepare or perform a release you *must be* at least an Apache Camel committer.
 
@@ -17,7 +17,7 @@ for building the release.
 * Make sure you are using Java 1.8 for Apache Camel 2.18.0 and later.
 
 [[ReleaseGuide-MavenSetup]]
-==== Maven Setup
+== Maven Setup
 Before you deploy anything to the https://repository.apache.org[Apache Nexus repository] using Maven, you should
 configure your `~/.m2/settings.xml` file so that the file permissions of the deployed artifacts are group writable.
 If you do not do this, other developers will not able to overwrite your SNAPSHOT releases with newer versions.
@@ -76,7 +76,7 @@ http://maven.apache.org/guides/mini/guide-encryption.html[password encryption re
 ----
 
 [[ReleaseGuide-CreatingTheRelease]]
-==== Creating the Release
+== Creating the Release
 
 Complete the following steps to create a new Camel release:
 

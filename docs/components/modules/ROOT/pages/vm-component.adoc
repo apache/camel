@@ -1,5 +1,5 @@
 [[vm-component]]
-== VM Component
+= VM Component
 
 *Available as of Camel version 1.1*
 
@@ -16,7 +16,7 @@ this mechanism to communicate across web applications (provided that
 
 VM is an extension to the xref:seda-component.adoc[Seda] component.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -39,7 +39,7 @@ from("direct:foo").to("vm:bar");
 from("vm:bar?concurrentConsumers=5").to("file://output");
 ----
 
-=== Options
+== Options
 
 // component options: START
 The VM component supports 7 options, which are listed below.
@@ -69,7 +69,7 @@ vm:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -108,7 +108,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -144,7 +144,7 @@ The component supports 8 options, which are listed below.
 See the xref:seda-component.adoc[Seda] component for options and other important
 usage details as the same rules apply to the xref:vm-component.adoc[Vm] component.
 
-=== Samples
+== Samples
 
 In the route below we send exchanges across CamelContext instances to a
 VM queue named `order.email`:
@@ -162,6 +162,6 @@ deployed in another `.war` application):
 from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
-=== See Also
+== See Also
 
 * xref:seda-component.adoc[Seda]

@@ -1,5 +1,5 @@
 [[cxfrs-component]]
-== CXF-RS Component
+= CXF-RS Component
 
 *Available as of Camel version 2.0*
 
@@ -19,7 +19,7 @@ for this component:
 </dependency>
 -------------------------------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------
@@ -43,7 +43,7 @@ For either style above, you can append options to the URI as follows:
 cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 ------------------------------------------------------------------
 
-### Options
+== Options
 
 
 
@@ -74,7 +74,7 @@ cxfrs:beanId:address
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (32 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -126,7 +126,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -166,7 +166,7 @@ https://github.com/apache/camel/blob/master/components/camel-cxf/src/main/resour
 file] and http://cxf.apache.org/docs/jax-rs.html[CXF JAX-RS
 documentation] for more information.
 
-### How to configure the REST endpoint in Camel
+== How to configure the REST endpoint in Camel
 
 In
 https://github.com/apache/camel/blob/master/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[camel-cxf
@@ -174,7 +174,7 @@ schema file], there are two elements for the REST endpoint definition.
 *cxf:rsServer* for REST consumer, *cxf:rsClient* for REST producer. +
  You can find a Camel REST service route configuration example here.
 
-### How to override the CXF producer address from message header
+== How to override the CXF producer address from message header
 
 The `camel-cxfrs` producer supports to override the services address by
 setting the message with the key of "CamelDestinationOverrideUrl".
@@ -185,7 +185,7 @@ setting the message with the key of "CamelDestinationOverrideUrl".
  exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()));
 ----------------------------------------------------------------------------------------------
 
-### Consuming a REST Request - Simple Binding Style
+== Consuming a REST Request - Simple Binding Style
 
 *Available as of Camel 2.11*
 
@@ -223,7 +223,7 @@ respected and it becomes the final response.
 * In all cases, Camel headers permitted by custom or default
 `HeaderFilterStrategy` are added to the HTTP response.
 
-#### Enabling the Simple Binding Style
+=== Enabling the Simple Binding Style
 
 This binding style can be activated by setting the `bindingStyle`
 parameter in the consumer endpoint to value `SimpleConsumer`:
@@ -234,7 +234,7 @@ parameter in the consumer endpoint to value `SimpleConsumer`:
     .to("log:TEST?showAll=true");
 ---------------------------------------------------------
 
-#### Examples of request binding with different method signatures
+=== Examples of request binding with different method signatures
 
 Below is a list of method signatures along with the expected result from
 the Simple binding.
@@ -266,7 +266,7 @@ as the IN message body.
  The DataHandler is unwrapped from the MessageContentsList and preserved
 as the IN message body.
 
-#### More examples of the Simple Binding Style
+=== More examples of the Simple Binding Style
 
 Given a JAX-RS resource class with this method:
 
@@ -315,7 +315,7 @@ For more examples on how to process requests and write responses can be
 found
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/jaxrs/simplebinding/[here].
 
-### Consuming a REST Request - Default Binding Style
+== Consuming a REST Request - Default Binding Style
 
 The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
 implements the https://javaee.github.io/jsr311/[JAX-RS (JSR-311) API], so we can
@@ -410,7 +410,7 @@ public interface CustomerServiceResource {
 }
 ----
 
-### How to invoke the REST service through camel-cxfrs producer
+== How to invoke the REST service through camel-cxfrs producer
 
 The http://cxf.apache.org/docs/jax-rs.html[CXF JAXRS front end]
 implements

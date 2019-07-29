@@ -1,5 +1,5 @@
 [[validator-component]]
-== Validator Component
+= Validator Component
 
 *Available as of Camel version 1.1*
 
@@ -18,7 +18,7 @@ Syntax]
 The xref:msv-component.adoc[MSV] component also supports
 http://relaxng.org/[RelaxNG XML Syntax].
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -36,7 +36,7 @@ system which contains the XSD to validate against. For example:
 
 The Validation component is provided directly in the camel-core.
 
-=== Options
+== Options
 
 // component options: START
 The Validator component supports 3 options, which are listed below.
@@ -62,7 +62,7 @@ validator:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +94,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -123,7 +123,7 @@ The component supports 4 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Example
+== Example
 
 The following
 https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/component/validator/camelContext.xml[example]
@@ -132,7 +132,7 @@ goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given schema (which is
 supplied on the classpath).
 
-=== Advanced: JMX method clearCachedSchema
+== Advanced: JMX method clearCachedSchema
 
 You can force that the cached schema in the
 validator endpoint is cleared and reread with the next process call with

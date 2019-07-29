@@ -1,5 +1,5 @@
 [[file-language]]
-== File Language
+= File Language
 
 *Available as of Camel version 1.1*
 
@@ -14,7 +14,7 @@ path and names. The goal is to allow expressions to be used with the
 File and FTP components for setting
 dynamic file patterns for both consumer and producer.
 
-=== File Language options
+== File Language options
 
 // language options: START
 The File language supports 2 options, which are listed below.
@@ -29,7 +29,7 @@ The File language supports 2 options, which are listed below.
 |===
 // language options: END
 
-=== Syntax
+== Syntax
 
 This language is an *extension* to the xref:simple-language.adoc[Simple] language
 so the xref:simple-language.adoc[Simple] syntax applies also. So the table below
@@ -100,9 +100,9 @@ the file. Notice: all the commands from the xref:simple-language.adoc[Simple]
 language can also be used.
 |===
 
-=== File token example
+== File token example
 
-==== Relative paths
+=== Relative paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
 following *relative* directory: `.\filelanguage\test`. And we configure
@@ -134,7 +134,7 @@ tokens will return as:
 |file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
 |===
 
-==== Absolute paths
+=== Absolute paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
 following *absolute* directory:
@@ -168,7 +168,7 @@ return as:
 |file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
 |===
 
-=== Samples
+== Samples
 
 You can enter a fixed xref:constant-language.adoc[Constant] expression such as
 `myfile.txt`:
@@ -226,7 +226,7 @@ use the xref:file-language.adoc[File Language], xref:file-language.adoc[Simple]
 and the xref:components::bean-component.adoc[Bean] language in one combined expression. This
 is pretty powerful for those common file path patterns.
 
-=== Using Spring PropertyPlaceholderConfigurer together with the File component
+== Using Spring PropertyPlaceholderConfigurer together with the File component
 
 In Camel you can use the xref:file-language.adoc[File Language] directly
 from the xref:simple-language.adoc[Simple] language which makes a
@@ -289,6 +289,6 @@ Invalid bean definition with name 'sampleRoute' defined in class path resource [
 Could not resolve placeholder 'date:now:yyyyMMdd'
 ----------------------------------------------------------------------------------------------------
 
-=== Dependencies
+== Dependencies
 
 The File language is part of *camel-core*.

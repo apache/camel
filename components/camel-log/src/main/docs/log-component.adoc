@@ -1,5 +1,5 @@
 [[log-component]]
-== Log Component
+= Log Component
 
 *Available as of Camel version 1.1*
 
@@ -13,7 +13,7 @@ logging via, among others:
 * Logback
 * Java Util Logging
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -54,7 +54,7 @@ There is also a `log` directly in the DSL, but it has a different
 purpose. Its meant for lightweight and human logs. See more details at
 LogEIP.
 
-=== Options
+== Options
 
 
 
@@ -84,7 +84,7 @@ log:loggerName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -131,7 +131,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -160,7 +160,7 @@ The component supports 4 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Regular logger sample
+== Regular logger sample
 
 In the route below we log the incoming orders at `DEBUG` level before
 the order is processed:
@@ -181,7 +181,7 @@ Or using Spring XML to define the route:
 </route>
 ----
 
-=== Regular logger with formatter sample
+== Regular logger with formatter sample
 
 In the route below we log the incoming orders at `INFO` level before the
 order is processed.
@@ -192,7 +192,7 @@ from("activemq:orders").
     to("log:com.mycompany.order?showAll=true&multiline=true").to("bean:processOrder");
 ----
 
-=== Throughput logger with groupSize sample
+== Throughput logger with groupSize sample
 
 In the route below we log the throughput of the incoming orders at
 `DEBUG` level grouped by 10 messages.
@@ -203,7 +203,7 @@ from("activemq:orders").
     to("log:com.mycompany.order?level=DEBUG&groupSize=10").to("bean:processOrder");
 ----
 
-=== Throughput logger with groupInterval sample
+== Throughput logger with groupInterval sample
 
 This route will result in message stats logged every 10s, with an
 initial 60s delay and stats should be displayed even if there isn't any
@@ -222,7 +222,7 @@ The following will be logged:
 "Received: 1000 new messages, with total 2000 so far. Last group took: 10000 millis which is: 100 messages per second. average: 100"
 ----
 
-=== Masking sensitive information like password
+== Masking sensitive information like password
 *Available as of Camel 2.19*
 
 You can enable security masking for logging by setting `logMask` flag to `true`.
@@ -261,7 +261,7 @@ And in XML:
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
 
-=== Full customization of the logging output
+== Full customization of the logging output
 
 *Available as of Camel 2.11*
 
@@ -307,7 +307,7 @@ in either of two ways:
 </bean>
 ----
 
-==== Convention over configuration:*
+=== Convention over configuration:*
 
 Simply by registering a bean with the name `logFormatter`; the Log
 Component is intelligent enough to pick it up automatically.
@@ -343,7 +343,7 @@ options:
 <to uri="log:bar?param1=bar&amp;param2=200"/>
 ---------------------------------------------
 
-=== Using Log component in OSGi
+== Using Log component in OSGi
 
 *Improvement as of Camel 2.12.4/2.13.1*
 
@@ -359,7 +359,7 @@ should be the bundle which contains route definition. To do this, either
 register single instance of `org.slf4j.Logger` in the Registry or
 reference it using `logger` URI parameter.
 
-=== See Also
+== See Also
 
 * LogEIP for using `log` directly in the DSL for human
 logs.

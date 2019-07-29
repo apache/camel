@@ -1,5 +1,5 @@
 [[Configuringroutestartuporderingandautostartup-Configuringroutesstartuporderingandautostartup]]
-=== Configuring routes startup ordering and autostartup
+= Configuring routes startup ordering and autostartup
 
 *Available as of Camel 2.1*
 
@@ -9,7 +9,7 @@ Camel now supports configuring two aspects:
 * order of starting routes
 
 [[Configuringroutestartuporderingandautostartup-ConfiguringwhetherCamelshouldbeautostartedornotinXMLDSL]]
-==== Configuring whether Camel should be auto started or not in XML DSL
+== Configuring whether Camel should be auto started or not in XML DSL
 
 The old option `shouldStartContext` have been removed and replaced with
 this new `autoStartup` option instead. What it allows is to configure
@@ -44,7 +44,7 @@ below:
 ----
 
 [[Configuringroutestartuporderingandautostartup-ConfiguringwhetherarouteshouldbestartedornotinXMLDSL]]
-==== Configuring whether a route should be started or not in XML DSL
+== Configuring whether a route should be started or not in XML DSL
 
 You can use the `autoStartup` option to configure if a given route
 should be started when Camel starts. By default a route is auto started.
@@ -72,7 +72,7 @@ And to explicit state it should be started:
 ----
 
 [[Configuringroutestartuporderingandautostartup-ConfiguringwhetherarouteshouldbestartedornotinJavaDSL]]
-==== Configuring whether a route should be started or not in Java DSL
+== Configuring whether a route should be started or not in Java DSL
 
 You can use the `autoStartup` option to configure if a given route
 should be started when Camel starts. By default a route is auto started.
@@ -85,7 +85,7 @@ from("activemq:queue:special").noAutoStartup().to("file://backup");
 ----
 
 [[Configuringroutestartuporderingandautostartup-ConfiguringwhetherarouteshouldbestartedornotusingabooleanorStringinJavaDSL]]
-==== Configuring whether a route should be started or not, using a boolean or String, in Java DSL
+== Configuring whether a route should be started or not, using a boolean or String, in Java DSL
 
 *Available as of Camel 2.9*
 
@@ -104,7 +104,7 @@ from("activemq:queue:special").autoStartup("{{startupRouteProperty}}").to("file:
 ----
 
 [[Configuringroutestartuporderingandautostartup-Configuringstartingorderforroutes]]
-==== Configuring starting order for routes
+== Configuring starting order for routes
 
 You can also configure the order in which routes are started. Previously
 Camel started the routes in a non deterministic order. Now you have fine
@@ -134,7 +134,7 @@ start from 1 and increment by 1. You can for example use: 100, 200, 205,
 89 if you like. Only rule of thumb is that the numbers must be unique.
 
 [[Configuringroutestartuporderingandautostartup-Whydoyouwanttocontrolthestartingorder]]
-==== Why do you want to control the starting order?
+== Why do you want to control the starting order?
 
 It can help in cases where routes are inter dependent on each other and
 also help with graceful shutting down Camel as Camel can stop the routes
@@ -152,12 +152,12 @@ were started.
 ====
 
 [[Configuringroutestartuporderingandautostartup-Examples]]
-==== Examples
+== Examples
 
 Let's try a couple of examples.
 
 [[Configuringroutestartuporderingandautostartup-Simpleexample]]
-===== Simple example
+=== Simple example
 
 [source,java]
 ----
@@ -189,7 +189,7 @@ You can also mix and match routes with and without `startupOrder`
 define.
 
 [[Configuringroutestartuporderingandautostartup-RouteswithstartupOrdermixedwithrouteswithout]]
-===== Routes with startupOrder mixed with routes without
+=== Routes with startupOrder mixed with routes without
 
 [source,java]
 ----
@@ -228,7 +228,7 @@ So you can use this to your advantage to only assign a `startupOrder` on
 the routes which really needs it.
 
 [[Configuringroutestartuporderingandautostartup-Routestostartuplast]]
-===== Routes to start up last
+=== Routes to start up last
 
 [source,java]
 ----
@@ -253,7 +253,7 @@ In the example above the order of startups of routes should be:
 4. `direct://bar`
 
 [[Configuringroutestartuporderingandautostartup-Shutdown]]
-==== Shutdown
+== Shutdown
 
 *Camel 2.2:* Camel will shutdown the routes in the *same* order that
 they were started.
@@ -264,7 +264,7 @@ they were started.
 See also xref:graceful-shutdown.adoc[Graceful Shutdown].
 
 [[Configuringroutestartuporderingandautostartup-Seealso]]
-==== See also
+== See also
 
 * xref:configuring-camel.adoc[Configuring Camel]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]

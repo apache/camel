@@ -1,5 +1,5 @@
 [[ExchangePattern-ExchangePattern]]
-=== Exchange Pattern
+= Exchange Pattern
 
 There are many different _Message Exchange Patterns_ you can use in
 messaging. This concept is also demonstrated in WSDL and JBI's MEPs.

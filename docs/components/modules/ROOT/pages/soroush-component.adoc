@@ -1,5 +1,5 @@
 [[soroush-component]]
-== Soroush Component
+= Soroush Component
 
 *Available as of Camel version 3.0*
 
@@ -48,7 +48,7 @@ attachments if provided in the message  (`SoroushMessage.file`, `SoroushMessage.
 and store the urls in the message (`SoroushMessage.fileUrl`, `SoroushMessage.thumbnailUrl`).
 |===
 
-### Options
+== Options
 
 // component options: START
 The Soroush component supports 3 options, which are listed below.
@@ -72,7 +72,7 @@ soroush:action
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,7 +114,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -144,7 +144,7 @@ The component supports 4 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Usage
+== Usage
 
 Every exchange that you send to soroush endpoint must contain a
 body of type `org.apache.camel.component.soroushbot.models.MessageModel`.
@@ -156,7 +156,7 @@ of `MessageModel` too.
 SoroushMessage message = exchange.getIn().getBody(SoroushMessage.class)
 ------------
 
-#### Receive Message
+=== Receive Message
 With this endpoint you can receive messages from users.
 
 The following is a basic example of how to receive all messages that your Soroush users are sending to the configured Bot.
@@ -178,7 +178,7 @@ and in Spring XML
 <bean id="processorBean" class="com.example.ProcessorBean"/>
 ------------
 
-#### Download File
+=== Download File
 This endpoint is useful when you want to conditionally download the files specified in the message.
 When you send a message to this endpoint it opens a connection to Soroush Server
 for downloading the files and store `InputStream` of that connection in
@@ -204,7 +204,7 @@ from("soroush:getMessage/YourAuthorizationToken")
     .bean(ProcessorBean.class)
 -------------
 
-#### Send Message
+=== Send Message
 This endpoint is your primary way to send messages and upload files. You can simply
 send a message to a user by sending the message to this endpoint.
 
@@ -220,7 +220,7 @@ from("soroush:getMessage/YourAuthorizationToken")
     .to("soroush:sendMessage/YourAuthorizationToken");
 -------------
 
-#### Auto Upload Attachments
+=== Auto Upload Attachments
 This endpoint can help you to automatically upload files and thumbnails of a message to the server
 and set `fileUrl` and `thumbnailUrl` of that message to proper values taken from Soroush Upload File Api.
 The only thing you need to do is setting `SoroushMessage.file` and `SoroushMessage.thumbnail` properties.
@@ -235,7 +235,7 @@ SoroushMessage.setThumbnail(InputStream thumbnailStream)
 -------------
 
 
-#### Upload File
+=== Upload File
 This endpoint is a utility endpoint that allows you to upload a file without sending the message.
 The only thing you need to do for uploading a file is to set `SoroushMessage.file` and `Send Message.thumbnail`
 and this endpoint upload them to the Soroush server.
@@ -252,7 +252,7 @@ from("soroush:getMessage/YourAuthorizationToken")
     .process(exchage->System.out.println(exchange.getIn().getBody(SoroushMessage.class).getFileUrl())
 -------------
 
-#### Error Handling
+=== Error Handling
 There are 3 types of exceptions that can be produced in Soroush Component.
 [width="100%",cols="2,5",options="header"]
 |===

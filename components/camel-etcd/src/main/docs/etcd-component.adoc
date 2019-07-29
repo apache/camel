@@ -1,18 +1,18 @@
 [[etcd-component]]
-== etcd Component
+= etcd Component
 
 *Available as of Camel version 2.18*
 
 The camel Etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
 etcd:namespace/path[?options]
 ----------------------------
 
-### URI Options
+== URI Options
 
 // component options: START
 The etcd component supports 8 options, which are listed below.
@@ -42,7 +42,7 @@ etcd:namespace/path
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -53,7 +53,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +93,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

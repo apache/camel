@@ -1,5 +1,5 @@
 [[delay-eip]]
-== Delay EIP
+= Delay EIP
 The Delayer Pattern allows you to delay the delivery of messages to some destination.
 
 == Options
@@ -27,11 +27,11 @@ See the Spring DSL samples for Delayer.
 
 [CAUTION]
 .Using Delayer in Java DSL
-====
+===
 See this ticket: https://issues.apache.org/jira/browse/CAMEL-2654[https://issues.apache.org/jira/browse/CAMEL-2654]
-====
+===
 
-=== Samples
+== Samples
 
 The example below will delay all messages received on *seda:b* 1 second before sending them to *mock:result*.
 
@@ -77,7 +77,7 @@ from("activemq:someQueue")
   .to("activemq:aDelayedQueue");
 ----
 
-==== Spring DSL
+=== Spring DSL
 The sample below demonstrates the delay in Spring DSL:
 
 [source,xml]
@@ -117,13 +117,13 @@ The sample below demonstrates the delay in Spring DSL:
 </camelContext>
 ----
 
-=== Asynchronous delaying
+== Asynchronous delaying
 
 *Available as of Camel 2.4*
 
 You can let the Delayer use non blocking asynchronous delaying, which means Camel will use a scheduler to schedule a task to be executed in the future. The task will then continue routing. This allows the caller thread to not block and be able to service other messages etc.
 
-==== From Java DSL
+=== From Java DSL
 You use the `asyncDelayed()` to enable the async behavior.
 
 [source,java]
@@ -133,7 +133,7 @@ from("activemq:queue:foo")
   .to("activemq:aDelayedQueue");
 ----
 
-==== From Spring XML
+=== From Spring XML
 
 You use the `asyncDelayed="true"` attribute to enable the async behavior.
 
@@ -148,7 +148,7 @@ You use the `asyncDelayed="true"` attribute to enable the async behavior.
 </route>
 ----
 
-=== Creating a custom delay
+== Creating a custom delay
 
 You can use an expression, such as calling a method on a bean, to determine when to send a message using something like this
 
@@ -173,6 +173,6 @@ public class SomeBean {
 ----
 
 
-=== See Also
+== See Also
 
 - Delay Interceptor

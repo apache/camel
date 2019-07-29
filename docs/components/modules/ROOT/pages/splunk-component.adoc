@@ -1,5 +1,5 @@
 [[splunk-component]]
-== Splunk Component
+= Splunk Component
 
 *Available as of Camel version 2.13*
 
@@ -20,14 +20,14 @@ for this component:
     </dependency>
 ---------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------
   splunk://[endpoint]?[options]
 -------------------------------
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -59,7 +59,7 @@ SplunkEvent.  See comment under message body.
 In this example a converter is required to convert to a SplunkEvent
 class.
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -82,7 +82,7 @@ name of the query in the savedSearch option.
 camel-splunk creates a route exchange per search result with a
 SplunkEvent in the body.
 
-### URI Options
+== URI Options
 
 
 
@@ -112,7 +112,7 @@ splunk:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +122,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -175,7 +175,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -206,7 +206,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Message body
+== Message body
 
 Splunk operates on data in key/value pairs. The SplunkEvent class is a
 placeholder for such data, and should be in the message body for the producer. 
@@ -217,7 +217,7 @@ You can send raw data to Splunk by setting the raw
 option on the producer endpoint. This is useful for eg. json/xml and
 other payloads where Splunk has build in support. 
 
-### Use Cases
+== Use Cases
 
 Search Twitter for tweets with music and publish events to Splunk
 
@@ -266,14 +266,14 @@ Search Splunk for tweets
           .log("${body}");
 --------------------------------------------------------------------------------------------------------------------------------
 
-### Other comments
+== Other comments
 
 Splunk comes with a variety of options for leveraging machine generated
 data with prebuilt apps for analyzing and displaying this.  +
  For example the jmx app. could be used to publish jmx attributes, eg.
 route and jvm metrics to Splunk, and displaying this on a dashboard.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

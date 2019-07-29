@@ -1,11 +1,11 @@
 [[twitter-directmessage-component]]
-== Twitter Direct Message Component
+= Twitter Direct Message Component
 
 *Available as of Camel version 2.10*
 
 The Twitter Direct Message Component consumes/produces a user's direct messages.
 
-### Component Options
+== Component Options
 
 // component options: START
 The Twitter Direct Message component supports 10 options, which are listed below.
@@ -29,7 +29,7 @@ The Twitter Direct Message component supports 10 options, which are listed below
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Twitter Direct Message endpoint is configured using URI syntax:
@@ -40,7 +40,7 @@ twitter-directmessage:user
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -50,7 +50,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+=== Query Parameters (44 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +103,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

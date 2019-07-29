@@ -1,5 +1,5 @@
 [[Whatplatformsaresupported-Whatplatformsaresupported]]
-=== What platforms are supported?
+= What platforms are supported?
 
 Any platform supporting JDK 6.
 

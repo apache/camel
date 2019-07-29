@@ -1,9 +1,9 @@
 [[throttle-eip]]
-== Throttle EIP
+= Throttle EIP
 
 The Throttler Pattern allows you to ensure that a specific endpoint does not get overloaded, or that we don't exceed an agreed SLA with some external service.
 
-=== Options
+== Options
 
 // eip options: START
 The Throttle EIP supports 6 options which are listed below:
@@ -20,7 +20,7 @@ The Throttle EIP supports 6 options which are listed below:
 |===
 // eip options: END
 
-=== Samples
+== Samples
 
 [source,java]
 ----
@@ -55,7 +55,7 @@ And an example in XML
 </route>
 ----
 
-=== Dynamically changing maximum requests per period
+== Dynamically changing maximum requests per period
 *Available as of Camel 2.8*
 
 Since we use an Expression you can adjust this value at runtime, for example you can provide a header with the value. At runtime Camel evaluates the expression and converts the result to a `java.lang.Long` type. In the example below we use a header from the message to determine the maximum requests per period. If the header is absent, then the Throttler uses the old value. So that allows you to only provide a header if the value is to be changed:
@@ -72,7 +72,7 @@ Since we use an Expression you can adjust this value at runtime, for example you
 </route>
 ----
 
-=== Asynchronous delaying
+== Asynchronous delaying
 
 You can let the Throttler use non blocking asynchronous delaying, which means Camel will use a scheduler to schedule a task to be executed in the future. The task will then continue routing. This allows the caller thread to not block and be able to service other messages, etc.
 

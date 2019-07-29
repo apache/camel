@@ -1,5 +1,5 @@
 [[UserStories-UserStories]]
-=== User Stories
+= User Stories
 
 This page is intended as a place to collect user stories and feedback on
 Apache Camel. If you are using or have tried Apache Camel please add an
@@ -255,7 +255,7 @@ Tracker 4j of camel-core] |The review of API changes for the Camel Core
 library since Camel 2.16 which is updated several times per week.
 |=======================================================================
 
-==== User Groups
+== User Groups
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -276,7 +276,7 @@ Apache Camel Group] |The Apache Camel group in google+
 user group for Apache Camel.
 |=======================================================================
 
-==== External Camel Components
+== External Camel Components
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================

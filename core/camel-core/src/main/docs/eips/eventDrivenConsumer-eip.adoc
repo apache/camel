@@ -1,5 +1,5 @@
 [[eventDrivenConsumer-eip]]
-== Event Driven Consumer
+= Event Driven Consumer
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventDrivenConsumer.html[Event Driven Consumer]
@@ -17,7 +17,7 @@ interface which is invoked by the xref:message-endpoint.adoc[Message Endpoint]
 when a xref:message.adoc[Message] is available for processing.
 
 [[eventDrivenConsumer-Example]]
-=== Example
+== Example
 
 The following demonstrates a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
@@ -48,7 +48,7 @@ For more details see:
 * xref:message-endpoint.adoc[Message Endpoint]
 
 [[eventDrivenConsumer-UsingThisPattern]]
-=== Using This Pattern
+== Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
 xref:getting-started.adoc[Getting Started], you may also find the

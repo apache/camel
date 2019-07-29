@@ -1,5 +1,5 @@
 [[TransactionErrorHandler-TransactionErrorHandler]]
-=== TransactionErrorHandler
+= TransactionErrorHandler
 
 *Available as of Camel 2.0*
 
@@ -18,7 +18,7 @@ handled. If so the exception will *not* be sent back to the caller and
 the xref:exchange.adoc[Exchange] continues to be routed.
 
 [[TransactionErrorHandler-Example]]
-==== Example
+== Example
 
 In this route below, any exception thrown in eg the `validateOrder` bean
 will be propagated back to the caller, and its the jetty endpoint. It
@@ -50,7 +50,7 @@ we transform the message into a fixed response that are returned to
 jetty endpoint that returns it to the original caller.
 
 [[TransactionErrorHandler-Conventionoverconfiguration]]
-==== Convention over configuration
+== Convention over configuration
 
 When you configure a route to be transacted you just mark it as
 transacted as follows:
@@ -107,7 +107,7 @@ the *transactionErrorHandler* DSL accepts either a TransactedPolicy, a
 TransactionTemplate or a PlatformTransactionManager.
 
 [[TransactionErrorHandler-UsingCameltodoredeliveries]]
-==== Using Camel to do redeliveries
+== Using Camel to do redeliveries
 
 As the xref:transactionerrorhandler.adoc[TransactionErrorHandler] also
 supports to let Camel do redeliveries you can use both worlds. Letting
@@ -118,7 +118,7 @@ exchange then its thrown back to the transaction manager that will
 perform the rollback, and redelivery.
 
 [[TransactionErrorHandler-ExamplewithusingCameltodoredeliveries]]
-===== Example with using Camel to do redeliveries
+=== Example with using Camel to do redeliveries
 
 In the route below we have configured a transaction error handler. It
 will by default do local redeliveries up till 6 times. In Case Camel
@@ -171,7 +171,7 @@ from("direct:fail")
 ----
 
 [[TransactionErrorHandler-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:error-handler.adoc[Error Handler]
 * xref:error-handling-in-camel.adoc[Error handling in Camel]

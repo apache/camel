@@ -1,5 +1,5 @@
 [[Guice-CamelGuice]]
-=== Camel Guice
+= Camel Guice
 
 We have support for https://github.com/google/guice[Google Guice]
 as a dependency injection framework.
@@ -18,7 +18,7 @@ for this component:
 ----
 
 [[Guice-DependencyInjectingCamelwithGuice]]
-==== Dependency Injecting Camel with Guice
+== Dependency Injecting Camel with Guice
 
 The
 http://camel.apache.org/maven/current/camel-guice/apidocs/org/apache/camel/guice/GuiceCamelContext.html[GuiceCamelContext]
@@ -63,7 +63,7 @@ You can then use Guice in the usual way to inject the route instances or
 any other dependent objects.
 
 [[Guice-BootstrappingwithJNDI]]
-==== Bootstrapping with JNDI
+== Bootstrapping with JNDI
 
 A common pattern used in J2EE is to bootstrap your application or root
 objects by looking them up in JNDI. This has long been the approach when
@@ -82,7 +82,7 @@ or `-jndiProperties` with the properties file location to let Guice Main
 to load right jndi properties file.
 
 [[Guice-ConfiguringComponent,EndpointorRouteBuilderinstances]]
-==== Configuring Component, Endpoint or RouteBuilder instances
+== Configuring Component, Endpoint or RouteBuilder instances
 
 You can use Guice to dependency inject whatever objects
 you need to create, be it an xref:endpoint.adoc[Endpoint],
@@ -119,7 +119,7 @@ environment specific (the `jndi.properties` file) which you can then
 change based on development, testing, production, etc.
 
 [[Guice-CreatingmultipleRouteBuilderinstancespertype]]
-==== Creating multiple RouteBuilder instances per type
+== Creating multiple RouteBuilder instances per type
 
 It is sometimes useful to create multiple instances of a particular
 xref:route-builder.adoc[RouteBuilder] with different configurations.

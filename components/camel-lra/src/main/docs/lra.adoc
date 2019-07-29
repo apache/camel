@@ -1,4 +1,4 @@
-== LRA Component
+= LRA Component
 
 *Available as of Camel version 2.21.0*
 
@@ -18,7 +18,7 @@ for this component:
 ----
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

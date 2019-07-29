@@ -1,5 +1,5 @@
 [[step-eip]]
-== Step EIP
+= Step EIP
 
 Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
@@ -24,21 +24,21 @@ This means you can monitor your Camel applications and gather statistics at 4-ti
 *** processor(s) level
 
 
-=== JMX Management
+== JMX Management
 
 Each Step EIP is registered in JMX under the `type=steps` tree, which allows to monitor
 all the steps in the CamelContext. Its also possible to dump statistics in XML format
 by the `dumpStepStatsAsXml` operations on the CamelContext or Route mbeans.
 
 
-=== Options
+== Options
 
 // eip options: START
 The Step EIP has no options.
 // eip options: END
 
 [[step-Examples]]
-=== Examples
+== Examples
 
 
 

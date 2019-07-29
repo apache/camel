@@ -1,5 +1,5 @@
 [[soapjaxb-dataformat]]
-== SOAP DataFormat
+= SOAP DataFormat
 
 *Available as of Camel version 2.3*
 
@@ -12,7 +12,7 @@ basic features of Apache CXF without need for the CXF Stack.
 See xref:jaxb-dataformat.adoc[JAXB] for details how you can control namespace
 prefix mappings when marshalling using SOAP data format.
 
-### SOAP Options
+== SOAP Options
 
 
 // dataformat options: START
@@ -33,7 +33,7 @@ The SOAP dataformat supports 7 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -69,7 +69,7 @@ ND
 
 
 
-### ElementNameStrategy
+== ElementNameStrategy
 
 An element name strategy is used for two purposes. The first is to find
 a xml element name for a given object and soap action when marshaling
@@ -96,7 +96,7 @@ similar tool then you probably will want to use the
 ServiceInterfaceStrategy. In the case you have no annotated service
 interface you should use QNameStrategy or TypeNameStrategy.
 
-### Using the Java DSL
+== Using the Java DSL
 
 The following example uses a named DataFormat of _soap_ which is
 configured with the package com.example.customerservice to initialize
@@ -122,7 +122,7 @@ As the SOAP dataformat inherits from the xref:jaxb-dataformat.adoc[JAXB] datafor
 most settings apply here as well
 
 
-#### Using SOAP 1.2
+=== Using SOAP 1.2
 
 *Available as of Camel 2.11*
 
@@ -160,7 +160,7 @@ And in the Camel route
 </route>
 ---------------------------------------------------------------------------------------------------------------
 
-### Multi-part Messages
+== Multi-part Messages
 
 *Available as of Camel 2.8.1*
 
@@ -184,7 +184,7 @@ ServiceInterfaceStrategy strat =  new ServiceInterfaceStrategy(com.example.custo
 SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat("com.example.customerservice.multipart", strat);
 -------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Holder Object mapping
+=== Holder Object mapping
 
 JAX-WS specifies the use of a type-parameterized `javax.xml.ws.Holder`
 object for `In/Out` and `Out` parameters. You may use an instance of the
@@ -193,9 +193,9 @@ values in accordance with the JAXB mapping for the class of the
 `Holder`'s value. No mapping is provided for `Holder` objects in an
 unmarshalled response.
 
-### Examples
+== Examples
 
-#### Webservice client
+=== Webservice client
 
 The following route supports marshalling the request and unmarshalling a
 response or fault.
@@ -230,7 +230,7 @@ CustomerService proxy = ProxyHelper.createProxy(startEndpoint, classLoader, Cust
 GetCustomersByNameResponse response = proxy.getCustomersByName(new GetCustomersByName());
 ---------------------------------------------------------------------------------------------------
 
-#### Webservice Server
+=== Webservice Server
 
 Using the following route sets up a webservice server that listens on
 jms queue customerServiceQueue and processes requests using the class
@@ -252,7 +252,7 @@ from("jms://queue:customerServiceQueue")
   .marshal(soapDF);
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use the SOAP dataformat in your camel routes you need to add the
 following dependency to your pom.

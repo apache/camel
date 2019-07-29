@@ -1,5 +1,5 @@
 [[OnCompletion-OnCompletion]]
-=== OnCompletion
+= OnCompletion
 
 Camel has this concept of a Unit of Work that encompass the
 Exchange. The unit of work among others supports
@@ -66,7 +66,7 @@ they need, eg the File component does that for work
 that moves/deletes the original file etc.
 
 [[OnCompletion-onCompletionwithroutescope]]
-==== onCompletion with route scope
+== onCompletion with route scope
 
 The *onCompletion* DSL allows you to add custom routes/processors when
 the original Exchange is complete. Camel spin off a
@@ -123,7 +123,7 @@ property `Exchange.ON_COMPLETION` with a boolean value of `true` when it
 spin offs the *onCompletion* Exchange.
 
 [[OnCompletion-UsingonCompletionfromSpringDSL]]
-===== Using onCompletion from Spring DSL
+=== Using onCompletion from Spring DSL
 
 The onCompletion is defined like this with Spring DSL:
 
@@ -162,7 +162,7 @@ attribute on the <onCompletion> tag so the failure example would be:
 -----------------------------------------------------------
 
 [[OnCompletion-onCompletionwithglobalscope]]
-==== onCompletion with global scope
+== onCompletion with global scope
 
 This works just like the route scope except from the fact that they are
 defined globally. An example below:
@@ -178,7 +178,7 @@ from("direct:start")
 -----------------------------------------------------------
 
 [[OnCompletion-UsingonCompletionfromSpringDSL.1]]
-===== Using onCompletion from Spring DSL
+=== Using onCompletion from Spring DSL
 
 This works just like the route scope except from the fact that they are
 defined globally. An example below:
@@ -206,7 +206,7 @@ scoped and thus its only the route scoped that are used. The globally
 scoped ones are never used.
 
 [[OnCompletion-UsingonCompletionwithonWhenpredicate]]
-==== Using onCompletion with onWhen predicate
+== Using onCompletion with onWhen predicate
 
 As other DSL in Camel you can attach a Predicate to
 the *onCompletion* so it only triggers in certain conditions, when the
@@ -229,7 +229,7 @@ from("direct:start")
 -----------------------------------------------------------
 
 [[OnCompletion-UsingonCompletionwithorwithoutthreadpool]]
-==== Using onCompletion with or without thread pool
+== Using onCompletion with or without thread pool
 
 *Available as of Camel 2.14*
 
@@ -273,7 +273,7 @@ to be used, using the executorServiceRef option
  
 
 [[OnCompletion-UsingonCompletiontorunbeforerouteconsumersendsbackresponsetocallee]]
-==== Using onCompletion to run before route consumer sends back response to callee
+== Using onCompletion to run before route consumer sends back response to callee
 
 *Available as of Camel 2.14*
 
@@ -317,7 +317,7 @@ And in XML DSL you set the mode attribute to BeforeConsumer:
  
 
 [[OnCompletion-SeeAlso]]
-==== See Also
+== See Also
 
 * Unit of Work
 

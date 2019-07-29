@@ -1,11 +1,11 @@
 [[IRCRoom-IRC]]
-=== IRC
+= IRC
 
 You can hang out on IRC in the `#apache-camel` room at freenode with other
 Apache Camel developers and users.
 
 [[IRCRoom-UsinganIRCclient]]
-==== Using an IRC client
+== Using an IRC client
 
 Here are the connection details.
 
@@ -17,7 +17,7 @@ Here are the connection details.
 |========================
 
 [[IRCRoom-GitterRoom]]
-==== Gitter Room
+== Gitter Room
 
 Apache Camel is also on Gitter in the
 https://gitter.im/apache/apache-camel[apache/apache-camel] room which

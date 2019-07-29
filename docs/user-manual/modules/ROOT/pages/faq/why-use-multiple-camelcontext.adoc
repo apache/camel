@@ -1,5 +1,5 @@
 [[WhyusemultipleCamelContext-WhyusemultipleCamelContext]]
-=== Why use multiple CamelContext?
+= Why use multiple CamelContext?
 
 In general, you don't tend to want multiple camel contexts in your
 application, if you're running Camel as a standalone Java instance.

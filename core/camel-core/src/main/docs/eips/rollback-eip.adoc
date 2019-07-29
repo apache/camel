@@ -1,5 +1,5 @@
 [[rollback-eip]]
-== Rollback EIP
+= Rollback EIP
 Rollback might be needed if there is a transaction or transactional pieces in your design.
 
 Camel recommends supporting the
@@ -54,7 +54,7 @@ component.getConfiguration().setConcurrentConsumers(1);
 ctx.addComponent("activemq", component);
 ----
 
-=== Options
+== Options
 // eip options: START
 The Rollback EIP supports 3 options which are listed below:
 
@@ -67,7 +67,7 @@ The Rollback EIP supports 3 options which are listed below:
 |===
 // eip options: END
 
-==== Transaction Policies
+=== Transaction Policies
 
 Outbound endpoints will automatically enlist in the current transaction
 context. But what if you do not want your outbound endpoint to enlist in
@@ -113,7 +113,7 @@ from("activemq:queue:foo").policy(requirenew).to("activemq:queue:bar");
 from("activemq:queue:foo").policy(notsupported).to("activemq:queue:bar");
 ----
 
-==== OSGi Blueprint
+=== OSGi Blueprint
 
 If you are using https://github.com/apache/camel/blob/master/docs/user-manual/en/using-osgi-blueprint-with-camel.adoc[OSGi
 Blueprint] then you most likely have to explicit declare a policy and
@@ -138,7 +138,7 @@ And then refer to "required" from the route:
 </route>
 --------------------------------------------------------
 
-=== Database Sample
+== Database Sample
 
 In this sample we want to ensure that two endpoints is under transaction
 control. These two endpoints inserts data into a database. +
@@ -169,7 +169,7 @@ is all that is needed to configure a Camel route as being transacted.
 Just remember to use the *transacted* DSL. The rest is standard Spring
 XML to setup the transaction manager.
 
-=== JMS Sample
+== JMS Sample
 
 In this sample we want to listen for messages on a queue and process the
 messages with our business logic java code and send them along. Since
@@ -193,7 +193,7 @@ feature set as the xref:defaulterrorhandler.adoc[DefaultErrorHandler],
 so you can for instance use xref:exception-clause.adoc[Exception Clause]
 as well.
 
-=== Integration Testing with Spring
+== Integration Testing with Spring
 
 An Integration Test here means a test runner class annotated
 `@RunWith(SpringJUnit4ClassRunner.class).`
@@ -220,7 +220,7 @@ test thread and expecting a separate thread created by your Camel route
 to be participate, which it cannot. You can, in your test, mock the
 parts that cause separate threads to avoid this issue.
 
-=== Using multiple routes with different propagation behaviors
+== Using multiple routes with different propagation behaviors
 
 *Available as of Camel 2.2* +
 Suppose you want to route a message through two routes and by which the
@@ -240,7 +240,7 @@ case of any exceptions we should handle it and just rollback this
 transaction. This is done using the `markRollbackOnlyLast` which tells
 Camel to only do it for the current transaction and not globally.
 
-==== See Also
+=== See Also
 
 * xref:error-handling-in-camel.adoc[Error handling in Camel]
 * xref:transactionerrorhandler.adoc[TransactionErrorHandler]

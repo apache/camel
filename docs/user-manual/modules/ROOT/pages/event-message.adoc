@@ -1,5 +1,5 @@
 [[eventMessage-eip]]
-== Event Message
+= Event Message
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventMessage.html[Event
@@ -18,7 +18,7 @@ xref:components::seda-component.adoc[SEDA]
 TIP: See the related xref:requestReply-eip.adoc[Request Reply] message.
 
 [[eventMessage-ExplicitlyspecifyingInOnly]]
-=== Explicitly specifying InOnly
+== Explicitly specifying InOnly
 
 If you are using a component which defaults to InOut you can override
 the xref:exchange-pattern.adoc[Exchange Pattern] for an endpoint using
@@ -30,7 +30,7 @@ foo:bar?exchangePattern=InOnly
 ----
 
 
-=== Samples
+== Samples
 
 From 2.0 onwards on Camel you can specify the
 xref:exchange-pattern.adoc[Exchange Pattern] using the DSL.

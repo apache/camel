@@ -1,5 +1,5 @@
 [[HowDoIImportRoutesFromOtherXMLFiles-HowDoIImportRoutesFromOtherXMLFiles]]
-=== How Do I Import Routes From Other XML Files?
+= How Do I Import Routes From Other XML Files?
 
 *Available as of Camel 2.3*
 
@@ -36,7 +36,7 @@ and also externalized in `RouteContext`.
 
 You can have as many `<routeContextRef/>` as you like.
 
-==== Reusable routes
+== Reusable routes
 
 The routes defined in `<routeContext/>` can be reused by multiple
 `<camelContext/>`. However its only the definition which is reused. At

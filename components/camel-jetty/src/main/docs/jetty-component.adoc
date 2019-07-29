@@ -1,5 +1,5 @@
 [[jetty-component]]
-== Jetty Component
+= Jetty Component
 
 *Available as of Camel version 1.2*
 
@@ -32,7 +32,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -42,7 +42,7 @@ jetty:http://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -110,7 +110,7 @@ jetty:httpUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (33 parameters):
+=== Query Parameters (33 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -162,7 +162,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -225,7 +225,7 @@ The component supports 35 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
 Camel uses the same message headers as the xref:http4-component.adoc[HTTP]
 component. 
@@ -241,11 +241,11 @@ header named `orderid` with the value 123.
 You can get the request.parameter from the
 message header not only from Get Method, but also other HTTP method.
 
-=== Usage
+== Usage
 
 The Jetty component supports consumer endpoints.
 
-=== Consumer Example
+== Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `\http://localhost:8080/myapp/myservice`:
@@ -287,7 +287,7 @@ xref:manual::simple-language.adoc[Simple] (such as xref:ognl-language.adoc[OGNL
 we could also test for the parameter value and do routing based on the
 header value as well.
 
-=== Session Support
+== Session Support
 
 The session support option, `sessionSupport`, can be used to enable a
 `HttpSession` object and access the session object while processing the
@@ -320,7 +320,7 @@ public void process(Exchange exchange) throws Exception {
 }
 ----
 
-=== SSL Support (HTTPS)
+== SSL Support (HTTPS)
 
 [[Jetty-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -430,7 +430,7 @@ client doesn't need a certificate but can have one.
 The value you use as keys in the above map is the port you configure
 Jetty to listen on.
 
-==== Configuring general SSL properties
+=== Configuring general SSL properties
 
 Instead of a per port number specific SSL socket connector (as shown
 above) you can now configure general properties which applies for all
@@ -452,7 +452,7 @@ the port number as entry).
 </bean>
 ----
 
-==== How to obtain reference to the X509Certificate
+=== How to obtain reference to the X509Certificate
 
 Jetty stores a reference to the certificate in the HttpServletRequest
 which you can access from code as follows:
@@ -463,7 +463,7 @@ HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
 X509Certificate cert = (X509Certificate) req.getAttribute("javax.servlet.request.X509Certificate")
 ----
 
-==== Configuring general HTTP properties
+=== Configuring general HTTP properties
 
 Instead of a per port number specific HTTP socket connector (as shown
 above) you can now configure general properties which applies for all
@@ -482,7 +482,7 @@ the port number as entry).
 </bean>
 ----
 
-==== Obtaining X-Forwarded-For header with HttpServletRequest.getRemoteAddr()
+=== Obtaining X-Forwarded-For header with HttpServletRequest.getRemoteAddr()
 
 If the HTTP requests are handled by an Apache server and forwarded to
 jetty with mod_proxy, the original client IP address is in the
@@ -514,7 +514,7 @@ This is particularly useful when an existing Apache server handles TLS
 connections for a domain and proxies them to application servers
 internally.
 
-=== Default behavior for returning HTTP status codes
+== Default behavior for returning HTTP status codes
 
 The default behavior of HTTP status codes is defined by the
 `org.apache.camel.component.http4.DefaultHttpBinding` class, which
@@ -527,7 +527,7 @@ returned, and the stacktrace is returned in the body. If you want to
 specify which HTTP status code to return, set the code in the
 `Exchange.HTTP_RESPONSE_CODE` header of the OUT message.
 
-=== Customizing HttpBinding
+== Customizing HttpBinding
 
 By default, Camel uses the
 `org.apache.camel.component.http4.DefaultHttpBinding` to handle how a
@@ -556,7 +556,7 @@ And then we can reference this binding when we define the route:
 </route>
 ----
 
-=== Jetty handlers and security configuration
+== Jetty handlers and security configuration
 
 You can configure a list of Jetty handlers on the endpoint, which can be
 useful for enabling advanced Jetty security features. These handlers are
@@ -623,7 +623,7 @@ from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler")
 If you need more handlers, set the `handlers` option equal to a
 comma-separated list of bean IDs.
 
-=== How to return a custom HTTP 500 reply message
+== How to return a custom HTTP 500 reply message
 
 You may want to return a custom reply message when something goes wrong,
 instead of the default reply message Camel xref:jetty-component.adoc[Jetty]
@@ -634,7 +634,7 @@ Exception Clause to construct the custom
 reply message. For example as show here, where we return
 `Dude something went wrong` with HTTP error code 500:
 
-=== Multi-part Form support
+== Multi-part Form support
 
 The camel-jetty component supports multipart form post out of box.
 The submitted form-data are mapped into the message header. Camel-jetty
@@ -642,7 +642,7 @@ creates an attachment for each uploaded file. The file name is mapped to
 the name of the attachment. The content type is set as the content type
 of the attachment file name. You can find the example here.
 
-=== Jetty JMX support
+== Jetty JMX support
 
 The camel-jetty component supports the enabling of Jetty's JMX
 capabilities at the component and endpoint level with the endpoint

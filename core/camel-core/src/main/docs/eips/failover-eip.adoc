@@ -1,9 +1,9 @@
 [[failover-eip]]
-== Failover EIP
+= Failover EIP
 
 Failover Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
 
-=== Options
+== Options
 
 // eip options: START
 The Failover EIP supports 4 options which are listed below:
@@ -18,7 +18,7 @@ The Failover EIP supports 4 options which are listed below:
 |===
 // eip options: END
 
-=== Examples
+== Examples
 
 In this case we are using the header test as correlation expression:
 

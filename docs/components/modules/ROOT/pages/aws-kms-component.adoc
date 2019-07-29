@@ -1,5 +1,5 @@
 [[aws-kms-component]]
-== AWS KMS Component
+= AWS KMS Component
 
 *Available as of Camel version 2.21*
 
@@ -12,7 +12,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon KMS. More information is available at
 https://aws.amazon.com/kms/[Amazon KMS].
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------
@@ -22,7 +22,7 @@ aws-kms://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -54,7 +54,7 @@ aws-kms:label
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -130,9 +130,9 @@ You have to provide the amazonKmsClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/kms/[Amazon KMS] service.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the KMS producer
+=== Message headers evaluated by the KMS producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -147,7 +147,7 @@ the https://aws.amazon.com/kms/[Amazon KMS] service.
 |`CamelAwsKMSKeyId` |`String` |The key Id 
 |=======================================================================
 
-#### KMS Producer operations
+=== KMS Producer operations
 
 Camel-AWS KMS component provides the following operation on the producer side:
 
@@ -158,7 +158,7 @@ Camel-AWS KMS component provides the following operation on the producer side:
 - describeKey
 - enableKey
 
-### Automatic detection of AWSKMS client in registry
+== Automatic detection of AWSKMS client in registry
 
 The component is capable of detecting the presence of an AWSKMS bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
@@ -181,7 +181,7 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

@@ -1,5 +1,5 @@
 [[stub-component]]
-== Stub Component
+= Stub Component
 
 *Available as of Camel version 2.10*
 
@@ -17,7 +17,7 @@ usually fail. Stub won't though, as it basically ignores all query
 parameters to let you quickly stub out one or more endpoints in your
 route temporarily.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -26,7 +26,7 @@ stub:someUri
 
 Where *`someUri`* can be any URI with any query parameters.
 
-=== Options
+== Options
 
 // component options: START
 The Stub component supports 7 options, which are listed below.
@@ -56,7 +56,7 @@ stub:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -128,7 +128,7 @@ The component supports 8 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Examples
+== Examples
 
 Here are a few samples of stubbing endpoint uris
 

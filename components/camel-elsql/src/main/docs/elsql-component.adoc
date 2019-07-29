@@ -1,5 +1,5 @@
 [[elsql-component]]
-== ElSQL Component
+= ElSQL Component
 
 *Available as of Camel version 2.16*
 
@@ -49,7 +49,7 @@ expression.
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
-=== Options
+== Options
 
 // component options: START
 The ElSQL component supports 6 options, which are listed below.
@@ -77,7 +77,7 @@ elsql:elsqlName:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (49 parameters):
+=== Query Parameters (49 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -146,7 +146,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -179,7 +179,7 @@ The component supports 7 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Result of the query
+== Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -193,7 +193,7 @@ headers, it provides a concise syntax for querying a sequence or some
 other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
-=== Header values
+== Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -209,7 +209,7 @@ count in the following message headers:
 `Integer` object.
 |===
 
-==== Sample
+=== Sample
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -248,7 +248,7 @@ parameters will be taken from the body.
      .to("elsql:projects:com/foo/orders.elsql")
 ----
 
-=== Using expression parameters in producers
+== Using expression parameters in producers
 
 In from Camel 2.16.1 onwards you can use Simple expressions as well,
 which allows to use an OGNL like notation on the message body, where it
@@ -263,7 +263,7 @@ assumes to have `getLicense` and `getMinimum` methods:
   ORDER BY id
 ----
 
-==== Using expression parameters in consumers
+=== Using expression parameters in consumers
 
 *Available as of Camel 2.23*
 

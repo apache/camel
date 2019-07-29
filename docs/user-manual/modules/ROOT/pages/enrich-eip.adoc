@@ -1,5 +1,5 @@
 [[enrich-eip]]
-== Enrich EIP
+= Enrich EIP
 
 Camel supports the Content Enricher from the EIP patterns using a Message Translator, an arbitrary Processor in the routing logic, or using the enrich DSL element to enrich the message.
 
@@ -21,11 +21,11 @@ The Enrich EIP supports 7 options which are listed below:
 |===
 // eip options: END
 
-=== Content enrichment using a Message Translator or a Processor
+== Content enrichment using a Message Translator or a Processor
 
 You can use Templating to consume a message from one destination, transform it with something like Velocity or XQuery, and then send it on to another destination. For example using InOnly (one way messaging)
 
-=== Samples
+== Samples
 
 [source,java]
 ----
@@ -70,7 +70,7 @@ from("activemq:My.Queue").
   to("activemq:Another.Queue");
 ----
 
-==== Using Spring XML
+=== Using Spring XML
 
 [source,xml]
 --------------------------------------------------------
@@ -81,7 +81,7 @@ from("activemq:My.Queue").
 </route>
 --------------------------------------------------------
 
-=== Content enrichment using the `enrich` DSL element
+== Content enrichment using the `enrich` DSL element
 
 Camel comes with flavor `enrich` as a choice of content enricher in the DSL.
 The other one is `pollEnrich`
@@ -90,7 +90,7 @@ The other one is `pollEnrich`
 
 Both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange.
 
-==== A little enrich example using Java:
+=== A little enrich example using Java:
 
 [source,java]
 ----
@@ -129,7 +129,7 @@ public class ExampleAggregationStrategy implements AggregationStrategy {
 
 Using this template the original exchange can be of any pattern. The resource exchange created by the enricher is always an in-out exchange.
 
-==== Enrich example using XML
+=== Enrich example using XML
 
 [source,xml]
 ----
@@ -150,7 +150,7 @@ Using this template the original exchange can be of any pattern. The resource ex
 <bean id="aggregationStrategy" class="..." />
 ----
 
-=== Aggregation strategy is optional
+== Aggregation strategy is optional
 The aggregation strategy is optional. If you do not provide it Camel will by default just use the body obtained from the resource.
 [source,java]
 ----
@@ -172,7 +172,7 @@ In the route above the message sent to the direct:result endpoint will contain t
 </route>
 ----
 
-=== Using dynamic uris
+== Using dynamic uris
 *Available as of Camel 2.16*
 
 Both `enrich` and `pollEnrich` supports using dynamic uris computed based on information from the current Exchange. For example to enrich from a HTTP endpoint where the header with key orderId is used as part of the content-path of the HTTP url:

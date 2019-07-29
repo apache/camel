@@ -1,5 +1,5 @@
 [[HowdoesCamelcomparetoServiceMix-HowdoesCamelcomparetoServiceMix]]
-=== How does Camel compare to ServiceMix?
+= How does Camel compare to ServiceMix?
 
 Camel is smart routing and mediation engine which implements the
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -33,7 +33,7 @@ your ESB for more centralised management, governance and operational
 monitoring etc.
 
 [[HowdoesCamelcomparetoServiceMix-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with
 ServiceMix]

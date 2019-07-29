@@ -1,5 +1,5 @@
 [[HowdoIuseSpringPropertyPlaceholderwithCamelXML-HowdoIuseSpringPropertyPlaceholderwithCamelXML]]
-=== How do I use Spring Property Placeholder with Camel XML
+= How do I use Spring Property Placeholder with Camel XML
 
 We do *NOT* yet support the `$\{something\}` notation inside arbitrary
 Camel XML. For example at the time of writing this is *NOT* supported
@@ -62,7 +62,7 @@ Camel does not yet fully support property placeholders as there is a
 limitation in Spring. See JIRA
 http://jira.springframework.org/browse/SPR-4466[SPR-4466]
 
-==== Bridge Spring and Camel property placeholders
+== Bridge Spring and Camel property placeholders
 
 From Camel 2.10 onwards you can bridge Spring and Camel property
 placeholders, see xref:using-propertyplaceholder.adoc[Using

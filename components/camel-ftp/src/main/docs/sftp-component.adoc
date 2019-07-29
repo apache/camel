@@ -1,5 +1,5 @@
 [[sftp-component]]
-== SFTP Component
+= SFTP Component
 
 *Available as of Camel version 1.1*
 
@@ -21,7 +21,7 @@ for this component:
 
 For more information you can look at xref:ftp-component.adoc[FTP component]
 
-### URI Options
+== URI Options
 
 The options below are exclusive for the FTPS component.
 
@@ -48,7 +48,7 @@ sftp:host:port/directoryName
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (118 parameters):
+=== Query Parameters (118 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]

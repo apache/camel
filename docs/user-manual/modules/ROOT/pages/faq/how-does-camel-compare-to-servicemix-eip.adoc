@@ -1,5 +1,5 @@
 [[HowdoesCamelcomparetoServiceMixEIP-HowdoesCamelcomparetoServiceMixEIP]]
-=== How does Camel compare to ServiceMix EIP
+= How does Camel compare to ServiceMix EIP
 
 http://servicemix.apache.org/servicemix-eip.html[ServiceMix EIP] was the
 ancestor though they both do similar things.
@@ -12,7 +12,7 @@ xref:components::jms-component.adoc[JMS] or xref:components::mina2-component.ado
 xref:dsl.adoc[Java DSL] or xref:spring.adoc[XML configuration].
 
 [[HowdoesCamelcomparetoServiceMixEIP-ConvertingfromServiceMixEIPtoCamel]]
-==== Converting from ServiceMix EIP to Camel
+== Converting from ServiceMix EIP to Camel
 
 Here's an example of a servicemix-eip route:
 
@@ -51,7 +51,7 @@ from("jbi:endpoint:test:messageFilter:endpoint").
 ----
 
 [[HowdoesCamelcomparetoServiceMixEIP-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:faq/how-does-camel-work-with-servicemix.adoc[How does Camel work with
 ServiceMix]

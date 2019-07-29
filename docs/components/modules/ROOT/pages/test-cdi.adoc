@@ -1,5 +1,5 @@
 [[CDITesting-CDITesting]]
-== CDI Testing
+= CDI Testing
 
 http://camel.apache.org/testing.html[Testing] is a crucial part of any
 development or integration work. In case you're using the Camel CDI
@@ -63,7 +63,7 @@ containers].
 |=======================================================================
 
 [[CDITesting-CamelCDITest]]
-=== Camel CDI Test
+== Camel CDI Test
 
 With this approach, your test classes use the JUnit runner provided in
 Camel CDI test. This runner manages the lifecycle of a standalone CDI
@@ -199,7 +199,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-Arquillian]]
-=== Arquillian
+== Arquillian
 
 With this approach, you use the JUnit runner or TestNG support provided
 by Arquillian to delegate the bootstrap of the CDI container. You need
@@ -364,7 +364,7 @@ for a complete working example of testing a Camel CDI application using
 the REST DSL and deployed as a WAR in Jetty.
 
 [[CDITesting-PAXExam]]
-=== PAX Exam
+== PAX Exam
 
 If you target OSGi as runtime environment for your Camel CDI
 applications, you can use PAX Exam to automate the deployment of your
@@ -422,7 +422,7 @@ complete working example of testing a Camel CDI application deployed in
 an OSGi container using PAX Exam.
 
 [[CDITesting-TestingPatterns]]
-=== Testing Patterns
+== Testing Patterns
 
 You can see the tests in the `camel-example-cdi-test` example for a
 thorough overview of the following testing patterns for Camel CDI
@@ -433,7 +433,7 @@ module, they should equally work with Arquillian and PAX Exam unless
 otherwise stated or illustrated with a specific example.
 
 [[CDITesting-Testroutes]]
-=== Test routes
+== Test routes
 
 You may want to add some Camel routes to your Camel CDI applications for
 testing purpose. For example to route some exchanges to a `MockEndpoint`
@@ -480,7 +480,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-Beanalternatives]]
-=== Bean alternatives
+== Bean alternatives
 
 You may want to replace a bean that is used in your Camel routes by
 another bean for testing purpose, for example to mock it or change the
@@ -593,7 +593,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-Camelcontextcustomization]]
-=== Camel context customization
+== Camel context customization
 
 You may need to customize your Camel contexts for testing purpose, for
 example disabling JMX management to avoid TCP port allocation conflict.
@@ -623,7 +623,7 @@ class will be used during the test execution instead of the default
 Camel context bean provided by the Camel CDI component.
 
 [[CDITesting-RoutesadvisingwithadviceWith]]
-=== Routes advising with `adviceWith`
+== Routes advising with `adviceWith`
 
 `AdviceWith` is used for testing Camel routes where you
 can _advice_ an existing route before its being tested. It allows to
@@ -657,7 +657,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-JUnitrules]]
-=== JUnit rules
+== JUnit rules
 
 Camel CDI test starts the CDI container after all the JUnit class rules
 have executed.
@@ -725,7 +725,7 @@ public class CamelCdiTest {
 ----
 
 [[CDITesting-SeeAlso]]
-=== See Also
+== See Also
 
 * CDI component
 * http://arquillian.org[Arquillian Web site]

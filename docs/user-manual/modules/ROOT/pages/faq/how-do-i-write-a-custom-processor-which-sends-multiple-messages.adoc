@@ -1,5 +1,5 @@
 [[HowdoIwriteacustomProcessorwhichsendsmultiplemessages-HowdoIwriteacustomProcessorwhichsendsmultiplemessages]]
-=== How do I write a custom Processor which sends multiple messages?
+= How do I write a custom Processor which sends multiple messages?
 
 You could use a xref:split-eip.adoc[Splitter] or use multiple
 xref:message-translator.adoc[Message Translator] instances in your

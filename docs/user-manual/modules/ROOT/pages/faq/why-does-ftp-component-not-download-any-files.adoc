@@ -1,5 +1,5 @@
 [[WhydoesFTPcomponentnotdownloadanyfiles-WhydoesFTPcomponentnotdownloadanyfiles]]
-=== Why does FTP component not download any files?
+= Why does FTP component not download any files?
 
 The xref:components::ftp-component.adoc[FTP] component has many options. So make sure you
 have configured it properly.

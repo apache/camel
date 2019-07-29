@@ -1,5 +1,5 @@
 [[idempotentConsumer-eip]]
-== Idempotent Consumer EIP
+= Idempotent Consumer EIP
 
 The
 http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent
@@ -27,7 +27,7 @@ Camel provides the following Idempotent Consumer implementations:
 * xref:components::ehcache-component.adoc[EhcacheIdempotentRepository]
 * xref:components::kafka-component.adoc[KafkaIdempotentRepository]
 
-=== Options
+== Options
 
 // eip options: START
 The Idempotent Consumer EIP supports 5 options which are listed below:

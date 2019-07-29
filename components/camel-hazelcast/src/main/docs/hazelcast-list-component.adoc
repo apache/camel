@@ -1,11 +1,11 @@
 [[hazelcast-list-component]]
-== Hazelcast List Component
+= Hazelcast List Component
 
 *Available as of Camel version 2.7*
 
 The http://www.hazelcast.com/[Hazelcast] List component is one of Camel Hazelcast Components which allows you to access Hazelcast distributed list.
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast List component supports 4 options, which are listed below.
@@ -30,7 +30,7 @@ hazelcast-list:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -40,7 +40,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -67,7 +67,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -101,7 +101,7 @@ The component supports 7 options, which are listed below.
 
 
 
-### List producer – to(“hazelcast-list:foo”)
+== List producer – to(“hazelcast-list:foo”)
 
 The list producer provides 7 operations:
 * add
@@ -112,7 +112,7 @@ The list producer provides 7 operations:
 * removeAll
 * clear
 
-#### Sample for *add*:
+=== Sample for *add*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ from("direct:add")
 .toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 ------------------------------------------------------------------------------------
 
-#### Sample for *get*:
+=== Sample for *get*:
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ from("direct:get")
 .to("seda:out");
 ------------------------------------------------------------------------------------
 
-#### Sample for *setvalue*:
+=== Sample for *setvalue*:
 
 [source,java]
 -----------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ from("direct:set")
 .toF("hazelcast-%sbar", HazelcastConstants.LIST_PREFIX);
 -----------------------------------------------------------------------------------------
 
-#### Sample for *removevalue*:
+=== Sample for *removevalue*:
 
 [source,java]
 --------------------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ Note that *CamelHazelcastObjectIndex* header is used for indexing
 purpose.
 
 
-### List consumer – from(“hazelcast-list:foo”)
+== List consumer – from(“hazelcast-list:foo”)
 
 The list consumer provides 2 operations:
 * add

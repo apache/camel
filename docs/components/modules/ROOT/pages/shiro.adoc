@@ -1,5 +1,5 @@
 [[ShiroSecurity-ShiroSecurityComponent]]
-== Shiro Security Component
+= Shiro Security Component
 
 *Available as of Camel 2.5*
 
@@ -37,7 +37,7 @@ for this component:
 ------------------------------------------------------------
 
 [[ShiroSecurity-ShiroSecurityBasics]]
-=== Shiro Security Basics
+== Shiro Security Basics
 
 To employ Shiro security on a camel route, a ShiroSecurityPolicy object
 must be instantiated with security configuration details (including
@@ -74,7 +74,7 @@ sec-level1 = zone1:readonly:*
 ------------------------------------------------------------------
 
 [[ShiroSecurity-InstantiatingaShiroSecurityPolicyObject]]
-=== Instantiating a ShiroSecurityPolicy Object
+== Instantiating a ShiroSecurityPolicy Object
 
 A ShiroSecurityPolicy object is instantiated as follows
 
@@ -95,7 +95,7 @@ A ShiroSecurityPolicy object is instantiated as follows
 ----------------------------------------------------------------------------------------
 
 [[ShiroSecurity-ShiroSecurityPolicyOptions]]
-=== ShiroSecurityPolicy Options
+== ShiroSecurityPolicy Options
 
 [width="100%",cols="10%,10%,10%,90%",options="header",]
 |=======================================================================
@@ -144,7 +144,7 @@ require all of the roles to be met.
 |=======================================================================
 
 [[ShiroSecurity-ApplyingShiroAuthenticationonaCamelRoute]]
-=== Applying Shiro Authentication on a Camel Route
+== Applying Shiro Authentication on a Camel Route
 
 The ShiroSecurityPolicy, tests and permits incoming message exchanges
 containing a encrypted SecurityToken in the Message Header to proceed
@@ -179,7 +179,7 @@ the user is a valid user.
 -----------------------------------------------------------------------
 
 [[ShiroSecurity-ApplyingShiroAuthorizationonaCamelRoute]]
-==== Applying Shiro Authorization on a Camel Route
+=== Applying Shiro Authorization on a Camel Route
 
 Authorization can be applied on a camel route by associating a
 Permissions List with the ShiroSecurityPolicy. The Permissions List
@@ -214,7 +214,7 @@ permission set, the request is not authorized to continue any further.
 -------------------------------------------------------------------------------------------
 
 [[ShiroSecurity-CreatingaShiroSecurityTokenandinjectingitintoaMessageExchange]]
-=== Creating a ShiroSecurityToken and injecting it into a Message Exchange
+== Creating a ShiroSecurityToken and injecting it into a Message Exchange
 
 A ShiroSecurityToken object may be created and injected into a Message
 Exchange using a Shiro Processor called ShiroSecurityTokenInjector. An
@@ -233,7 +233,7 @@ ShiroSecurityTokenInjector in the client is shown below
 -------------------------------------------------------------------------------------
 
 [[ShiroSecurity-SendingMessagestoroutessecuredbyaShiroSecurityPolicy]]
-=== Sending Messages to routes secured by a ShiroSecurityPolicy
+== Sending Messages to routes secured by a ShiroSecurityPolicy
 
 Messages and Message Exchanges sent along the camel route where the
 security policy is applied need to be accompanied by a SecurityToken in
@@ -267,7 +267,7 @@ ProducerTemplate in Camel along with a SecurityToken
 -------------------------------------------------------------------------------------------------
 
 [[ShiroSecurity-UsingShiroSecurityToken]]
-=== Using ShiroSecurityToken
+== Using ShiroSecurityToken
 
 You can send a message to a Camel route with a header of key
 `ShiroSecurityConstants.SHIRO_SECURITY_TOKEN` of the type

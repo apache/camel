@@ -1,12 +1,12 @@
 [[sample-eip]]
-== Sample EIP
+= Sample EIP
 *Available as of Camel 2.1*
 
 A sampling throttler allows you to extract a sample of the exchanges from the traffic through a route. +
 It is configured with a sampling period during which only a single exchange is allowed to pass through. All other exchanges will be stopped.
 Will by default use a sample period of 1 seconds.
 
-=== Options
+== Options
 // eip options: START
 The Sample EIP supports 3 options which are listed below:
 
@@ -20,7 +20,7 @@ The Sample EIP supports 3 options which are listed below:
 // eip options: END
 
 
-=== Samples
+== Samples
 You use this EIP with the `sample` DSL as show in these samples.
 
 These samples also show how you can use the different syntax to configure the sampling period:

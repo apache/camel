@@ -1,5 +1,5 @@
 [[URIs-URIs]]
-=== URIs
+= URIs
 
 Camel makes extensive use of URIs to allow you to refer to endpoints
 which are lazily created by a xref:component.adoc[Component] if you

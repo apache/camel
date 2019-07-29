@@ -1,5 +1,5 @@
 [[schematron-component]]
-== Schematron Component
+= Schematron Component
 
 *Available as of Camel version 2.15*
 
@@ -18,14 +18,14 @@ written in a way that Schematron rules are loaded at the start of the
 endpoint (only once) this is to minimise the overhead of instantiating a
 Java Templates object representing the rules.
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------
 schematron://path?[options]
 ---------------------------
 
-### URI options
+== URI options
 
 
 // component options: START
@@ -54,7 +54,7 @@ schematron:path
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -111,7 +111,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Headers
+== Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -122,7 +122,7 @@ The component supports 3 options, which are listed below.
 |CamelSchematronValidationReport |The schematrion report body in XML format. See an example below |String |IN
 |=======================================================================
 
-### URI and path syntax
+== URI and path syntax
 
 The following example shows how to invoke the schematron processor in
 Java DSL. The schematron rules file is sourced from the class path:
@@ -173,7 +173,7 @@ an update, all you need is to restart the route or the component. No
 harm in storing these rules in the class path though, but you will have
 to build and deploy the component to pick up the changes.
 
-### Schematron rules and report samples
+== Schematron rules and report samples
 
 Here is an example of schematron rules
 

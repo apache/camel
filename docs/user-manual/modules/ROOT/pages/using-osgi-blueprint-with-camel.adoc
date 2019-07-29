@@ -1,5 +1,5 @@
 [[UsingOSGiblueprintwithCamel-UsingOSGiblueprintwithCamel]]
-=== Using OSGi blueprint with Camel
+= Using OSGi blueprint with Camel
 
 *Available as of Camel 2.4*
 
@@ -11,7 +11,7 @@ implementation, which is the one used by http://karaf.apache.org[Apache
 Karaf].
 
 [[UsingOSGiblueprintwithCamel-Overview]]
-==== Overview
+== Overview
 
 The XML schema is mostly the same as the one for Spring, so all the xml
 snippets throughout the documentation referring to Spring XML also apply
@@ -50,7 +50,7 @@ your bundles
 xref:using-propertyplaceholder.adoc[Using PropertyPlaceholder]
 
 [[UsingOSGiblueprintwithCamel-Usingcamel-blueprint]]
-==== Using camel-blueprint
+== Using camel-blueprint
 
 To leverage camel-blueprint in OSGi, you only need the Aries Blueprint
 bundle and the camel-blueprint bundle, in addition to camel-core and its

@@ -1,5 +1,5 @@
 [[JNDI-JNDI]]
-=== JNDI
+= JNDI
 
 Camel will use JNDI as the default xref:registry.adoc[Registry]
 implementation if you do not use xref:components::spring.adoc[Spring]. This means

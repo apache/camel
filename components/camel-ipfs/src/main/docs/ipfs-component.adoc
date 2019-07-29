@@ -1,5 +1,5 @@
 [[ipfs-component]]
-== IPFS Component
+= IPFS Component
 
 *Available as of Camel version 2.23*
 
@@ -18,14 +18,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
 ipfs://cmd?options
 ---------------------------------
 
-### Options
+== Options
 
 // component options: START
 The IPFS component supports 2 options, which are listed below.
@@ -49,7 +49,7 @@ ipfs:ipfsHost:ipfsPort/ipfsCmd
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -61,7 +61,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (4 parameters):
+=== Query Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -102,15 +102,15 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Karaf support
+== Karaf support
 
 Actually this component is not supported in Karaf
 
-### Message Headers
+== Message Headers
 
 [TODO]
 
-### Samples
+== Samples
 
 In this sample we add a file to IPFS, get a file from IPFS and finally access the content of an IPFS file. 
 

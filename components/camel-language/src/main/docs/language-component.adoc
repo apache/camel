@@ -1,5 +1,5 @@
 [[language-component]]
-== Language Component
+= Language Component
 
 *Available as of Camel version 2.5*
 
@@ -17,7 +17,7 @@ additional JARs is needed. You only have to include additional Camel
 components if the language of choice mandates it, such as using
 xref:groovy-language.adoc[Groovy] or xref:groovy-language.adoc[JavaScript] languages.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -33,7 +33,7 @@ xref:language-component.adoc[Language]s in Camel
 language://languageName:resource:scheme:location][?options]
 ----
 
-=== URI Options
+== URI Options
 
 
 // component options: START
@@ -60,7 +60,7 @@ language:languageName:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -71,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +89,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -117,7 +117,7 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Message Headers
+== Message Headers
 
 The following message headers can be used to affect the behavior of the
 component
@@ -130,7 +130,7 @@ component
 script configured on the endpoint.
 |===
 
-=== Examples
+== Examples
 
 For example you can use the xref:manual::simple-language.adoc[Simple] language to
 Message Translator a message:
@@ -151,7 +151,7 @@ Object out = producer.requestBodyAndHeader("language:xpath", "<foo>Hello World</
 assertEquals("Hello World", out);
 ----
 
-=== Loading scripts from resources
+== Loading scripts from resources
 
 *Available as of Camel 2.9*
 

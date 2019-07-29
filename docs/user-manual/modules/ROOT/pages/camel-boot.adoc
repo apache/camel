@@ -1,5 +1,5 @@
 [[CamelBoot-CamelBoot]]
-=== Camel Boot
+= Camel Boot
 
 Camel lets you boot up a JVM process and configure Camel nicely using
 whichever dependency injection framework you choose.
@@ -13,19 +13,19 @@ required.
 The following camel boot options are supported:
 
 [[CamelBoot-CDI]]
-==== CDI
+== CDI
 
 Using the xref:components::cdi.adoc[camel-cdi module] you can boot up your Camel
 Java process using the *org.apache.camel.cdi.Main* class
 
 [[CamelBoot-Spring]]
-==== Spring
+== Spring
 
 Using the xref:spring.adoc[Spring] you can boot your
 Camel Java process using the *org.apache.camel.spring.Main* class
 
 [[CamelBoot-SpringBoot]]
-==== Spring Boot
+== Spring Boot
 
 You can combine Spring Boot with Camel using
 xref:components::spring-boot.adoc[Camel's Spring Boot integration]. In this case

@@ -1,5 +1,5 @@
 [[velocity-component]]
-== Velocity Component
+= Velocity Component
 
 *Available as of Camel version 1.2*
 
@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------
@@ -35,7 +35,7 @@ invoke; or the complete URL of the remote template (eg:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -65,7 +65,7 @@ velocity:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +91,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -122,7 +122,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 You can use the following headers on the message:
 
@@ -153,7 +153,7 @@ $in.setHeader("fruit", "Apple")
 
 The `fruit` header is now accessible from the `message.out.headers`.
 
-### Velocity Context
+== Velocity Context
 
 Camel will provide exchange information in the Velocity context (just a
 `Map`). The `Exchange` is transfered as:
@@ -192,7 +192,7 @@ setting the message header *CamelVelocityContext *just like this
 
  
 
-### Hot reloading
+== Hot reloading
 
 The Velocity template resource is, by default, hot reloadable for both
 file and classpath resources (expanded jar). If you set
@@ -200,7 +200,7 @@ file and classpath resources (expanded jar). If you set
 hot reloading is not possible. This scenario can be used in production,
 when the resource never changes.
 
-### Dynamic templates
+== Dynamic templates
 
 *Available as of Camel 2.1* +
  Camel provides two headers by which you can define a different resource
@@ -218,7 +218,7 @@ endpoint configured.
 |CamelVelocityTemplate |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-### Samples
+== Samples
 
 For example you could use something like
 
@@ -280,7 +280,7 @@ from("direct:in").
   to("velocity:dummy");
 ---------------------------------------------------------------------------------------------------------------
 
-### The Email Sample
+== The Email Sample
 
 In this sample we want to use Velocity templating for an order
 confirmation email. The email template is laid out in Velocity as:
@@ -297,7 +297,7 @@ ${body}
 
 And the java code:
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

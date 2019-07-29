@@ -1,12 +1,12 @@
 [[Building-BuildingCamelfromSource]]
-=== Building Camel from Source
+= Building Camel from Source
 
 Camel uses http://maven.apache.org/[Maven] as its build and management
 tool. If you don't fancy using Maven you can use your IDE directly or
 Download a distribution or JAR.
 
 [[Building-Prequisites]]
-==== Prequisites
+== Prequisites
 
 *Required:*
 
@@ -29,7 +29,7 @@ Download a distribution or JAR.
 PATH to generate the PDF documentation
 
 [[Building-Mavenoptions]]
-==== Maven options
+== Maven options
 
 To build camel maven has to be configured to use more memory
 
@@ -51,7 +51,7 @@ set MAVEN_OPTS="-Xms2048m -Xmx3584m"
 -------------------------------------------------------
 
 [[Building-Anormalbuild]]
-==== A normal build
+== A normal build
 
 [source,text]
 -----------------
@@ -59,7 +59,7 @@ mvn clean install
 -----------------
 
 [[Building-Anormalbuildwithoutrunningtests]]
-==== A quick build without running tests
+== A quick build without running tests
 
 The following skips building the manual, the distro and does not execute
 the unit tests.
@@ -70,7 +70,7 @@ mvn clean install -Pfastinstall
 -------------------------------
 
 [[Building-Anormalbuildwithoutrunningtestsbutcheckstyleverificationenabled]]
-==== A normal build without running tests but checkstyle verification enabled
+== A normal build without running tests but checkstyle verification enabled
 
 [source,text]
 -------------------------------------------
@@ -78,13 +78,13 @@ mvn clean install -Pfastinstall,sourcecheck
 -------------------------------------------
 
 [[Building-UsinganIDE]]
-==== Using an IDE
+== Using an IDE
 
 If you prefer to use an IDE then you can auto-generate the IDE's project
 files using maven plugins. e.g.
 
 [[Building-IntelliJ]]
-===== IntelliJ
+=== IntelliJ
 
 [source,text]
 -------------
@@ -92,7 +92,7 @@ mvn idea:idea
 -------------
 
 [[Building-Eclipse]]
-===== Eclipse
+=== Eclipse
 
 There are several ways to import the projects into Eclipse.
 
@@ -207,7 +207,7 @@ need to update the projects.
 --------------------------------------------------------------------------
 
 [[Building-Buildingwithcheckstyle]]
-==== Building with checkstyle
+== Building with checkstyle
 
 To enable source style checking with checkstyle, build Camel with the
 -Psourcecheck parameter
@@ -218,7 +218,7 @@ mvn -Psourcecheck clean install
 -------------------------------
 
 [[Building-Buildingsourcejars]]
-==== Building source jars
+== Building source jars
 
 If you want to build jar files with the source code, that for instance
 Eclipse can important so you can debug the Camel code as well. Then you
@@ -230,7 +230,7 @@ mvn clean source:jar install -Pfastinstall
 ------------------------------------------
 
 [[Building-Workingwithkaraffeatures]]
-==== Working with karaf features
+== Working with karaf features
 
 If you change anything in the features.xml from `platform/karaf` you can
 run a validation step to ensure the generated features.xml file is
@@ -243,7 +243,7 @@ mvn clean install -Pvalidate
 ----------------------------
 
 [[Building-ExecutingunittestsusingEkstazi]]
-==== Executing unit tests using Ekstazi
+== Executing unit tests using Ekstazi
 
 Normally, when you execute the unit tests during your development cycle
 for a particular component, you are executing all the tests each time.
@@ -263,7 +263,7 @@ mvn test -Pekstazi
 ------------------
 
 [[Building-SeeAlso]]
-==== See Also
+== See Also
 
 * Running Unit Tests
 * Source

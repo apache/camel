@@ -1,15 +1,15 @@
 [[roundRobin-eip]]
-== Round Robin EIP
+= Round Robin EIP
 
 Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is selected for each exchange.
 
-=== Options
+== Options
 
 // eip options: START
 The Round Robin EIP has no options.
 // eip options: END
 
-=== Examples
+== Examples
 
 In this case we are using the header test as correlation expression:
 

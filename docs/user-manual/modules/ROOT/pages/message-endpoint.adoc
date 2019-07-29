@@ -1,5 +1,5 @@
 [[messageEndpoint-eip]]
-== Message Endpoint
+= Message Endpoint
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageEndpoint.html[Message
@@ -22,11 +22,11 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Compon
 implementations.
 
 [[messageEndpoint-Example]]
-=== Samples
+== Samples
 
 See first example in https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/to-eip.adoc[To EIP]
 
-=== See Also
+== See Also
 
 For more details see:
 

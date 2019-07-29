@@ -1,5 +1,5 @@
 [[netty4-component]]
-== Netty4 Component
+= Netty4 Component
 
 *Available as of Camel version 2.14*
 
@@ -31,7 +31,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 The URI scheme for a netty component is as follows
 
@@ -47,7 +47,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 // component options: START
 The Netty4 component supports 7 options, which are listed below.
@@ -77,7 +77,7 @@ netty4:protocol:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (74 parameters):
+=== Query Parameters (74 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -172,7 +172,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -278,7 +278,7 @@ The component supports 79 options, which are listed below.
 
 
 
-=== Registry based Options
+== Registry based Options
 
 Codec Handlers and SSL Keystores can be enlisted in the Registry, such as in the Spring XML file.
 The values that could be passed in, are the following:
@@ -333,7 +333,7 @@ so Camel knows it should lookup.
 
 NOTE: Read below about using non shareable encoders/decoders.
 
-==== Using non shareable encoders or decoders
+=== Using non shareable encoders or decoders
 
 If your encoders or decoders are not shareable (e.g. they don't have the
 @Shareable class annotation), then your encoder/decoder must implement
@@ -346,16 +346,16 @@ The Netty component offers a
 `org.apache.camel.component.netty.ChannelHandlerFactories` factory
 class, that has a number of commonly used methods.
 
-=== Sending Messages to/from a Netty endpoint
+== Sending Messages to/from a Netty endpoint
 
-==== Netty Producer
+=== Netty Producer
 
 In Producer mode, the component provides the ability to send payloads to
 a socket endpoint using either TCP or UDP protocols (with optional SSL support).
 
 The producer mode supports both one-way and request-response based operations.
 
-==== Netty Consumer
+=== Netty Consumer
 
 In Consumer mode, the component provides the ability to:
 
@@ -368,9 +368,9 @@ object based payloads and
 The consumer mode supports both one-way and request-response based
 operations.
 
-=== Examples
+== Examples
 
-==== A UDP Netty endpoint using Request-Reply and serialized object payload
+=== A UDP Netty endpoint using Request-Reply and serialized object payload
 
 [source,java]
 ----
@@ -388,7 +388,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ----
 
-==== A TCP based Netty consumer endpoint using One-way communication
+=== A TCP based Netty consumer endpoint using One-way communication
 
 [source,java]
 ----
@@ -400,7 +400,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ----
 
-==== An SSL/TCP based Netty consumer endpoint using Request-Reply communication
+=== An SSL/TCP based Netty consumer endpoint using Request-Reply communication
 
 [[Netty4-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -509,7 +509,7 @@ enriches the Camel Message with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 
-==== Using Multiple Codecs
+=== Using Multiple Codecs
 
 In certain cases it may be necessary to add chains of encoders and
 decoders to the netty pipeline. To add multpile codecs to a camel netty
@@ -614,7 +614,7 @@ or via XML.
 </camelContext>
 ----
 
-=== Closing Channel When Complete
+== Closing Channel When Complete
 
 When acting as a server you sometimes want to close the channel when,
 for example, a client conversion is finished. +
@@ -645,7 +645,7 @@ from("netty4:tcp://0.0.0.0:8080").process(new Processor() {
 [[Netty4-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
 Adding custom channel pipeline factories to gain complete control over a created pipeline
 
-=== Custom pipeline
+== Custom pipeline
 
 Custom channel pipelines provide complete control to the user over the
 handler/interceptor chain by inserting custom handler(s), encoder(s) &
@@ -670,7 +670,7 @@ decoders wired to the pipeline.
 The example below shows how ServerInitializerFactory factory may be
 created
 
-==== Using custom pipeline factory
+=== Using custom pipeline factory
 
 [source,java]
 ----
@@ -715,7 +715,7 @@ context.addRoutes(new RouteBuilder() {
 });
 ----
 
-=== Reusing Netty boss and worker thread pools
+== Reusing Netty boss and worker thread pools
 
 Netty has two kind of thread pools: boss and worker. By default each
 Netty consumer and producer has their private thread pools. If you want
@@ -772,7 +772,7 @@ And if we have another route we can refer to the shared worker pool:
 
 and so forth.
 
-=== Multiplexing concurrent messages over a single connection with request/reply
+== Multiplexing concurrent messages over a single connection with request/reply
 
 When using Netty for request/reply messaging via the netty producer then by default each
 message is sent via a non-shared connection (pooled). This ensures that replies are
@@ -796,7 +796,7 @@ This provides support for timeout and other complexities you otherwise would nee
 You can find an example with the Apache Camel source code in the examples directory
 under the `camel-example-netty-custom-correlation` directory.
 
-=== See Also
+== See Also
 
 * xref:netty4-http-component.adoc[Netty HTTP]
 * xref:mina2-component.adoc[MINA]

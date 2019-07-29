@@ -1,5 +1,5 @@
 [[CamelConfigurationUtilities-JSSEUtility]]
-=== JSSE Utility
+= JSSE Utility
 
 The JSSE Utility, available as of *2.8*, allows you to easily configure
 aspects of the
@@ -8,7 +8,7 @@ Secure Socket Extension] (JSSE) API in order to greatly simplify the use
 of custom transport layer security (TLS) settings on Camel components.
 
 [[CamelConfigurationUtilities-SupportedComponents]]
-==== Supported Components
+== Supported Components
 
 The following Camel components directly support the use of this
 configuration utility:
@@ -30,7 +30,7 @@ configuration utility:
 * xref:components::http4-component.adoc[HTTP]
 
 [[CamelConfigurationUtilities-Configuration]]
-==== Configuration
+== Configuration
 
 The key component in configuring TLS through the JSSE API is the
 SSLContext.  The
@@ -64,7 +64,7 @@ namespaces for Spring and Blueprint based configuration, respectively.
 
 
 [[CamelConfigurationUtilities-SSLContextParameters]]
-===== SSLContextParameters
+=== SSLContextParameters
 
 SSLContextParameters (sslContextParameters) contain the following elements:
 
@@ -164,7 +164,7 @@ override the settings specified at the SSLContextParameters level.
 
 
 [[CamelConfigurationUtilities-KeyManagersParameters]]
-===== KeyManagersParameters
+=== KeyManagersParameters
 
 KeyManagersParameters contain the following elements:
 
@@ -196,7 +196,7 @@ store containing a user or server private key.  In some cases, such as
 when using PKCS#11, the key store is omitted entirely.
 
 [[CamelConfigurationUtilities-TrustManagersParameters]]
-===== TrustManagersParameters
+=== TrustManagersParameters
 
 TrustManagersParameters contain the following elements:
 
@@ -225,7 +225,7 @@ store containing trusted CA certificates / public keys.  In some cases,
 such as when using PKCS#11, the key store is omitted entirely.
 
 [[CamelConfigurationUtilities-KeyStoreParameters]]
-===== KeyStoreParameters
+=== KeyStoreParameters
 
 KeyStoreParameters contain the following elements:
 
@@ -270,7 +270,7 @@ configuration.
 
 
 [[CamelConfigurationUtilities-FilterParameters]]
-===== FilterParameters
+=== FilterParameters
 
 FilterParameters contain the following elements:
 
@@ -286,7 +286,7 @@ patterns for which matching values should be included.  The list of
 excludes takes precedence over the include patterns.
 
 [[CamelConfigurationUtilities-SecureRandomParameters]]
-===== SecureRandomParameters
+=== SecureRandomParameters
 SecureRandomParameters contain the following elements:
 
 * algorithm (attribute)
@@ -304,7 +304,7 @@ used to create the SecureRandom represented by this object's
 configuration.  If omitted, the default look-up behavior is used.
 
 [[CamelConfigurationUtilities-SSLContextServerParameters]]
-===== SSLContextServerParameters
+=== SSLContextServerParameters
 SSLContextServerParameters contain the following elements:
 
 * clientAuthentication (attribute)
@@ -343,7 +343,7 @@ setting in the SSLContextParameters. This option has no affect on the
 SSLEngine configuration.
 
 [[CamelConfigurationUtilities-SSLContextClientParameters]]
-===== SSLContextClientParameters
+=== SSLContextClientParameters
 SSLContextClientParameters contains the following elements:
 
 * sniHostNames (elements)
@@ -368,10 +368,10 @@ secureSocketProtocolsFilter::
 See <<CamelConfigurationUtilities-SSLContextServerParameters>>.
 
 [[CamelConfigurationUtilities-Examples]]
-==== Examples
+== Examples
 
 [[CamelConfigurationUtilities-ProgrammaticUsage]]
-===== Programmatic Usage
+=== Programmatic Usage
 
 [[CamelConfigurationUtilities-SettingClientAuthenticationOntheServerSide]]
 Setting Client Authentication On the Server Side
@@ -474,7 +474,7 @@ KeyStore keyStore = ksp.createKeyStore();
 ---------------------------------------------------
 
 [[CamelConfigurationUtilities-XMLConfiguration]]
-===== XML Configuration
+=== XML Configuration
 
 [NOTE]
 ====

@@ -1,5 +1,5 @@
 [[HTTP-SessionHandling]]
-=== HTTP Session Handling
+= HTTP Session Handling
 
 *Available as of Camel 2.19*
 
@@ -10,7 +10,7 @@ maintain a server session (e.g. via a session cookie called "JSESSIONID"
 with servers implementing the JEE Servlet specification).
 
 [[HTTP-SessionHandling-SessionScope]]
-==== Session Scope
+== Session Scope
 
 If a Camel route intends to implement some kind of HTTP session handling
 the scope of this session should be considered.
@@ -19,7 +19,7 @@ Independently from the session scope the implementation must honor the
 domain of the handled cookies.
 
 [[HTTP-SessionHandling-RouteContextScope]]
-==== Route/Context Scope
+== Route/Context Scope
 
 It might be desirable to have a single session for a route or a
 xref:camelcontext.adoc[CamelContext]. This essentially means that all
@@ -27,7 +27,7 @@ calls to a server issued from a route or CamelContext share a single
 HTTP session.
 
 [[HTTP-SessionHandling-EndpointScope]]
-==== Endpoint Scope
+== Endpoint Scope
 
 It is also possible to have a session on an xref:endpoint.adoc[Endpoint]
 entity. This would mean that all invocations of an HTTP call issued by a
@@ -37,7 +37,7 @@ Some components like camel-http, and camel-http4 support endpoint scoped
 sessions even prior to version 2.19.
 
 [[HTTP-SessionHandling-ExchangeScope]]
-====  Exchange Scope
+==  Exchange Scope
 
 The third option to define a session scope is on
 xref:exchange.adoc[Exchange]level. This is particularly useful for
@@ -53,7 +53,7 @@ server can maintain a separate state for the different parallel
 invocations.
 
 [[HTTP-SessionHandling-Usage]]
-==== Usage
+== Usage
 
 If you are a Camel user, you see that several Camel components support
 the cookieHandler parameter on endpoint level. All you need to do is to
@@ -80,7 +80,7 @@ does not store any state it is generally not useful to have multiple
 anyway).
 
 [[HTTP-SessionHandling-Example]]
-==== Example
+== Example
 
 The following three routes will each do two invocations of an echo REST
 service. In the first route (without a cookie handler) each invocation
@@ -121,7 +121,7 @@ invocations of the route will not share a session.
 --------------------------------------------------------------------------------------------------------
 
 [[HTTP-SessionHandling-ComponentDevelopers]]
-==== Component Developers
+== Component Developers
 
 If you want to develop a HTTP based component that is supposed to
 participate in a session you have to add the following parts to your
@@ -143,7 +143,7 @@ is set on the endpoint perform a
 the server.
 
 [[HTTP-SessionHandling-MoreInfo]]
-==== More Info
+== More Info
 
 Some APIs provide more direct support for cookie handling. In this case
 it might be easier to get the underlying `java.net.CookieStore` with a

@@ -1,5 +1,5 @@
 [[HowshouldIinvokemyPOJOsorSpringServices-HowshouldIinvokemyPOJOsorSpringServices]]
-=== How should I invoke my POJOs or Spring Services?
+= How should I invoke my POJOs or Spring Services?
 
 The various options are described in detail in
 xref:bean-integration.adoc[Bean Integration], in particular the
@@ -15,7 +15,7 @@ from("jms:someQueue").bean(MyBean.class, "someMethod");
 ----
 
 [[HowshouldIinvokemyPOJOsorSpringServices-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:bean-integration.adoc[Bean Integration]
 * xref:bean-binding.adoc[Bean Binding]

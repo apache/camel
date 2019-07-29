@@ -1,5 +1,5 @@
 [[HowdoIspecifytimeperiodinahumanfriendlysyntax-HowdoIspecifytimeperiodinahumanfriendlysyntax]]
-=== How do I specify time period in a human friendly syntax?
+= How do I specify time period in a human friendly syntax?
 
 *Available as of Camel 2.3*
 

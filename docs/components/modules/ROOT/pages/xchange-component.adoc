@@ -1,5 +1,5 @@
 [[xchange-component]]
-== XChange Component
+= XChange Component
 
 *Available as of Camel version 2.21*
 
@@ -21,14 +21,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
 xchange://exchange?options
 ---------------------------------
 
-### Options
+== Options
 
 // component options: START
 The XChange component supports 2 options, which are listed below.
@@ -52,7 +52,7 @@ xchange:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -62,7 +62,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -107,7 +107,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Authentication
+== Authentication
 
 This component communicates with supported crypto currency exchanges via REST API. Some API requests use simple unauthenticated GET request. 
 For most of the interesting stuff however, you'd need an account with the exchange and have API access keys enabled.
@@ -127,11 +127,11 @@ apiKey = GuRW0*********
 secretKey = nKLki************
 ----
 
-### Message Headers
+== Message Headers
 
 [TODO]
 
-### Samples
+== Samples
 
 In this sample we find the current Bitcoin market price in USDT:
 

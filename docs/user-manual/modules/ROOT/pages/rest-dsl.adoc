@@ -1,4 +1,4 @@
-== REST DSL Component
+= REST DSL Component
 
 *Available as of Camel version 2.16*
 
@@ -6,7 +6,7 @@ Apache Camel offers a REST styled DSL which can be used with Java or
 XML. The intention is to allow end users to define REST services using a
 REST style with verbs such as get, post, delete etc.
 
-=== How it works
+== How it works
 
 The Rest DSL is a facade that builds xref:components::rest-component.adoc[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by
@@ -14,7 +14,7 @@ using Camel REST components such
 as xref:components::restlet-component.adoc[Restlet], xref:components::restlet-component.adoc[Spark-rest], and
 others that has native REST integration.
 
-=== Components supporting Rest DSL
+== Components supporting Rest DSL
 
 The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
@@ -33,7 +33,7 @@ supports Swagger Java from Camel 2.17 onwards)
 * xref:components::undertow-component.adoc[camel-undertow] (also
 supports Swagger Java from Camel 2.17 onwards)
 
-=== Rest DSL with Java
+== Rest DSL with Java
 
 To use the Rest DSL in Java then just do as with regular Camel routes by
 extending the `RouteBuilder` and define the routes in the `configure`
@@ -83,7 +83,7 @@ routing directly to an endpoint using to(). An alternative is to embed a
 Camel route directly using route() - there is such an example further
 below.
 
-=== Rest DSL with XML
+== Rest DSL with XML
 
 The REST DSL supports the XML DSL also using either Spring or Blueprint.
 The example above can be define in XML as shown below:
@@ -117,7 +117,7 @@ The example above can be define in XML as shown below:
 </camelContext>
 ----
 
-=== Using base path
+== Using base path
 
 The REST DSL allows to define base path to make the DSL a bit more DRY.
 For example to define a customer path, we can set the base path in
@@ -173,7 +173,7 @@ only. The example above can be defined as:
 </rest>
 ----
 
-=== Using Dynamic To in Rest DSL
+== Using Dynamic To in Rest DSL
 
 *Available as of Camel 2.16*
 
@@ -189,7 +189,7 @@ over xref:components::jms-component.adoc[JMS] where the queue name is dynamic d
 }
 ----
 
-=== And in XML DSL
+== And in XML DSL
 
 [source,xml]
 ----
@@ -204,7 +204,7 @@ See more details at Message Endpoint about
 the dynamic to, and what syntax it supports. By default it uses
 the xref:simple-language.adoc[Simple] language, but it has more power than so.
 
-=== Embedding Camel routes
+== Embedding Camel routes
 
 Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
@@ -241,7 +241,7 @@ service using .route(). Notice we need to use .endRest() to tell Camel
 where the route ends, so we can _go back_ to the Rest DSL and continue
 defining REST services.
 
-=== Configuring route options
+== Configuring route options
 
 In the embedded route you can configure the route settings such as
 routeId, autoStartup and various other options you can set on routes
@@ -255,7 +255,7 @@ today.
 ----
 
 
-=== Managing Rest services
+== Managing Rest services
 
 Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
@@ -270,7 +270,7 @@ performance statistics.
 There is also a Rest Registry JMX MBean that contains a registry of all
 REST services which has been defined. 
 
-=== Binding to POJOs using
+== Binding to POJOs using
 
 The Rest DSL supports automatic binding json/xml contents to/from POJOs
 using Camels Data Format. By default the binding
@@ -470,7 +470,7 @@ public class UserPojo {
 By having the JAXB annotations the POJO supports both json and xml
 bindings.
 
-=== Configuring Rest DSL
+== Configuring Rest DSL
 [width="100%",cols="20%,10%,30%",options="header",]
 |===
 |Option |Default |Description
@@ -629,7 +629,7 @@ example configure 2 component options, and 3 endpoint options etc.
 
  
 
-=== Enabling or disabling Jackson JSON features
+== Enabling or disabling Jackson JSON features
 
 *Available as of Camel 2.15*
 
@@ -679,7 +679,7 @@ The rest configuration is of course also possible using XML DSL
 </restConfiguration>
 ----
 
-=== Default CORS headers
+== Default CORS headers
 
 *Available as of Camel 2.14.1*
 
@@ -701,7 +701,7 @@ Access-Control-Request-Method, Access-Control-Request-Headers
 |Access-Control-Max-Age |3600
 |===
  
-=== Defining a custom error message as-is
+== Defining a custom error message as-is
 
 If you want to define custom error messages to be sent back to the
 client with a HTTP error code (eg such as 400, 404 etc.) then
@@ -745,7 +745,7 @@ the HTTP error code to 400. This is important, as that tells rest-dsl
 that this is a custom error message, and the message should not use the
 output pojo binding (eg would otherwise bind to CountryPojo).
 
-=== Catching JsonParserException and returning a custom error message
+== Catching JsonParserException and returning a custom error message
 
 From *Camel 2.14.1* onwards you return a custom message as-is (see
 previous section). So we can leverage this with Camel error handler to
@@ -762,7 +762,7 @@ onException(JsonParseException.class)
     .setBody().constant("Invalid json data");
 ----
 
-=== Query Parameter default Values
+== Query Parameter default Values
 
 You can specify default values for parameters in the rest-dsl, such as
 the verbose parameter below:
@@ -785,7 +785,7 @@ and the value `false` because it was declared as the default value. This
 functionality is only applicable for query parameters.
 
 
-=== Client Request Validation
+== Client Request Validation
 
 From *Camel 2.22* onwards its possible to enable validation of the incoming client request.
 The validation checks for the following:
@@ -807,7 +807,7 @@ restConfiguration().component("jetty").host("localhost")
 ----
 
 
-=== Integrating a Camel component with Rest DSL
+== Integrating a Camel component with Rest DSL
 
 Any Apache Camel component can integrate with the Rest DSL if they can
 be used as a REST service (eg as a REST consumer in Camel lingo). To
@@ -819,7 +819,7 @@ Camel consumer that exposes the REST services based on the given
 parameters, such as path, verb, and other options. For example see the
 source code for camel-restlet, camel-spark-rest.
 
-=== Swagger API
+== Swagger API
 
 The Rest DSL supports Swagger Java by
 the `camel-swagger-java` module. See more details at
@@ -872,7 +872,7 @@ And in Java DSL
     .to("bean:userService?method=updateUser")
 ----
 
-==== Vendor Extensions
+=== Vendor Extensions
 
 The generated API documentation can be configured to include vendor extensions (https://swagger.io/specification/#specificationExtensions)
 which document the operations and definitions with additional information, such as class name of model classes, camel context id and route id's.
@@ -914,7 +914,7 @@ And in XML DSL:
 </restConfiguration>
 ----
 
-==== Supported API properties
+=== Supported API properties
 
 The following table lists supported API properties and explains their effect. To set them use `apiProperty(String, String)` in the Java DSL
 or `<apiProperty>` when defining the REST API via XML configuration. Properties in **bold** are required by the OpenAPI 2.0 specification. 

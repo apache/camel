@@ -1,5 +1,5 @@
 [[ErrorHandler-ErrorHandler]]
-=== Error Handler
+= Error Handler
 
 Camel supports pluggable
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
@@ -29,7 +29,7 @@ more power.
 The current implementations Camel provides out of the box are:
 
 [[ErrorHandler-Nontransacted]]
-=== Non transacted
+== Non transacted
 
 * DefaultErrorHandler is the default
 error handler in Camel. This error handler does not support a dead
@@ -41,7 +41,7 @@ sending it to a dead letter endpoint
 * NoErrorHandler for no error handling
 
 [[ErrorHandler-Transacted]]
-=== Transacted
+== Transacted
 
 * TransactionErrorHandler is the
 default error handler in Camel for transacted routes. See the
@@ -53,10 +53,10 @@ examples. Error handling rules are inherited on each routing rule within
 a single RouteBuilder
 
 [[ErrorHandler-ShortSummaryoftheprovidedErrorHandlers]]
-==== Short Summary of the provided Error Handlers
+== Short Summary of the provided Error Handlers
 
 [[ErrorHandler-DefaultErrorHandlerhttps://cwiki.apache.org/confluence/pages/viewpage.action?pageId=113880]]
-===== DefaultErrorHandler
+=== DefaultErrorHandler
 
 The DefaultErrorHandler is the default
 error handler in Camel. Unlike xref:dead-letter-channel.adoc[Dead Letter
@@ -64,7 +64,7 @@ Channel] it does not have any dead letter queue, and do *not* handle
 exceptions by default.
 
 [[ErrorHandler-DeadLetterChannelhttps://cwiki.apache.org/confluence/pages/viewpage.action?pageId=49482]]
-===== Dead Letter Channel
+=== Dead Letter Channel
 
 The Dead Letter Channel will redeliver at
 most 6 times using 1 second delay, and if the exchange failed it will be
@@ -97,7 +97,7 @@ or also from *Camel 2.3.0 onwards*
 --------------------------------------------------------------------------------------------------
 
 [[ErrorHandler-NoErrorHandler]]
-===== No Error Handler
+=== No Error Handler
 
 The no error handler is to be used for disabling error handling.
 
@@ -129,7 +129,7 @@ or also from *Camel 2.3.0 onwards*
 ---------------------------------------------------------------
 
 [[ErrorHandler]]
-===== TransactionErrorHandler
+=== TransactionErrorHandler
 
 The TransactionErrorHandler is the
 default error handler in Camel for transacted routes.
@@ -145,7 +145,7 @@ overrules the default error handler. This is convention over
 configuration.
 
 [[ErrorHandler-Featuressupportbyvariouss]]
-==== Features support by various Error Handlers
+== Features support by various Error Handlers
 
 Here is a breakdown of which features is supported by the
 Error Handler(s):
@@ -213,7 +213,7 @@ See Exception Clause documentation for
 documentation of some of the features above.
 
 [[ErrorHandler-Scopes]]
-==== Scopes
+== Scopes
 
 The error handler is scoped as either
 
@@ -255,7 +255,7 @@ RouteBuilder builder = new RouteBuilder() {
 ---------------------------------------------------------------
 
 [[ErrorHandler-Springbasedconfiguration]]
-==== Spring based configuration
+== Spring based configuration
 
 *Java DSL vs. Spring DSL*
 The error handler is configured a bit differently in Java DSL and Spring
@@ -277,7 +277,7 @@ handler then its use everywhere. But you can override this in a route
 and use another error handler.
 
 [[ErrorHandler-Springbasedconfigurationsample]]
-===== Spring based configuration sample
+=== Spring based configuration sample
 
 In this sample we configure a xref:dead-letter-channel.adoc[Dead Letter
 Channel] on the route that should redeliver at most 3 times and use a
@@ -295,7 +295,7 @@ From Camel 2.3.0, camel provides a customer bean configuration for the
 Error Handler, you can find the examples here.
 
 [[ErrorHandler-Usingthetransactionalerrorhandler]]
-==== Using the transactional error handler
+== Using the transactional error handler
 
 The transactional error handler is based on spring transaction. This
 requires the usage of the camel-spring component. +
@@ -304,7 +304,7 @@ samples for how to use and transactional behavior and configuration with
 this error handler.
 
 [[ErrorHandler-Seealso]]
-==== See also
+== See also
 
 * Error handling in Camel for
 introduction and background material on error handling in Camel

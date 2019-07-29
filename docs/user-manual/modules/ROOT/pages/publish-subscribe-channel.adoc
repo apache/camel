@@ -1,5 +1,5 @@
 [[PublishSubscribeChannel-PublishSubscribeChannel]]
-== Publish Subscribe Channel
+= Publish Subscribe Channel
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PublishSubscribeChannel.html[Publish
@@ -18,7 +18,7 @@ allowing multiple consumers.
 image:http://www.enterpriseintegrationpatterns.com/img/PublishSubscribeSolution.gif[image]
 
 [[PublishSubscribeChannel-Samples]]
-=== Samples
+== Samples
 
 Another option is to explicitly list the publish-subscribe relationship
 in your routing logic; this keeps the producer and consumer decoupled

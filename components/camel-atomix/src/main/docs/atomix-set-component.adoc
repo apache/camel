@@ -1,5 +1,5 @@
 [[atomix-set-component]]
-== Atomix Set Component
+= Atomix Set Component
 
 *Available as of Camel version 2.20*
 
@@ -17,7 +17,7 @@ for this component:
     </dependency>
 ----
 
-### URI format
+== URI format
 
 [source,java]
 ----
@@ -50,7 +50,7 @@ atomix-set:resourceName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

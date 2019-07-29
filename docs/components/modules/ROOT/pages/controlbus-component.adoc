@@ -1,5 +1,5 @@
 [[controlbus-component]]
-== Control Bus Component
+= Control Bus Component
 
 *Available as of Camel version 2.11*
 
@@ -36,7 +36,7 @@ controlbus:command[?options]
 Where *command* can be any string to identify which type of command to
 use.
 
-=== Commands
+== Commands
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -49,7 +49,7 @@ evaluating the message body. If there is any result from the evaluation,
 then the result is put in the message body.
 |===
 
-=== Options
+== Options
 
 
 // component options: START
@@ -76,7 +76,7 @@ controlbus:command:language
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +87,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,7 +109,7 @@ You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -138,7 +138,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Using route command
+== Using route command
 
 The route command allows you to do common tasks on a given route very
 easily, for example to start a route, you can send an empty message to
@@ -157,7 +157,7 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 ----
 
 [[ControlBus-Gettingperformancestatistics]]
-=== Getting performance statistics
+== Getting performance statistics
 
 *Available as of Camel 2.11.1*
 
@@ -183,7 +183,7 @@ just omit the routeId parameter as shown below:
 String xml = template.requestBody("controlbus:route?action=stats", null, String.class);
 ----
 
-=== Using Simple language
+== Using Simple language
 
 You can use the xref:manual::simple-language.adoc[Simple] language with the control bus,
 for example to stop a specific route, you can send a message to the

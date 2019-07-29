@@ -1,5 +1,5 @@
 [[flink-component]]
-== Apache Flink Component
+= Apache Flink Component
 
 *Available as of Camel version 2.18*
 
@@ -24,7 +24,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI Format
+== URI Format
 
 Currently, the Flink Component supports only Producers. One can create DataSet, DataStream jobs.
 
@@ -48,7 +48,7 @@ flink:endpointType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -58,7 +58,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -110,7 +110,7 @@ The component supports 7 options, which are listed below.
 
 
 
-### FlinkComponent Options
+== FlinkComponent Options
 
 
 
@@ -136,7 +136,7 @@ The Apache Flink component supports 6 options, which are listed below.
 
 
 
-### Flink DataSet Callback
+== Flink DataSet Callback
 
 [source,java]
 -----------------------------------
@@ -155,7 +155,7 @@ public DataSetCallback<Long> dataSetCallback() {
 }
 -----------------------------------
 
-### Flink DataStream Callback
+== Flink DataStream Callback
 
 [source,java]
 ---------------------------
@@ -172,7 +172,7 @@ public VoidDataStreamCallback dataStreamCallback() {
 }
 ---------------------------
 
-### Camel-Flink Producer call
+== Camel-Flink Producer call
 
 [source,java]
 -----------------------------------
@@ -189,7 +189,7 @@ try {
     }
 -----------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

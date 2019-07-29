@@ -1,5 +1,5 @@
 [[rabbitmq-component]]
-== RabbitMQ Component
+= RabbitMQ Component
 
 *Available as of Camel version 2.12*
 
@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 The old syntax is *deprecated*:
 [source,text]
@@ -44,7 +44,7 @@ RabbitMQ client default (5672). The exchange name determines which
 exchange produced messages will sent to. In the case of consumers, the
 exchange name determines which exchange the queue will bind to.
 
-=== Options
+== Options
 
 // component options: START
 The RabbitMQ component supports 51 options, which are listed below.
@@ -118,7 +118,7 @@ rabbitmq:exchangeName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -128,7 +128,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (59 parameters):
+=== Query Parameters (59 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -196,7 +196,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -279,7 +279,7 @@ See
 http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html[http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html]
 and the AMQP specification for more information on connection options.
 
-=== Using connection factory
+== Using connection factory
 
 To connect to RabbitMQ you can setup a `ConnectionFactory` (same as with JMS) with the login details such as:
 
@@ -315,7 +315,7 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 ----
 
 
-=== Message Headers
+== Message Headers
 
 The following headers are set on exchanges when consuming messages.
 
@@ -386,14 +386,14 @@ producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
 producer sets will be overriden.
 
-=== Message Body
+== Message Body
 
 The component will use the camel exchange in body as the rabbit mq
 message body. The camel exchange in object must be convertible to a byte
 array. Otherwise the producer will throw an exception of unsupported
 body type.
 
-=== Samples
+== Samples
 
 To receive messages from a queue that is bound to an exchange A with the
 routing key B,

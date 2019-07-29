@@ -1,5 +1,5 @@
 [[bean-language]]
-== Bean method Language
+= Bean method Language
 == Bean Language
 *Available as of Camel version 1.3*
 
@@ -18,7 +18,7 @@ xref:manual::message.adoc[Message] Exchange to the method parameters; so you can
 annotate the bean to extract headers or other expressions such as
 xref:components::xpath-language.adoc[XPath] or xref:components::xquery-language.adoc[XQuery] from the message.
 
-=== Bean Language options
+== Bean Language options
 
 // language options: START
 The Bean method language supports 4 options, which are listed below.
@@ -37,7 +37,7 @@ The Bean method language supports 4 options, which are listed below.
 
 
 [[BeanLanguage-UsingBeanExpressionsinJava]]
-=== Using Bean Expressions in Java
+== Using Bean Expressions in Java
 
 [source,syntaxhighlighter-pre]
 ----
@@ -47,7 +47,7 @@ from("activemq:topic:OrdersTopic")
 ----
 
 [[BeanLanguage-UsingBeanExpressionsinSpringXML]]
-=== Using Bean Expressions in Spring XML
+== Using Bean Expressions in Spring XML
 
 [source,syntaxhighlighter-pre]
 ----
@@ -70,7 +70,7 @@ deprecated. Use the *`ref`* attribute instead.
 ====
 
 [[BeanLanguage-WritingtheExpressionBean]]
-=== Writing the Expression Bean
+== Writing the Expression Bean
 
 The bean in the above examples is just any old Java Bean with a method
 called *`isGoldCustomer()`* that returns some object that is easily
@@ -110,7 +110,7 @@ xref:manual::message.adoc[Message] or individual headers, properties, the body
 or other expressions.
 
 [[BeanLanguage-Non-RegistryBeans]]
-=== Non-Registry Beans
+== Non-Registry Beans
 
 The xref:bean-language.adoc[Bean Language] also supports invoking beans
 that isn't registered in the xref:manual::registry.adoc[Registry]. This is
@@ -169,7 +169,7 @@ from("activemq:topic:OrdersTopic")
 ----
 
 [[BeanLanguage-OtherExamples]]
-=== Other Examples
+== Other Examples
 
 We have some test cases you can look at if it'll help
 

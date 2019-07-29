@@ -1,10 +1,10 @@
 # Camel Google Pubsub example
 
-### Introduction
+= Introduction
 
 An example which shows how to integrate Camel with Google Pubsub.
 
-### Preparing Google Pubsub
+== Preparing Google Pubsub
 
 This example requires a Google Cloud Account with a Pubsub subscription.
 To create a Goolge Cloud account please visit https://cloud.google.com.
@@ -32,7 +32,7 @@ Using an account and key::
   Set `credentials.account` to the service account email and `credentials.key` to the service account key.
 
 
-### Run
+== Run
 
 Run the consumer and producer in separate shells:
 
@@ -51,7 +51,7 @@ As the pubsub channel is persistent the consumer and producer do not need to run
 Messages can be send from the Google Pubsub console which will be picked up by the consumer.
 
 
-### Configuration
+== Configuration
 
 You can configure the details in the file:
   `src/main/resources/application.properties`
@@ -60,7 +60,7 @@ You can enable verbose logging by adjusting the `src/main/resources/log4j2.prope
   file as documented in the file.
 
 
-### Forum, Help, etc
+== Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums
 	<http://camel.apache.org/discussion-forums.html>

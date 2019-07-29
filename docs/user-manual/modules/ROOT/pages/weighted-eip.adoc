@@ -1,9 +1,9 @@
 [[weighted-eip]]
-== Weighted EIP
+= Weighted EIP
 
 Weighted Load Balancer, with this policy in case of failures the exchange will be tried on the next endpoint.
 
-=== Options
+== Options
 
 // eip options: START
 The Weighted EIP supports 3 options which are listed below:
@@ -17,7 +17,7 @@ The Weighted EIP supports 3 options which are listed below:
 |===
 // eip options: END
 
-=== Examples
+== Examples
 
 In this case we are using the header test as correlation expression:
 

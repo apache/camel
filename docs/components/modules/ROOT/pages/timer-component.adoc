@@ -1,12 +1,12 @@
 [[timer-component]]
-== Timer Component
+= Timer Component
 
 *Available as of Camel version 1.0*
 
 The Timer component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -33,7 +33,7 @@ xref:manual::faq/how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[hu
 friendly syntax].
 
 
-=== Options
+== Options
 
 // component options: START
 The Timer component supports 2 options, which are listed below.
@@ -58,7 +58,7 @@ timer:timerName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +91,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -119,7 +119,7 @@ The component supports 3 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Exchange Properties
+== Exchange Properties
 
 When the timer is fired, it adds the following information as properties
 to the `Exchange`:
@@ -139,7 +139,7 @@ to the `Exchange`:
 |`Exchange.TIMER_COUNTER` |`Long` |The current fire counter. Starts from 1.
 |===
 
-=== Sample
+== Sample
 
 To set up a route that generates an event every 60 seconds:
 
@@ -164,7 +164,7 @@ And the route in Spring DSL:
 </route>
 -----
 
-=== Firing as soon as possible
+== Firing as soon as possible
 
 *Available as of Camel 2.17*
 
@@ -188,7 +188,7 @@ reached.
 If you don't specify a repeatCount then the timer will continue firing
 messages until the route will be stopped. 
 
-=== Firing only once
+== Firing only once
 
 *Available as of Camel 2.8*
 
@@ -203,7 +203,7 @@ starting the route. To do that you use the repeatCount option as shown:
 </route>
 ----
 
-=== See Also
+== See Also
 
 * xref:scheduler-component.adoc[Scheduler]
 * xref:quartz2-component.adoc[Quartz]

@@ -1,5 +1,5 @@
 [[DynamicRouter-DynamicRouter]]
-== Dynamic Router
+= Dynamic Router
 
 The
 http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic
@@ -19,7 +19,7 @@ bean, will return `null` to indicate the end. Otherwise the
 `dynamicRouter` will keep repeating endlessly.
 
 [[DynamicRouter-Options]]
-=== Options
+== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -39,7 +39,7 @@ value to -1 allows to turn off the cache all together.
 |=======================================================================
 
 [[DynamicRouter-DynamicRouterinCamel2.5onwards]]
-=== Dynamic Router in Camel 2.5 onwards
+== Dynamic Router in Camel 2.5 onwards
 
 The Dynamic Router will set a
 property (Exchange.SLIP_ENDPOINT) on the Exchange
@@ -49,7 +49,7 @@ because the Dynamic Router implementation is
 based on top of Routing Slip).
 
 [[DynamicRouter-JavaDSL]]
-=== Java DSL
+== Java DSL
 
 In Java DSL you can use the `dynamicRouter` as shown below:
 
@@ -139,7 +139,7 @@ Exchange are. Although there was a bug in the method
 call expression, see the warning below.
 
 [[DynamicRouter-SpringXML]]
-=== Spring XML
+== Spring XML
 
 The same example in Spring XML would be:
 
@@ -165,7 +165,7 @@ The same example in Spring XML would be:
 ----
 
 [[DynamicRouter-DynamicRouterannotation]]
-=== @DynamicRouter annotation
+== @DynamicRouter annotation
 
 You can also use the `@DynamicRouter` annotation. The `route` method would
 then be invoked repeatedly as the message is processed dynamically. The

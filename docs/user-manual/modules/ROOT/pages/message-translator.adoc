@@ -1,5 +1,5 @@
 [[messageTranslator-eip]]
-== Message Translator
+= Message Translator
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
@@ -12,7 +12,7 @@ in different encodings.
 
 image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[image]
 
-=== Samples
+== Samples
 
 You can transform a message using Camel's
 xref:bean-integration.adoc[Bean Integration] to call any method on a

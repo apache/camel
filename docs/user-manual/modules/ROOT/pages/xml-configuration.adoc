@@ -1,5 +1,5 @@
 [[XMLConfiguration-XMLConfiguration]]
-=== XML Configuration
+= XML Configuration
 
 We recommend developers use the Java xref:dsl.adoc[Domain Specific Language] when writing routing rules as this provides maximum IDE
 completion and functionality while being the most expressive. However if
@@ -15,7 +15,7 @@ For examples on how to use Camel XML, see the
 xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns] or refer to the xref:components::spring.adoc[Spring Support].
 
 [[XMLConfiguration-SeeAlso]]
-=== See Also
+== See Also
 
 * xref:xml-reference.adoc[XML Reference]
 * xref:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do I use Spring Property Placeholder with Camel XML]

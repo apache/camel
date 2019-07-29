@@ -1,5 +1,5 @@
 [[OpenTracing-OpenTracingComponent]]
-## OpenTracing Component
+= OpenTracing Component
 
 *Available as of Camel 2.19*
 
@@ -12,7 +12,7 @@ to/from Camel.
 See the http://opentracing.io/[OpenTracing] website for a list of supported tracers.
 
 
-### Configuration
+== Configuration
 
 The configuration properties for the OpenTracing tracer are:
 
@@ -31,7 +31,7 @@ Dashes need for instances to be encoded for JMS property keys.
 
 There are three ways in which an OpenTracing tracer can be configured to provide distributed tracing for a Camel application:
 
-#### Explicit
+=== Explicit
 
 Include the `camel-opentracing` component in your POM, along with any specific dependencies associated with the chosen OpenTracing compliant Tracer.
 
@@ -59,7 +59,7 @@ OpenTracing tracer beans. Camel will automatically discover and use them.
   </bean>
 ---------------------------------------------------------------------------------------------------------
 
-### Spring Boot
+== Spring Boot
 
 If you are using Spring Boot then you can add
 the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
@@ -69,7 +69,7 @@ The `Tracer` will be implicitly obtained from the camel context's `Registry`, or
 a `Tracer` bean has been defined by the application.
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -96,7 +96,7 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Java Agent
+== Java Agent
 
 The third approach is to use a Java Agent to automatically configure the OpenTracing support.
 
@@ -120,7 +120,7 @@ The `Tracer` used will be implicitly loaded from the camel context `Registry` or
 
 How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option.
 
-### Example
+== Example
 
 You can find an example demonstrating the three ways to configure OpenTracing here:
 https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing]

@@ -1,5 +1,5 @@
 [[otherwise-eip]]
-== Otherwise EIP
+= Otherwise EIP
 
 The Otherwise EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
 Based Router] from the xref:enterprise-integration-patterns.adoc[EIP
@@ -7,13 +7,13 @@ patterns]
 
 image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
 
-=== Options
+== Options
 
 // eip options: START
 The Otherwise EIP has no options.
 // eip options: END
 
-=== Examples
+== Examples
 
 The following example shows how to route a request from an input
 *direct:a* endpoint to either *direct:b*, *direct:c* or *direct:d* depending on

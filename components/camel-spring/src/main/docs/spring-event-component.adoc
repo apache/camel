@@ -1,5 +1,5 @@
 [[spring-event-component]]
-== Spring Event Component
+= Spring Event Component
 
 *Available as of Camel version 1.4*
 
@@ -11,7 +11,7 @@ xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] to process them such as xref:manual::filter-eip.adoc[Message
 Filter].
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------
@@ -21,7 +21,7 @@ spring-event://default[?options]
 Note, at the moment there are no options for this component. That can
 easily change in future releases, so please check back.
 
-### Spring Event Options
+== Spring Event Options
 
 
 
@@ -50,7 +50,7 @@ spring-event:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -107,7 +107,7 @@ The component supports 5 options, which are listed below.
 
 
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

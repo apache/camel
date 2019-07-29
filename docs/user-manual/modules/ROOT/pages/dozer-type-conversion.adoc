@@ -1,5 +1,5 @@
 [[DozerTypeConversion-DozerTypeConversion]]
-== Dozer Type Conversion
+= Dozer Type Conversion
 
 https://github.com/DozerMapper/dozer/blob/master/docs/asciidoc/about/about.adoc[Dozer] is a fast
 and flexible framework for mapping back and forth between Java Beans.
@@ -100,7 +100,7 @@ inconsistencies between the beans i.e. the address properties, knowing
 that Dozer will automatically match and convert the others.
 
 [[DozerTypeConversion-ConfiguringDozer]]
-=== Configuring Dozer
+== Configuring Dozer
 
 Dozer's configuration is extremely flexible and many mapping scenarios
 are covered https://github.com/DozerMapper/dozer/blob/master/docs/asciidoc/documentation/mappings.adoc[here].
@@ -129,7 +129,7 @@ For our simple example, the configuration looks like the following.
 ---------------------------------------------------------------------------------------------------------
 
 [[DozerTypeConversion-SupportforDozerinCamel]]
-=== Support for Dozer in Camel
+== Support for Dozer in Camel
 
 Camel provides a simple mechanism to integrate Dozer Mappers with it's
 own powerful http://camel.apache.org/type-converter.html[Type

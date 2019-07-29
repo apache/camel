@@ -1,5 +1,5 @@
 [[beanstalk-component]]
-== Beanstalk Component
+= Beanstalk Component
 
 *Available as of Camel version 2.15*
 
@@ -10,7 +10,7 @@ You can find the detailed explanation of Beanstalk job lifecycle
 at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
 protocol].
 
-### Dependencies
+== Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -25,7 +25,7 @@ Maven users need to add the following dependency to their `pom.xml`
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 
-### URI format
+== URI format
 
 [source,xml]
 ------------------------------------------
@@ -52,7 +52,7 @@ details here].
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
-### Beanstalk options
+== Beanstalk options
 
 
 
@@ -82,7 +82,7 @@ beanstalk:connectionSettings
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (28 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -129,7 +129,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -188,7 +188,7 @@ Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
 see Polling Consumer.
 
-### Consumer Headers
+== Consumer Headers
 
 The consumer stores a number of job headers in the Exchange message:
 
@@ -218,7 +218,7 @@ queue
 |_beanstalk.kicks_ |int |the number of times this job has been kicked
 |=======================================================================
 
-### Examples
+== Examples
 
 This Camel component lets you both request the jobs for processing and
 supply them to Beanstalkd daemon. Our simple demo routes may look like
@@ -258,7 +258,7 @@ out of buried and/or delayed state to the normal queue.
 
  
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

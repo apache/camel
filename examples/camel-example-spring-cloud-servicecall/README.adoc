@@ -7,17 +7,17 @@ This example includes two maven modules:
  - service that exposes a number of services
  - consumer that consumes services
 
-## Configuration
+= Configuration
 
 The consumer is configured in the src/main/resources/application.properties
 
-## Build
+== Build
 
 You can build this example using
 
     mvn compile
 
-## Run the example
+== Run the example
 
 Using multiple shells:
 
@@ -37,7 +37,7 @@ Using multiple shells:
   $ cd consumer
   $ mvn spring-boot:run
 
-## Test the example:
+== Test the example:
 
 In a new shell:
 
@@ -48,7 +48,7 @@ In a new shell:
 
 If you keep calling the http endpoint you'll notice they are consumed using a round robin policy and that only the services matching specific tags are consumed.
 
-## Web console
+== Web console
 
 You can open the Consul web console
 
@@ -56,7 +56,7 @@ You can open the Consul web console
 
 Where you can find information about the services and its state.
 
-## More information
+== More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/
 

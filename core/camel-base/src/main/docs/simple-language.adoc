@@ -1,5 +1,5 @@
 [[simple-language]]
-== Simple Language
+= Simple Language
 
 *Available as of Camel version 1.1*
 
@@ -29,7 +29,7 @@ uses `$simple{ }` as placeholders. This can be used in situations to avoid clash
 Spring property placeholder together with Camel.
 
 
-=== Simple Language options
+== Simple Language options
 
 // language options: START
 The Simple language supports 2 options, which are listed below.
@@ -44,7 +44,7 @@ The Simple language supports 2 options, which are listed below.
 |===
 // language options: END
 
-=== Variables
+== Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -226,7 +226,7 @@ includes the route strack-trace). This can be used if you do not want to
 log sensitive data from the message itself.
 |=======================================================================
 
-=== OGNL expression support
+== OGNL expression support
 
 INFO:Camel's OGNL support is for invoking methods only. You cannot access
 fields. Camel support accessing the length field of Java arrays.
@@ -357,7 +357,7 @@ And yes you can combine this with the operator support as shown below:
 simple("${body.address.zip} > 1000")
 ------------------------------------
 
-=== Operator support
+== Operator support
 
 The parser is limited to only support a single operator.
 
@@ -509,7 +509,7 @@ simple("${in.header.bar} == 100")
 simple("${in.header.bar} > 100")
 ----
 
-==== Comparing with different types
+=== Comparing with different types
 
 When you compare with different types such as String and int, then you
 have to take a bit care. Camel will use the type from the left hand side
@@ -617,7 +617,7 @@ From *Camel 2.9* onwards the range value must be in single quotes
 simple("${in.header.number} range '100..199'")
 ----
 
-==== Using Spring XML
+=== Using Spring XML
 
 As the Spring XML does not have all the power as the Java DSL with all
 its various builder methods, you have to resort to use some other
@@ -635,7 +635,7 @@ order:
 </from>
 ----
 
-=== Using and / or
+== Using and / or
 
 If you have two expressions you can combine them with the `&&` or `||`
 operator.
@@ -664,7 +664,7 @@ simple("${in.header.title} contains 'Camel' && ${in.header.type'} == 'gold' && $
 -----
 
 
-=== Samples
+== Samples
 
 In the Spring XML sample below we filter based on a header value:
 
@@ -788,7 +788,7 @@ You can nest functions, such as shown below:
 </setHeader>
 ----
 
-=== Referring to constants or enums
+== Referring to constants or enums
 
 Suppose you have an enum for customers
 
@@ -796,7 +796,7 @@ And in a Content Based Router we can use
 the xref:simple-language.adoc[Simple] language to refer to this enum, to check
 the message which enum it matches.
 
-=== Using new lines or tabs in XML DSLs
+== Using new lines or tabs in XML DSLs
 
 It is easier to specify new lines or tabs in
 XML DSLs as you can escape the value now
@@ -808,7 +808,7 @@ XML DSLs as you can escape the value now
 </transform>
 ----
 
-=== Leading and trailing whitespace handling
+== Leading and trailing whitespace handling
 
 The trim attribute of the expression can be
 used to control whether the leading and trailing whitespace characters
@@ -822,7 +822,7 @@ whitespace characters.
 </setBody>
 ----
 
-=== Setting result type
+== Setting result type
 
 You can now provide a result type to the xref:simple-language.adoc[Simple]
 expression, which means the result of the evaluation will be converted
@@ -846,7 +846,7 @@ And in XML DSL
 </setHeader>
 ----
 
-=== Loading script from external resource
+== Loading script from external resource
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -858,7 +858,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
 ----
 
-=== Setting Spring beans to Exchange properties
+== Setting Spring beans to Exchange properties
 
 You can set a spring bean into an exchange property as shown below:
 

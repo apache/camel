@@ -1,5 +1,5 @@
 [[stream-config-eip]]
-== Stream-config EIP
+= Stream-config EIP
 
 Stream-processing resequence EIP
 

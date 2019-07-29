@@ -1,5 +1,5 @@
 [[message-eip]]
-== Message
+= Message
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/Message.html[Message] from

@@ -1,5 +1,5 @@
 [[univocity-tsv-dataformat]]
-== uniVocity TSV DataFormat
+= uniVocity TSV DataFormat
 
 *Available as of Camel version 2.15*
 
@@ -29,7 +29,7 @@ download page for the latest versions]).
 </dependency>
 ----------------------------------------------------
 
-### Options
+== Options
 
 Most configuration options of the uniVocity-parsers are available in the
 data formats. If you want more information about a particular option,
@@ -40,7 +40,7 @@ page].
 The 3 data formats share common options and have dedicated ones, this
 section presents them all.
 
-### Options
+== Options
 
 
 // dataformat options: START
@@ -70,7 +70,7 @@ The uniVocity TSV dataformat supports 15 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -113,7 +113,7 @@ The component supports 16 options, which are listed below.
 
 
 
-### Marshalling usages
+== Marshalling usages
 
 The marshalling accepts either:
 
@@ -122,7 +122,7 @@ The marshalling accepts either:
 
 Any other body will throws an exception.
 
-#### Usage example: marshalling a Map into CSV format
+=== Usage example: marshalling a Map into CSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ Any other body will throws an exception.
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Usage example: marshalling a Map into fixed-width format
+=== Usage example: marshalling a Map into fixed-width format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ Any other body will throws an exception.
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Usage example: marshalling a Map into TSV format
+=== Usage example: marshalling a Map into TSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ Any other body will throws an exception.
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Unmarshalling usages
+== Unmarshalling usages
 
 The unmarshalling uses an `InputStream` in order to read the data.
 
@@ -180,7 +180,7 @@ All the rows can either:
 * be collected at once into a list (`lazyLoad` option with `false`);
 * be read on the fly using an iterator (`lazyLoad` option with `true`).
 
-#### Usage example: unmarshalling a CSV format into maps with automatic headers
+=== Usage example: unmarshalling a CSV format into maps with automatic headers
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ All the rows can either:
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Usage example: unmarshalling a fixed-width format into lists
+=== Usage example: unmarshalling a fixed-width format into lists
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------

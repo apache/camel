@@ -1,5 +1,5 @@
 [[quartz2-component]]
-== Quartz2 Component
+= Quartz2 Component
 
 *Available as of Camel version 2.12*
 
@@ -22,7 +22,7 @@ for this component:
 ------------------------------------------------------------
 
 
-=== URI format
+== URI format
 
 ----
 quartz2://timerName?options
@@ -39,7 +39,7 @@ name.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -78,7 +78,7 @@ quartz2:groupName/triggerName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -118,7 +118,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -184,7 +184,7 @@ required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on `<camelContext>` then a unique id is auto assigned, and there is no problem.
 ====
 
-=== Configuring quartz.properties file
+== Configuring quartz.properties file
 
 By default Quartz will look for a `quartz.properties` file in the
 `org/quartz` directory of the classpath. If you are using WAR
@@ -212,7 +212,7 @@ To do this you can configure this in Spring XML as follows
 </bean>
 ----
 
-=== Enabling Quartz scheduler in JMX
+== Enabling Quartz scheduler in JMX
 
 You need to configure the quartz scheduler properties to enable JMX. +
  That is typically setting the option
@@ -221,7 +221,7 @@ configuration file.
 
 This option is set to true by default, unless explicitly disabled.
 
-=== Starting the Quartz scheduler
+== Starting the Quartz scheduler
 
 The xref:quartz2-component.adoc[Quartz2] component offers an option to let the
 Quartz scheduler be started delayed, or not auto started at all.
@@ -235,7 +235,7 @@ This is an example:
 </bean>
 ----
 
-=== Clustering
+== Clustering
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
 Then the xref:quartz2-component.adoc[Quartz2] component will *not* pause/remove
@@ -245,7 +245,7 @@ to keep running on the other nodes in the cluster.
 *Note*: When running in clustered node no checking is done to ensure
 unique job name/group for endpoints.
 
-=== Message Headers
+== Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header
 values. The following headers are added: +
@@ -257,7 +257,7 @@ values. The following headers are added: +
 The `fireTime` header contains the `java.util.Date` of when the exchange
 was fired.
 
-=== Using Cron Triggers
+== Using Cron Triggers
 
 Quartz supports
 http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html[Cron-like
@@ -290,7 +290,7 @@ valid URI syntax:
 |`+` | _Space_
 |===
 
-=== Specifying time zone
+== Specifying time zone
 
 The Quartz Scheduler allows you to configure time zone per trigger. For
 example to use a timezone of your country, then you can do as follows:
@@ -301,7 +301,7 @@ quartz2://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.timeZone=Euro
 
 The timeZone value is the values accepted by `java.util.TimeZone`.
 
-=== Configuring misfire instructions
+== Configuring misfire instructions
 
 The quartz scheduler can be configured with a misfire instruction
 to handle misfire situations for the trigger.
@@ -321,7 +321,7 @@ quartz2://myGroup/myTimerName?cron=0/2+*+*+*+*+?trigger.misfireInstruction=2
 
 The simple and cron triggers has the following misfire instructions representative:
 
-==== SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW = 1 (default)
+====SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW = 1 (default)
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be fired now by Scheduler.
@@ -330,7 +330,7 @@ This instruction should typically only be used for
 'one-shot' (non-repeating) Triggers. If it is used on a trigger with a
 repeat count > 0 then it is equivalent to the instruction MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT.
 
-==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT = 2
+====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_EXISTING_REPEAT_COUNT = 2
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -344,7 +344,7 @@ the start-time and repeat-count that it was originally setup with (this
 is only an issue if you for some reason wanted to be able to tell what
 the original values were at some later time).
 
-==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT = 3
+====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NOW_WITH_REMAINING_REPEAT_COUNT = 3
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -365,7 +365,7 @@ This instruction could cause the Trigger
 to go to the 'COMPLETE' state after firing 'now', if all the
 repeat-fire-times where missed.
 
-==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT = 4
+====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_REMAINING_COUNT = 4
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -376,7 +376,7 @@ repeat count set to what it would be, if it had not missed any firings.
 WARNING: This instruction could cause the Trigger
 to go directly to the 'COMPLETE' state if all fire-times where missed.
 
-==== SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT = 5
+====SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT = 5
 
 Instructs the Scheduler that upon a mis-fire
 situation, the SimpleTrigger wants to be
@@ -387,12 +387,12 @@ WARNING: This instruction could cause the Trigger
 to go directly to the 'COMPLETE' state if the end-time of the trigger
 has arrived.
 
-==== CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW = 1 (default)
+====CronTrigger.MISFIRE_INSTRUCTION_FIRE_ONCE_NOW = 1 (default)
 
 Instructs the Scheduler that upon a mis-fire
 situation, the CronTrigger wants to be fired now by Scheduler.
 
-==== CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING = 2
+====CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING = 2
 
 Instructs the Scheduler that upon a mis-fire
 situation, the CronTrigger wants to have it's
@@ -401,7 +401,7 @@ current time (taking into account any associated Calendar
 but it does not want to be fired now.
 
 
-=== Using QuartzScheduledPollConsumerScheduler
+== Using QuartzScheduledPollConsumerScheduler
 
 The xref:quartz2-component.adoc[Quartz2] component provides a
 Polling Consumer scheduler which allows to

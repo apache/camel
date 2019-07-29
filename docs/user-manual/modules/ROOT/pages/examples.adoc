@@ -1,4 +1,4 @@
-=== Examples
+= Examples
 
 Once you have read about xref:getting-started.adoc[Getting Started] and
 looked at the xref:enterprise-integration-patterns.adoc[Enterprise
@@ -9,7 +9,7 @@ xref:faq/what-are-the-dependencies.adoc[check the requirements for working
 with Camel]. Then xref:running-examples.adoc[Running Examples] describes
 how to get the examples to run
 
-==== Walk-throughs
+== Walk-throughs
 
 * Walk through the code of a
 xref:walk-through-an-example.adoc[beginner's example] so you can
@@ -33,7 +33,7 @@ our xref:mailing-lists.adoc[Mailing Lists], or simply post a tweet with
 the words "Apache Camel".
 ====
 
-==== Examples
+== Examples
 
 Browse the examples from github where each example is documented and up
 to date:
@@ -42,7 +42,7 @@ https://github.com/apache/camel/tree/master/examples#welcome-to-the-apache-camel
 
 
 [[Examples-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns]

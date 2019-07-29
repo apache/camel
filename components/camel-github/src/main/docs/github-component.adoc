@@ -1,5 +1,5 @@
 [[github-component]]
-== GitHub Component
+= GitHub Component
 
 *Available as of Camel version 2.15*
 
@@ -33,14 +33,14 @@ for this component:
 </dependency>
 -----------------------------------------
 
-### URI format
+== URI format
 
 [source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
-### Mandatory Options:
+== Mandatory Options:
 
 Note that these can be configured directly through the endpoint.
 
@@ -69,7 +69,7 @@ github:type/branchName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +103,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -134,7 +134,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -151,7 +151,7 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |commit |polling |org.eclipse.egit.github.core.RepositoryCommit
 |=======================================================================
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================

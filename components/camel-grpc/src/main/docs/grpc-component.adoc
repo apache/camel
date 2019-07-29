@@ -1,5 +1,5 @@
 [[grpc-component]]
-== gRPC Component
+= gRPC Component
 
 *Available as of Camel version 2.19*
 
@@ -30,14 +30,14 @@ add following configuration property to the maven file
 <properties>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------
 grpc://service[?options]
 -------------------------------------
 
-### Endpoint Options
+== Endpoint Options
 
 // component options: START
 The gRPC component supports 2 options, which are listed below.
@@ -61,7 +61,7 @@ grpc:host:port/service
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,7 +109,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -138,7 +138,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Transport security and authentication support
+== Transport security and authentication support
 
 The following https://grpc.io/docs/guides/auth.html[authentication] mechanisms are built-in to gRPC and available in this component:
 
@@ -171,7 +171,7 @@ Using the JDK for ALPN is generally much slower and may not support the necessar
 There might be a need to install additional libraries according to the Operating System of choice.
 For more information consult https://github.com/grpc/grpc-java/blob/master/SECURITY.md[the Security page of gRPC].
 
-### gRPC producer resource type mapping
+== gRPC producer resource type mapping
 
 The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note, that invocation of the procedures with incoming stream parameter in asynchronous style are not allowed.
 
@@ -191,7 +191,7 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
-### gRPC consumer headers (will be installed after the consumer invocation)
+== gRPC consumer headers (will be installed after the consumer invocation)
 
 [width="100%",cols="25%,50,25%",options="header",]
 |=======================================================================
@@ -203,7 +203,7 @@ The table below shows the types of objects in the message body, depending on the
 
 |=======================================================================
 
-### Examples
+== Examples
 
 Below is a simple synchronous method invoke with host and port parameters
 
@@ -264,7 +264,7 @@ from("direct:grpc-jwt")
 .to("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong?method=pingSyncSync&synchronous=true&authenticationType=JWT&jwtSecret=supersecuredsecret");
 -------------------------------------------------------------------------------
 
-### Configuration
+== Configuration
 
 It's it is recommended to use Maven Protocol Buffers Plugin which calls Protocol Buffer Compiler (protoc) tool to generate Java source files from .proto (protocol buffer definition) files for the custom project. This plugin will generate procedures request and response classes, their builders and gRPC procedures stubs classes as well.
 
@@ -307,13 +307,13 @@ Insert gRPC and protobuf Java code generator plugin **<plugins>** tag of the pro
 </plugin>
 -------------------------------------------------------------------------
 
-### For more information, see these resources
+== For more information, see these resources
 
 http://www.grpc.io/[gRPC project site]
 
 https://www.xolstice.org/protobuf-maven-plugin[Maven Protocol Buffers Plugin]
 
-### See Also
+== See Also
 
 * Getting Started
 * Configuring Camel

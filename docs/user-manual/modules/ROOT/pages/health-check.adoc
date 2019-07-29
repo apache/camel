@@ -1,5 +1,5 @@
 [[HealthCheck-HealthCheck]]
-== HealthCheck
+= HealthCheck
 
 *Available as of Camel 2.20*
 
@@ -17,7 +17,7 @@ Camel 2.20 provides an *experimental* support to probe the state of a Camel inte
 - *HealthCheckRepository:* a simple interface to define health check providers and by default there is one that grabs all the checks available in the registry so you can add your own check i.e. istantiating your bean in spring/spring-boot; components can provide theirs own repository;
 - *HealthCheckService:* a simple service that runs in the background and invokes the checks according to a schedule;
 
-=== Examples:
+== Examples:
 
 - *Spring Boot*:
 +
@@ -96,7 +96,7 @@ camel.health.check.routes.threshold[slow].last-processing-time.failures = 5
 </beans>
 ----
 
-=== Writing a custom check:
+== Writing a custom check:
 
 As of version 2.20.0, there are a limited number of health checks provided by Camel out of the box so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some usueful methods:
 

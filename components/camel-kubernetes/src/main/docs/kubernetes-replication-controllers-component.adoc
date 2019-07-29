@@ -1,5 +1,5 @@
 [[kubernetes-replication-controllers-component]]
-== Kubernetes Replication Controller Component
+= Kubernetes Replication Controller Component
 
 *Available as of Camel version 2.17*
 
@@ -9,7 +9,7 @@ consume kubernetes replication controller events.
 
 
 
-### Component Options
+== Component Options
 
 // component options: START
 The Kubernetes Replication Controller component supports 2 options, which are listed below.
@@ -25,7 +25,7 @@ The Kubernetes Replication Controller component supports 2 options, which are li
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Kubernetes Replication Controller endpoint is configured using URI syntax:
@@ -36,7 +36,7 @@ kubernetes-replication-controllers:masterUrl
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -46,7 +46,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +85,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

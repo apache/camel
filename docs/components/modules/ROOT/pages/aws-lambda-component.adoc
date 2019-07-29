@@ -1,5 +1,5 @@
 [[aws-lambda-component]]
-== AWS Lambda Component
+= AWS Lambda Component
 
 *Available as of Camel version 2.20*
 
@@ -18,7 +18,7 @@ When creating a Lambda function, you need to specify a IAM role which has at lea
 
 Lambda is regional service. Unlike S3 bucket, Lambda function created in a given region is not available on other regions.
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------
@@ -28,7 +28,7 @@ aws-lambda://functionName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -60,7 +60,7 @@ aws-lambda:function
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -137,9 +137,9 @@ You have to provide the awsLambdaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/lambda/[Amazon Lambda] service.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the Lambda producer
+=== Message headers evaluated by the Lambda producer
 
 [width="100%",cols="5%,5%,10%,75%,5%",options="header",]
 |=======================================================================
@@ -198,7 +198,7 @@ The default is 3 seconds.|No
 
 |=======================================================================
 
-### List of Avalaible Operations
+== List of Avalaible Operations
 
 - listFunctions
 - getFunction,
@@ -215,18 +215,18 @@ The default is 3 seconds.|No
 - publishVersion
 - listVersions
 
-### Example
+== Example
 
 To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/master/components/camel-aws/src/test/java/org/apache/camel/component/aws/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
 
-### Automatic detection of AmazonLambda client in registry
+== Automatic detection of AmazonLambda client in registry
 
 The component is capable of detecting the presence of an AmazonLambda bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -243,7 +243,7 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

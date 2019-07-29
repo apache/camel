@@ -1,5 +1,5 @@
 [[mongodb3-component]]
-== MongoDB Component
+= MongoDB Component
 
 *Available as of Camel version 2.19*
 
@@ -44,14 +44,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
 mongodb3:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-=== MongoDB options
+== MongoDB options
 
 
 // component options: START
@@ -82,7 +82,7 @@ mongodb3:connectionBean
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -125,7 +125,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -156,7 +156,7 @@ The component supports 4 options, which are listed below.
 
 
 [[MongoDB-ConfigurationofdatabaseinSpringXML]]
-=== Configuration of database in Spring XML
+== Configuration of database in Spring XML
 
 The following Spring XML creates a bean defining the connection to a
 MongoDB instance.
@@ -182,7 +182,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/context
 </beans>
 ----------------------------------------------------------------------------------------------------------------------------------
 
-=== Sample route
+== Sample route
 
 The following route defined in Spring XML executes the operation
 xref:mongodb3-component.adoc[*dbStats*] on a collection.
@@ -199,11 +199,11 @@ xref:mongodb3-component.adoc[*dbStats*] on a collection.
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
 
-=== MongoDB operations - producer endpoints
+== MongoDB operations - producer endpoints
 
-==== Query operations
+=== Query operations
 
-===== findById
+==== findById
 
 This operation retrieves only one element from the collection whose _id
 field matches the content of the IN message body. The incoming object
@@ -223,7 +223,7 @@ from("direct:findById")
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter. See
 xref:mongodb3-component.adoc[Specifying optional parameters].
 
-===== findOneByQuery
+==== findOneByQuery
 
 Use this operation to retrieve just one element (the first) from the collection that
 matches a MongoDB query. *The query object is extracted `CamelMongoDbCriteria` header*.
@@ -254,7 +254,7 @@ from("direct:findOneByQuery")
 TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
 xref:mongodb3-component.adoc[Specifying optional parameters].
 
-===== findAll
+==== findAll
 
 The `findAll` operation returns all documents matching a query, or none
 at all, in which case all documents contained in the collection are
@@ -337,7 +337,7 @@ consideration. |int/Integer
 TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
 xref:mongodb3-component.adoc[Specifying optional parameters].
 
-===== count
+==== count
 
 Returns the total number of objects in a collection, returning a Long as
 the OUT message body. +
@@ -367,7 +367,7 @@ Document query = ...
 Long count = template.requestBodyAndHeader("direct:count", query, MongoDbConstants.COLLECTION, "dynamicCollectionName");
 ------------------------------------------------------------------------------------------------------------------------
 
-===== Specifying a fields filter (projection)
+==== Specifying a fields filter (projection)
 
 Query operations will, by default, return the matching objects in their
 entirety (with all their fields). If your documents are large and you
@@ -399,7 +399,7 @@ Bson fieldProjection = Projection.exclude("_id", "boringField");
 Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.FIELDS_PROJECTION, fieldProjection);
 ----------------------------------------------------------------------------------------------------------------------------
 
-===== Specifying a sort clause
+==== Specifying a sort clause
 
 There is a often a requirement to fetch the min/max record from a 
 collection based on sorting by a particular field
@@ -432,9 +432,9 @@ to a single field, based on the `documentTimestamp` field:
 .to("direct:aMyBatisParameterizedSelect");
 ----------------------------------------------------------------------------------------------------------------------------
 
-==== Create/update operations
+=== Create/update operations
 
-===== insert
+==== insert
 
 Inserts an new object into the MongoDB collection, taken from the IN
 message body. Type conversion is attempted to turn it into `Document` or
@@ -481,7 +481,7 @@ have been inserted.
 In MongoDB Java Driver 3.x the insertOne and insertMany operation return void.
 The Camel insert operation return the Document or List of Documents inserted. Note that each Documents are Updated by a new OID if need.
 
-===== save
+==== save
 
 The save operation is equivalent to an _upsert_ (UPdate, inSERT)
 operation, where the record will be updated, and if it doesn't exist, it
@@ -513,7 +513,7 @@ from("direct:insert")
     .to("mongodb3:myDb?database=flights&collection=tickets&operation=save");
 ---------------------------------------------------------------------------
 
-===== update
+==== update
 
 Update one or multiple records on the collection. Requires a filter query and 
 a update rules.
@@ -588,9 +588,9 @@ Object result = template.requestBodyAndHeader("direct:update", updateObj, MongoD
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 
-==== Delete operations
+=== Delete operations
 
-===== remove
+==== remove
 
 Remove matching records from the collection. The IN message body will
 act as the removal filter query, and is expected to be of type
@@ -611,9 +611,9 @@ A header with key `CamelMongoDbRecordsAffected` is returned
 containing the number of records deleted (copied from
 `WriteResult.getN()`).
 
-==== Bulk Write Operations
+=== Bulk Write Operations
 
-===== bulkWrite
+==== bulkWrite
 
 *Available as of Camel 2.21*
 
@@ -647,9 +647,9 @@ Unordered operations are executed in parallel and this behavior is not guarantee
 |=======================================================================
 
 
-==== Other operations
+=== Other operations
 
-===== aggregate
+==== aggregate
 
 Perform a aggregation with the given pipeline contained in the
 body.
@@ -701,7 +701,7 @@ Note that calling `.split(body())` is enough to send the entries down the route 
 Calling `.streaming()` is thus required to load data into memory by batches.
 
 
-===== getDbStats
+==== getDbStats
 
 Equivalent of running the `db.stats()` command in the MongoDB shell,
 which displays useful statistic figures about the database. +
@@ -738,7 +738,7 @@ assertTrue("Result is not of type Document", result instanceof Document);
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `Document` in the OUT message body.
 
-===== getColStats
+==== getColStats
 
 Equivalent of running the `db.collection.stats()` command in the MongoDB
 shell, which displays useful statistic figures about the collection. +
@@ -778,7 +778,7 @@ assertTrue("Result is not of type Document", result instanceof Document);
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `Document` in the OUT message body.
 
-===== command
+==== command
 
 Run the body as a command on database. Useful for admin operation as
 getting host information, replication or sharding status.
@@ -792,7 +792,7 @@ DBObject commandBody = new BasicDBObject("hostInfo", "1");
 Object result = template.requestBody("direct:command", commandBody);
 --------------------------------------------------------------------------------
 
-==== Dynamic operations
+=== Dynamic operations
 
 An Exchange can override the endpoint's fixed operation by setting the
 `CamelMongoDbOperation` header, defined by the
@@ -810,13 +810,13 @@ Object result = template.requestBodyAndHeader("direct:insert", "irrelevantBody",
 assertTrue("Result is not of type Long", result instanceof Long);
 -----------------------------------------------------------------------------------------------------------------------------
 
-=== Consumers
+== Consumers
 There are several types of consumers:
 
 . Tailable Cursor Consumer
 . Change Streams Consumer
 
-==== Tailable Cursor Consumer
+=== Tailable Cursor Consumer
 
 MongoDB offers a mechanism to instantaneously consume ongoing data from
 a collection, by keeping the cursor open just like the `tail -f` command
@@ -838,7 +838,7 @@ new objects are inserted, MongoDB will push them as `Document` in natural
 order to your tailable cursor consumer, who will transform them to an
 Exchange and will trigger your route logic.
 
-=== How the tailable cursor consumer works
+== How the tailable cursor consumer works
 
 To turn a cursor into a tailable cursor, a few special flags are to be
 signalled to MongoDB when first generating the cursor. Once created, the
@@ -889,7 +889,7 @@ The above route will consume from the "flights.cancellations" capped
 collection, using "departureTime" as the increasing field, with a
 default regeneration cursor delay of 1000ms.
 
-=== Persistent tail tracking
+== Persistent tail tracking
 
 Standard tail tracking is volatile and the last value is only kept in
 memory. However, in practice you will need to restart your Camel
@@ -909,7 +909,7 @@ persisting at regular intervals too in the future (flush every 5
 seconds) for added robustness if the demand is there. To request this
 feature, please open a ticket in the Camel JIRA.
 
-=== Enabling persistent tail tracking
+== Enabling persistent tail tracking
 
 To enable this function, set at least the following options on the
 endpoint URI:
@@ -955,7 +955,7 @@ from("mongodb3:myDb?database=flights&collection=cancellations&tailTrackIncreasin
     .to("mock:test");
 -----------------------------------------------------------------------------------------------------------------------------------
 
-==== Change Streams Consumer
+=== Change Streams Consumer
 
 Change Streams allow applications to access real-time data changes without the complexity and risk of tailing the MongoDB oplog.
 Applications can use change streams to subscribe to all data changes on a collection and immediately react to them.
@@ -984,7 +984,7 @@ from("mongodb3:myDb?consumerType=changeStreams&database=flights&collection=ticke
     .to("mock:test");
 -------------
 
-=== Type conversions
+== Type conversions
 
 The `MongoDbBasicConverters` type converter included with the
 camel-mongodb component provides the following conversions:
@@ -1004,7 +1004,7 @@ object to a `Map`, which is in turn used to initialise a new
 
 This type converter is auto-discovered, so you don't need to configure anything manually.
 
-=== See also
+== See also
 
 * http://www.mongodb.org/[MongoDB website]
 * http://en.wikipedia.org/wiki/NoSQL[NoSQL Wikipedia article]

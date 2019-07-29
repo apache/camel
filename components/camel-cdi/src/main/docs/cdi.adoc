@@ -1,5 +1,5 @@
 [[cdi-component]]
-== Camel CDI
+= Camel CDI
 
 The Camel CDI component provides auto-configuration for Apache Camel
 using CDI as dependency injection framework based
@@ -22,7 +22,7 @@ Camel CDI testing.
 camel-cdi is deprecated in OSGi and not supported. Use OSGi Blueprint if using Camel with OSGi.
 ====
 
-=== Auto-configured Camel context
+== Auto-configured Camel context
 
 Camel CDI automatically deploys and configures a `CamelContext` bean.
 That `CamelContext` bean is automatically instantiated, configured and
@@ -43,7 +43,7 @@ Note that this bean can be customized programmatically and other Camel
 context beans can be deployed in the application as well.
 
 [[CDI-Auto-detectingCamelroutes]]
-=== Auto-detecting Camel routes
+== Auto-detecting Camel routes
 
 Camel CDI automatically collects all the `RoutesBuilder` beans in the
 application, instantiates and add them to the `CamelContext` bean
@@ -84,7 +84,7 @@ static void configuration(@Observes CdiCamelConfiguration configuration) {
 }
 ----
 
-=== Auto-configured Camel primitives
+== Auto-configured Camel primitives
 
 Camel CDI provides beans for common Camel primitives that can be
 injected in any CDI beans, e.g.:
@@ -110,7 +110,7 @@ Endpoint endpoint;
 TypeConverter converter;
 ----
 
-=== Camel context configuration
+== Camel context configuration
 
 If you just want to change the name of the default `CamelContext` bean,
 you can used the `@ContextName` qualifier provided by Camel CDI, e.g.:
@@ -207,7 +207,7 @@ class ManualStartupCamelContext extends DefaultCamelContext {
 }
 ----
 
-=== Configuration properties
+== Configuration properties
 
 To configure the sourcing of the configuration properties used by Camel
 to resolve properties placeholders, you can declare
@@ -258,7 +258,7 @@ You can see the `camel-example-cdi-properties` example for a working
 example of a Camel CDI application using DeltaSpike configuration
 mechanism.
 
-=== Auto-configured type converters
+== Auto-configured type converters
 
 CDI beans annotated with the `@Converter` annotation are automatically
 registered into the deployed Camel contexts, e.g.:
@@ -277,9 +277,9 @@ public class MyTypeConverter {
 
 Note that CDI injection is supported within the type converters.
 
-=== Camel bean integration
+== Camel bean integration
 
-==== Camel annotations
+=== Camel annotations
 
 As part of the Camel http://camel.apache.org/bean-integration.html[bean
 integration], Camel comes with a set
@@ -397,7 +397,7 @@ void consume(@Body String body) {
  | 
 |===
 
-==== Bean component
+=== Bean component
 
 You can refer to CDI beans, either by type or name, From the Camel DSL,
 e.g. with the Java Camel DSL:
@@ -423,7 +423,7 @@ class MyNamedBean {
 from("direct:inbound").bean("foo");
 ----
 
-==== Referring beans from Endpoint URIs
+=== Referring beans from Endpoint URIs
 
 When configuring endpoints using the URI syntax you can refer to beans
 in the Registry using the `pass:[#]` notation. If the URI
@@ -451,7 +451,7 @@ PlatformTransactionManager createTransactionManager(TransactionManager transacti
 }
 ----
 
-=== Camel events to CDI events
+== Camel events to CDI events
 
 Camel provides a set
 of http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/event/package-summary.html[management
@@ -516,7 +516,7 @@ Note that the support for Camel events translation into CDI events is
 only activated if observer methods listening for Camel events are
 detected in the deployment, and that per Camel context.
 
-=== CDI events endpoint
+== CDI events endpoint
 
 The CDI event endpoint bridges
 the http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#events[CDI
@@ -660,7 +660,7 @@ endpoint instances and the observer methods as the CDI container doesn't
 have any ways of discovering the Camel context model during the
 deployment phase.
 
-=== Camel XML configuration import
+== Camel XML configuration import
 
 While CDI favors a typesafe dependency injection mechanism, it may be
 useful to reuse existing Camel XML configuration files into a Camel CDI
@@ -743,7 +743,7 @@ configuration, e.g.:
 ----
 
 
-=== Transaction support
+== Transaction support
 
 Camel CDI provides support for Camel transactional client using JTA.
 
@@ -767,7 +767,7 @@ Note that, for the time being, the transaction manager is looked up as JNDI reso
 More flexible strategies will be added in the future to support a wider range of deployment scenarios.
 ====
 
-==== Transaction policies
+=== Transaction policies
 
 Camel CDI provides implementation for the typically supported Camel `TransactedPolicy` as CDI beans. It is possible to have these policies looked up by name using the transacted EIP, e.g.:
 
@@ -817,7 +817,7 @@ The list of supported transaction policy names is:
 - `PROPAGATION_NESTED`,
 - `PROPAGATION_MANDATORY`.
 
-==== Transactional error handler
+=== Transactional error handler
 
 Camel CDI provides a transactional error handler that extends the redelivery error handler, forces a rollback whenever an exception occurs and creates a new transaction for each redelivery.
 
@@ -840,7 +840,7 @@ class MyRouteBean extends CdiRouteBuilder {
 ----
 
 
-=== Lazy Injection / Programmatic Lookup
+== Lazy Injection / Programmatic Lookup
 
 While the CDI programmatic model favors a http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#typesafe_resolution[typesafe resolution]
 mechanism that occurs at application initialization time, it is possible to perform
@@ -924,7 +924,7 @@ for (CamelContext context : contexts)
 ----
 
 
-=== Maven Archetype
+== Maven Archetype
 
 Among the available xref:manual::camel-maven-archetypes.adoc[Camel Maven
 archetypes], you can use the provided `camel-archetype-cdi` to generate
@@ -936,7 +936,7 @@ mvn archetype:generate -DarchetypeGroupId=org.apache.camel.archetypes -Darchetyp
 ----
 
 
-=== See Also
+== See Also
 
 * Camel CDI testing
 * http://www.cdi-spec.org[CDI specification Web site]

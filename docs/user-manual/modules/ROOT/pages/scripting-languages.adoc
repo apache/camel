@@ -1,5 +1,5 @@
 [[ScriptingLanguages-ScriptingLanguages]]
-=== Scripting Languages
+= Scripting Languages
 
 Camel supports a number of scripting languages which can be used to
 create an Expression or
@@ -42,7 +42,7 @@ However any http://jcp.org/en/jsr/detail?id=223[JSR 223] scripting
 language can be used using the generic DSL methods.
 
 [[ScriptingLanguages-ScriptContext]]
-==== ScriptContext
+== ScriptContext
 
 The JSR-223 scripting languages ScriptContext is pre configured with the
 following attributes all set at `ENGINE_SCOPE`:
@@ -71,7 +71,7 @@ See Scripting Languages for the list of
 languages with explicit DSL support.
 
 [[ScriptingLanguages-AdditionalargumentstoScriptingEngine]]
-==== Additional arguments to ScriptingEngine
+== Additional arguments to ScriptingEngine
 
 *Available as of Camel 2.8*
 
@@ -80,7 +80,7 @@ header on the Camel message with the key `CamelScriptArguments`.
 See this example:
 
 [[ScriptingLanguages-Usingpropertiesfunction]]
-==== Using properties function
+== Using properties function
 
 *Available as of Camel 2.9*
 
@@ -103,7 +103,7 @@ same example is simpler:
 -------------------------------------------------------------------------------
 
 [[ScriptingLanguages-Loadingscriptfromexternalresource]]
-==== Loading script from external resource
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -118,7 +118,7 @@ eg to refer to a file on the classpath you can do:
 -------------------------------------------------------------------
 
 [[ScriptingLanguages-Howtogettheresultfrommultiplestatementsscript]]
-==== How to get the result from multiple statements script
+== How to get the result from multiple statements script
 
 *Available as of Camel 2.14*
 
@@ -139,7 +139,7 @@ result = body * 2 + 1
  
 
 [[ScriptingLanguages-Dependencies]]
-==== Dependencies
+== Dependencies
 
 To use scripting languages in your camel routes you need to add the a
 dependency on *camel-script* which integrates the JSR-223 scripting
@@ -159,7 +159,7 @@ the download page for the latest versions).
 ---------------------------------------
 
 [[ScriptingLanguages-SeeAlso]]
-=== See Also
+== See Also
 
 * Languages
 * xref:dsl.adoc[DSL]

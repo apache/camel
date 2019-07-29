@@ -1,5 +1,5 @@
 [[weather-component]]
-== Weather Component
+= Weather Component
 
 *Available as of Camel version 2.12*
 
@@ -25,26 +25,26 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
 weather://<unused name>[?options]
 ---------------------------------
 
-### REMARK
+== REMARK
 
 Since the 9th of October, an Api Key is required to access the
 openweather service. This key is passed as parameter to the URI
 definition of the weather endpoint using the appid param !
 
-### Geolocation provider
+== Geolocation provider
 
 Since July 2018 FreegeoIP is no longer available. The camel-weather component was using this API.
 We switch to https://github.com/apilayer/freegeoip#readme[IPstack] so you'll need to specify and Access Key and the IP 
 from where you're using the API now on.
 
-### Options
+== Options
 
 
 // component options: START
@@ -73,7 +73,7 @@ weather:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (47 parameters):
+=== Query Parameters (47 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -139,7 +139,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -174,12 +174,12 @@ The component supports 5 options, which are listed below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Exchange data format
+== Exchange data format
 
 Camel will deliver the body as a json formatted java.lang.String (see
 the `mode` option above).
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -191,7 +191,7 @@ the `mode` option above).
 location from this header instead.
 |=======================================================================
 
-### Samples
+== Samples
 
 In this sample we find the 7 day weather forecast for Madrid, Spain:
 

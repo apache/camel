@@ -1,5 +1,5 @@
 [[WhycanInotusewhenorotherwiseinaJavaCamelroute-WhycanInotusewhenotherwiseinaJavaCamelroute]]
-=== Why can I not use when/otherwise in a Java Camel route?
+= Why can I not use when/otherwise in a Java Camel route?
 
 When using the xref:content-based-router-eip.adoc[Content Based Router] in
 the Java DSL you may have a situation where the compiler will not accept
@@ -88,7 +88,7 @@ to the xref:content-based-router-eip.adoc[Content Based Router]. Note
 `.endChoice()` is *available as of Camel 2.7*.
 
 [[WhycanInotusewhenorotherwiseinaJavaCamelroute-Stillproblems]]
-==== Still problems
+== Still problems
 
 If there are still problems, then you can split your route into multiple
 routes, and link them together using the xref:components::direct-component.adoc[Direct]

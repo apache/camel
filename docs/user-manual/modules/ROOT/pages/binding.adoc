@@ -1,5 +1,5 @@
 [[Binding-Binding]]
-=== Binding
+= Binding
 
 In Camel terms a _binding_ is a way of wrapping an
 xref:endpoint.adoc[Endpoint] in a contract; such as a
@@ -16,7 +16,7 @@ Camel framework itself; so you can use them easily inside any Camel
 route.
 
 [[Binding-UsingBindings]]
-==== Using Bindings
+== Using Bindings
 
 A Binding is currently a bean which defines the contract (though we'll
 hopefully add bindings to the Camel DSL).
@@ -25,7 +25,7 @@ There are a few approaches to defining a bound endpoint (i.e. an
 endpoint bound with a Binding).
 
 [[Binding-UsingthebindingURI]]
-==== Using the binding URI
+== Using the binding URI
 
 You can prefix any endpoint URI with *binding:nameOfBinding:* where
 _nameOfBinding_ is the name of the Binding bean in your registry.
@@ -40,7 +40,7 @@ JAXB xref:data-format.adoc[Data Format] to marshal and unmarshal
 messages.
 
 [[Binding-UsingaBindingComponent]]
-==== Using a BindingComponent
+== Using a BindingComponent
 
 There is a xref:component.adoc[Component] called BindingComponent which
 can be configured in your xref:registry.adoc[Registry] by dependency
@@ -68,7 +68,7 @@ use the given Jackson xref:data-format.adoc[Data Format] to marshal on
 and off the queue.
 
 [[Binding-WhentouseBindings]]
-==== When to use Bindings
+== When to use Bindings
 
 If you only use an endpoint once in a single route; a binding may
 actually be more complex and more work than just using the 'raw'

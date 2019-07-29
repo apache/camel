@@ -1,5 +1,5 @@
 [[IsCamelanESB-IsCamelanESB]]
-=== Is Camel an ESB?
+= Is Camel an ESB?
 
 Typically vendors claim practically everything is an ESB these days, so
 the answer is probably yes :smile:

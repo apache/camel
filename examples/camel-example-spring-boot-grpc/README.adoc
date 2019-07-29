@@ -1,10 +1,10 @@
 # Spring Boot Example with gRPC
 
-### Introduction
+= Introduction
 
 This example demonstrates how you can use Camel-gRPC Starter component. The example is composed of a standalone gRPC server and a Camel Spring-boot gRPC route acting as client.
 
-### Server
+== Server
 
 You can build the server under the directory hello-camel-grpc-server with:
 
@@ -22,7 +22,7 @@ Aug 08, 2017 8:00:00 AM org.apache.camel.examples.grpc.HelloCamelServer start
 INFO: Server started. I'm listening on 50051
 ----
 
-### Run the client
+== Run the client
 
 You can build the client example under the directory hello-camel-grpc-client with:
 
@@ -57,7 +57,7 @@ And you should see this output in the console.
 
 ----
 
-### Help
+== Help
 
 If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
 

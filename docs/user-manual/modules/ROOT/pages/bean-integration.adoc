@@ -1,10 +1,10 @@
 [[BeanIntegration-BeanIntegration]]
-=== Bean Integration
+= Bean Integration
 
 Camel supports the integration of beans and POJOs in a number of ways
 
 [[BeanIntegration-Annotations]]
-==== Annotations
+== Annotations
 
 If a bean is defined in Spring XML or scanned using
 the Spring component scanning mechanism and a *<camelContext>* is used
@@ -62,7 +62,7 @@ See the POJO Messaging Example for how
 to use the annotations for routing and messaging.
 
 [[BeanIntegration-BeanComponent]]
-==== Bean Component
+== Bean Component
 
 The xref:components::bean-component.adoc[Bean] component allows one to invoke a particular
 method. Alternately the xref:components::bean-component.adoc[Bean] component supports the
@@ -74,7 +74,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/compon
 to some Camel endpoint.
 
 [[BeanIntegration-SpringRemoting]]
-==== Spring Remoting
+== Spring Remoting
 
 We support a Spring Remoting provider which
 uses Camel as the underlying transport mechanism. The nice thing about

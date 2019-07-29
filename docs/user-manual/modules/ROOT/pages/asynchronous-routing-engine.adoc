@@ -1,5 +1,5 @@
 [[AsynchronousRoutingEngine-AsynchronousRoutingEngine]]
-=== Asynchronous Routing Engine
+= Asynchronous Routing Engine
 
 *Available as of Camel 2.4*
 
@@ -47,7 +47,7 @@ In the future additional Components will be
 supported as well where it's applicable.
 
 [[AsynchronousRoutingEngine-Forcingtousesynchronousprocessing]]
-==== Forcing to use synchronous processing
+== Forcing to use synchronous processing
 
 You can configure the endpoints with the option `synchronous=true` to
 force using synchronous processing. For example when sending a web
@@ -60,7 +60,7 @@ to disable it. The JBI and NMR component
 are always asynchronous and doesn't support this option.
 
 [[AsynchronousRoutingEngine-Backgroundinformation]]
-=== Background information
+== Background information
 
 See Asynchronous Processing for
 additional information and the concepts behind the asynchronous model.

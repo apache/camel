@@ -1,5 +1,5 @@
 [[zookeeper-component]]
-== ZooKeeper Component
+= ZooKeeper Component
 
 *Available as of Camel version 2.9*
 
@@ -26,7 +26,7 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -36,7 +36,7 @@ zookeeper://zookeeper-server[:port][/path][?options]
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
 
-### Options
+== Options
 
 // component options: START
 The ZooKeeper component supports 3 options, which are listed below.
@@ -61,7 +61,7 @@ zookeeper:serverUrls/path
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -180,9 +180,9 @@ The component supports 58 options, which are listed below.
 
 
 
-### Use cases
+== Use cases
 
-#### Reading from a _znode_
+=== Reading from a _znode_
 
 The following snippet will read the data from the _znode_
 `/somepath/somenode/` provided that it already exists. The data
@@ -202,7 +202,7 @@ endpoint await its creation:
 from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
 ----
 
-#### Reading from a _znode_
+=== Reading from a _znode_
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
 ensemble, the `CamelZookeeperEventType` header holds ZooKeeper's
@@ -211,7 +211,7 @@ value from that `WatchedEvent`. If the data is read initially (not
 triggered by a `WatchedEvent`) the `CamelZookeeperEventType` header will not
 be set.
 
-#### Writing to a _znode_
+=== Writing to a _znode_
 
 The following snippet will write the payload of the exchange into the
 znode at `/somepath/somenode/` provided that it already exists:

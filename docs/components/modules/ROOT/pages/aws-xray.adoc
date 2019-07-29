@@ -1,5 +1,5 @@
 [[AWSXRay-AWSXRayComponent]]
-## AWS XRay Component
+= AWS XRay Component
 
 *Available as of Camel 2.21*
 
@@ -7,7 +7,7 @@ The camel-aws-xray component is used for tracing and timing incoming and outgoin
 
 Events (subsegments) are captured for incoming and outgoing messages being sent to/from Camel.
 
-### Dependency
+== Dependency
 
 In order to include AWS XRay support into Camel, the archive containing the Camel related AWS XRay related classes need to be added to the project. In addition to that, AWS XRay libraries also need to be available.
 
@@ -44,7 +44,7 @@ To include both, AWS XRay and Camel, dependencies use the following Maven import
   <dependencies>
 ---------------------------------------------------------------------------------------------------------
 
-### Configuration
+== Configuration
 
 The configuration properties for the AWS XRay tracer are:
 
@@ -61,7 +61,7 @@ uses the rules from Intercept.
 
 There is currently only one way an AWS XRay tracer can be configured to provide distributed tracing for a Camel application:
 
-#### Explicit
+=== Explicit
 
 Include the `camel-aws-xray` component in your POM, along with any specific dependencies associated with the AWS XRay Tracer.
 
@@ -91,7 +91,7 @@ AWS XRay tracer bean. Camel will automatically discover and use it.
 
 In case of the default `NoopTracingStrategy` only the creation and deletion of exchanges is tracked but not the invocation of certain beans or EIP patterns.
 
-#### Tracking of comprehensive route execution
+=== Tracking of comprehensive route execution
 
 In order to track the execution of an exchange among multiple routes, on exchange creation a unique trace ID is generated and stored in the headers if no corresponding value was yet available. This trace ID is copied over to new exchanges in order to keep a consistent view of the processed exchange.
 
@@ -110,6 +110,6 @@ The component will use the following constants found in the headers of the excha
 
 Note that the AWS XRay `Entity` (i.e., `Segment` and `Subsegment`) are not serializable and therefore should not get passed to other JVM processes.
 
-### Example
+== Example
 
 You can find an example demonstrating the way to configure AWS XRay tracing within the tests accompanying this project.

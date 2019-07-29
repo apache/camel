@@ -1,5 +1,5 @@
 [[asterisk-component]]
-== Asterisk Component
+= Asterisk Component
 
 *Available as of Camel version 2.18*
 
@@ -20,14 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------
 asterisk:name[?options]
 -------------------------------------------------------------------------------------------------------------------------
 
-### Options
+== Options
 
 // component options: START
 The Asterisk component supports 2 options, which are listed below.
@@ -51,7 +51,7 @@ asterisk:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -61,7 +61,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -109,7 +109,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Action
+== Action
 Supported actions are:
 
 * QUEUE_STATUS, Queue Status

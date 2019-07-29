@@ -1,5 +1,5 @@
 [[HowdoIeditthewebsite-HowdoIeditthewebsite]]
-=== How do I edit the website?
+= How do I edit the website?
 
 The website is all contained in
 https://github.com/apache/camel/[the GitHub repository] so that you can
@@ -8,11 +8,11 @@ all your contributions under the
 http://www.apache.org/licenses/LICENSE-2.0[Apache Software License version 2.0]
 
 [[HowdoIeditthewebsite-Howtoedit]]
-==== How to edit
+== How to edit
 
 TODO: Write how it works and how to contribute to the web site.
 
 [[HowdoIeditthewebsite-Howthesiteworks]]
-==== How the site works
+== How the site works
 
 TODO: Write how it works and how to contribute to the web site.

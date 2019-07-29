@@ -1,5 +1,5 @@
 [[milo-server-component]]
-== OPC UA Server Component
+= OPC UA Server Component
 
 *Available as of Camel version 2.19*
 
@@ -65,14 +65,14 @@ The OPC UA Server component supports 21 options, which are listed below.
 
 
 
-=== URI format
+== URI format
 
 [source,java]
 ------------------------
 milo-server:itemId[?options]
 ------------------------
 
-=== URI options
+== URI options
 
 
 
@@ -85,7 +85,7 @@ milo-server:itemId
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +110,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -163,7 +163,7 @@ The component supports 22 options, which are listed below.
 
 
 
-=== See Also
+== See Also
 
 * Configuring Camel
 * Component

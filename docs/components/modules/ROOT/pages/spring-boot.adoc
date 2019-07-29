@@ -1,5 +1,5 @@
 [[SpringBoot-SpringBoot]]
-== Spring Boot
+= Spring Boot
 
 *Available as of Camel 2.15*
 
@@ -26,7 +26,7 @@ soon as you add that dependency into your classpath, Spring Boot will
 automatically auto-configure Camel for you.
 
 [[SpringBoot-CamelSpringBootStarter]]
-=== Camel Spring Boot Starter
+== Camel Spring Boot Starter
 
 *Available as of Camel 2.17*
 
@@ -74,7 +74,7 @@ or `application.yml` file. 
 
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -226,7 +226,7 @@ The component supports 126 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 [[SpringBoot-Auto-configuredCamelcontext]]
-=== Auto-configured Camel context
+== Auto-configured Camel context
 
 The most important piece of functionality provided by the Camel
 auto-configuration is `CamelContext` instance.
@@ -253,7 +253,7 @@ public class MyAppConfig {
 ----
 
 [[SpringBoot-Auto-detectingCamelroutes]]
-=== Auto-detecting Camel routes
+== Auto-detecting Camel routes
 
 Camel auto-configuration collects all the `RouteBuilder` instances from
 the Spring context and automatically injects them into the provided
@@ -297,7 +297,7 @@ public class MyRouterConfiguration {
 ----
 
 [[SpringBoot-Camelproperties]]
-=== Camel properties
+== Camel properties
 
 Spring Boot auto-configuration automatically connects
 to http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config[Spring
@@ -334,7 +334,7 @@ public class MyRouter extends RouteBuilder {
 ----
 
 [[SpringBoot-CustomCamelcontextconfiguration]]
-=== Custom Camel context configuration
+== Custom Camel context configuration
 
 If you would like to perform some operations on `CamelContext` bean
 created by Camel auto-configuration,
@@ -366,7 +366,7 @@ fully auto-configured. You can add many instances of
 be executed.
 
 [[SpringBoot-DisablingJMX]]
-=== Disabling JMX
+== Disabling JMX
 
 To disable JMX of the auto-configured `CamelContext` use
 `camel.springboot.jmxEnabled` property (JMX is enabled by default). For
@@ -379,7 +379,7 @@ camel.springboot.jmx-enabled = false
 ----
 
 [[SpringBoot-Auto-configuredconsumerandproducertemplates]]
-=== Auto-configured consumer and producer templates
+== Auto-configured consumer and producer templates
 
 Camel auto-configuration provides pre-configured `ConsumerTemplate` and
 `ProducerTemplate` instances. You can simply inject them into your
@@ -416,7 +416,7 @@ camel.springboot.producer-template-cache-size = 200
 ----
 
 [[SpringBoot-Auto-configuredTypeConverter]]
-=== Auto-configured TypeConverter
+== Auto-configured TypeConverter
 
 Camel auto-configuration registers a `TypeConverter` instance named
 `typeConverter` in the Spring context.
@@ -438,7 +438,7 @@ public class InvoiceProcessor {
 ----
 
 [[SpringBoot-SpringtypeconversionAPIbridge]]
-==== Spring type conversion API bridge
+=== Spring type conversion API bridge
 
 Spring comes with
 the powerful http://docs.spring.io/spring/docs/current/spring-framework-reference/html/validation.html#core-convert[type
@@ -472,7 +472,7 @@ no `ConversionService` instance is available, Camel Spring Boot
 auto-configuration will create one for you.
 
 [[SpringBoot-Disablingtypeconversionsfeatures]]
-=== Disabling type conversions features
+== Disabling type conversions features
 
 If you don't want Camel Spring Boot to register type-conversions related
 features (like `TypeConverter` instance or Spring bridge) set the
@@ -485,7 +485,7 @@ camel.springboot.type-conversion = false
 
 
 [[SpringBoot-Keepingapplicationalive]]
-=== Keeping the application alive
+== Keeping the application alive
 
 Camel applications having this feature enabled launch a new thread on startup for the sole purpose of
 keeping the application alive by preventing JVM termination.
@@ -503,7 +503,7 @@ Applications using web modules (e.g. importing the `org.springframework.boot:spr
 usually don't need to use this feature because the application is kept alive by the presence of other non-daemon threads.
 
 [[SpringBoot-AddingXMLroutes]]
-=== Adding XML routes
+== Adding XML routes
 
 By default you can put Camel XML routes in the classpath under the
 directory camel, which camel-spring-boot will auto detect and include.
@@ -534,7 +534,7 @@ The XML files should be Camel XML routes (not CamelContext) such as
 ----
 
 [[SpringBoot-AddingREST]]
-=== Adding XML Rest-DSL
+== Adding XML Rest-DSL
 
 By default you can put Camel Rest-DSL XML routes in the classpath under the
 directory camel-rest, which camel-spring-boot will auto detect and include.
@@ -574,7 +574,7 @@ The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
 ----
 
 [[SpringBoot-Testing]]
-=== Testing
+== Testing
 For testing, Maven users will need to add the following dependencies to their `pom.xml`:
 
 [source,xml]

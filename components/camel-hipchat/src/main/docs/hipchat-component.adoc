@@ -1,5 +1,5 @@
 [[hipchat-component]]
-== Hipchat Component
+= Hipchat Component
 
 *Available as of Camel version 2.15*
 
@@ -13,7 +13,7 @@ https://www.hipchat.com/account/api[personal access token] that you can
 use to produce/consume messages.
 
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------------
@@ -23,7 +23,7 @@ hipchat://[host][:port]?options
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -53,7 +53,7 @@ hipchat:protocol:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,7 +98,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -132,7 +132,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Scheduled Poll Consumer
+== Scheduled Poll Consumer
 
 This component implements the
 ScheduledPollConsumer. Only the last message
@@ -157,7 +157,7 @@ public void configure() throws Exception {
 }
 ---------------------------------------------------------------------------------
 
-#### Message headers set by the Hipchat consumer
+=== Message headers set by the Hipchat consumer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -174,7 +174,7 @@ Hipchat https://www.hipchat.com/docs/apiv2/method/view_recent_privatechat_histor
 The status of the API response received.
 |=======================================================================
 
-### Hipchat Producer
+== Hipchat Producer
 
 Producer can send messages to both Room's and User's simultaneously. The
 body of the exchange is sent as message. Sample usage is shown below.
@@ -191,7 +191,7 @@ Appropriate headers needs to be set.
  }
 ----------------------------------------------------------
 
-#### Message headers evaluated by the Hipchat producer
+=== Message headers evaluated by the Hipchat producer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -212,7 +212,7 @@ a user notification (change the tab color, play a sound, notify mobile
 phones, etc). *Default: 'false' (Room Only)*
 |=======================================================================
 
-#### Message headers set by the Hipchat producer
+=== Message headers set by the Hipchat producer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -225,7 +225,7 @@ The status of the API response received when message sent to the user.
 |HipchatFromUserResponseStatus |HipchatConstants.TO_ROOM_RESPONSE_STATUS |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_ |The status of the API response received when message sent to the room.
 |=======================================================================
 
-#### Configuring Http Client
+=== Configuring Http Client
 
 The HipChat component allow your own `HttpClient` configuration. This can be done by defining a reference for `CloseableHttpClient` in the http://camel.apache.org/registry.html[registry] (e.g. Spring Context) and then, set the parameter during the Endpoint definition, for example: `hipchat:http://api.hipchat.com?httpClient=#myHttpClient`.
 
@@ -243,7 +243,7 @@ CloseableHttpClient httpclient = HttpClients.custom()
 To see more information about Http Client configuration, please check the https://hc.apache.org/httpcomponents-client-ga/examples.html[official documentation].
  
 
-#### Dependencies
+=== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 

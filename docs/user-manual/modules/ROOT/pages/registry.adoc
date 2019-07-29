@@ -1,5 +1,5 @@
 [[Registry-Registry]]
-=== Registry
+= Registry
 
 Camel supports a pluggable
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/Registry.html[Registry]

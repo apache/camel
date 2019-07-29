@@ -1,4 +1,4 @@
-## Jasypt component
+= Jasypt component
 
 *Available as of Camel 2.5*
 
@@ -37,7 +37,7 @@ for this component:
 ------------------------------------------------------------
 
 
-### Tooling
+== Tooling
 
 The Jasypt component provides a little command line
 tooling to encrypt or decrypt values.
@@ -103,7 +103,7 @@ encrypted and the value has the tokens surrounding `ENC(value here)`
 TIP: When running jasypt tooling, if you come across `java.lang.NoClassDefFoundError: org/jasypt/encryption/pbe/StandardPBEStringEncryptor` this means you have to include jasypt\{version\}.jar in your classpath. Example of adding jar to classpath may be copying jasypt\{version\}.jar to $JAVA_HOME\jre\lib\ext if you are going to run as `java -jar ...`. The latter may be adding jasypt\{version\}.jar to classpath using `-cp`, in that case you should provide main class to execute as eg: `java -cp jasypt-1.9.2.jar:camel-jasypt-2.18.2.jar org.apache.camel.component.jasypt.Main -c encrypt -p secret -i tiger`
 
 
-### URI Options
+== URI Options
 
 The options below are exclusive for the Jasypt
 component.
@@ -119,7 +119,7 @@ mandatory. See below for more details.
 |=======================================================================
 
 
-### Protecting the master password
+== Protecting the master password
 
 The master password used by Jasypt must be provided,
 so that it's capable of decrypting the values. However having this
@@ -150,7 +150,7 @@ $ unset CAMEL_ENCRYPTION_PASSWORD
 The `password` option is then a matter of defining as follows:
 `password=sysenv:CAMEL_ENCRYPTION_PASSWORD`.
 
-### Example with Java DSL
+== Example with Java DSL
 
 In Java DSL you need to configure Jasypt as a
 `JasyptPropertiesParser` instance and set it on the
@@ -160,7 +160,7 @@ The properties file `myproperties.properties` then contain the encrypted
 value, such as shown below. Notice how the password value is encrypted
 and the value has the tokens surrounding `ENC(value here)`
 
-### Example with Spring XML
+== Example with Spring XML
 
 In Spring XML you need to configure the `JasyptPropertiesParser` which
 is shown below. Then the Camel xref:properties-component.adoc[Properties]
@@ -210,7 +210,7 @@ Jasypt.
 </camelContext>
 --------------------------------------------------------------------------------------------------------------
 
-### Example with Blueprint XML
+== Example with Blueprint XML
 
 In Blueprint XML you need to configure
 the `JasyptPropertiesParser` which is shown below. Then the
@@ -286,7 +286,7 @@ to Jasypt.
 </blueprint>
 ----------------------------------------------------------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Security
 * xref:properties-component.adoc[Properties]

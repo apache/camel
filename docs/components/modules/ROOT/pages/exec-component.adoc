@@ -1,11 +1,11 @@
 [[exec-component]]
-== Exec Component
+= Exec Component
 
 *Available as of Camel version 2.3*
 
 The Exec component can be used to execute system commands.
 
-### Dependencies
+== Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -20,7 +20,7 @@ Maven users need to add the following dependency to their `pom.xml`
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 
-### URI format
+== URI format
 
 [source,xml]
 ---------------------------
@@ -31,7 +31,7 @@ where `executable` is the name, or file path, of the system command that
 will be executed. If executable name is used (e.g. `exec:java`), the
 executable must in the system path.
 
-### URI options
+== URI options
 
 // component options: START
 The Exec component supports 2 options, which are listed below.
@@ -55,7 +55,7 @@ exec:executable
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +84,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -113,7 +113,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Message headers
+== Message headers
 
 The supported headers are defined in
 `org.apache.camel.component.exec.ExecBinding`.
@@ -155,7 +155,7 @@ Camel Message Body with `stderr`. This behavior is disabled (`false`) by
 default.
 |=======================================================================
 
-### Message body
+== Message body
 
 If the `Exec` component receives an `in` message body that is
 convertible to `java.io.InputStream`, it is used to feed input to the
@@ -186,9 +186,9 @@ will return the content of the out file. If no out file is used, then
 this component will convert the stdout of the process to the target
 type. For more details, please refer to the xref:exec-component.adoc[usage examples] below.
 
-### Usage examples
+== Usage examples
 
-#### Executing word count (Linux)
+=== Executing word count (Linux)
 
 The example below executes `wc` (word count, Linux) to count the words
 in file `/usr/share/dict/words`. The word count (output) is written to
@@ -210,7 +210,7 @@ from("direct:exec")
 });
 --------------------------------------------------------------------------------------
 
-#### Executing `java`
+=== Executing `java`
 
 The example below executes `java` with 2 arguments: `-server` and
 `-version`, provided that `java` is in the system path.
@@ -230,7 +230,7 @@ from("direct:exec")
 .to("exec:c:/program files/jdk/bin/java?args=-server -version -Duser.name=Camel&workingDir=c:/temp")
 ----------------------------------------------------------------------------------------------------
 
-#### Executing Ant scripts
+=== Executing Ant scripts
 
 The following example executes http://ant.apache.org/[Apache Ant]
 (Windows only) with the build file `CamelExecBuildFile.xml`, provided
@@ -262,7 +262,7 @@ from("direct:exec")
   });
 -------------------------------------------------------------------------------------------------------
 
-#### Executing `echo` (Windows)
+=== Executing `echo` (Windows)
 
 Commands such as `echo` and `dir` can be executed only with the command
 interpreter of the operating system. This example shows how to execute
@@ -273,7 +273,7 @@ such a command - `echo` - in Windows.
 from("direct:exec").to("exec:cmd?args=/C echo echoString")
 ----------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

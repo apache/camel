@@ -1,5 +1,5 @@
 [[optaplanner-component]]
-== OptaPlanner Component
+= OptaPlanner Component
 
 *Available as of Camel version 2.13*
 
@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------------------
@@ -36,7 +36,7 @@ example `/org/foo/barSolverConfig.xml`.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### OptaPlanner Options
+== OptaPlanner Options
 
 
 // component options: START
@@ -63,7 +63,7 @@ optaplanner:configFile
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +91,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -121,7 +121,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |=======================================================================
@@ -133,7 +133,7 @@ The component supports 3 options, which are listed below.
 rather than blocking the current thread.
 |=======================================================================
 
-### Message Body
+== Message Body
 
 Camel takes the planning problem for the IN body, solves it and returns
 it on the OUT body. The IN body object supports the following use cases:
@@ -147,7 +147,7 @@ wait till isEveryProblemFactChangeProcessed before returning result.
 * If the body is none of the above types, then the producer will return
 the best result from the solver identified by solverId
 
-### Termination
+== Termination
 
 The solving will take as long as specified in the `solverConfig`.
 
@@ -167,7 +167,7 @@ The solving will take as long as specified in the `solverConfig`.
 
  
 
-#### Samples
+=== Samples
 
 Solve an planning problem that's on the ActiveMQ queue with OptaPlanner:
 
@@ -185,7 +185,7 @@ from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
   .to("optaplanner:/org/foo/barSolverConfig.xml");
 -------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

@@ -1,5 +1,5 @@
 [[requestReply-eip]]
-== Request Reply
+= Request Reply
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/RequestReply.html[Request
@@ -25,7 +25,7 @@ request/responses).
 TIP: *Related* See the related Event Message message
 
 [[RequestReply-ExplicitlyspecifyingInOut]]
-=== Explicitly specifying InOut
+== Explicitly specifying InOut
 
 When consuming messages from xref:components::jms-component.adoc[JMS] a Request-Reply is
 indicated by the presence of the *JMSReplyTo* header.

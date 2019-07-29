@@ -1,5 +1,5 @@
 [[Intercept-Intercept]]
-=== Intercept
+= Intercept
 
 The intercept feature in Camel supports intercepting
 Exchanges while they are _on route_.  +
@@ -43,7 +43,7 @@ regular Java code in a POJO or
 Processor.
 
 [[Intercept-Intercept.1]]
-==== Intercept
+== Intercept
 
 `Intercept` is like a regular interceptor that is applied on each
 processing step the Exchange undergo while its being
@@ -78,7 +78,7 @@ And in the route below we want to stop in certain conditions, when the
 message contains the word 'Hello':
 
 [[Intercept-UsingfromSpringDSL]]
-===== Using from Spring DSL
+=== Using from Spring DSL
 
 The same hello world sample in Spring DSL would be:
 
@@ -102,7 +102,7 @@ And the sample for using the *when* predicate would be:
 And the sample for using the *when* and *stop* would be:
 
 [[Intercept-InterceptFrom]]
-==== InterceptFrom
+== InterceptFrom
 
 `InterceptFrom` is for intercepting any incoming
 Exchange, in any route (it intercepts all the `from`
@@ -130,7 +130,7 @@ And if want to only apply a specific endpoint, as the *seda:bar*
 endpoint in the sample below, we can do it like this:
 
 [[Intercept-UsingfromSpringDSL.1]]
-===== Using from Spring DSL
+=== Using from Spring DSL
 
 Intercept is of course also available using Spring DSL as shown in the
 sample below:
@@ -140,7 +140,7 @@ intercept from certain endpoints and route then elsewhere and `stop` to
 not continue routing in the original intended route path.
 
 [[Intercept-InterceptSendToEndpoint]]
-==== InterceptSendToEndpoint
+== InterceptSendToEndpoint
 
 *Available as of Camel 2.0*
 
@@ -180,7 +180,7 @@ does not control skipping behaviour
 is matched, leading to more natural logic altogether.
 
 [[Intercept-UsingfromSpringDSL.2]]
-===== Using from Spring DSL
+=== Using from Spring DSL
 
 Intercept endpoint is of course also available using Spring DSL.
 
@@ -194,7 +194,7 @@ And the 3rd with the `skip`, notice skip is set with the
 tag:
 
 [[Intercept-AdvancedusageofIntercpt]]
-==== Advanced usage of Intercpt
+== Advanced usage of Intercpt
 
 The `interceptFrom` and `interceptSendToEndpoint` supports endpoint URI
 matching by the following rules in the given order:
@@ -210,7 +210,7 @@ match by wildcard. Then you know the real endpoint that was intercepted
 and can react accordingly.
 
 [[Intercept-Matchbywildcard]]
-===== Match by wildcard
+=== Match by wildcard
 
 Match by wildcard allows you to match a range of endpoint or all of a
 given type. For instance use `uri="file:*"` will match all
@@ -233,7 +233,7 @@ intercept("file://order/inbox/*").to("log:newfileorders");
 To intercept any files received from the `order/inbox` folder.
 
 [[Intercept-Matchbyregularexpression]]
-===== Match by regular expression
+=== Match by regular expression
 
 Match by regular expression is just like match by wildcard but using
 regex instead. So if we want to intercept incoming messages from gold
@@ -256,7 +256,7 @@ construct a `Consumer` using the Camel API and consumes an
 Endpoint then the `interceptFrom` is not triggered.
 
 [[Intercept-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:architecture.adoc[Architecture]
 

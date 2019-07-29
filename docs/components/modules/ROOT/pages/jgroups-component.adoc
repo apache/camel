@@ -1,5 +1,5 @@
 [[jgroups-component]]
-== JGroups Component
+= JGroups Component
 
 *Available as of Camel version 2.13*
 
@@ -20,7 +20,7 @@ for this component.
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -30,7 +30,7 @@ jgroups:clusterName[?options]
 Where *clusterName* represents the name of the JGroups cluster the
 component should connect to.
 
-### Options
+== Options
 
 
 
@@ -65,7 +65,7 @@ jgroups:clusterName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -130,7 +130,7 @@ The component supports 10 options, which are listed below.
 
 
 
-### Headers
+== Headers
 
 [width="100%",cols="10%,10%,70%",options="header",]
 |=======================================================================
@@ -151,7 +151,7 @@ consumed message has been extracted.
 endpoint.
 |=======================================================================
  
-### Usage
+== Usage
 
 Using `jgroups` component on the consumer side of the route will capture
 messages received by the `JChannel` associated with the endpoint and
@@ -176,7 +176,7 @@ endpoint.
 from("direct:start").to("jgroups:clusterName");
 --------------------------------------------------
 
-### Predefined filters
+== Predefined filters
 
 JGroups component comes with predefined filters factory class named `JGroupsFilters.`
 
@@ -198,7 +198,7 @@ from("jgroups:clusterName?enableViewMessages=true").
   to("seda:masterNodeEventsQueue");
 ----------------------------------------------------------------------------------------
 
-### Predefined expressions
+== Predefined expressions
 
 JGroups component comes with predefined expressions factory class named `JGroupsExpressions.`
 
@@ -235,9 +235,9 @@ from("jgroups:clusterName?enableViewMessages=true").
 from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Examples
+== Examples
 
-#### Sending (receiving) messages to (from) the JGroups cluster
+=== Sending (receiving) messages to (from) the JGroups cluster
 
 In order to send message to the JGroups cluster use producer endpoint,
 just as demonstrated on the snippet below.
@@ -263,7 +263,7 @@ from("jgroups:myCluster").to("mock:messagesFromTheCluster");
 mockEndpoint.assertIsSatisfied();
 ------------------------------------------------------------
 
-#### Receive cluster view change notifications
+=== Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
 listening to the notifications regarding cluster membership changes. By
@@ -279,7 +279,7 @@ from("jgroups:clusterName?enableViewMessages=true").to(mockEndpoint);
 mockEndpoint.assertIsSatisfied();
 ---------------------------------------------------------------------
 
-#### Keeping singleton route within the cluster
+=== Keeping singleton route within the cluster
 
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one

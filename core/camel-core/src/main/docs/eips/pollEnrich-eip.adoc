@@ -1,5 +1,5 @@
 [[pollEnrich-eip]]
-== Poll Enrich EIP
+= Poll Enrich EIP
 
 Camel comes with flavor `pollEnrich` as a choice of content enricher in the DSL.
 The other one is `enrich`
@@ -8,9 +8,9 @@ The other one is `enrich`
 
 [NOTE]
 .Good practice to use timeout value
-====
+===
 By default Camel will use the receive. Which may block until there is a message available. It is therefore recommended to always provide a timeout value, to make this clear that we may wait for a message, until the timeout is hit.
-====
+===
 
 If there is no data then the `newExchange` in the aggregation strategy is `null`.
 
@@ -22,19 +22,19 @@ You can pass in a timeout value that determines which method to use
 
 The timeout values is in millis.
 
-====
+===
 `pollEnrich` does *not* access any data from the current Exchange which means when polling it cannot use any of the existing headers you may have set on the Exchange. For example you cannot set a filename in the `Exchange.FILE_NAME` header and use `pollEnrich` to consume only that file. For that you *must* set the filename in the endpoint URI.
 Both `enrich` and `pollEnrich` supports dynamic endpoints that uses an Expression to compute the uri, which allows to use data from the current Exchange. In other words all what is told above no longer apply and it just works.
-====
+===
 
-=== Content enrichment using pollEnrich
+== Content enrichment using pollEnrich
 The `pollEnrich` works just as the `enrich` however as it uses a Polling Consumer we have 3 methods when polling
 
 * `receive`
 * `receiveNoWait`
 * `receive(timeout)`
 
-=== PollEnrich Options
+== PollEnrich Options
 
 // eip options: START
 The Poll Enrich EIP supports 7 options which are listed below:
@@ -52,7 +52,7 @@ The Poll Enrich EIP supports 7 options which are listed below:
 |===
 // eip options: END
 
-=== PollEnrich Example
+== PollEnrich Example
 
 In this example we enrich the message by loading the content from the file named inbox/data.txt.
 [source,java]
@@ -88,7 +88,7 @@ For example to wait up to 5 seconds you can do:
 </route>
 ----
 
-=== Using dynamic uris
+== Using dynamic uris
 
 *Available as of Camel 2.16*
 

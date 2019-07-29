@@ -1,5 +1,5 @@
 [[nagios-component]]
-== Nagios Component
+= Nagios Component
 
 *Available as of Camel version 2.3*
 
@@ -19,7 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------
@@ -32,7 +32,7 @@ its endpoint. +
  Camel also provides a EventNotifer which allows
 you to send notifications to Nagios.
 
-### Options
+== Options
 
 
 
@@ -67,7 +67,7 @@ nagios:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,7 +96,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -135,7 +135,7 @@ The component supports 11 options, which are listed below.
 
 
 
-### Sending message examples
+== Sending message examples
 
 You can send a message to Nagios where the message payload contains the
 message. By default it will be `OK` level and use the
@@ -162,7 +162,7 @@ To send a `CRITICAL` message you can send the headers such as:
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
 -----------------------------------------------------------------------------
 
-### Using `NagiosEventNotifer`
+== Using `NagiosEventNotifer`
 
 The xref:nagios-component.adoc[Nagios] component also provides an
 EventNotifer which you can use to send events to
@@ -185,7 +185,7 @@ In Spring XML its just a matter of defining a Spring bean with the type
 xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

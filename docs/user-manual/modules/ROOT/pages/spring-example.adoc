@@ -1,4 +1,4 @@
-== Spring Example
+= Spring Example
 
 The spring example is a simple refactor of the
 adoc:walk-through-an-example.adoc[first example] to show how to use the

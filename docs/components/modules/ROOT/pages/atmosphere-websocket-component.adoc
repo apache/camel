@@ -1,5 +1,5 @@
 [[atmosphere-websocket-component]]
-== Atmosphere Websocket Component
+= Atmosphere Websocket Component
 
 *Available as of Camel version 2.14*
 
@@ -30,7 +30,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Atmosphere-Websocket Options
+== Atmosphere-Websocket Options
 
 
 
@@ -67,7 +67,7 @@ atmosphere-websocket:servicePath
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,7 +111,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -149,20 +149,20 @@ The component supports 11 options, which are listed below.
 
 
 
-### URI Format
+== URI Format
 
 [source,java]
 -----------------------------------------------
 atmosphere-websocket:///relative path[?options]
 -----------------------------------------------
 
-### Reading and Writing Data over Websocket
+== Reading and Writing Data over Websocket
 
 An atmopshere-websocket endpoint can either write data to the socket or
 read from the socket, depending on whether the endpoint is configured as
 the producer or the consumer, respectively.
 
-### Configuring URI to Read or Write Data
+== Configuring URI to Read or Write Data
 
 In the route below, Camel will read from the specified websocket
 connection.
@@ -208,7 +208,7 @@ And the equivalent Spring sample:
 
  
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

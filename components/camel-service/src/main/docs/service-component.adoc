@@ -1,13 +1,13 @@
 [[service-component]]
-== Service Component
+= Service Component
 
 *Available as of Camel version 2.22*
 
 
-### Using the service endpoint
+== Using the service endpoint
 
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -15,7 +15,7 @@ service:serviceName:endpoint[?options]
 ----
 
 
-### Options
+== Options
 
 // component options: START
 The Service component supports 4 options, which are listed below.
@@ -41,7 +41,7 @@ service:delegateUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -51,7 +51,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +65,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -97,7 +97,7 @@ The component supports 5 options, which are listed below.
 
 
 
-### Implementations
+== Implementations
 
 Camel provide the following ServiceRegistry implementations:
 
@@ -105,7 +105,7 @@ Camel provide the following ServiceRegistry implementations:
 - camel-zookeeper
 - camel-spring-cloud
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

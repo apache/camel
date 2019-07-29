@@ -1,5 +1,5 @@
 [[pipeline-eip]]
-== Pipeline EIP
+= Pipeline EIP
 
 Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
@@ -9,14 +9,14 @@ With Camel you can split your processing across multiple independent
 https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] instances which can then be chained
 together.
 
-=== Options
+== Options
 
 // eip options: START
 The Pipeline EIP has no options.
 // eip options: END
 
 [[pipeline-Examples]]
-=== Examples
+== Examples
 
 You can create pipelines of logic using multiple
 https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] or https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message

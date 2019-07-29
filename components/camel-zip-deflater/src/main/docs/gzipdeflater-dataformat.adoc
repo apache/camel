@@ -1,5 +1,5 @@
 [[gzipdeflater-dataformat]]
-== GZip Deflater DataFormat
+= GZip Deflater DataFormat
 
 *Available as of Camel version 2.0*
 
@@ -16,7 +16,7 @@ using `gzip` tool.
 NOTE: This dataformat is not for working with gzip files such as uncompressing and building gzip files.
 Instead use the zipfile dataformat.
 
-=== Options
+== Options
 
 // dataformat options: START
 The GZip Deflater dataformat supports 1 options, which are listed below.
@@ -30,7 +30,7 @@ The GZip Deflater dataformat supports 1 options, which are listed below.
 |===
 // dataformat options: END
 
-=== Marshal
+== Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload employing gzip compression format and send it an ActiveMQ queue
@@ -41,7 +41,7 @@ called MY_QUEUE.
 from("direct:start").marshal().gzipDeflater().to("activemq:queue:MY_QUEUE");
 ----
 
-=== Unmarshal
+== Unmarshal
 
 In this example we unmarshal a gzipped payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -52,7 +52,7 @@ the `UnGZippedMessageProcessor`.
 from("activemq:queue:MY_QUEUE").unmarshal().gzipDeflater().process(new UnGZippedMessageProcessor());
 ----
 
-=== Dependencies
+== Dependencies
 
 This data format is provided in *camel-core* so no additional
 dependencies is needed.

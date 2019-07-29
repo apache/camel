@@ -1,5 +1,5 @@
 [[Transformer-Transformer]]
-== Transformer
+= Transformer
 
 *Available as of Camel 2.19*
 
@@ -17,7 +17,7 @@ type and apply. Once transform succeed or message is already in expected type, t
 
 
 [[Transformer-DataTypeFormat]]
-=== Data type format
+== Data type format
 [source]
 ----
 scheme:name
@@ -29,7 +29,7 @@ a wildcard.
 
 
 [[Transformer-SupportedTransformers]]
-=== Supported Transformers
+== Supported Transformers
 
 |===
 | Transformer | Description
@@ -44,7 +44,7 @@ a wildcard.
 
 
 [[Transformer-CommonOptions]]
-==== Common Options
+=== Common Options
 All transformers have following common options to specify which data type is supported by the transformer. `scheme` or both of `fromType` and `toType` must be specified.
 |===
 | Name | Description
@@ -59,7 +59,7 @@ All transformers have following common options to specify which data type is sup
 
 
 [[Transformer-DataFormat]]
-==== DataFormat Transformer Options
+=== DataFormat Transformer Options
 |===
 | Name | Description
 
@@ -92,7 +92,7 @@ XML DSL:
 
 
 [[Transformer-Endpoint]]
-=== Endpoint Transformer Options
+== Endpoint Transformer Options
 |===
 | Name | Description
 
@@ -118,7 +118,7 @@ And here is an example to specify endpoint ref in XML DSL:
 ----
 
 [[Transformer-Custom]]
-=== Custom Transformer Options
+== Custom Transformer Options
 Note that Transformer must be a subclass of `org.apache.camel.spi.Transformer`
 |===
 | Name | Description
@@ -148,7 +148,7 @@ XML DSL:
 
 
 [[Transformer-Examples]]
-=== Examples
+== Examples
 
 For example to declare the Endpoint Transformer which uses
 xslt component to transform from `xml:ABCOrder` to `xml:XYZOrder`, we can do as follows:
