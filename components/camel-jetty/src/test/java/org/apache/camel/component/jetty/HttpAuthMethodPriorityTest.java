@@ -22,11 +22,13 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.rest.MyCustomHttpBinding;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.impl.JndiRegistry;
 import org.eclipse.jetty.security.ConstraintMapping;
@@ -40,14 +42,9 @@ import org.junit.Test;
 
 @Ignore
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myAuthHandler", getSecurityHandler());
-        return jndi;
-    }
-    private SecurityHandler getSecurityHandler() throws IOException {
+	
+    @BindToRegistry("myAuthHandler")
+    public SecurityHandler getSecurityHandler() throws IOException {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
 

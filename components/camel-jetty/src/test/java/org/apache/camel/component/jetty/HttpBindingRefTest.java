@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -32,6 +33,12 @@ import org.junit.Test;
  */
 public class HttpBindingRefTest extends BaseJettyTest {
 
+    @BindToRegistry("default")
+    private DefaultHttpBinding binding = new DefaultHttpBinding();
+    
+    @BindToRegistry("myownbinder")
+    private MyHttpBinding bindingHttp = new MyHttpBinding();
+    
     @Test
     public void testDefaultHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
@@ -42,14 +49,6 @@ public class HttpBindingRefTest extends BaseJettyTest {
     public void testCustomHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
         assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("default", new DefaultHttpBinding());
-        jndi.bind("myownbinder", new MyHttpBinding());
-        return jndi;
     }
 
     @Override

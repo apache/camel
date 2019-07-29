@@ -26,6 +26,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -42,6 +43,9 @@ import org.junit.Test;
 
 public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
+	@BindToRegistry("myMultipartFilter")
+	private MyMultipartFilter multipartFilter = new MyMultipartFilter();
+	
     private static class MyMultipartFilter extends MultiPartFilter {
         @Override
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {            
@@ -93,13 +97,6 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
         assertEquals("Get a wrong response status", 200, status);
         assertNotNull("Did not use custom multipart filter", httppost.getResponseHeader("MyMultipartFilter"));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myMultipartFilter", new MyMultipartFilter());
-        return jndi;
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
