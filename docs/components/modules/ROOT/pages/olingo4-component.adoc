@@ -1,5 +1,5 @@
 [[olingo4-component]]
-== Olingo4 Component
+= Olingo4 Component
 
 *Available as of Camel version 2.19*
 
@@ -32,14 +32,14 @@ for this component:
     </dependency>
 ----------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------------------------
     olingo4://endpoint/<resource-path>?[options]
 ------------------------------------------------
 
-### Olingo4 Options
+== Olingo4 Options
 
 
 
@@ -73,7 +73,7 @@ olingo4:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +84,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +110,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -151,7 +151,7 @@ The component supports 16 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-### Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can use endpoint names and options listed
 next. Producer endpoints can also use a special option *`inBody`* that
@@ -195,7 +195,7 @@ org.apache.olingo.commons.api.http.HttpStatusCode for other OData resources
 |update |data, resourcePath, endpointHttpHeaders |PUT |org.apache.olingo.commons.api.http.HttpStatusCode
 |=======================================================================
 
-### Endpoint HTTP Headers
+== Endpoint HTTP Headers
 The component level configuration property **httpHeaders** supplies static HTTP header information. 
 However, some systems requires dynamic header information to be passed to and received from the endpoint.
 A sample use case would be systems that require dynamic security tokens.  The **endpointHttpHeaders** 
@@ -204,7 +204,7 @@ be passed to the endpoint in the *`CamelOlingo4.endpointHttpHeaders`* property a
 response headers will be returned in a *`CamelOlingo4.responseHttpHeaders`* property.  
 Both properties are of the type *`java.util.Map<String, String>`*.
 
-### OData Resource Type Mapping
+== OData Resource Type Mapping
 
 The result of *read* endpoint and data type of *data* option depends on
 the OData resource being queried, created or modified. 
@@ -231,7 +231,7 @@ java.util.Map<String, Object> for In body (request)
 |Count |<resource-uri>/$count |java.lang.Long
 |=======================================================================
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Only the *read* endpoint can be used as a consumer endpoint. Consumer
 endpoints can
@@ -242,12 +242,12 @@ collection will generate one exchange per element, and their routes will
 be executed once for each exchange. This behavior can be disabled by
 setting the endpoint property *consumer.splitResult=false*. 
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a *`CamelOlingo4.`* prefix.
 
-### Message Body
+== Message Body
 
 All result message bodies utilize objects provided by the underlying
 http://olingo.apache.org/javadoc/odata4/index.html[Apache Olingo 4.0
@@ -257,7 +257,7 @@ parameter. For endpoints that return an array or collection, a consumer
 endpoint will map every element to distinct messages, unless
 *consumer.splitResult* is set to *false*.
 
-### Use cases
+== Use cases
 
 The following route reads top 5 entries from the People entity
 ordered by ascending FirstName property. 

@@ -1,5 +1,5 @@
 [[hystrix-eip]]
-== Hystrix EIP
+= Hystrix EIP
 
 *Available as of Camel 2.18*
 
@@ -16,7 +16,7 @@ Maven users will need to add the following dependency to their pom.xml to use th
 </dependency>
 ----
 
-=== Configuration options
+== Configuration options
 
 // eip options: START
 The Hystrix EIP supports 2 options which are listed below:
@@ -29,7 +29,7 @@ The Hystrix EIP supports 2 options which are listed below:
 |===
 // eip options: END
 
-=== Camel's Error Handler and Hystrix EIP
+== Camel's Error Handler and Hystrix EIP
 
 By default the Hystrix EIP handles errors by itself. This means if the circuit breaker is open and
 the message fails, then Camel's error handler is not reacting also.
@@ -62,7 +62,7 @@ If we turn off the `inheritErrorHandler` option (default) then the Hystrix EIP w
 executed once because it handled the error itself.
 
 
-=== Samples
+== Samples
 
 Below is an example route showing an Hystrix endpoint that protects against slow operation by falling back to the in-lined fallback route. By default the timeout request is just *1000ms* so the HTTP endpoint has to be fairly quick to succeed.
 [source,java]
@@ -97,6 +97,6 @@ And in XML DSL:
 
 See https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/onFallback-eip.adoc[onFallback]
 
-=== Other examples
+== Other examples
 
 You can find an example with the source code: https://github.com/apache/camel/tree/master/examples/camel-example-hystrix[camel-example-hystrix].

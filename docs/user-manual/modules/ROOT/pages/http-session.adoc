@@ -1,5 +1,5 @@
 [[HTTPSession-HTTPSession]]
-=== HTTP-Session Handling
+= HTTP-Session Handling
 
 Several Camel components can use HTTP as the underlying transport protocol.
 In general HTTP calls are stateless in nature, however some servers allow
@@ -8,7 +8,7 @@ session (e.g. via a session cookie called "JSESSIONID" with servers implementing
 the JEE Servlet specification).
 
 [[HTTPSession-SessionScope]]
-==== Session Scope
+== Session Scope
 
 If a Camel route intends to implement some kind of HTTP session handling
 the scope of this session should be considered.
@@ -17,14 +17,14 @@ Independently of the session scope the implementation must honor the domain of
 the handled cookies.
 
 [[HTTPSession-ContextScope]]
-===== Route/Context Scope
+=== Route/Context Scope
 
 It might be desirable to have a single session for a route or a 
 CamelContext. This essentially means that all calls to
 a server issued from a route or CamelContext share a single HTTP session.
 
 [[HTTPSession-EndpointScope]]
-===== Endpoint Scope
+=== Endpoint Scope
 
 It is also possible to have a session on an
 Endpoint entity. This would mean that all invocations of
@@ -35,7 +35,7 @@ Some components like camel-http, and camel-http4 support endpoint scoped session
 even prior to version 2.19.
 
 [[HTTPSession-ExchangeScope]]
-===== Exchange Scope
+=== Exchange Scope
 
 The third option to define a session scope is on 
 Exchange level. This is particularly useful for scenarios
@@ -49,7 +49,7 @@ is defined on exchange scope, each invocation of the route will get a separate s
 and the server can maintain a separate state for the different parallel invocations.
 
 [[HTTPSession-Usage]]
-==== Usage
+== Usage
 
 If you are a Camel user, you see that several Camel components support the cookieHandler
 parameter on endpoint level. All you need to do is to instantiate a cookie handler 
@@ -71,7 +71,7 @@ this means that each Exchange will get its own browser instance (so sessions are
 As the ExchangeCookieHandler does not store any state it is generally not useful to have
 multiple ExchangeCookieHandler instances (as they would access the same data, anyway).
 
-===== Example
+=== Example
 
 The following three routes will each do two invocations of an echo REST service. In the first
 route (without a cookie handler) each invocation will get a new session. For the second route
@@ -122,7 +122,7 @@ will copy the reference to this cookie store (so there is effectively a shared c
 As a workaround, you can call a cookieHandler.getCookieStore() e.g. by setting this to some dummy header.
 
 [[HTTPSession-ComponentDevelopers]]
-==== Component Developers
+== Component Developers
 
 If you want to develop a HTTP based component that is supposed to participate in a session
 you have to add the following parts to your code:

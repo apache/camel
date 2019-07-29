@@ -1,5 +1,5 @@
 [[activemq-component]]
-== ActiveMQ Component
+= ActiveMQ Component
 
 *Available as of Camel version 1.0*
 
@@ -26,7 +26,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 --------------------------------------------
 activemq:[queue:|topic:]destinationName[?options]
@@ -41,7 +41,7 @@ activemq:foo
 -----------
 
 
-=== Component options
+== Component options
 
 // component options: START
 The ActiveMQ component supports 85 options, which are listed below.
@@ -139,7 +139,7 @@ The ActiveMQ component supports 85 options, which are listed below.
 |===
 // component options: END
 
-=== Endpoint options
+== Endpoint options
 
 
 // endpoint options: START
@@ -151,7 +151,7 @@ activemq:destinationType:destinationName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -162,7 +162,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (92 parameters):
+=== Query Parameters (92 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -264,7 +264,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

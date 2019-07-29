@@ -1,5 +1,5 @@
 [[validate-eip]]
-== Validate EIP
+= Validate EIP
 *Available as of Camel 2.3* +
 
 Validate uses an expression or predicates to validate the contents of a message.
@@ -8,13 +8,13 @@ You can use the validate DSL with all kind of Predicates and Expressions.
 Validate evaluates the Predicate/Expression and if it is false a `PredicateValidationException` is thrown.
 If it is true message processing continues.
 
-=== Options
+== Options
 
 // eip options: START
 The Validate EIP has no options.
 // eip options: END
 
-=== Samples
+== Samples
 
 The route below will read the file contents and validate them against a regular expression.
 

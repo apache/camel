@@ -15,12 +15,12 @@ The following sample routes are started together in a spring-boot application (a
 All routes are enabled by default, but they can be switched off by changing the `src/main/resources/application.yml` file.
 Each route is contained in a separate Java class.
 
-## How to run
+= How to run
 
 You can run this example using
 
     mvn spring-boot:run
 
-## More information
+== More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/

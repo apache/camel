@@ -1,4 +1,4 @@
-## Kubernetes Components
+= Kubernetes Components
 
 *Available as of Camel version 2.17*
 
@@ -38,7 +38,7 @@ their `pom.xml` for this component:
 ------------------------------------------------------------
 
 
-### Headers
+== Headers
 
 [width="100%",options="header"]
 |=======================================================================
@@ -122,13 +122,13 @@ their `pom.xml` for this component:
 |=======================================================================
 
 
-### Usage
+== Usage
 
-#### Producer examples
+=== Producer examples
 
 Here we show some examples of producer using camel-kubernetes.
 
-#### Create a pod
+=== Create a pod
 
 [source,java]
 -------------------------------------------------------------
@@ -138,7 +138,7 @@ from("direct:createPod")
 
 By using the KubernetesConstants.KUBERNETES_POD_SPEC header you can specify your PodSpec and pass it to this operation.
 
-#### Delete a pod
+=== Delete a pod
 
 [source,java]
 -------------------------------------------------------------

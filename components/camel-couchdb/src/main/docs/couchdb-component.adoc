@@ -1,5 +1,5 @@
 [[couchdb-component]]
-== CouchDB Component
+= CouchDB Component
 
 *Available as of Camel version 2.11*
 
@@ -32,7 +32,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------
@@ -42,7 +42,7 @@ couchdb:http://hostname[:port]/database?[options]
 Where *hostname* is the hostname of the running couchdb instance. Port
 is optional and if not specified then defaults to 5984.
 
-### Options
+== Options
 
 // component options: START
 The CouchDB component supports 2 options, which are listed below.
@@ -66,7 +66,7 @@ couchdb:protocol:hostname:port/database
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,7 +102,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -131,7 +131,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Headers
+== Headers
 
 The following headers are set on exchanges during message transport.
 
@@ -157,7 +157,7 @@ ignored. That means for example, if you set CouchDbId as a header, it
 will not be used as the id for insertion, the id of the document will
 still be used.
 
-### Message Body
+== Message Body
 
 The component will use the message body as the document to be inserted.
 If the body is an instance of String, then it will be marshalled into a
@@ -166,7 +166,7 @@ or the insert / update will fail. If the body is an instance of a
 com.google.gson.JsonElement then it will be inserted as is. Otherwise
 the producer will throw an exception of unsupported body type.
 
-### Samples
+== Samples
 
 For example if you wish to consume all inserts, updates and deletes from
 a CouchDB instance running locally, on port 9999 then you could use the

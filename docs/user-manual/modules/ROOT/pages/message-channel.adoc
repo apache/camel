@@ -1,5 +1,5 @@
 [[MessageChannel-MessageChannel]]
-== Message Channel
+= Message Channel
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageChannel.html[Message
@@ -12,7 +12,7 @@ Endpoint interfaces.
 
 image:http://www.enterpriseintegrationpatterns.com/img/MessageChannelSolution.gif[image]
 
-=== Samples
+== Samples
 
 In JMS, Message Channels are represented by topics and queues such as
 the following
@@ -43,7 +43,7 @@ And in XML:
 </route>
 ----
 
-=== See Also
+== See Also
 
 For more details see
 

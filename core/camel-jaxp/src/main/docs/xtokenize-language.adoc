@@ -1,5 +1,5 @@
 [[xtokenize-language]]
-== XML Tokenize Language
+= XML Tokenize Language
 
 *Available as of Camel version 2.14*
 
@@ -13,7 +13,7 @@ Tokenizer. 
 
 For more details see Splitter.
 
-=== XML Tokenizer Options
+== XML Tokenizer Options
 
 // language options: START
 The XML Tokenize language supports 4 options, which are listed below.

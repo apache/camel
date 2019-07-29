@@ -1,18 +1,18 @@
 [[jcache-component]]
-== JCache Component
+= JCache Component
 
 *Available as of Camel version 2.17*
 
 The JCache component enables you to perform caching operations using JSR107/JCache as cache implementation.
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
 jcache:cacheName[?options]
 ----------------------------
 
-### URI Options
+== URI Options
 
 // endpoint options: START
 The JCache endpoint is configured using URI syntax:
@@ -23,7 +23,7 @@ jcache:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -33,7 +33,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -143,7 +143,7 @@ The policy needs a JCache Cache. It can be set directly by _.setCache()_ or the 
 
 Similar caching solution is available for example in Spring using the @Cacheable annotation.
 
-=== JCachePolicy Fields
+== JCachePolicy Fields
 
 
 [width="100%",cols="2,5,3,2",options="header"]
@@ -157,10 +157,10 @@ Similar caching solution is available for example in Spring using the @Cacheable
 | *enabled* | If policy is not enabled, no wrapper processor is added to the route. It has impact only during startup, not during runtime. For example it can be used to disable caching from properties. | true | boolean
 |===
 
-## How to determine cache to use?
+== How to determine cache to use?
 
 
-### Set cache
+== Set cache
 
 The cache used by the policy can be set directly. This means you have to configure the cache yourself and get a JCache Cache object,
  but this gives the most flexibility. For example it can be setup in the config xml of the cache provider (Hazelcast, EhCache, ...)
@@ -184,7 +184,7 @@ from("direct:get-orders")
     .bean(OrderService.class,"findOrderById(${body})");
 ----------------------------
 
-### Set cacheManager
+== Set cacheManager
 
 If the _cache_ is not set, the policy will try to lookup or create the cache automatically.
  If the _cacheManager_ is set on the policy, it will try to get cache with the set _cacheName_ (routeId by default) from the CacheManager.
@@ -203,7 +203,7 @@ jcachePolicy.setCacheManager(cacheManager);
 jcachePolicy.setCacheName("items")
 ----------------------------
 
-### Find cacheManager
+== Find cacheManager
 
 If _cacheManager_ (and the _cache_) is not set, the policy will try to find a JCache CacheManager object:
 
@@ -219,7 +219,7 @@ from("direct:get-orders").routeId("getorders")
     .bean(OrderService.class,"findOrderById(${body})");
 ----------------------------
 
-### Partially wrapped route
+== Partially wrapped route
 
 In the examples above the whole route was executed or skipped. A policy can be used to wrap only a segment of the route instead of all processors.
 
@@ -236,7 +236,7 @@ from("direct:get-orders")
 
 The _.log()_ at the beginning and at the end of the route is always called, but the section inside _.policy()_ and _.end()_ is executed based on the cache.
 
-## KeyExpression
+== KeyExpression
 
 By default the policy uses the received Exchange body as _key_, so the default expression is like _simple("$\{body\})_.
  We can set a different Camel Expression as _keyExpression_ which will be evaluated to determine the key.
@@ -264,9 +264,9 @@ from("direct:get-orders")
     .bean(OrderService.class,"findOrderById(${header.orderId})");
 ----------------------------
 
-## Camel XML DSL examples
+== Camel XML DSL examples
 
-### Use JCachePolicy in an XML route
+== Use JCachePolicy in an XML route
 
 In Camel XML DSL we need a named reference to the JCachePolicy instance (registered in CamelContext or simply in Spring).
  We have to wrap the route between <policy>...</policy> tags after <from>.
@@ -305,7 +305,7 @@ See this example when only a part of the route is wrapped:
 ----------------------------
 
 
-### Define CachePolicy in Spring
+== Define CachePolicy in Spring
 
 It's more convenient to create a JCachePolicy in Java especially within a RouteBuilder using the Camel DSL expressions,
  but see this example to define it in a Spring XML:
@@ -322,7 +322,7 @@ It's more convenient to create a JCachePolicy in Java especially within a RouteB
 </bean>
 ----------------------------
 
-### Create Cache from XML
+== Create Cache from XML
 
 It's not strictly speaking related to Camel XML DLS, but JCache providers usually have a way to configure the cache in an XML file.
  For example with Hazelcast you can add a _hazelcast.xml_ to classpath to configure the cache "spring" used in the example above.
@@ -346,7 +346,7 @@ It's not strictly speaking related to Camel XML DLS, but JCache providers usuall
 ----------------------------
 
 
-=== Special scenarios and error handling
+== Special scenarios and error handling
 
 If the Cache used by the policy is closed (can be done dynamically), the whole caching functionality is skipped,
  the route will be executed every time.

@@ -1,5 +1,5 @@
 [[InversionOfControlWithSmartDefaults-InversionOfControlWithSmartDefaults]]
-=== Inversion Of Control With Smart Defaults
+= Inversion Of Control With Smart Defaults
 
 Inversion of Control is a powerful way of wiring together your beans so
 that the beans themselves can stay simple & be injected with their

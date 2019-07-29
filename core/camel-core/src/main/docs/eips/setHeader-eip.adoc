@@ -1,9 +1,9 @@
 [[setHeader-eip]]
-== Set Header EIP
+= Set Header EIP
 
 The SetHeader EIP allows you to set and header on your exchange.
 
-=== Options
+== Options
 
 // eip options: START
 The Set Header EIP supports 1 options which are listed below:
@@ -15,7 +15,7 @@ The Set Header EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
-=== Examples
+== Examples
 
 The following example shows how to use the SetHeader EIP
 

@@ -1,5 +1,5 @@
 [[pdf-component]]
-== PDF Component
+= PDF Component
 
 *Available as of Camel version 2.16*
 
@@ -23,7 +23,7 @@ following dependency to their `pom.xml`:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 The PDF component only supports producer endpoints.
 
@@ -32,7 +32,7 @@ The PDF component only supports producer endpoints.
 pdf:operation[?options]
 -----------------------
 
-### Options
+== Options
 
 // component options: START
 The PDF component supports 2 options, which are listed below.
@@ -58,7 +58,7 @@ pdf:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -118,7 +118,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Headers
+== Headers
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
 |Header |Description
@@ -137,7 +137,7 @@ https://pdfbox.apache.org/docs/1.8.10/javadocs/org/apache/pdfbox/pdmodel/encrypt
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

@@ -1,5 +1,5 @@
 [[GracefulShutdown-GracefulShutdown]]
-=== Graceful Shutdown
+= Graceful Shutdown
 
 *Available as of Camel 2.2*
 
@@ -15,7 +15,7 @@ Camel provides a default strategy in the
 doing that.
 
 [[GracefulShutdown-DefaultShutdownStrategy]]
-==== DefaultShutdownStrategy
+== DefaultShutdownStrategy
 
 The default strategy will gracefully shutdown routes:
 
@@ -61,7 +61,7 @@ Notice how it waits while there are inflight exchanges still being
 processed before it can shutdown.
 
 [[GracefulShutdown-Suppressingloggingduetotimeoutnotallowingallinflightmessagestocomplete]]
-==== Suppressing logging due to timeout not allowing all inflight messages to complete
+== Suppressing logging due to timeout not allowing all inflight messages to complete
 
 
 *Available as of Camel 2.12*
@@ -86,7 +86,7 @@ logs coming from 3rd party libraries and whatnot, which Camel cannot
 control.
 
 [[GracefulShutdown-Logginginflightexchangeinformationontimeout]]
-==== Logging inflight exchange information on timeout
+== Logging inflight exchange information on timeout
 
 *Available as of Camel 2.15*
 
@@ -123,7 +123,7 @@ context.getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
 ---------------------------------
 
 [[GracefulShutdown-Controllingorderingofroutes]]
-==== Controlling ordering of routes
+== Controlling ordering of routes
 
 You can configure the order in which routes should be started, and thus
 also the same order they are being shutdown. 
@@ -132,7 +132,7 @@ xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring
 route startup ordering and autostartup].
 
 [[GracefulShutdown-Finegrainedconfiguration]]
-==== Fine grained configuration
+== Fine grained configuration
 
 You can control two areas that influence graceful shutdown in the Camel
 routing:
@@ -146,7 +146,7 @@ explicit configured. (same principle as xref:error-handler.adoc[Error
 Handler], etc.).
 
 [[GracefulShutdown-ShutdownRoute]]
-==== ShutdownRoute
+== ShutdownRoute
 
 This option can control how a given route should act during graceful
 shutdown. It has two values `Default` and `Defer`. The `Default` is
@@ -268,7 +268,7 @@ keep intake new messages which will delay the shutdown processor. Or
 even have it timeout if a lot of new messages keep coming in.
 
 [[GracefulShutdown-ShutdownRunningTask]]
-==== ShutdownRunningTask
+== ShutdownRunningTask
 
 This option control how a given route consumer acts during shutdown.
 Most route consumer will only operate on a single task (message),
@@ -370,13 +370,13 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 ---------------------------------
 
 [[GracefulShutdown-JMXmanaged]]
-==== JMX managed
+== JMX managed
 
 The `ShutdownStrategy` is JMX aware as well so you can manage it from a
 JMX console. For example you can change the timeout value.
 
 [[GracefulShutdown-Shuttingdownindividualroutes]]
-==== Shutting down individual routes
+== Shutting down individual routes
 
 *Available as of Camel 2.3* 
  Its now possible to gracefully shutdown an individual route using
@@ -385,13 +385,13 @@ provide a specific timeout to use instead of the default timeout
 settings using `shutdownRoute(routeId, timeout, timeUnit)`.
 
 [[GracefulShutdown-Developerrelated]]
-==== Developer related
+== Developer related
 
 If you develop your own Camel component or want to implement your own
 shutdown strategy then read this section for details.
 
 [[GracefulShutdown-ShutdownStrategy]]
-==== ShutdownStrategy
+== ShutdownStrategy
 
 You can implement your own strategy to control the shutdown by
 implementing the `org.apache.camel.spi.ShutdownStrategy` and the set it
@@ -404,7 +404,7 @@ xref:advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
 configuration of CamelContext using Spring].
 
 [[GracefulShutdown-ShutdownAware]]
-==== ShutdownAware
+== ShutdownAware
 
 The interface `org.apache.camel.spi.ShutdownAware` is an optional
 interface consumers can implement to have fine grained control during
@@ -425,7 +425,7 @@ xref:batch-consumer.adoc[Batch Consumer] should implement
 option. See `GenericFileConsumer` for an example.
 
 [[GracefulShutdown-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:configuring-route-startup-ordering-and-autostartup.adoc[Configuring
 route startup ordering and autostartup]

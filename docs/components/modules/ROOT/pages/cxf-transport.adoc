@@ -1,5 +1,5 @@
 [[CamelTransportforCXF-WhatstheCamelTransportforCXF]]
-== What's the Camel Transport for CXF
+= What's the Camel Transport for CXF
 
 In CXF you offer or consume a webservice by defining its address. The
 first part of the address specifies the protocol to use. For example
@@ -18,13 +18,13 @@ use Camel's routing engine and integration patterns support together
 with your CXF services.
 
 [[CamelTransportforCXF-IntegrateCamelintoCXFtransportlayer]]
-=== Integrate Camel into CXF transport layer
+== Integrate Camel into CXF transport layer
 
 To include the Camel Transport into your CXF bus you use the
 CamelTransportFactory. You can do this in Java as well as in Spring.
 
 [[CamelTransportforCXF-SettinguptheCamelTransportinSpring]]
-==== Setting up the Camel Transport in Spring
+=== Setting up the Camel Transport in Spring
 
 You can use the following snippet in your applicationcontext if you want
 to configure anything special. If you only want to activate the camel
@@ -53,7 +53,7 @@ jar and load a CamelTransportFactory for you.
 --------------------------------------------------------------------------------------------------------
 
 [[CamelTransportforCXF-IntegratingtheCamelTransportinaprogrammaticway]]
-==== Integrating the Camel Transport in a programmatic way
+=== Integrating the Camel Transport in a programmatic way
 
 Camel transport provides a setContext method that you could use to set
 the Camel context into the transport factory. If you want this factory
@@ -88,10 +88,10 @@ BusFactory.setDefaultBus(bus);
 ------------------------------------------------------------------------------------------------------------------
 
 [[CamelTransportforCXF-ConfigurethedestinationandconduitwithSpring]]
-=== Configure the destination and conduit with Spring
+== Configure the destination and conduit with Spring
 
 [[CamelTransportforCXF-Namespace]]
-==== Namespace
+=== Namespace
 
 The elements used to configure a Camel transport endpoint are defined
 in the namespace `\http://cxf.apache.org/transports/camel`. It is
@@ -115,7 +115,7 @@ the `xsi:schemaLocation` attribute.
 ---------------------------------------------------------------------
 
 [[CamelTransportforCXF-Thedestinationelement]]
-==== The `destination` element
+=== The `destination` element
 
 You configure a Camel transport server endpoint using the
 `camel:destination` element and its children. The `camel:destination`
@@ -163,7 +163,7 @@ You can specify the camel context in the camel destination
 The camel context id which you want inject into the camel destination
 
 [[CamelTransportforCXF-Theconduitelement]]
-==== The `conduit` element
+=== The `conduit` element
 
 You configure a Camel transport client using the `camel:conduit` element
 and its children. The `camel:conduit` element takes a single attribute,
@@ -213,7 +213,7 @@ You can specify the camel context in the camel conduit
 The camel context id which you want inject into the camel conduit
 
 [[CamelTransportforCXF-ConfigurethedestinationandconduitwithBlueprint]]
-=== Configure the destination and conduit with Blueprint
+== Configure the destination and conduit with Blueprint
 
 Camel Transport for CXF supports configuration with Blueprint.
 
@@ -245,7 +245,7 @@ context in the camel destination.
 ------------------------------------------------------------------------
 
 [[CamelTransportforCXF-ExampleUsingCamelasaloadbalancerforCXF]]
-=== Example Using Camel as a load balancer for CXF
+== Example Using Camel as a load balancer for CXF
 
 This example shows how to use the camel load balancing feature in CXF.
 You need to load the configuration file in CXF and publish the endpoints

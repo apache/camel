@@ -1,5 +1,5 @@
 [[removeHeader-eip]]
-== Remove Header EIP
+= Remove Header EIP
 The Remove Header EIP allows you to remove an header from your exchange.
 
 == Options
@@ -14,7 +14,7 @@ The Remove Header EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
-=== Samples
+== Samples
 
 [source,java]
 ----
@@ -23,7 +23,7 @@ from("seda:b")
   .to("mock:result");
 ----
 
-==== Spring DSL
+=== Spring DSL
 The sample below demonstrates the delay in Spring DSL:
 
 [source,xml]

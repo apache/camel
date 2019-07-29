@@ -1,5 +1,5 @@
 [[CEP-CamelCEP]]
-== Camel CEP
+= Camel CEP
 
 http://en.wikipedia.org/wiki/Complex_event_processing[Complex Event
 Processing] or
@@ -16,7 +16,7 @@ http://netflix.github.com/RxJava/javadoc/[API] which is a JVM port of
 the https://rx.codeplex.com/[Reactive Extensions]
 
 [[CEP-CEPwithCamelRX]]
-=== CEP with Camel RX
+== CEP with Camel RX
 
 Camel RX provides various ways to get an
 http://netflix.github.com/RxJava/javadoc/rx/Observable.html[Observable<T>]

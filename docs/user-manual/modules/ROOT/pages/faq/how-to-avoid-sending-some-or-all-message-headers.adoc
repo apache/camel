@@ -1,12 +1,12 @@
 [[Howtoavoidsendingsomeorallmessageheaders-Howtoavoidsendingsomeorallmessageheaders]]
-=== How to avoid sending some or all message headers?
+= How to avoid sending some or all message headers?
 
 When I send a message to a Camel endpoint such as the
 xref:components::mail-component.adoc[Mail] component, then the mail include some message
 headers I do not want. How can I avoid this?
 
 [[Howtoavoidsendingsomeorallmessageheaders-UseremoveHeadersintheroute]]
-==== Use removeHeaders in the route
+== Use removeHeaders in the route
 
 This is a gotcha more people encounter. However it's very easy to solve.
 To remove all headers use a wildcard expression:
@@ -63,7 +63,7 @@ it does not support patterns, so you can only remove a single header by
 its name.
 
 [[Howtoavoidsendingsomeorallmessageheaders-UseHeaderFilterStrategy]]
-==== Use HeaderFilterStrategy
+== Use HeaderFilterStrategy
 
 An alternative is that some of the Camel
 xref:component.adoc[Components] supports configuring a custom header
@@ -101,7 +101,7 @@ private data" since the header has only been filtered out from the producer
 endpoint, but not removed from the Exchange.
 
 [[Howtoavoidsendingsomeorallmessageheaders-SelectingTheAcceptedHeaders]]
-==== Selecting the accepted headers
+== Selecting the accepted headers
 
 The more steps a route has, more headers tend to be present in the exchange.
 When the number of headers is large, undetermined, or one can't know in advance

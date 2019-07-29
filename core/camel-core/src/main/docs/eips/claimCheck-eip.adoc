@@ -1,5 +1,5 @@
 [[claimCheck-eip]]
-== Claim Check EIP
+= Claim Check EIP
 
 *Available as of Camel 2.21*
 
@@ -28,7 +28,7 @@ The Claim Check EIP supports 5 options which are listed below:
 // eip options: END
 
 
-=== Claim Check Operation
+== Claim Check Operation
 
 When using this EIP you must specify the operation to use which can be of the following:
 
@@ -44,7 +44,7 @@ These operations will then store and retrieve the data using this key. You can u
 The `Push` and `Pop` operations do *not* use a key but stores the data in a stack structure.
 
 
-=== Filter what data to merge back
+== Filter what data to merge back
 
 The `filter` option is used to define what data to merge back when using the `Get` or `Pop` operation. When data is merged back
 then its merged using a `AggregationStrategy`. The default strategy uses the `filter` option to easily specify what data to merge back.
@@ -63,7 +63,7 @@ The pattern rule supports wildcard and regular expression:
 
 You can specify multiple rules separated by comma.
 
-==== Basic filter examples
+=== Basic filter examples
 
 For example to include the message body and all headers starting with _foo_:
 
@@ -99,7 +99,7 @@ If the filter rule is specified as empty or as wildcard then everything is merge
 
 Notice that when merging back data, then any existing data is overwritten, and any other existing data is preserved.
 
-==== Fine grained filtering with include and exclude pattern
+=== Fine grained filtering with include and exclude pattern
 
 The syntax also supports the following prefixes which can be used to specify include,exclude, or remove
 
@@ -124,7 +124,7 @@ You can also instruct to remove headers when merging data back, for example to r
 
 Note you cannot have both include (`+`) and exclude (`-`) `header:pattern` at the same time.
 
-=== Dynamic keys
+== Dynamic keys
 
 The claim check key are static, but you can use the `simple` language syntax to define dynamic keys,
 for example to use a header from the message named `myKey`:
@@ -145,7 +145,7 @@ from("direct:start")
 ----
 
 
-=== Java Examples
+== Java Examples
 
 The following example shows the `Push` and `Pop` operations in action;
 
@@ -200,7 +200,7 @@ from("direct:start")
     .to("mock:c");
 ----
 
-=== XML examples
+== XML examples
 
 The following example shows the `Push` and `Pop` operations in action;
 

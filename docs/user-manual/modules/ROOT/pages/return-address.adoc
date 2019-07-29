@@ -1,4 +1,4 @@
-== Return Address
+= Return Address
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return

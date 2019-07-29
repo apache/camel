@@ -1,3 +1,5 @@
+= Hiding Middleware
+
 When writing software these days, its important to try and decouple as
 much middleware code from your business logic as possible.
 

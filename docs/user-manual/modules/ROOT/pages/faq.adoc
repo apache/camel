@@ -1,5 +1,5 @@
 [[FAQ-FAQ]]
-=== FAQ
+= FAQ
 
 Here are a list of commonly asked questions and answers. If you have any
 questions which are not on this list, please talk to us on the
@@ -11,7 +11,7 @@ xref:faq/how-does-the-website-work.adoc[the GitHub repository you can send a pul
 so please join in and help us make the documentation better!
 
 [[FAQ-GeneralQuestions]]
-==== General Questions
+== General Questions
 
 General questions about Camel
 
@@ -56,7 +56,7 @@ ServiceMix when should I use Camel?]
 * xref:faq/why-the-name-camel.adoc[Why the name Camel?]
 
 [[FAQ-UsingCamelQuestions]]
-==== Using Camel Questions
+== Using Camel Questions
 
 Questions on using Apache Camel
 
@@ -121,7 +121,7 @@ Questions on using Apache Camel
 * xref:faq/why-use-multiple-camelcontext.adoc[Why use multiple CamelContext?]
 
 [[FAQ-LoggingQuestions]]
-==== Logging Questions
+== Logging Questions
 
 Questions on logging output from Camel to a console, using the
 xref:components::log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j etc
@@ -131,7 +131,7 @@ xref:components::log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j et
 * xref:faq/how-do-i-use-log4j.adoc[How do I use log4j?]
 
 [[FAQ-CamelEndpointQuestions]]
-==== Camel Endpoint Questions
+== Camel Endpoint Questions
 
 Questions on using the various Camel xref:xref:components::index.adoc[Components]
 and xref:endpoint.adoc[Endpoint] implementations
@@ -143,19 +143,19 @@ and xref:endpoint.adoc[Endpoint] implementations
 * xref:faq/how-do-the-timer-and-quartz-endpoints-compare.adoc[How do the Timer and Quartz endpoints compare?]
 
 [[FAQ-ComponentQuestions]]
-==== Component Questions
+== Component Questions
 
 Questions on using specific components
 
 [[FAQ-JMSQuestions]]
-===== JMS Questions
+=== JMS Questions
 
 Questions on using the xref:components::jms-component.adoc[JMS] endpoints in Camel
 
 * xref:faq/why-does-my-jms-route-only-consume-one-message-at-once.adoc[Why does my JMS route only consume one message at once?]
 
 [[FAQ-CommonProblems]]
-==== Common Problems
+== Common Problems
 
 Common Problems that people have when riding the Camel
 
@@ -169,7 +169,7 @@ Common Problems that people have when riding the Camel
 * xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
 
 [[FAQ-Acknowledgement]]
-==== Acknowledgement
+== Acknowledgement
 
 Many thanks to the following organizations for helping the Camel
 project.

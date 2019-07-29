@@ -1,5 +1,5 @@
 [[ical-dataformat]]
-== iCal DataFormat
+= iCal DataFormat
 
 *Available as of Camel version 2.12*
 
@@ -27,7 +27,7 @@ END:VEVENT
 END:VCALENDAR
 ----------------------------------------------------------------------
 
-### Options
+== Options
 
 // dataformat options: START
 The iCal dataformat supports 2 options, which are listed below.
@@ -42,7 +42,7 @@ The iCal dataformat supports 2 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -71,7 +71,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Basic Usage
+== Basic Usage
 
 To unmarshal and marshal the message shown above, your route will look
 like the following:
@@ -98,7 +98,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

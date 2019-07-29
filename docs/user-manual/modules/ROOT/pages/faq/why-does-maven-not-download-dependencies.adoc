@@ -1,5 +1,5 @@
 [[Whydoesmavennotdownloaddependencies-Whydoesmavennotdownloaddependencies]]
-=== Why does Maven not download dependencies?
+= Why does Maven not download dependencies?
 
 Maven uses HTTP to download its dependenices along with the dependencies
 of the Maven project (such as Camel).

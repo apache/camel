@@ -1,5 +1,5 @@
 [[HowdoestheCamelAPIcompareto-HowdoestheCamelAPIcomparetofromCXFHTTPJBIJMSJavaMailetc]]
-=== How does the Camel API compare to from CXF, HTTP, JBI, JMS, JavaMail, etc.
+= How does the Camel API compare to from CXF, HTTP, JBI, JMS, JavaMail, etc.
 
 We have tried to make the Camel
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html[Exchange]

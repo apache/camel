@@ -1,7 +1,7 @@
 [[JMX]]
-=== JMX
+= JMX
 
-==== Using JMX to manage Apache Camel
+== Using JMX to manage Apache Camel
 
 By default, JMX instrumentation agent is enabled in Camel, which means
 that Camel runtime creates and registers MBean management objects with a
@@ -44,7 +44,7 @@ Spring configuration:
 Spring configuration always takes precedence over system properties when
 they both present. It is true for all JMX related configurations.
 
-==== Disabling JMX instrumentation agent in Camel
+== Disabling JMX instrumentation agent in Camel
 
 You can disable JMX instrumentation agent by setting the Java VM system
 property as follow:
@@ -76,7 +76,7 @@ CamelContext camel = new DefaultCamelContext();
 camel.disableJMX();
 ----
 
-==== Locating a MBeanServer in the Java VM
+== Locating a MBeanServer in the Java VM
 
 Each CamelContext can have an instance of
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/InstrumentationAgent.html[`InstrumentationAgent`]
@@ -144,7 +144,7 @@ Spring configuration:
 </camelContext>
 ----
 
-==== Creating JMX RMI Connector Server
+== Creating JMX RMI Connector Server
 
 JMX connector server enables MBeans to be remotely managed by a JMX
 client such as JConsole; Camel JMX RMI connector server can be
@@ -167,7 +167,7 @@ Spring configuration:
 </camelContext>
 ----
 
-==== JMX Service URL
+== JMX Service URL
 
 The default JMX Service URL has the format:
 
@@ -262,7 +262,7 @@ When the connector port option is set, the JMX service URL will become:
 service:jmx:rmi://localhost:<connectorPort>/jndi/rmi://localhost:<registryPort>/<serviceUrlPath>
 ----
 
-==== The System Properties for Camel JMX support
+== The System Properties for Camel JMX support
 
 [width="100%",cols="1m,1,3",options="header",]
 |=======================================================================
@@ -274,7 +274,7 @@ feature in Camel
 See more system properties in this section below: _jmxAgent Properties
 Reference_.
 
-==== How to use authentication with JMX
+== How to use authentication with JMX
 
 JMX in the JDK have features for authentication and also for using
 secure connections over SSL. You have to refer to the SUN documentation
@@ -283,9 +283,9 @@ how to use this:
 * http://java.sun.com/j2se/1.5.0/docs/guide/management/agent.html
 * http://java.sun.com/javase/6/docs/technotes/guides/management/agent.html
 
-==== JMX inside an Application Server
+== JMX inside an Application Server
 
-===== Tomcat 6
+=== Tomcat 6
 
 See http://tomcat.apache.org/tomcat-6.0-doc/monitoring.html[this page]
 for details about enabling JMX in Tomcat.
@@ -301,7 +301,7 @@ set the following options...
     -Dcom.sun.management.jmxremote.authenticate=false
 ----
 
-===== JBoss AS 4
+=== JBoss AS 4
 
 By default JBoss creates its own `MBeanServer`. To allow Camel to expose
 to the same server follow these steps:
@@ -321,7 +321,7 @@ Add the following property to your `JAVA_OPTS` by editing `run.sh` or
 `run.conf` `-Djboss.platform.mbeanserver`. See
 http://wiki.jboss.org/wiki/JBossMBeansInJConsole
 
-===== WebSphere
+=== WebSphere
 
 Alter the `mbeanServerDefaultDomain` to be `WebSphere`:
 
@@ -330,7 +330,7 @@ Alter the `mbeanServerDefaultDomain` to be `WebSphere`:
 <camel:jmxAgent id="agent" createConnector="true" mbeanObjectDomainName="org.yourname" usePlatformMBeanServer="false" mbeanServerDefaultDomain="WebSphere"/>
 ----
 
-===== Oracle OC4j
+=== Oracle OC4j
 
 The Oracle OC4J J2EE application server will not allow Camel to access
 the platform `MBeanServer`. You can identify this in the log as Camel
@@ -347,13 +347,13 @@ java.lang.SecurityException: Unauthorized access from application: xx to MBean: 
 To resolve this you should disable the JMX agent in Camel, see section
 _Disabling JMX instrumentation agent in Camel_.
 
-==== Advanced JMX Configuration
+== Advanced JMX Configuration
 
 The Spring configuration file allows you to configure how Camel is
 exposed to JMX for management. In some cases, you could specify more
 information here, like the connector's port or the path name.
 
-==== Example:
+== Example:
 
 [source,xml]
 ----
@@ -386,7 +386,7 @@ SUNJMX=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=1
 for Camel, as additional startup parameters for the JVM. If you start
 Camel directly, you'll have to pass these parameters yourself.)
 
-==== `jmxAgent` Properties Reference
+== `jmxAgent` Properties Reference
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
@@ -452,7 +452,7 @@ usage of each incoming and outgoing endpoints).
 |=======================================================================
 
 
-==== Configuring whether to register MBeans always, for new routes or just by default
+== Configuring whether to register MBeans always, for new routes or just by default
 
 
 *Available as of Camel 2.7*
@@ -483,9 +483,9 @@ also be registered. This could potential lead to system degration due
 the rising number of mbeans in the registry. A MBean is not a
 light-weight object and thus consumes memory.
 
-=== Monitoring Camel using JMX
+== Monitoring Camel using JMX
 
-==== Using JConsole to monitor Camel
+== Using JConsole to monitor Camel
 
 The `CamelContext` should appear in the list of local connections, if
 you are running JConsole on the same host as Camel.
@@ -498,7 +498,7 @@ Using the Apache Camel with JConsole:
 
 image:camel-jmx.png[image]
 
-==== Which endpoints are registered
+== Which endpoints are registered
 
 In *Camel 2.1* onwards *only* `singleton` endpoints are registered as
 the overhead for non singleton will be substantial in cases where
@@ -506,11 +506,11 @@ thousands or millions of endpoints are used. This can happens when using
 a Recipient List EIP or from a
 `ProducerTemplate` that sends a lot of messages.
 
-==== Which processors are registered
+== Which processors are registered
 
 All processors out of the box from Apache Camel in the routes are registered (EIPs, consumers and producers).
 
-==== How to use the JMX NotificationListener to listen the camel events?
+== How to use the JMX NotificationListener to listen the camel events?
 
 The Camel notification events give a coarse grained overview what is
 happening. You can see lifecycle event from context and endpoints and
@@ -553,7 +553,7 @@ context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotific
     }, null);
 ----
 
-==== Using the Tracer MBean to get fine grained tracing
+== Using the Tracer MBean to get fine grained tracing
 
 Additionally to the coarse grained notifications above *Camel 2.9.0*
 support JMX Notification for fine grained trace events.
@@ -574,9 +574,9 @@ route with all exchange and message details:
 
 image:jconsole_trace_notifications.png[image]
 
-=== Using JMX for your own Camel Code
+== Using JMX for your own Camel Code
 
-==== Registering your own Managed Endpoints
+== Registering your own Managed Endpoints
 
 *Available as of Camel 2.0* +
 You can decorate your own endpoints with Spring managed annotations
@@ -631,7 +631,7 @@ Notice from *Camel 2.9* onwards its encouraged to use the
 the `org.apache.camel.api.management` package. This allows your custom
 code to not depend on Spring JARs.
 
-==== Programming your own Managed Services
+== Programming your own Managed Services
 
 *Available as of Camel 2.1*
 
@@ -685,7 +685,7 @@ types such as:
 
 And in the future we will add additional wrappers for more EIP patterns.
 
-==== ManagementObjectNameStrategy
+== ManagementObjectNameStrategy
 
 *Available as of Camel 2.1*
 
@@ -694,7 +694,7 @@ Camel provides a pluggable API for naming strategy by
 implementation is used to compute the MBean names that all MBeans are
 registered with.
 
-==== Management naming pattern
+== Management naming pattern
 
 *Available as of Camel 2.10*
 
@@ -836,7 +836,7 @@ install a 2nd Camel application that has the same `CamelContext` id and
 `managementNamePattern` then Camel will fail upon starting, and report a
 MBean already exists exception.
 
-==== ManagementStrategy
+== ManagementStrategy
 
 *Available as of Camel 2.1*
 
@@ -849,7 +849,7 @@ does, for example, is make it easier to provide an adapter for other
 management products. In addition, it also allows you to provide more
 details and features that are provided out of the box at Apache.
 
-==== Configuring level of granularity for performance statistics
+== Configuring level of granularity for performance statistics
 
 *Available as of Camel 2.1*
 
@@ -910,7 +910,7 @@ And from Spring DSL you do:
 </camelContext>
 ----
 
-=== Hiding sensitive information
+== Hiding sensitive information
 
 *Available as of Camel 2.12*
 
@@ -942,7 +942,7 @@ And from Spring DSL you do:
 This will mask URIs having options such as password and
 passphrase, and use `xxxxxx` as the replacement value.
 
-==== Declaring which JMX attributes and operations to mask
+== Declaring which JMX attributes and operations to mask
 
 On the `org.apache.camel.api.management.ManagedAttribute` and
 `org.apache.camel.api.management.ManagedOperation`, the attribute `mask`

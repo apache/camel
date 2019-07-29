@@ -1,5 +1,5 @@
 [[XMLReference-CamelXMLReference]]
-=== Camel XML Reference
+= Camel XML Reference
 
 This page contains a link to the XML schema documents for
 xref:xml-configuration.adoc[XML Configuration] with Camel releases. You
@@ -7,7 +7,7 @@ can refer to http://camel.apache.org/schema/ to see the individual XSDs
 available.
 
 [[XMLReference-ReleasedSchemas-Spring]]
-==== Released Schemas - Spring
+== Released Schemas - Spring
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -226,7 +226,7 @@ available.
 |=======================================================================
 
 [[XMLReference-ReleasedSchemas-Blueprint]]
-==== Released Schemas - Blueprint
+== Released Schemas - Blueprint
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -497,7 +497,7 @@ available.
 |=======================================================================
 
 [[XMLReference-ReleasedSchemas-CXFSpring]]
-==== Released Schemas - CXF Spring
+== Released Schemas - CXF Spring
 
 [width="100%",cols="50%,50%",options="header",]
 |======================================================================
@@ -604,7 +604,7 @@ available.
 |======================================================================
 
 [[XMLReference-ReleasedSchemas-CXFblueprint]]
-==== Released Schemas - CXF blueprint
+== Released Schemas - CXF blueprint
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -822,7 +822,7 @@ available.
 |=======================================================================
 
 [[XMLReference-ReleasedSchemas-SpringIntegration]]
-==== Released Schemas - Spring Integration
+== Released Schemas - Spring Integration
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -1126,7 +1126,7 @@ available.
 |=======================================================================
 
 [[XMLReference-ReleasedSchemas-SpringSecurity]]
-==== Released Schemas - Spring Security
+== Released Schemas - Spring Security
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -1400,7 +1400,7 @@ available.
 |=======================================================================
 
 [[XMLReference-UsingtheXSDsinconfigurationfiles]]
-==== Using the XSDs in configuration files
+== Using the XSDs in configuration files
 
 When you are using xref:components::spring.adoc[Spring]'s 2.5 XML handling to parse
 the XML then you need to refer to the XSD locations in your XML

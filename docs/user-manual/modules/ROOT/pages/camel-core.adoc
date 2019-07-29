@@ -1,3 +1,5 @@
+= Camel Core
+
 [TIP]
 ====
 This page is work in progress. The layering is probably not yet correct

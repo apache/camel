@@ -1,5 +1,5 @@
 [[ServicePool-ServicePool]]
-=== Service Pool
+= Service Pool
 
 *Available as of Camel 2.0*
 
@@ -23,7 +23,7 @@ Well these components uses pooled producers:
 * xref:components::mina2-component.adoc[Mina]
 
 [[ServicePool-Usage]]
-==== Usage
+== Usage
 
 By default Camel uses a shared
 `org.apache.camel.impl.DefaultProducerServicePool` provided by
@@ -33,7 +33,7 @@ till 6 x 100 in total in the pool, where each distinct
 xref:endpoint.adoc[Endpoint] have a limit of up till 100 producers.
 
 [[ServicePool-Pluggableproducerpooling]]
-==== Pluggable producer pooling
+== Pluggable producer pooling
 
 Camel supports using a 3rd part pool implementation. What is needed is
 to implement an adapter by implementing the
@@ -44,7 +44,7 @@ Then set your custom pooling on the `CamelContext` with the
 `setProducerServicePool` method.
 
 [[ServicePool-Developingpooleableproducers]]
-==== Developing pooleable producers
+== Developing pooleable producers
 
 The producer service pool identify a producer as being pool capable if
 the producer implements the marker interface
@@ -54,7 +54,7 @@ should be able to automatic safely recover lost connection. Usually you
 implement logic that re connects if needed.
 
 [[ServicePool-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:architecture.adoc[Architecture]
 

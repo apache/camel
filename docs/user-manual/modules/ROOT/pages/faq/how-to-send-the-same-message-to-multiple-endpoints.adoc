@@ -1,5 +1,5 @@
 [[Howtosendthesamemessagetomultipleendpoints-Howtosendthesamemessagetomultipleendpoints]]
-=== How to send the same message to multiple endpoints?
+= How to send the same message to multiple endpoints?
 
 When you need to send the *same* message to multiple endpoints then you
 should use xref:multicast-eip.adoc[Multicast].

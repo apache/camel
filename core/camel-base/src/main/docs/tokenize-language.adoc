@@ -1,5 +1,5 @@
 [[tokenize-language]]
-== Tokenize Language
+= Tokenize Language
 
 *Available as of Camel version 2.0*
 
@@ -14,7 +14,7 @@ language is recommended as it offers a faster, more efficient
 tokenization specifically for XML documents. For more details
 see Splitter.
 
-=== Tokenize Options
+== Tokenize Options
 
 // language options: START
 The Tokenize language supports 11 options, which are listed below.

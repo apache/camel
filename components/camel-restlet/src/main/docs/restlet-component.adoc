@@ -1,5 +1,5 @@
 [[restlet-component]]
-== Restlet Component
+= Restlet Component
 
 *Available as of Camel version 2.0*
 
@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -53,7 +53,7 @@ synchronous=true as option on the endpoint uris, Or set it on the
 RestletComponent as a global option so all endpoints inherit this
 option.
 
-=== Options
+== Options
 
 
 
@@ -104,7 +104,7 @@ restlet:protocol:host:port/uriPattern
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -117,7 +117,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -145,7 +145,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -197,7 +197,7 @@ The component supports 25 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
@@ -245,15 +245,15 @@ create responses using the API from Restlet. See examples below.
 the List of CacheDirective of Restlet from the camel message header.
 |===
 
-=== Message Body
+== Message Body
 
 Camel will store the restlet response from the external server on the
 OUT body. All headers from the IN message will be copied to the OUT
 message, so that headers are preserved during routing.
 
-=== Samples
+== Samples
 
-==== Restlet Endpoint with Authentication
+=== Restlet Endpoint with Authentication
 
 The following route starts a `restlet` consumer endpoint that listens
 for `POST` requests on http://localhost:8080. The processor creates a
@@ -291,7 +291,7 @@ The sample client gets a response like the following:
 received [<order foo='1'/>] as an order id = 89531
 ----
 
-==== Single restlet endpoint to service multiple methods and URI templates (deprecated)
+=== Single restlet endpoint to service multiple methods and URI templates (deprecated)
 
 This functionality is *deprecated* so do NOT use!
 
@@ -318,7 +318,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 </util:list>
 ----
 
-==== Using Restlet API to populate response
+=== Using Restlet API to populate response
 
 *Available as of Camel 2.8*
 
@@ -329,7 +329,7 @@ the response from an inlined Camel Processor:
 
 *Generating response using Restlet Response API*
 
-==== Configuring max threads on component
+=== Configuring max threads on component
 
 To configure the max threads options you must do this on the component,
 such as:
@@ -341,7 +341,7 @@ such as:
 </bean>
 ----
 
-==== Using the Restlet servlet within a webapp
+=== Using the Restlet servlet within a webapp
 
 *Available as of Camel 2.8* +
  There are

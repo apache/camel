@@ -1,5 +1,4 @@
-[[POJOConsuming-@Consume]]
-= @Consume
+= POJO Consuming
 
 To consume a message you use the
 `org.apache.camel.Consume`

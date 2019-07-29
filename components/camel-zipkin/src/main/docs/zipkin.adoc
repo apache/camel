@@ -1,5 +1,5 @@
 [[Zipkin-ZipkinComponent]]
-=== Zipkin Component
+= Zipkin Component
 
 *Available as of Camel 2.18*
 
@@ -44,7 +44,7 @@ platform can run your application in a linux container where service
 configurations are provided as environment variables.
 
 [[camel-zipkin-Options]]
-=== Options
+== Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
@@ -86,7 +86,7 @@ debug log size].  
 |===
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -122,7 +122,7 @@ The component supports 10 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 [[camel-zipkin-Example]]
-=== Example
+== Example
 
 To enable camel-zipkin you need to configure first
 
@@ -165,7 +165,7 @@ zipkin tracer beans. Camel will automatically discover and use them.
 ----
 
 [[camel-zipkin-ServiceName]]
-==== ServiceName
+== ServiceName
 
 However, if you want to map Camel endpoints to human friendly logical
 names, you can add mappings
@@ -185,7 +185,7 @@ traces. If your application uses different services, you should map
 them to more finely grained client / server service mappings
 
 [[camel-zipkin-ClientandServerServiceMappings]]
-==== Client and Server Service Mappings
+== Client and Server Service Mappings
 
 * ClientServiceMappings
 * ServerServiceMappings
@@ -230,7 +230,7 @@ zipkin.addClientServiceMapping("http:someserver*", "audit");
 ----
 
 [[camel-zipkin-Mappingrules]]
-=== Mapping rules
+== Mapping rules
 
 The service name mapping for server occurs using the following rules
 
@@ -260,7 +260,7 @@ service name
 5.  No service name was found, the exchange is not traced by zipkin
 
 [[camel-zipkin-Noclientorservermappings]]
-==== No client or server mappings
+== No client or server mappings
 
 If there has been no configuration of client or server service mappings,
 CamelZipkin runs in a fallback mode, and uses endpoint
@@ -281,7 +281,7 @@ systems across your infrastructure, then you should consider using human-readabl
 uris.
 
 [[camel-zipkin-camel-zipin-starter]]
-=== camel-zipin-starter
+== camel-zipin-starter
 
 If you are using Spring Boot then you can add
 the `camel-zipkin-starter` dependency, and turn on zipkin by annotating

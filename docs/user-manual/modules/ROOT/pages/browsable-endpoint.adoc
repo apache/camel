@@ -1,5 +1,5 @@
 [[BrowsableEndpoint-BrowsableEndpoint]]
-=== BrowsableEndpoint
+= BrowsableEndpoint
 
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/BrowsableEndpoint.html[BrowsableEndpoint]
 is an extension interface an Endpoint may implement

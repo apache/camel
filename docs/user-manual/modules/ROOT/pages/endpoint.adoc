@@ -1,5 +1,5 @@
 [[Endpoint-Endpoints]]
-=== Endpoints
+= Endpoints
 
 Camel supports the Message Endpoint pattern
 using the
@@ -26,7 +26,7 @@ consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
 [[Endpoint-SeeAlso]]
-==== See Also
+== See Also
 
 * Configuring Camel
 * Message Endpoint pattern

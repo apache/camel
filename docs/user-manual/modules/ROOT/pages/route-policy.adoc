@@ -1,4 +1,4 @@
-=== RoutePolicy
+= RoutePolicy
 
 *Available as of Camel 2.1*
 
@@ -7,7 +7,7 @@ route(s) at runtime. For example you can use it to determine whether a
 route should be running or not. However the policies can support any
 kind of use cases.
 
-==== How it works
+== How it works
 
 You associate a route with a given *`RoutePolicy`* and then during
 runtime Camel will invoke callbacks on this policy where you can
@@ -44,7 +44,7 @@ during the day using a
 xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] (offered via the
 http://camel.apache.org/quartz.html[camel-quartz] component).
 
-==== SuspendableService
+== SuspendableService
 
 If you want to dynamic suspend/resume routes as the
 *`org.apache.camel.impl.ThrottlingRoutePolicy`* does then its advised to
@@ -54,7 +54,7 @@ grained *`suspend`* and *`resume`* operations. And use the
 operations as it support fallback for regular
 *`org.apache.camel.Service`* instances.
 
-==== `ThrottlingInflightRoutePolicy`
+== `ThrottlingInflightRoutePolicy`
 
 The *`ThrottlingInflightRoutePolicy`* is triggered when an
 xref:exchange.adoc[Exchange] is complete, which means that it requires
@@ -84,7 +84,7 @@ again in case it has been suspended.
 |`logger` |`ThrottlingInflightRoutePolicy` |The logger category.
 |===
 
-==== ThrottlingInflightRoutePolicy compared to the Throttler EIP
+== ThrottlingInflightRoutePolicy compared to the Throttler EIP
 
 The *`ThrottlingInflightRoutePolicy`* compared to
 xref:throttle-eip.adoc[Throttler] is that it does *not* block during
@@ -97,11 +97,11 @@ is based its metrics on number of inflight exchanges where as
 xref:throttle-eip.adoc[Throttler] is based on number of messages per time
 unit.
 
-==== `ScheduledRoutePolicy` (Simple and Cron based) using camel Quartz
+== `ScheduledRoutePolicy` (Simple and Cron based) using camel Quartz
 
 For more details check out the following links
 
-==== Configuring Policy
+== Configuring Policy
 
 You configure the route policy as follows from Java DSL, using the
 *`routePolicy`* method:
@@ -125,7 +125,7 @@ In Spring XML its a bit different as follows using the
 </route>
 ---------------------------------------------------------
 
-==== Configuring Policy Sets
+== Configuring Policy Sets
 
 *`RoutePolicy`* has been further improved to allow addition of policy
 sets or a collection of policies that are concurrently applied on a
@@ -157,7 +157,7 @@ as necessary on the route.
 </camelContext>
 ----------------------------------------------------------------------------------------------
 
-==== Using `RoutePolicyFactory`
+== Using `RoutePolicyFactory`
 
 If you want to use a route policy for every route, you can use
 a *`org.apache.camel.spi.RoutePolicyFactory`* as a factory for creating
@@ -199,7 +199,7 @@ Note you can have as many route policy factories as you want. Just call
 the *`addRoutePolicyFactory`* again, or declare the other factories
 as *`<bean>`* in XML.
 
-==== See Also
+== See Also
 
 * xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] for information
 on policy based scheduling capability for camel routes

@@ -1,5 +1,5 @@
 [[json-validator-component]]
-== JSON Schema Validator Component
+= JSON Schema Validator Component
 
 *Available as of Camel version 2.20*
 
@@ -21,7 +21,7 @@ for this component:
 ----
 
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -33,7 +33,7 @@ Where *resourceUri* is some URL to a local resource on the classpath or a
 full URL to a remote resource or resource on the file system which contains 
 the JSON Schema to validate against.
  
-=== URI Options
+== URI Options
 
 // component options: START
 The JSON Schema Validator component supports 2 options, which are listed below.
@@ -59,7 +59,7 @@ json-validator:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +87,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -117,7 +117,7 @@ The component supports 3 options, which are listed below.
 
 
 
-=== Example
+== Example
 
 Assumed we have the following JSON Schema
 

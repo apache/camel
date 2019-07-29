@@ -1,5 +1,5 @@
 [[lucene-component]]
-== Lucene Component
+= Lucene Component
 
 *Available as of Camel version 2.2*
 
@@ -34,7 +34,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------------
@@ -45,7 +45,7 @@ lucene:searcherName:query[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Insert Options
+== Insert Options
 
 
 
@@ -80,7 +80,7 @@ lucene:host:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -107,7 +107,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -147,9 +147,9 @@ The component supports 12 options, which are listed below.
 
 
 
-### Sending/Receiving Messages to/from the cache
+== Sending/Receiving Messages to/from the cache
 
-#### Message Headers
+=== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -162,7 +162,7 @@ wildcards and phrases
 documentation when returning hit information.
 |=======================================================================
 
-#### Lucene Producers
+=== Lucene Producers
 
 This component supports 2 producer endpoints.
 
@@ -176,14 +176,14 @@ property name called 'QUERY'. The value of the header property 'QUERY'
 is a Lucene Query. For more details on how to create Lucene Queries
 check out http://lucene.apache.org/java/3_0_0/queryparsersyntax.html[http://lucene.apache.org/java/3_0_0/queryparsersyntax.html]
 
-#### Lucene Processor
+=== Lucene Processor
 
 There is a processor called LuceneQueryProcessor available to perform
 queries against lucene without the need to create a producer.
 
-### Lucene Usage Samples
+== Lucene Usage Samples
 
-#### Example 1: Creating a Lucene index
+=== Example 1: Creating a Lucene index
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -197,7 +197,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------------------------
 
-#### Example 2: Loading properties into the JNDI registry in the Camel Context
+=== Example 2: Loading properties into the JNDI registry in the Camel Context
 
 [source,java]
 -----------------------------------------------------------------
@@ -208,7 +208,7 @@ registry.bind("load_dir", new File("src/test/resources/sources"));
 registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 -----------------------------------------------------------------
 
-#### Example 2: Performing searches using a Query Producer
+=== Example 2: Performing searches using a Query Producer
 
 [source,java]
 ----------------------------------------------------------------------------------------------------
@@ -239,7 +239,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ----------------------------------------------------------------------------------------------------
 
-#### Example 3: Performing searches using a Query Processor
+=== Example 3: Performing searches using a Query Processor
 
 [source,java]
 -------------------------------------------------------------------------------------------------------

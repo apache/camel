@@ -1,6 +1,6 @@
-== Spring Boot Example with Camel REST DSL and Swagger
+= Spring Boot Example with Camel REST DSL and Swagger
 
-=== Introduction
+== Introduction
 
 This example illustrates how to use https://projects.spring.io/spring-boot/[Spring Boot] with http://camel.apache.org[Camel]. It provides a simple REST service that is created with http://camel.apache.org/rest-dsl.html[Camel REST DSL] and documented with http://swagger.io[Swagger].
 
@@ -8,13 +8,13 @@ The project uses the `camel-spring-boot-starter` dependency, a Spring Boot start
 
 The project also uses `camel-servlet` component as the HTTP transport component for Camel REST DSL.
 
-=== Build
+== Build
 
 You can build this example using:
 
     $ mvn package
 
-=== Run
+== Run
 
 You can run this example using:
 
@@ -75,7 +75,7 @@ $ curl http://localhost:8080/api/api-doc
 
 The Spring Boot application can be stopped pressing `[CTRL] + [C]` in the shell.
 
-=== Help
+== Help
 
 If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
 

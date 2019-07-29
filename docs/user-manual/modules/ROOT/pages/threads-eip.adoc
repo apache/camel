@@ -1,5 +1,5 @@
 [[threads-eip]]
-== Threads EIP
+= Threads EIP
 The Threads Pattern allows you to introduce a thread pool into a route.
 
 == Options
@@ -23,7 +23,7 @@ The Threads EIP supports 10 options which are listed below:
 |===
 // eip options: END
 
-=== Samples
+== Samples
 
 The example below will add a Thread pool with a pool size of 5 threads before sending to *mock:result*.
 
@@ -34,7 +34,7 @@ from("seda:a")
   .to("mock:result");
 ----
 
-==== Spring DSL
+=== Spring DSL
 
 The sample below demonstrates the threads EIP in Spring DSL:
 

@@ -1,5 +1,5 @@
 [[Languages-Languages]]
-=== Languages
+= Languages
 
 To support flexible and powerful
 xref:enterprise-integration-patterns.adoc[Enterprise Integration
@@ -8,7 +8,7 @@ xref:expression.adoc[Expression] or xref:predicate.adoc[Predicate]
 within either the xref:dsl.adoc[Routing Domain Specific Language] or the
 xref:xml-configuration.adoc[XML Configuration].
 
-==== Note
+== Note
 *Combining Predicates**
 
 When creating predicates (expressions that evaluate to `true` or
@@ -17,7 +17,7 @@ language they are built with -- by using the `PredicateBuilder` class.
 For more information, see xref:predicate.adoc[Compound Predicates].
 
 
-==== The following is the list of currently supported languages:
+== The following is the list of currently supported languages:
 
 * xref:components::bean-language.adoc[Bean Language] for using Java for expressions
 * xref:constant-language.adoc[Constant]

@@ -1,5 +1,5 @@
 [[rest-swagger-component]]
-== REST Swagger Component
+= REST Swagger Component
 
 *Available as of Camel version 2.19*
 
@@ -28,7 +28,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------------------------------
@@ -81,7 +81,7 @@ invocations so it makes sense to use this feature only for parameters
 that are indeed constant for all invocations -- for example API version
 in path such as `/api/\{version\}/users/\{id\}`. 
 
-### Options
+== Options
 
 // component options: START
 The REST Swagger component supports 10 options, which are listed below.
@@ -113,7 +113,7 @@ rest-swagger:specificationUri#operationId
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -124,7 +124,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -141,7 +141,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -178,7 +178,7 @@ The component supports 11 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Example: PetStore
+== Example: PetStore
 
 Checkout the example in the `camel-example-rest-swagger` project in
 the `examples` directory.

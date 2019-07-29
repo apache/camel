@@ -1,5 +1,5 @@
 [[irc-component]]
-== IRC Component
+= IRC Component
 
 *Available as of Camel version 1.1*
 
@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------------------------
@@ -31,7 +31,7 @@ irc:nick@host[:port]?channels=#channel1,#channel2,#channel3[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
@@ -63,7 +63,7 @@ irc:hostname:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +110,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -145,9 +145,9 @@ The component supports 4 options, which are listed below.
 
 
 
-### SSL Support
+== SSL Support
 
-#### Using the JSSE Configuration Utility
+=== Using the JSSE Configuration Utility
 
 The IRC component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
@@ -198,7 +198,7 @@ Spring DSL based configuration of endpoint
   <to uri="ircs://camel-prd-user@server:6669/#camel-test?nickname=camel-prd&password=password&sslContextParameters=#sslContextParameters"/>...
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Using the legacy basic configuration options
+=== Using the legacy basic configuration options
 
 You can also connect to an SSL enabled IRC server, as follows:
 
@@ -217,7 +217,7 @@ If you need to provide your own custom trust manager, use the
 ircs:host[:port]/#room?username=user&password=pass&trustManager=#referenceToMyTrustManagerBean
 ----------------------------------------------------------------------------------------------
 
-### Using keys
+== Using keys
 
 *Available as of Camel 2.2*
 
@@ -231,7 +231,7 @@ For example we join 3 channels where as only channel 1 and 3 uses a key.
 irc:nick@irc.server.org?channels=#chan1,#chan2,#chan3&keys=chan1Key,,chan3key
 -----------------------------------------------------------------------------
 
-### Getting a list of users of the channel
+== Getting a list of users of the channel
 
 Using the `namesOnJoin` option one can invoke the IRC-`NAMES` command after the component has joined a channel. 
 The server will reply with `irc.num = 353`. So in order to process the result the property `onReply` has to be `true`.
@@ -248,7 +248,7 @@ from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
 			.to("mock:result").stop();
 -----------------------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

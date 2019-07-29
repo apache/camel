@@ -1,5 +1,5 @@
 [[HowdoIretryfailedmessagesforever-HowdoIretryfailedmessagesforever]]
-=== How do I retry failed messages forever?
+= How do I retry failed messages forever?
 
 If you want to keep the bad message in the original queue, then you are
 also blocking the messages that has arrived on the queue after the bad

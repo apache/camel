@@ -1,5 +1,5 @@
 [[flatpack-component]]
-== Flatpack Component
+= Flatpack Component
 
 *Available as of Camel version 1.4*
 
@@ -22,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------------
@@ -39,7 +39,7 @@ flatpack:someName[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### URI Options
+== URI Options
 
 // component options: START
 The Flatpack component supports 2 options, which are listed below.
@@ -63,7 +63,7 @@ flatpack:type:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (27 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,7 +110,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -149,7 +149,7 @@ The component supports 13 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Examples
+== Examples
 
 * `flatpack:fixed:foo.pzmap.xml` creates a fixed-width endpoint using
 the `foo.pzmap.xml` file configuration.
@@ -158,7 +158,7 @@ the `foo.pzmap.xml` file configuration.
 * `flatpack:foo` creates a delimited endpoint called `foo` with no file
 configuration.
 
-### Message Headers
+== Message Headers
 
 Camel will store the following headers on the IN message:
 
@@ -170,7 +170,7 @@ Camel will store the following headers on the IN message:
 number of rows.
 |=======================================================================
 
-### Message Body
+== Message Body
 
 The component delivers the data in the IN message as a
 `org.apache.camel.component.flatpack.DataSetList` object that has
@@ -199,7 +199,7 @@ However, you can also always get it as a `List` (even for
   String firstName = row.get("FIRSTNAME");
 ---------------------------------------------------
 
-### Header and Trailer records
+== Header and Trailer records
 
 The header and trailer notions in Flatpack are supported. However, you
 *must* use fixed record IDs:
@@ -230,7 +230,7 @@ trailer. You can omit one or both of them if not needed.
     </RECORD>
 ---------------------------------------------------------------------------
 
-### Using the endpoint
+== Using the endpoint
 
 A common use case is sending a file to this endpoint for further
 processing in a separate route. For example:
@@ -253,7 +253,7 @@ processing in a separate route. For example:
 You can also convert the payload of each message created to a `Map` for
 easy Bean Integration
 
-### Flatpack DataFormat
+== Flatpack DataFormat
 
 The xref:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
@@ -271,7 +271,7 @@ Splitter.
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
 
-### Options
+== Options
 
 The data format has the following options:
 
@@ -300,7 +300,7 @@ expected and ignores the extra characters.
 expected and ignores the extra characters.
 |=======================================================================
 
-### Usage
+== Usage
 
 To use the data format, simply instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
@@ -335,7 +335,7 @@ in Java code from e.g. a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
-### Dependencies
+== Dependencies
 
 To use Flatpack in your camel routes you need to add the a dependency on
 *camel-flatpack* which implements this data format.
@@ -353,7 +353,7 @@ the download page for the latest versions).
 </dependency>
 -----------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

@@ -1,4 +1,4 @@
-== ReactiveExecutor VertX
+= ReactiveExecutor VertX
 
 *Available as of Camel 3.0*
 
@@ -10,12 +10,12 @@ for processing message during routing.
 
 NOTE: At this time this component is an experiment so use it with care.
 
-=== VertX instance
+== VertX instance
 
 This implementation will by default create a default `io.vertx.core.Vertx` instance to be used.
 However you can configure an existing instance using the getter/setter on the `VertXReactiveExecutor` class.
 
-=== Auto detection from classpath
+== Auto detection from classpath
 
 To use this implementation all you need to do is to add the `camel-reactive-executor-vertx` dependency to the classpath,
 and Camel should auto-detect this on startup and log as follows:
@@ -25,7 +25,7 @@ and Camel should auto-detect this on startup and log as follows:
 Using ReactiveExecutor: org.apache.camel.reactive.vertx.VertXReactiveExecutor@2a62b5bc
 ----
 
-=== Manual enabling
+== Manual enabling
 
 If you use OSGi or the implementation is not added to the classpath, you need to enable this explict such:
 

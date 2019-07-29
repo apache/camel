@@ -1,5 +1,5 @@
 [[hl7-dataformat]]
-== HL7 DataFormat
+= HL7 DataFormat
 
 *Available as of Camel version 2.0*
 
@@ -29,7 +29,7 @@ for this component:
 </dependency>
 ----
 
-=== HL7 MLLP protocol
+== HL7 MLLP protocol
 
 HL7 is often used with the HL7 MLLP protocol, which is a text based TCP
 socket based protocol. This component ships with a Mina and Netty4 Codec
@@ -67,7 +67,7 @@ the HL7 message content.
 segment terminators. The HAPI library requires the use of `\r`.
 |===
 
-==== Exposing an HL7 listener using Mina
+=== Exposing an HL7 listener using Mina
 
 In the Spring XML file, we configure a mina2 endpoint to listen for HL7
 requests using TCP on port `8888`:
@@ -128,7 +128,7 @@ public class PatientLookupService {
     }
 ----
 
-==== Exposing an HL7 listener using Netty (available from Camel 2.15 onwards)
+=== Exposing an HL7 listener using Netty (available from Camel 2.15 onwards)
 
 In the Spring XML file, we configure a netty4 endpoint to listen for HL7
 requests using TCP on port `8888`:
@@ -159,7 +159,7 @@ from("hl7NettyListener")
   .bean("patientLookupService");
 ----
 
-=== HL7 Model using java.lang.String or byte[]
+== HL7 Model using java.lang.String or byte[]
 
 The HL7 MLLP codec uses plain String as its data format. Camel uses its
 Type Converter to convert to/from strings to
@@ -171,7 +171,7 @@ plain `byte[]` as its data format by setting the `produceString`
 property to false. The Type Converter is also capable of converting
 the `byte[]` to/from HAPI HL7 model objects.
 
-=== HL7v2 Model using HAPI
+== HL7v2 Model using HAPI
 
 The HL7v2 model uses Java objects from the HAPI library. Using this
 library, you can encode and decode from the EDI format (ER7) that is
@@ -207,7 +207,7 @@ QRY_A19 msg = exchange.getIn().getBody(QRY_A19.class);
 String patientId = msg.getQRD().getWhoSubjectFilter(0).getIDNumber().getValue();
 ----
 
-=== HL7 DataFormat
+== HL7 DataFormat
 
 The xref:hl7-dataformat.adoc[HL7] component ships with a HL7 data format that can
 be used to marshal or unmarshal HL7 model objects.
@@ -225,7 +225,7 @@ The HL7 dataformat supports 2 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -287,14 +287,14 @@ a byte stream and put on a JMS queue. +
 Here we unmarshal the byte stream into a HAPI Message object that is
 passed to our patient lookup service.
 
-==== Serializable messages
+=== Serializable messages
 
 As of HAPI 2.0, the HL7v2 model classes are fully
 serializable. So you can put HL7v2 messages directly into a JMS queue
 (i.e. without calling `marshal()` and read them again directly from the
 queue (i.e. without calling `unmarshal()`.
 
-==== Segment separators
+=== Segment separators
 
 Unmarshalling does not automatically fix segment
 separators anymore by converting `\n` to `\r`. If you  +
@@ -303,7 +303,7 @@ separators anymore by converting `\n` to `\r`. If you  +
 `Expression` for this purpose.
 
 
-==== Charset
+=== Charset
 
 Both `marshal and unmarshal` evaluate the charset
 provided in the field `MSH-18`. If this field is empty, by default the
@@ -329,7 +329,7 @@ object:
     .to("patientLookupService");
 ----
 
-=== Message Headers
+== Message Headers
 
 The unmarshal operation adds these fields from the MSH segment as
 headers on the Camel message:
@@ -370,7 +370,7 @@ that was used to parse the message`
 All headers except `CamelHL7Context `are `String` types. If a header
 value is missing, its value is `null`.
 
-=== Dependencies
+== Dependencies
 
 To use HL7 in your Camel routes you'll need to add a dependency on
 *camel-hl7* listed above, which implements this data format.

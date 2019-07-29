@@ -1,5 +1,5 @@
 [[HodoIspecifywhichmethodtousewhenusingbeansinroutes-HodoIspecifywhichmethodtousewhenusingbeansinroutes]]
-=== Ho do I specify which method to use when using beans in routes?
+= Ho do I specify which method to use when using beans in routes?
 
 See xref:components::bean-component.adoc[Bean], xref:bean-integration.adoc[Bean Integration]
 and xref:bean-binding.adoc[Bean Binding]

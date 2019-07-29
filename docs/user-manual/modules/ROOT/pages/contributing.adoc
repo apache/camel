@@ -1,4 +1,4 @@
-== Contributing to Apache Camel
+= Contributing to Apache Camel
 
 There are many ways you can help make Camel a better piece of software - please dive in and help!
 

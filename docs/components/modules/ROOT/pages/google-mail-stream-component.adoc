@@ -1,5 +1,5 @@
 [[google-mail-stream-component]]
-== Google Mail Stream Component
+= Google Mail Stream Component
 
 *Available as of Camel version 2.22*
 
@@ -30,7 +30,7 @@ for this component:
 </dependency>
 ------------------------------------------------------
 
-### URI Format
+== URI Format
 
 The GoogleMail Component uses the following URI format:
 
@@ -38,7 +38,7 @@ The GoogleMail Component uses the following URI format:
         google-mail-stream://index?[options]
 --------------------------------------------------------
 
-### GoogleMailStreamComponent
+== GoogleMailStreamComponent
 
 
 // component options: START
@@ -68,7 +68,7 @@ google-mail-stream:index
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (29 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -116,7 +116,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -156,7 +156,7 @@ The component supports 14 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Consumer
+== Consumer
 
 The consumer will poll by default with the query "is:unread" and maxResults equals to 10.
 

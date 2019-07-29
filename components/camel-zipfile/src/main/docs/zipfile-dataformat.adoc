@@ -1,5 +1,5 @@
 [[zipfile-dataformat]]
-== Zip File DataFormat
+= Zip File DataFormat
 
 *Available as of Camel version 2.11*
 
@@ -9,7 +9,7 @@ Zip files containing a single entry, and Zip files containing a single
 entry can be unmarshalled (decompressed) to the original file contents.
 This data format supports ZIP64, as long as Java 7 or later is being used].
 
-=== ZipFile Options
+== ZipFile Options
 
 // dataformat options: START
 The Zip File dataformat supports 4 options, which are listed below.
@@ -26,7 +26,7 @@ The Zip File dataformat supports 4 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -57,7 +57,7 @@ The component supports 5 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-=== Marshal
+== Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload using Zip file compression, and send it to an ActiveMQ queue
@@ -105,7 +105,7 @@ from("direct:start")
 This route would result in a Zip file named "report.txt.zip" in the
 output directory, containing a single Zip entry named "report.txt".
 
-=== Unmarshal
+== Unmarshal
 
 In this example we unmarshal a Zip file payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -145,7 +145,7 @@ from("file:src/test/resources/org/apache/camel/dataformat/zipfile?consumer.delay
     .end();
 ----
 
-=== Aggregate
+== Aggregate
 
 [NOTE]
 Please note that this aggregation strategy requires eager completion check to work properly.
@@ -175,7 +175,7 @@ from("file:input/directory?antInclude=*/.txt")
         .to("file:output/directory");
 ----
 
-=== Dependencies
+== Dependencies
 
 To use Zip files in your camel routes you need to add a dependency on
 *camel-zipfile* which implements this data format.

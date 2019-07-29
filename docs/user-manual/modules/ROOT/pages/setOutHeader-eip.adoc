@@ -1,11 +1,11 @@
 [[setOutHeader-eip]]
-== Set Out Header EIP (deprecated)
+= Set Out Header EIP (deprecated)
 == Set Header EIP
 
 This EIP is deprecated.
 The SetOutHeader EIP allows you to set an header on the out message of your exchange.
 
-=== Options
+== Options
 
 // eip options: START
 The Set Out Header EIP supports 1 options which are listed below:
@@ -17,7 +17,7 @@ The Set Out Header EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
-=== Examples
+== Examples
 
 The following example shows how to use the SetOutHeader EIP
 

@@ -1,5 +1,5 @@
 [[HowtoswitchtheCXFconsumerbetweenHTTPandHTTPSwithouttouchingtheSpringconfiguration-HowtoswitchtheCXFconsumerbetweenHTTPandHTTPSwithouttouchingtheSpringconfiguration]]
-=== How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?
+= How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?
 
 You can find general information how to secure your Camel CXF Consumer
 with HTTPS

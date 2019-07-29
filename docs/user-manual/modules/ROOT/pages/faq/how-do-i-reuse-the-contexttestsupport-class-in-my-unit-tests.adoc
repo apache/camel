@@ -1,5 +1,5 @@
 [[HowdoIreusetheContextTestSupportclassinmyunittests-HowdoIreusetheContextTestSupportclassinmyunittests]]
-=== How do I reuse the ContextTestSupport class in my unit tests?
+= How do I reuse the ContextTestSupport class in my unit tests?
 
 You might want to look at the various xref:testing.adoc[Testing]
 options xref:spring-testing.adoc[Spring Testing] to see if those are better,

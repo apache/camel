@@ -1,5 +1,5 @@
 [[websocket-component]]
-== Jetty Websocket Component
+= Jetty Websocket Component
 
 *Available as of Camel version 2.10*
 
@@ -10,7 +10,7 @@ http://tools.ietf.org/html/rfc6455[IETF] specification (drafts and RFC
 6455). It supports the protocols ws:// and wss://. To use wss://
 protocol, the SSLContextParameters must be defined.
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------
@@ -20,7 +20,7 @@ websocket://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Websocket Options
+== Websocket Options
 
 
 
@@ -71,7 +71,7 @@ websocket:host:port/resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,7 +112,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -158,7 +158,7 @@ The component supports 16 options, which are listed below.
 
  
 
-### Message Headers
+== Message Headers
 
 The WebSocket component uses 2 headers to indicate to either send
 messages back to a single/current client, or to all clients.
@@ -174,7 +174,7 @@ use the `sendToAll` option on the endpoint instead of using this header.
 |`WebsocketConstants.REMOTE_ADDRESS` |Remote address of the websocket session.
 |=======================================================================
 
-### Usage
+== Usage
 
 In this example we let Camel exposes a websocket server which clients
 can communicate with. The websocket server uses the default host and
@@ -201,9 +201,9 @@ from("activemq:topic:newsTopic")
    .to("websocket://localhost:8443/newsTopic?sendToAll=true&staticResources=classpath:webapp");
 -----------------------------------------------------------------------------------------------
 
-### Setting up SSL for WebSocket Component
+== Setting up SSL for WebSocket Component
 
-#### Using the JSSE Configuration Utility
+=== Using the JSSE Configuration Utility
 
 The WebSocket component supports SSL/TLS configuration
 through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
@@ -281,7 +281,7 @@ Java DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

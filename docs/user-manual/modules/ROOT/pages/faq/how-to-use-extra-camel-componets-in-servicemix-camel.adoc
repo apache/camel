@@ -1,3 +1,5 @@
+= How to use extra camel componets in servicemix-camel
+
 [[ConfluenceContent]]
 Since Servicemix3's component has same hierarchies of the class loaders
 with the J2EE application server, and the components the class loader is

@@ -1,5 +1,5 @@
 [[split-eip]]
-== Split EIP
+= Split EIP
 
 The http://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html[Splitter] from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows you split a message into a number of pieces and process them individually.
 
@@ -29,7 +29,7 @@ The Split EIP supports 12 options which are listed below:
 |===
 // eip options: END
 
-=== Exchange properties
+== Exchange properties
 The following properties are set on each Exchange that are split:
 
 [width="100%",cols="3,1m,6",options="header"]
@@ -41,7 +41,7 @@ The following properties are set on each Exchange that are split:
 |=======================================================================
 
 
-=== Examples
+== Examples
 The following example shows how to take a request from the *direct:a* endpoint the split it into pieces using an Expression, then forward each piece to *direct:b*
 
 [source,java]
@@ -73,7 +73,7 @@ from("activemq:my.queue")
 </camelContext>
 ----
 
-=== Splitting a Collection, Iterator or Array
+== Splitting a Collection, Iterator or Array
 
 A common use case is to split a Collection, Iterator or Array from the message. In the sample below we simply use an Expression to identify the value to split.
 
@@ -109,7 +109,7 @@ In XML you can use the Simple language to identify the value to split.
 </route>
 ----
 
-=== Using Tokenizer from Spring XML Extensions*
+== Using Tokenizer from Spring XML Extensions*
 
 You can use the tokenizer expression in the Spring DSL to split bodies or headers using a token. This is a common use-case, so we provided a special *tokenizer* tag for this.
 In the sample below we split the body using a `@` as separator. You can of course use comma or space or even a regex pattern, also set `regex=true`.
@@ -127,7 +127,7 @@ In the sample below we split the body using a `@` as separator. You can of cours
 </camelContext>
 ----
 
-=== What the Splitter returns
+== What the Splitter returns
 
 The Splitter will by default return the original input message.
 
@@ -136,7 +136,7 @@ There is a sample on this page (Split aggregate request/reply sample).
 Notice its the same strategy as the Aggregate EIP supports.
 This Splitter can be viewed as having a build in light weight Aggregate EIP.
 
-=== Parallel execution of distinct parts
+== Parallel execution of distinct parts
 
 If you want to execute all parts in parallel you can use the `parallelProcessing` option as show:
 
@@ -149,16 +149,16 @@ from("activemq:my.queue")
     .to("activemq:my.parts");
 ----
 
-=== Stream based
+== Stream based
 
 [NOTE]
 .Splitting big XML payloads
-====
+===
 The XPath engine in Java and saxon will load the entire XML content into memory. And thus they are not well suited for very big
 XML payloads. Instead you can use a custom Expression which will iterate the XML payload in a streamed fashion.
 You can use the Tokenizer language which supports this when you supply the start and end tokens.
 You can use the XMLTokenizer language which is specifically provided for tokenizing XML documents.
-====
+===
 
 You can split streams by enabling the streaming mode using the streaming builder method.
 
@@ -179,7 +179,7 @@ from("direct:streaming")
     .to("activemq:my.parts")
 ----
 
-=== Streaming big XML payloads using Tokenizer language
+== Streaming big XML payloads using Tokenizer language
 
 There are two tokenizers that can be used to tokenize an XML payload. The first tokenizer uses the same principle as in the text tokenizer to scan the XML payload and extract a sequence of tokens.
 
@@ -189,9 +189,9 @@ If you have a big XML payload, from a file source, and want to split it in strea
 
 [NOTE]
 .StAX component
-====
+===
 The Camel StAX component can also be used to split big XML files in a streaming mode. See more details at StAX.
-====
+===
 
 For example you may have a XML payload structured as follows
 [source,xml]
@@ -343,7 +343,7 @@ it results in invalid xml snippets after the split. For example the snippet coul
 <Start>...<</Start> .... <Start>...</</Start>
 ----
 
-=== Splitting files by grouping N lines together
+== Splitting files by grouping N lines together
 *Available as of Camel 2.10*
 
 The Tokenizer language has a new option group that allows you to group N parts together, for example to split big files into chunks of 1000 lines.
@@ -374,11 +374,11 @@ So in the example above the message being sent to the activemq order queue, will
 
 The output when using the group option is always a `java.lang.String` type.
 
-=== Specifying a custom aggregation strategy
+== Specifying a custom aggregation strategy
 
 This is specified similar to the Aggregate EIP.
 
-=== Specifying a custom ThreadPoolExecutor
+== Specifying a custom ThreadPoolExecutor
 
 You can customize the underlying `ThreadPoolExecutor` used in the parallel splitter via the `executorService` option.
 In the Java DSL try something like this:
@@ -394,7 +394,7 @@ from("activemq:my.queue")
         .to("activemq:my.parts");
 ----
 
-=== Using a Pojo to do the splitting
+== Using a Pojo to do the splitting
 
 As the Splitter can use any Expression to do the actual splitting we leverage this fact and use a *method* expression to invoke a Bean to get the splitted parts.
 
@@ -404,9 +404,9 @@ So the returned value, will then be used by Camel at runtime, to split the messa
 
 [TIP]
 .Streaming mode and using pojo
-====
+===
 When you have enabled the streaming mode, then you should return a `Iterator` to ensure streamish fashion. For example if the message is a big file, then by using an iterator, that returns a piece of the file in chunks, in the next method of the `Iterator` ensures low memory footprint. This avoids the need for reading the entire content into memory. For an example see the source code for the TokenizePair implementation.
-====
+===
 
 In the route we define the Expression as a method call to invoke our Bean that we have registered with the id mySplitterBean in the Registry.
 
@@ -476,7 +476,7 @@ public class MySplitterBean {
 }
 ----
 
-=== Split aggregate request/reply sample
+== Split aggregate request/reply sample
 
 This sample shows how you can split an Exchange, process each splitted message, aggregate and return a combined response to the original caller using request/reply.
 The route below illustrates this and how the split supports a `aggregationStrategy` to hold the in progress processed messages:
@@ -583,7 +583,7 @@ BuildCombinedResponse: (id=1,item=A);(id=2,item=B);(id=3,item=C)
 Response to caller: Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]
 ----
 
-=== Stop processing in case of exception
+== Stop processing in case of exception
 The Splitter will by default continue to process the entire Exchange even in case of one of the splitted message will thrown an exception during routing.
 For example if you have an Exchange with 1000 rows that you split and route each sub message. During processing of these sub messages an exception is thrown at the 17th. What Camel does by default is to process the remainder 983 messages. You have the chance to remedy or handle this in the `AggregationStrategy`.
 But sometimes you just want Camel to stop and let the exception be propagated back, and let the Camel error handler handle it. You can do this in Camel 2.1 by specifying that it should stop in case of an exception occurred. This is done by the `stopOnException` option as shown below:
@@ -609,12 +609,12 @@ And using XML DSL you specify it as follows:
 </route>
 ----
 
-=== Using onPrepare to execute custom logic when preparing messages
+== Using onPrepare to execute custom logic when preparing messages
 *Available as of Camel 2.8*
 
 See details at Multicast EIP
 
-=== Sharing unit of work
+== Sharing unit of work
 *Available as of Camel 2.8*
 
 The Splitter will by default not share unit of work between the parent exchange and each split exchange.
@@ -695,6 +695,6 @@ Using this from XML DSL is just as easy as you just have to set the `shareUnitOf
 
 [NOTE]
 .Implementation of shared unit of work
-====
+===
 So in reality the unit of work is not shared as a single object instance. Instead `SubUnitOfWork` is attached to their parent, and issues callback to the parent about their status (commit or rollback). This may be refactored in Camel 3.0 where larger API changes can be done.
-====
+===

@@ -1,4 +1,4 @@
-=== Spring Cloud Netflix
+= Spring Cloud Netflix
 
 *Available as of Camel 2.19*
 
@@ -29,7 +29,7 @@ camel.cloud.netflix = true
 camel.cloud.netflix.ribbon = true
 ----
 
-=== Spring Cloud Netflix Starter
+== Spring Cloud Netflix Starter
 
 *Available as of Camel 2.19*
 

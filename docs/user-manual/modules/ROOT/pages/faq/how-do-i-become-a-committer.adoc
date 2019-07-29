@@ -1,5 +1,5 @@
 [[HowdoIbecomeacommitter-HowcanIbecomeacommitter]]
-=== How can I become a committer
+= How can I become a committer
 
 First of all you need to get involved and
 https://github.com/apache/camel/blob/master/CONTRIBUTING.md[Contribute] via the mail list, forums, edit the
@@ -16,7 +16,7 @@ xref:mailing-lists.adoc[Discussion Forums],
 helping with documentation and the issue tracker.
 
 [[HowdoIbecomeacommitter-Becomingacommittersteps]]
-==== Becoming a committer steps
+== Becoming a committer steps
 
 * Download and print the Apache Contributor License Agreement from
 http://www.apache.org/dev/new-committers-guide.html[here]. You need to
@@ -32,7 +32,7 @@ to have your account created; we'll also need to know
 ** your preferred unix account name
 
 [[HowdoIbecomeacommitter-GettingstartedatApache]]
-==== Getting started at Apache
+== Getting started at Apache
 
 Firstly add yourself to the xref:team.adoc[Team] page
 
@@ -41,13 +41,13 @@ http://www.apache.org/dev/new-committers-guide.html[new committers guide].
 Its also worth viewing http://www.apache.org/dev.
 
 [[HowdoIbecomeacommitter-Moreinformation]]
-==== More information
+== More information
 
 You can find more information about being a
 http://www.apache.org/dev/committers.html[committer at Apache here].
 
 [[HowdoIbecomeacommitter-GettingKarmainJIRAandConfluence]]
-==== Getting Karma in JIRA and Confluence
+== Getting Karma in JIRA and Confluence
 
 Mail the dev list and ask for karma for JIRA / Confluence giving them
 details of your username you used to register with them both. We can
@@ -55,7 +55,7 @@ then grant the necessary karma so you can start grabbing JIRA issues or
 editing the wiki
 
 [[HowdoIbecomeacommitter-GettingKarmainJenkinsHudson]]
-==== Getting Karma in Jenkins / Hudson
+== Getting Karma in Jenkins / Hudson
 
 Mail the PMC chair and ask for karma for Jenkins / Hudson as described
 http://wiki.apache.org/general/Hudson[here].

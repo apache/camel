@@ -1,5 +1,5 @@
 [[WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected-WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected]]
-=== Why does useOriginalMessage with error handler not work as expected?
+= Why does useOriginalMessage with error handler not work as expected?
 
 If you use the xref:exception-clause.adoc[useOriginalMessage] option
 from the Camel xref:exception-clause.adoc[Error Handler] then it matters

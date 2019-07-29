@@ -1,15 +1,15 @@
 [[digitalocean-component]]
-== DigitalOcean Component
+= DigitalOcean Component
 
 *Available as of Camel version 2.19*
 
 The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating https://www.digitalocean.com/community/projects/api-client-in-java[digitalocean-api-java]. All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
 
-=== Prerequisites
+== Prerequisites
 
 You must have a valid DigitalOcean account and a valid OAuth token. You can generate an OAuth token by visiting the [Apps & API] section of the DigitalOcean control panel for your account.
 
-=== URI format
+== URI format
 
 The **DigitalOcean Component** uses the following URI format:
 
@@ -27,7 +27,7 @@ digitalocean://droplets?operation=list&oAuthToken=XXXXXX&page=1&perPage=10
 The DigitalOcean component only supports producer endpoints so you cannot use this component at the beginning of a route to listen to messages in a channel.
 
 
-=== Options
+== Options
 
 
 // component options: START
@@ -52,7 +52,7 @@ digitalocean:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -62,7 +62,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +83,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -120,17 +120,17 @@ All **operation** values are defined in `DigitalOceanOperations` enumeration.
 All **header** names used by the component are defined in `DigitalOceanHeaders` enumeration.
 
 
-=== Message body result
+== Message body result
 
 All message bodies returned are using objects provided by the **digitalocean-api-java** library.
 
 
-=== API Rate Limits
+== API Rate Limits
 
 DigitalOcean REST API encapsulated by camel-digitalocean component is subjected to API Rate Limiting. You can find the per method limits in the https://developers.digitalocean.com/documentation/v2/#rate-limit[API Rate Limits documentation].
 
 
-=== Account endpoint
+== Account endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -138,7 +138,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `get` | get account info |  | `com.myjeeva.digitalocean.pojo.Account`
 |===
 
-=== BlockStorages endpoint
+== BlockStorages endpoint
 
 [width="100%",cols="2,5,^5a,1",options="header"]
 |===
@@ -223,7 +223,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `List<com.myjeeva.digitalocean.pojo.Action>`
 |===
 
-=== Droplets endpoint
+== Droplets endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -330,7 +330,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `listAllNeighbors` |  retrieve a list of any droplets that are running on the same physical hardware | | `List<com.myjeeva.digitalocean.pojo.Droplet>`
 |===
 
-=== Images endpoint
+== Images endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -358,7 +358,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `convert` | convert an image, for example, a backup to a snapshot| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Action`
 |===
 
-=== Snapshots endpoint
+== Snapshots endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -368,7 +368,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `delete` | delete an snapshot| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Delete`
 |===
 
-=== Keys endpoint
+== Keys endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -393,7 +393,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `delete` | delete a key by fingerprint| `CamelDigitalOceanKeyFingerprint` _String_ | `com.myjeeva.digitalocean.pojo.Delete`
 |===
 
-=== Regions endpoint
+== Regions endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -401,7 +401,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `list` |  list all of the regions that are available | | `List<com.myjeeva.digitalocean.pojo.Region>`
 |===
 
-=== Sizes endpoint
+== Sizes endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -409,7 +409,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `list` |  list all of the sizes that are available | | `List<com.myjeeva.digitalocean.pojo.Size>`
 |===
 
-=== Floating IPs endpoint
+== Floating IPs endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -430,7 +430,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `listActions` |  retrieve all actions that have been executed on a Floating IP | `CamelDigitalOceanFloatingIPAddress` _String_ | `List<com.myjeeva.digitalocean.pojo.Action>`
 |===
 
-=== Tags endpoint
+== Tags endpoint
 
 [width="100%",cols="2,5,^4,2",options="header"]
 |===
@@ -447,7 +447,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `com.myjeeva.digitalocean.pojo.Tag`
 |===
 
-=== Examples
+== Examples
 
 Get your account info
 

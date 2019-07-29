@@ -1,5 +1,5 @@
 [[TypeConverter-TypeConverter]]
-=== Type Converter
+= Type Converter
 
 It is very common when routing messages from one endpoint to another to
 need to convert the body payloads from one type to another such as to
@@ -29,7 +29,7 @@ Document document = message.getBody(Document.class);
 ----
 
 [[TypeConverter-HowTypeConversionworks]]
-==== How Type Conversion works
+== How Type Conversion works
 
 The type conversion strategy is defined by the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/TypeConverter.html[TypeConverter]
@@ -41,7 +41,7 @@ From Camel 3 onwards there type converter registry implementation uses source co
 
 
 [[TypeConverter-TypeConverterRegistry]]
-==== TypeConverterRegistry
+== TypeConverterRegistry
 
 Exposed the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/TypeConverterRegistry.html[TypeConverterRegistry]
@@ -59,7 +59,7 @@ context.getTypeConverterRegistry()
 ----
 
 [[TypeConverter-TypeConverterRegistryutilizationstatistics]]
-===== TypeConverterRegistry utilization statistics
+=== TypeConverterRegistry utilization statistics
 
 Camel can gather utilization statistics of the runtime usage of type
 converters. These stats are available in JMX, and as well as from the
@@ -85,7 +85,7 @@ Or in the XML DSL with:
 ----
 
 [[TypeConverter-Addtypeconverterclassesatruntime]]
-===== Add type converter classes at runtime
+=== Add type converter classes at runtime
 
 You can add new type converters at runtime, by having your classes
 implement `org.apache.camel.TypeConverters` which is an marker
@@ -126,7 +126,7 @@ then `CamelContext` will automatic discover and add the converters.
 You can declare multiple `<bean>`s if you have more classes.
 
 [[TypeConverter-DiscoveringTypeConverters]]
-==== Discovering Type Converters
+== Discovering Type Converters
 
 Camel will automatic discover and load type converters from all the JARs in the classpath on startup.
 
@@ -163,7 +163,7 @@ public class IOConverter {
 }
 ----
 
-===== Discovering Type Converters in the fast way
+=== Discovering Type Converters in the fast way
 
 To enable the fast type converter way, you should enable `loader = true`
 on the class level annotation as shown:
@@ -192,7 +192,7 @@ When using Maven you add:
 ----
 
 [[TypeConverter-Returningnullvalues]]
-===== Returning null values
+=== Returning null values
 
 By default when using a method in a POJO annotation with @Converter
 returning null is not a valid response. If null is returned, then Camel
@@ -214,7 +214,7 @@ public static InputStream toInputStream(File file) throws IOException {
 ----
 
 [[TypeConverter-DiscoveringFallbackTypeConverters]]
-==== Discovering Fallback Type Converters
+== Discovering Fallback Type Converters
 
 *Available in Camel 2.0*
 
@@ -279,7 +279,7 @@ public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, Ty
 ----
 
 [[TypeConverter-WritingyourownTypeConverters]]
-==== Writing your own Type Converters
+== Writing your own Type Converters
 
 You are welcome to write your own converters. Remember to use the
 `@Converter` annotations on the classes and methods you wish to use.
@@ -292,7 +292,7 @@ injection to customize the converter
 * converter methods should be thread safe and reentrant
 
 [[TypeConverter-Exchangeparameter]]
-==== Exchange parameter
+== Exchange parameter
 
 The type converter accepts the `Exchange` as an optional 2nd parameter.
 This is usable if the type converter for instance needs information from

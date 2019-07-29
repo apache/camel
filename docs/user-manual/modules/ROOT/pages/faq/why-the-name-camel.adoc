@@ -1,5 +1,5 @@
 [[WhythenameCamel-WhydidyouchoosethenameCamel]]
-=== Why did you choose the name Camel?
+= Why did you choose the name Camel?
 
 * it stands for Concise Application Message Exchange Language (i.e. the
 Java xref:dsl.adoc[DSL] for routing)

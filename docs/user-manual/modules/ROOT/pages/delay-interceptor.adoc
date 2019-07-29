@@ -1,5 +1,5 @@
 [[DelayInterceptor-DelayInterceptor]]
-=== Delay Interceptor
+= Delay Interceptor
 
 *Available in Camel 1.5*
 
@@ -15,7 +15,7 @@ The delay interceptor can be configured as follows:
 * adding the delay interceptor to the CamelContext in Java code.
 
 [[DelayInterceptor-ConfiguringusingSpring]]
-==== Configuring using Spring
+== Configuring using Spring
 
 Just set the delay attribute of the camelContext tag as shown below:
 
@@ -30,7 +30,7 @@ Just set the delay attribute of the camelContext tag as shown below:
 --------------------------------------------------------------------------------------------------
 
 [[DelayInterceptor-ConfiguringusingJava]]
-==== Configuring using Java
+== Configuring using Java
 
 You can add the delayer interceptor in the RouteBulder:
 
@@ -40,7 +40,7 @@ getContext().setDelayer(200);
 -----------------------------
 
 [[DelayInterceptor-Granularity]]
-==== Granularity
+== Granularity
 
 In *Camel 2.0* you can configure it on both camel context and per route
 as you like. Per route will override the camel context setting. +
@@ -63,7 +63,7 @@ with 200 millis.
 ------------------------
 
 [[DelayInterceptor-SeeAlso]]
-==== See Also
+== See Also
 
 * Tracer
 * xref:debugger.adoc[Debugger]

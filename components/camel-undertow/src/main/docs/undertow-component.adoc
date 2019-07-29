@@ -1,5 +1,5 @@
 [[undertow-component]]
-== Undertow Component
+= Undertow Component
 
 *Available as of Camel version 2.16*
 
@@ -27,7 +27,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -40,7 +40,7 @@ undertow:wss://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 // component options: START
 The Undertow component supports 6 options, which are listed below.
@@ -69,7 +69,7 @@ undertow:httpURI
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,7 +113,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -152,7 +152,7 @@ The component supports 11 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
 Camel uses the same message headers as the xref:http4-component.adoc[HTTP]
 component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
@@ -163,7 +163,7 @@ example, given a client request with the URL,
 `\http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-=== HTTP Producer Example
+== HTTP Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -186,7 +186,7 @@ or in XML
 <route>
 ----
 
-=== HTTP Consumer Example
+== HTTP Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `\http://localhost:8080/myapp/myservice`:
@@ -199,7 +199,7 @@ In this sample we define a route that exposes a HTTP service at
 </route>
 ----
 
-=== WebSocket Example
+== WebSocket Example
 
 In this sample we define a route that exposes a WebSocket service at
 `\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
@@ -213,7 +213,7 @@ In this sample we define a route that exposes a WebSocket service at
 </route>
 ----
 
-=== Using localhost as host
+== Using localhost as host
 
 When you specify `localhost` in a URL, Camel exposes the endpoint only
 on the local TCP/IP network interface, so it cannot be accessed from

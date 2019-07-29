@@ -1,6 +1,6 @@
 # Spring Boot Example with Camel REST DSL, Geocoder and Swagger
 
-### Introduction
+= Introduction
 
 This example illustrates how to use https://projects.spring.io/spring-boot/[Spring Boot] with http://camel.apache.org[Camel]. It provides a simple REST service that is created with http://camel.apache.org/rest-dsl.html[Camel REST DSL], using  the http://camel.apache.org/geocoder.html[Geocoder component] and documented with http://swagger.io[Swagger].
 
@@ -8,13 +8,13 @@ The project uses the `camel-spring-boot-starter` and `camel-geocoder-starter` de
 
 The project was based on it's `camel-example-spring-boot-rest-swagger` sibling.
 
-### Build
+== Build
 
 You can build this example using:
 
     $ mvn package
 
-### Run
+== Run
 
 You can run this example using:
 
@@ -106,7 +106,7 @@ The Swagger documentation is located at: http://localhost:8080/camel/api-doc and
 
 The Spring Boot application can be stopped pressing `[CTRL]`+`[C]` in the shell.
 
-### Help
+== Help
 
 If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
 

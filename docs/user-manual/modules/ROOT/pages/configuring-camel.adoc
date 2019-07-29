@@ -1,8 +1,8 @@
 [[ConfiguringCamel-ConfiguringCamel]]
-=== Configuring Camel
+= Configuring Camel
 
 [[ConfiguringCamel-HowdoIaddacomponent]]
-==== How do I add a component?
+== How do I add a component?
 
 You might first want to read xref:writing-components.adoc[Writing
 Components] for a background in how to implement a new component.
@@ -47,7 +47,7 @@ injection.
 
 
 [[ConfiguringCamel-WorkingwithSpringXML]]
-==== Working with Spring XML
+== Working with Spring XML
 
 You can configure a component via Spring using the following mechanism:
 
@@ -69,7 +69,7 @@ you could write your own namespace & schema if you prefer.
 
 
 [[ConfiguringCamel-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:writing-components.adoc[Writing Components]
 * xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]

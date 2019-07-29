@@ -1,5 +1,5 @@
 [[bindy-dataformat]]
-== Bindy DataFormat
+= Bindy DataFormat
 
 *Available as of Camel version 2.0*
 
@@ -49,7 +49,7 @@ the Class or field.
 As you configure bindy using class names instead of package names
 you can put multiple models in the same package.
 
-=== Options
+== Options
 
 // dataformat options: START
 The Bindy dataformat supports 5 options, which are listed below.
@@ -67,7 +67,7 @@ The Bindy dataformat supports 5 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -113,7 +113,7 @@ ND
 
 
 
-=== Annotations
+== Annotations
 
 The annotations created allow to map different concept of your model to
 the POJO like :
@@ -131,7 +131,7 @@ financial messages),
 
 This section will describe them :
 
-=== 1. CsvRecord
+== 1. CsvRecord
 
 The CsvRecord annotation is used to identified the root class of the
 model. It represents a record = a line of a CSV file and can be linked
@@ -384,7 +384,7 @@ public Class Order {
 Remark : pos is used to parse the file, stream while positions is used
 to generate the CSV
 
-=== 2. Link
+== 2. Link
 
 The link annotation will allow to link objects together.
 
@@ -436,7 +436,7 @@ public class Client {
 }
 ----
 
-=== 3. DataField
+== 3. DataField
 
 The DataField annotation defines the property of the field. Each
 datafield is identified by its position in the record, a type (string,
@@ -730,7 +730,7 @@ public class Order {
 
 This attribute is only applicable to optional fields.
 
-=== 4. FixedLengthRecord
+== 4. FixedLengthRecord
 
 The FixedLengthRecord annotation is used to identified the root class of
 the model. It represents a record = a line of a file/message containing
@@ -1173,7 +1173,7 @@ public static class Order {
 }
 ----
 
-=== 5. Message
+== 5. Message
 
 The Message annotation is used to identified the class of your model who
 will contain key value pairs fields. This kind of format is used mainly
@@ -1209,7 +1209,7 @@ project http://www.quickfixj.org/[http://www.quickfixj.org/].
 |keyValuePairSeparair |string |mandatory - can be '\u0001', '\u0009', '#' or 'anything'
 
 |crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value
-= WINDOWS - allow to define the carriage return character to use. If you
+== WINDOWS - allow to define the carriage return character to use. If you
 specify a value other than the three listed before, the value you enter
 (custom) will be used as the CRLF character(s)
 
@@ -1254,7 +1254,7 @@ message looks like (src\test\data\fix\fix.txt) and the Order, Trailer,
 Header classes
 (src\test\java\org\apache\camel\dataformat\bindy\model\fix\simple\Order.java)
 
-=== 6. KeyValuePairField
+== 6. KeyValuePairField
 
 The KeyValuePairField annotation defines the property of a key value
 pair field. Each KeyValuePairField is identified by a tag (= key) and
@@ -1350,7 +1350,7 @@ public class Order {
 }
 ----
 
-=== 7. Section
+== 7. Section
 
 In FIX message of fixed length records, it is common to have different
 sections in the representation of the information : header, body and
@@ -1432,7 +1432,7 @@ public class Trailer {
     }
 ----
 
-=== 8. OneToMany
+== 8. OneToMany
 
 The purpose of the annotation @OneToMany is to allow to work with a
 `List<?>` field defined a POJO class or from a record containing
@@ -1566,7 +1566,7 @@ public class Security {
 }
 ----
 
-=== 9. BindyConverter
+== 9. BindyConverter
 
 The purpose of the annotation @BindyConverter is define a converter
 to be used on field level. The provided class must implement the
@@ -1594,7 +1594,7 @@ public static class CustomConverter implements Format<String> {
 }
 ----
 
-=== 10. FormatFactories
+== 10. FormatFactories
 
 The purpose of the annotation @FormatFactories is to define a set of converters
 at record-level. The provided classes must implement the FormatFactoryInterface interface.
@@ -1645,7 +1645,7 @@ public static class OrderNumberFormatFactory extends AbstractFormatFactory {
 }
 ----
 
-=== Supported Datatypes
+== Supported Datatypes
 
 The DefaultFormatFactory makes formatting of the following datatype available by
 returning an instance of the interface FormatFactoryInterface based on the provided
@@ -1671,7 +1671,7 @@ FormattingOptions:
 The DefaultFormatFactory can be overridden by providing an instance of
 FactoryRegistry in the registry in use (e.g. spring or JNDI).
 
-=== Using the Java DSL
+== Using the Java DSL
 
 The next step instantiates the DataFormat _bindy_ class
 associated with this record type and providing a class as a parameter.
@@ -1686,7 +1686,7 @@ configured in this package.
 DataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 ----
 
-==== Setting locale
+=== Setting locale
 
 Bindy supports configuring the locale on the dataformat, such as 
 
@@ -1707,7 +1707,7 @@ BindyCsvDataFormat bindy = new BindyCsvDataFormat(com.acme.model.MyModel.class);
 bindy.setLocale("default");
 ----
 
-==== Unmarshaling
+=== Unmarshaling
 
 [source,java]
 ----
@@ -1791,7 +1791,7 @@ from("file://inbox?charset=Cp922")
   .to("direct:handleOrders");
 ----
 
-==== Marshaling
+=== Marshaling
 
 To generate CSV records from a collection of model objects, you create
 the following route :
@@ -1803,7 +1803,7 @@ from("direct:handleOrders")
    .to("file://outbox")
 ----
 
-=== Using Spring XML
+== Using Spring XML
 
 This is really easy to use Spring as your favorite DSL language to
 declare the routes to be used for camel-bindy. The following example
@@ -1857,7 +1857,7 @@ content to generate a file containing the csv record.
 NOTE: Please verify that your model classes implements serializable otherwise
 the queue manager will raise an error
 
-=== Dependencies
+== Dependencies
 
 To use Bindy in your camel routes you need to add the a dependency on
 *camel-bindy* which implements this data format.

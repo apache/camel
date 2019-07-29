@@ -1,5 +1,5 @@
 [[ldif-component]]
-== LDIF Component
+= LDIF Component
 
 *Available as of Camel version 2.20*
 
@@ -28,7 +28,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -47,7 +47,7 @@ of setting up a custom SocketFactory instance.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 // component options: START
 The LDIF component supports 2 options, which are listed below.
@@ -71,7 +71,7 @@ ldif:ldapConnectionName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (3 parameters):
+=== Query Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +93,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -122,7 +122,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Body types:
+== Body types:
 
 The body can be a URL to an LDIF file or an inline LDIF file. To signify the difference
 in body types, an inline LDIF must start with:
@@ -134,12 +134,12 @@ version: 1
 
 If not, the component will try to parse the body as a URL.
 
-=== Result
+== Result
 
 The result is returned in the Out body as a `ArrayList<java.lang.String>` object.
 This contains either "success" or an Exception message for each LDIF entry.
 
-=== LdapConnection
+== LdapConnection
 
 The URI, `ldif:ldapConnectionName`, references a bean with the ID,
 `ldapConnectionName`. The ldapConnection can be configured using a
@@ -187,7 +187,7 @@ or in a OSGi blueprint.xml:
 ----
 
 
-=== Samples
+== Samples
 
 Following on from the Spring configuration above, the code sample below
 sends an LDAP request to filter search a group for a member. The Common

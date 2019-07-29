@@ -1,5 +1,5 @@
 [[hazelcast-atomicvalue-component]]
-== Hazelcast Atomic Number Component
+= Hazelcast Atomic Number Component
 
 *Available as of Camel version 2.7*
 
@@ -9,7 +9,7 @@ An atomic number is an object that simply provides a grid wide number (long).
 *There is no consumer for this endpoint!*
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast Atomic Number component supports 4 options, which are listed below.
@@ -35,7 +35,7 @@ hazelcast-atomicvalue:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -45,7 +45,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -100,7 +100,7 @@ The component supports 7 options, which are listed below.
 
 
 
-### atomic number producer - to("hazelcast-atomicvalue:foo")
+== atomic number producer - to("hazelcast-atomicvalue:foo")
 
 The operations for this producer are:
 * setvalue (set the number with a given value)
@@ -118,7 +118,7 @@ Header Variables for the request message:
 |`CamelHazelcastOperationType` |`String` |valid values are: setvalue, get, increase, decrease, destroy 
 |=======================================================================
 
-#### Sample for *set*:
+=== Sample for *set*:
 
 Java DSL:
 
@@ -145,7 +145,7 @@ Spring DSL:
 Provide the value to set inside the message body (here the value is 10):
 `template.sendBody("direct:set", 10);`
 
-#### Sample for *get*:
+=== Sample for *get*:
 
 Java DSL:
 
@@ -172,7 +172,7 @@ Spring DSL:
 You can get the number with
 `long body = template.requestBody("direct:get", null, Long.class);`.
 
-#### Sample for *increment*:
+=== Sample for *increment*:
 
 Java DSL:
 
@@ -199,7 +199,7 @@ Spring DSL:
 The actual value (after increment) will be provided inside the message
 body.
 
-#### Sample for *decrement*:
+=== Sample for *decrement*:
 
 Java DSL:
 
@@ -226,7 +226,7 @@ Spring DSL:
 The actual value (after decrement) will be provided inside the message
 body.
 
-#### Sample for *destroy*
+=== Sample for *destroy*
 
 Java DSL:
 

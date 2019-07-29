@@ -1,5 +1,5 @@
 [[aws-ses-component]]
-== AWS Simple Email Service Component
+= AWS Simple Email Service Component
 
 *Available as of Camel version 2.9*
 
@@ -12,7 +12,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SES. More information is available at
 https://aws.amazon.com/ses[Amazon SES].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------
@@ -22,7 +22,7 @@ aws-ses://from[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -54,7 +54,7 @@ aws-ses:from
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +64,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,7 +86,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -137,9 +137,9 @@ You have to provide the amazonSESClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/ses[Amazon's SES].
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the SES producer
+=== Message headers evaluated by the SES producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -158,7 +158,7 @@ the https://aws.amazon.com/ses[Amazon's SES].
 |`CamelAwsSesHtmlEmail` |`Boolean` |The flag to show if email content is HTML.
 |=======================================================================
 
-#### Message headers set by the SES producer
+=== Message headers set by the SES producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -167,7 +167,7 @@ the https://aws.amazon.com/ses[Amazon's SES].
 |`CamelAwsSesMessageId` |`String` |The Amazon SES message ID.
 |=======================================================================
 
-#### Advanced AmazonSimpleEmailService configuration
+=== Advanced AmazonSimpleEmailService configuration
 
 If you need more control over the `AmazonSimpleEmailService` instance
 configuration you can create your own instance and refer to it from the
@@ -195,11 +195,11 @@ AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(awsCredenti
 registry.bind("client", client);
 ----------------------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
-### Automatic detection of AmazonSimpleEmailService client in registry
+== Automatic detection of AmazonSimpleEmailService client in registry
 
 The component is capable of detecting the presence of an AmazonSimpleEmailService bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
@@ -218,7 +218,7 @@ This may be really useful for smarter configuration of the endpoint.
 
 where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

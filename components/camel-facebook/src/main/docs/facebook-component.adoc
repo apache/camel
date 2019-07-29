@@ -1,5 +1,5 @@
 [[facebook-component]]
-== Facebook Component
+= Facebook Component
 
 *Available as of Camel version 2.14*
 
@@ -33,14 +33,14 @@ for this component:
     </dependency>
 -----------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
   facebook://[endpoint]?[options]
 ---------------------------------
 
-### FacebookComponent
+== FacebookComponent
 
 The facebook component can be configured with the Facebook account
 settings below, which are mandatory. The values can be provided to the
@@ -79,7 +79,7 @@ facebook:methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (104 parameters):
+=== Query Parameters (104 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -202,7 +202,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -259,7 +259,7 @@ The component supports 30 options, which are listed below.
 
 
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint names and options from the table
 below. Endpoints can also use the short name without the *get* or
@@ -293,7 +293,7 @@ return a boolean, return true for success and false otherwise. In case
 of Facebook API errors the endpoint will throw a RuntimeCamelException
 with a facebook4j.FacebookException cause.
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 Any of the producer endpoints that take a
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=reading&linkCreation=true&fromPageId=34020899[reading#reading]
@@ -308,7 +308,7 @@ camel-facebook creates one route exchange per returned object. As an
 example, if *"facebook://home"* results in five posts, the route will be
 executed five times (once for each Post).
 
-### Reading Options
+== Reading Options
 
 The *reading* option of type *facebook4j.Reading* adds support for
 reading parameters, which allow selecting specific fields, limits the
@@ -326,14 +326,14 @@ The reading option can be a reference or value of type
 options in either the endpoint URI or exchange header with
 *CamelFacebook.* prefix.
 
-### Message header
+== Message header
 
 Any of the
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=URI+options&linkCreation=true&fromPageId=34020899[URI
 options#urioptions] can be provided in a message header for producer
 endpoints with *CamelFacebook.* prefix.
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Facebook4J
 API. Producer endpoints can specify the option name for incoming message
@@ -343,7 +343,7 @@ For endpoints that return an array, or *facebook4j.ResponseList*, or
 *java.util.List*, a consumer endpoint will map every elements in the
 list to distinct messages.
 
-### Use cases
+== Use cases
 
 To create a post within your Facebook profile, send this producer a
 facebook4j.PostUpdate body.

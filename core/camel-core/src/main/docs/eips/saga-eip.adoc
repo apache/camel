@@ -1,5 +1,5 @@
 [[saga-eip]]
-== Saga EIP
+= Saga EIP
 
 *Available as of Camel 2.21*
 
@@ -37,7 +37,7 @@ The Saga EIP supports 6 options which are listed below:
 |===
 // eip options: END
 
-=== Exchange properties
+== Exchange properties
 The following properties are set on each Exchange that is participating to a Saga (normal actions, compensating actions and completions):
 
 [width="100%",cols="4m,2m,5",options="header"]
@@ -46,7 +46,7 @@ The following properties are set on each Exchange that is participating to a Sag
 | `Long-Running-Action` | `String` | A globally unique identifier for the Saga that can be propagated to remote systems using transport-level headers (e.g. HTTP).
 |===
 
-=== Saga Service Configuration
+== Saga Service Configuration
 The Saga EIP requires that a service implementing the interface `org.apache.camel.saga.CamelSagaService` is added to the Camel context.
 
 Camel currently supports the following Saga Services:
@@ -54,7 +54,7 @@ Camel currently supports the following Saga Services:
 * *InMemorySagaService*: it is a *basic* implementation of the Saga EIP that does not support advanced features (no remote context propagation, no consistency guarantee in case of application failure).
 * *LRASagaService*: it is a *fully-fledged* implementation of the Saga EIP based on Microprofile sandbox LRA specification that supports remote context propagation and provides consistency guarantees in case of application failure.
 
-==== Using the In-Memory Saga Service
+=== Using the In-Memory Saga Service
 
 The in-memory Saga service is not recommended for production environments as it does not support persistence of the Saga status (it is kept only in-memory),
 so it cannot guarantee consistency of Sagas in case of application failure (e.g. JVM crash).
@@ -70,7 +70,7 @@ context.addService(new org.apache.camel.impl.saga.InMemorySagaService());
 
 The service belongs to the `camel-core` module.
 
-==== Using the LRA Saga Service
+=== Using the LRA Saga Service
 
 The LRA Saga Service is an implementation based on the Microprofile sandbox LRA specification.
 It leverages a *external Saga coordinator* to control the execution of the various steps of the Saga.
@@ -120,7 +120,7 @@ sagaService.setLocalParticipantUrl("http://my-host-as-seen-by-lra-service:8080/c
 context.addService(sagaService);
 ----
 
-===== Using the LRA Saga Service in Spring Boot
+==== Using the LRA Saga Service in Spring Boot
 
 Spring Boot users can use a simplified configuration model for the LRA Saga Service. Maven users can
 include the *camel-lra-starter* module in their project:
@@ -157,7 +157,7 @@ camel:
 
 Once done, the Saga EIP can be directly used inside Camel routes and it will use the LRA Saga Service under the hood.
 
-=== Examples
+== Examples
 
 Suppose you want to place a new order and you have two distinct services in your system: one managing the orders and one managing the credit.
 Logically you can place a order if you have enough credit for it.
@@ -257,7 +257,7 @@ This completes the example. It can be run with both implementations of the Saga 
 
 Further options will be shown next.
 
-==== Handling Completion Events
+=== Handling Completion Events
 It is often required to do some processing when the Saga is completed. Compensation endpoints are invoked when something wrong happens and the Saga is cancelled.
 Equivalently, *completion endpoints* can be invoked to do further processing when the Saga is completed successfully.
 
@@ -293,7 +293,7 @@ When the Saga is completed, the order is sent to a JMS queue for preparation.
 Like compensating actions, also completion actions may be called multiple times by the Saga coordinator (especially in case of errors, like network errors).
 In this example, the service listening to the _prepareOrder_ JMS queue should be prepared to hold possible duplicates (see the Idempotent Consumer EIP for examples on how to handle duplicates).
 
-==== Using Custom Identifiers and Options
+=== Using Custom Identifiers and Options
 The example shown so far use the `Exchange.SAGA_LONG_RUNNING_ACTION` as identifier for the resources (order and credit).
 This is not always a desired approach, as it may pollute the business logic and the data model.
 
@@ -329,7 +329,7 @@ Since the _direct:creditReservation_ endpoint can be now called also from outsid
 
 *Multiple options* can be declared in a Saga route.
 
-==== Setting Timeouts
+=== Setting Timeouts
 Sagas are long running actions, but this does not mean that they should not have a bounded timeframe to execute.
 *Setting timeouts on Sagas is always a good practice* as it guarantees that a Saga does not remain stuck forever in the case of machine failure.
 
@@ -364,7 +364,7 @@ from("direct:buy")
     .to("direct:reserveCredit");
 ----
 
-==== Choosing Propagation
+=== Choosing Propagation
 In the examples above, we have used the _MANDATORY_ and _SUPPORTS_ propagation modes, but also the _REQUIRED_ propagation mode,
 that is the default propagation used when nothing else is specified.
 
@@ -381,7 +381,7 @@ These propagation modes map 1:1 the equivalent modes used in transactional conte
 | `NEVER` | The current block must never be invoked within a saga.
 |===
 
-==== Using Manual Completion (Advanced)
+=== Using Manual Completion (Advanced)
 When a Saga cannot be all executed in a synchronous way, but it requires e.g. communication with external services using asynchronous communication channels,
 the completion mode cannot be set to _AUTO_ (default), because the saga is not completed when the exchange that creates it is done.
 
@@ -424,7 +424,7 @@ But Sagas add a lot of value, since they guarantee that even in the presence of 
 there will always be a consistent outcome: order placed and credit reserved, or none of them changed.
 In particular, if the Saga is not completed within 2 hours, the compensation mechanism will take care of fixing the status.
 
-=== XML Configuration
+== XML Configuration
 
 Saga features are also available for users that want to use the XML configuration.
 

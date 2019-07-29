@@ -1,5 +1,5 @@
 [[DefaultErrorHandler-DefaultErrorHandler]]
-=== DefaultErrorHandler
+= DefaultErrorHandler
 
 This is the new default error handler in Camel 2.0 onwards.
 
@@ -23,7 +23,7 @@ handled. If so, the exception will *not* be sent back to the caller, and
 the xref:exchange.adoc[Exchange] continues to be routed.
 
 [[DefaultErrorHandler-Example]]
-==== Example
+== Example
 
 In this route below, any exception thrown in, eg the `validateOrder`
 bean, will be propagated back to the caller via the jetty endpoint. It
@@ -60,7 +60,7 @@ and we transform the message into a fixed response that is returned to
 jetty endpoint that returns it to the original caller.
 
 [[DefaultErrorHandler-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:error-handler.adoc[Error Handler]
 * xref:dead-letter-channel.adoc[Dead Letter Channel]

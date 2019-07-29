@@ -1,12 +1,12 @@
 [[recipientList-eip]]
-== Recipient List EIP
+= Recipient List EIP
 The http://www.enterpriseintegrationpatterns.com/RecipientList.html[Recipient List] from the EIP patterns allows you to route messages to a number of dynamically specified recipients.
 
 image:http://www.enterpriseintegrationpatterns.com/img/RecipientList.gif[image]
 
 The recipients will receive a copy of the *same* Exchange, and Camel will execute them sequentially.
 
-=== Options
+== Options
 
 // eip options: START
 The Recipient List EIP supports 15 options which are listed below:
@@ -35,7 +35,7 @@ The Recipient List EIP supports 15 options which are listed below:
 
 TIP: You can use the RecipientList Annotation on a POJO to create a Dynamic Recipient List. For more details see the Bean Integration.
 
-=== Static Recipient List
+== Static Recipient List
 The following example shows how to route a request from an input *queue:a* endpoint to a static list of destinations
 
 [source,java]
@@ -58,7 +58,7 @@ And in XML:
 </camelContext>
 ----
 
-=== Dynamic Recipient List
+== Dynamic Recipient List
 Usually one of the main reasons for using the Recipient List pattern is that the list of recipients is dynamic and
 calculated at runtime. The following example demonstrates how to create a dynamic recipient list using an Expression
 (which in this case extracts a named header value dynamically) to calculate the list of endpoints which are either
@@ -70,7 +70,7 @@ from("jms:queue:a")
     .recipientList(header("foo"));
 ----
 
-=== Iteratable value
+== Iteratable value
 The dynamic list of recipients that are defined in the header must be iterable such as:
 
 * `java.util.Collection`
@@ -80,7 +80,7 @@ The dynamic list of recipients that are defined in the header must be iterable s
 * a single String with values separated by comma (the delimiter configured)
 * any other type will be regarded as a single value
 
-=== Using delimiter in Spring XML
+== Using delimiter in Spring XML
 In Spring DSL you can set the delimiter attribute for setting a delimiter to be used if the header value is a single String with multiple separated endpoints.
 By default Camel uses comma as delimiter, but this option lets you specify a custom delimiter to use instead.
 
@@ -105,7 +105,7 @@ from("direct:a")
     .recipientList(header("myHeader"), ";");
 ----
 
-=== Sending to multiple recipients in parallel
+== Sending to multiple recipients in parallel
 The Recipient List now supports `parallelProcessing` that for example Splitter also supports.
 You can use it to use a thread pool to have concurrent tasks sending the Exchange to multiple recipients concurrently.
 
@@ -127,11 +127,11 @@ And in XML it is an attribute on the recipient list tag.
 </route>
 ----
 
-==== Using custom thread pool
+=== Using custom thread pool
 A thread pool is only used for `parallelProcessing`. You supply your own custom thread pool via the `ExecutorServiceStrategy` (see Camel's Threading Model),
 the same way you would do it for the `aggregationStrategy`. By default Camel uses a thread pool with 10 threads (subject to change in future versions).
 
-=== Stop continuing in case one recipient failed
+== Stop continuing in case one recipient failed
 The Recipient List now supports `stopOnException` that for example Splitter also supports.
 You can use it to stop sending to any further recipients in case any recipient failed.
 
@@ -156,7 +156,7 @@ And in XML its an attribute on the recipient list tag.
 [NOTE]
 You can combine parallelProcessing and stopOnException and have them both true.
 
-=== Ignore invalid endpoints
+== Ignore invalid endpoints
 The Recipient List now supports `ignoreInvalidEndpoints` (like the Routing Slip).
 You can use it to skip endpoints which are invalid.
 
@@ -182,7 +182,7 @@ Then let us say the `myHeader` contains the following two endpoints `direct:foo,
 The first endpoint is valid and works. However the second one is invalid and will just be ignored.
 Camel logs at DEBUG level about it, so you can see why the endpoint was invalid.
 
-=== Using custom AggregationStrategy
+== Using custom AggregationStrategy
 You can now use your own `AggregationStrategy` with the Recipient List. However this is rarely needed.
 What it is good for is that in case you are using Request Reply messaging then the replies from the recipients can be aggregated.
 By default Camel uses `UseLatestAggregationStrategy` which just keeps that last received reply. If you must remember all the bodies that all the recipients sent back,
@@ -211,7 +211,7 @@ And in XML it is again an attribute on the recipient list tag.
 <bean id="myStrategy" class="com.mycompany.MyOwnAggregationStrategy"/>
 ----
 
-=== Knowing which endpoint when using custom AggregationStrategy
+== Knowing which endpoint when using custom AggregationStrategy
 *Available as of Camel 2.12*
 
 When using a custom `AggregationStrategy` then the `aggregate` method is always invoked in sequential order
@@ -227,7 +227,7 @@ public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
 }
 ----
 
-=== Using method call as recipient list
+== Using method call as recipient list
 You can use a Bean to provide the recipients, for example:
 
 [source,java]
@@ -274,7 +274,7 @@ from("activemq:queue:test").bean(MessageRouter.class, "routeTo");
 
 Which then would invoke the routeTo method and detect that it is annotated with `@RecipientList` and then act accordingly as if it was a recipient list EIP.
 
-=== Using timeout
+== Using timeout
 If you use `parallelProcessing` then you can configure a total `timeout` value in millis. Camel will then process the messages in parallel until the timeout is hit. This allows you to continue processing if one message consumer is slow. For example you can set a timeout value of 20 sec.
 
 [WARNING]
@@ -311,9 +311,9 @@ from("direct:c").to("mock:C").setBody(constant("C"));
 
 [NOTE]
 .Timeout in other EIPs
-====
+===
 This timeout feature is also supported by Splitter and both multicast and recipientList.
-====
+===
 
 By default if a timeout occurs the `AggregationStrategy` is not invoked. However you can implement a special version `TimeoutAwareAggregationStrategy`
 
@@ -336,15 +336,15 @@ This allows you to deal with the timeout in the `AggregationStrategy` if you rea
 
 [NOTE]
 .Timeout is total
-====
+===
 The timeout is total, which means that after X time, Camel will aggregate the messages which have completed within the timeframe.
 The remainders will be cancelled. Camel will also only invoke the `timeout` method in the `TimeoutAwareAggregationStrategy` once, for the first index which caused the timeout.
-====
+===
 
-=== Using onPrepare to execute custom logic when preparing messages
+== Using onPrepare to execute custom logic when preparing messages
 See details at the Multicast EIP
 
-=== Using ExchangePattern in recipients
+== Using ExchangePattern in recipients
 *Available as of Camel 2.15*
 
 The recipient list will by default use the current Exchange Pattern. Though one can imagine use-cases where one wants to send

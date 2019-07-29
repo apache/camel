@@ -1,9 +1,9 @@
 [[inOut-eip]]
-== In Out EIP
+= In Out EIP
 
 The *inOut:* EIP define an InOut ExchangePattern.
 
-=== EIP options
+== EIP options
 
 // eip options: START
 The In Out EIP supports 1 options which are listed below:

@@ -1,5 +1,5 @@
 [[WritingComponents-WritingComponents]]
-=== Writing Components
+= Writing Components
 
 Apache Camel is designed to make it very easy to drop in new components
 whether they be routing components, transformers, transports etc. The
@@ -26,7 +26,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelC
 or users can use a URI which auto-creates your component.
 
 [[WritingComponents-WritingEndpoints]]
-==== Writing Endpoints
+== Writing Endpoints
 
 When implementing an xref:endpoint.adoc[Endpoint] you typically may
 implement one or more of the following methods:
@@ -68,7 +68,7 @@ method will be created for you which avoids you having to write any
 polling code.
 
 [[WritingComponents-AnnotatingyourEndpoint]]
-==== Annotating your Endpoint
+== Annotating your Endpoint
 
 As of *Camel 2.12* if you want to benefit from the automatic generation
 of HTML documentation for all the parameters on your endpoint as part of
@@ -89,14 +89,14 @@ Refer to the xref:endpoint-annotations.adoc[Endpoint Annotations guide
 for details].
 
 [[WritingComponents-UsingaProcessor]]
-==== Using a Processor
+== Using a Processor
 
 If you are writing a simple endpoint which just processes messages in
 some way, you can just implement a xref:processor.adoc[Processor] and
 xref:processor.adoc[use that to create an endpoint].
 
 [[WritingComponents-Dependencyinjectionandauto-discovery]]
-==== Dependency injection and auto-discovery
+== Dependency injection and auto-discovery
 
 When using auto-discovery the CamelContext will default to its
 xref:injector.adoc[Injector] implementation to inject any required or
@@ -113,7 +113,7 @@ like Spring or Guice; then add it to the CamelContext. Or you can let
 the Component auto-inject itself as the endpoints are auto-discovered.
 
 [[WritingComponents-Options]]
-==== Options
+== Options
 
 If your component has options you can let it have public getters/setters
 and Camel will automatically set the properties when the endpoint is
@@ -149,7 +149,7 @@ parameter:
 ----
 
 [[WritingComponents-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:configuring-camel.adoc[Configuring Camel]
 * xref:endpoint.adoc[Endpoint]

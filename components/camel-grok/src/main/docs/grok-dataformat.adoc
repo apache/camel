@@ -1,5 +1,5 @@
 [[grok-dataformat]]
-== Grok DataFormat
+= Grok DataFormat
 
 *Available as of Camel version 3.0*
 
@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Basic usage
+== Basic usage
 
 Extract all IP adresses from input
 [source,java]
@@ -40,12 +40,12 @@ from("file://apacheLogs")
     .to("log:4xx")
 --------------------------------------------------------------------------------
 
-### Predefined patterns
+== Predefined patterns
 
 This component comes with predefined patterns, which are based on Logstash patterns.
 Full list can be found at https://github.com/thekrakken/java-grok/tree/master/src/main/resources/patterns[Java Grok repository]
 
-### Custom patterns
+== Custom patterns
 
 Camel Grok DataFormat supports plugable patterns, which are auto loaded from Camel Registry.
 You can register patterns with Java DSL and Spring DSL
@@ -87,7 +87,7 @@ public class MyRouteBuilder extends RouteBuilder {
 --------------------------------------------------------------------------------
 
 
-### Grok Dataformat Options
+== Grok Dataformat Options
 
 // dataformat options: START
 The Grok dataformat supports 5 options, which are listed below.
@@ -105,7 +105,7 @@ The Grok dataformat supports 5 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

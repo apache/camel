@@ -1,5 +1,5 @@
 [[Injector-Injector]]
-=== Injector
+= Injector
 
 The
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/Injector.html[Injector]

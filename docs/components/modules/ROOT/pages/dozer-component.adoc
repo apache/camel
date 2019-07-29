@@ -1,5 +1,5 @@
 [[dozer-component]]
-== Dozer Component
+= Dozer Component
 
 *Available as of Camel version 2.15*
 
@@ -33,7 +33,7 @@ following dependency to their `pom.xml`:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 The Dozer component only supports producer endpoints.
 
@@ -54,7 +54,7 @@ from("direct:orderInput").
   to("direct:orderOutput");
 ---------------------------------------------------------------------------------------
 
-### Options
+== Options
 
 // component options: START
 The Dozer component supports 2 options, which are listed below.
@@ -78,7 +78,7 @@ dozer:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -106,7 +106,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -135,7 +135,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Using Data Formats with Dozer
+== Using Data Formats with Dozer
 
 Dozer does not support non-Java sources and targets for mappings, so it
 cannot, for example, map an XML document to a Java object on its own.
@@ -169,7 +169,7 @@ using a JAXB data format and marshal the mapping output using Jackson.
 <endpoint uri="dozer:xml2json?marshalId=myjson&amp;unmarshalId=myjaxb&amp;targetModel=org.example.Order"/>
 ----------------------------------------------------------------------------------------------------------
 
-### Configuring Dozer
+== Configuring Dozer
 
 All Dozer endpoints require a Dozer mapping configuration file which
 defines mappings between source and target objects.  The component will
@@ -192,13 +192,13 @@ of `org.apache.camel.converter.dozer.DozerBeanMapperConfiguration`.
 </bean>
 ------------------------------------------------------------------------------------------
 
-### Mapping Extensions
+== Mapping Extensions
 
 The Dozer component implements a number of extensions to the Dozer
 mapping framework as custom converters.  These converters implement
 mapping functions that are not supported directly by Dozer itself.
 
-#### Variable Mappings
+=== Variable Mappings
 
 Variable mappings allow you to map the value of a variable definition
 within a Dozer configuration into a target field instead of using the
@@ -229,7 +229,7 @@ class into your target field of choice:
 </mappings>
 --------------------------------------------------------------------------------------------------------
 
-#### Custom Mappings
+=== Custom Mappings
 
 Custom mappings allow you to define your own logic for how a source
 field is mapped to a target field.  They are similar in function to
@@ -280,7 +280,7 @@ public class CustomMapper {
 </mappings>
 --------------------------------------------------------------------------------------------------------
 
-#### Expression Mappings
+=== Expression Mappings
 
 Expression mappings allow you to use the powerful
 http://camel.apache.org/languages.html[language] capabilities of Camel

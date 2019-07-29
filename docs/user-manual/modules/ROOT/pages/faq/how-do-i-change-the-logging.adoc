@@ -1,5 +1,5 @@
 [[HowdoIchangethelogging-HowdoIchangethelogging]]
-=== How do I change the logging?
+= How do I change the logging?
 
 We use https://commons.apache.org/proper/commons-logging/[commons-logging] to
 log information in the broker client and the broker itself so you can

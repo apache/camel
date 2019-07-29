@@ -1,5 +1,5 @@
 [[google-sheets-stream-component]]
-== Google Sheets Stream Component
+= Google Sheets Stream Component
 
 *Available as of Camel version 2.23*
 
@@ -31,7 +31,7 @@ for this component:
 
 ------------------------------------------------------
 
-### URI Format
+== URI Format
 
 The Google Sheets Component uses the following URI format:
 
@@ -40,7 +40,7 @@ The Google Sheets Component uses the following URI format:
 
 --------------------------------------------------------
 
-### GoogleSheetsStreamComponent
+== GoogleSheetsStreamComponent
 
 
 // component options: START
@@ -70,7 +70,7 @@ google-sheets-stream:apiName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (33 parameters):
+=== Query Parameters (33 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +122,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -166,7 +166,7 @@ The component supports 18 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Consumer
+== Consumer
 
 The consumer will poll by default with maxResults equals to 5.
 

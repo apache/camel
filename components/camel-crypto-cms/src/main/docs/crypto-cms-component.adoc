@@ -1,5 +1,5 @@
 [[crypto-cms-component]]
-== Crypto CMS Component
+= Crypto CMS Component
 
 *Available as of Camel version 2.20*
 
@@ -31,7 +31,7 @@ Security.addProvider(new BouncyCastleProvider());
 
 If the Bouncy Castle security provider is not registered then the Crypto CMS component will register the provider.
 
-### Options
+== Options
 
 // component options: START
 The Crypto CMS component supports 4 options, which are listed below.
@@ -57,7 +57,7 @@ crypto-cms:cryptoOperation:name
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -125,7 +125,7 @@ The component supports 5 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Enveloped Data
+== Enveloped Data
 
 Note, that a `crypto-cms:encypt` endpoint is typically defined in one route and the complimentary `crypto-cms:decrypt` in another, though for simplicity in the
 examples they appear one after the other.
@@ -235,7 +235,7 @@ from("direct:start")
     </route> 
 ----
 
-### Signed Data
+== Signed Data
 
 Note, that a `crypto-cms:sign` endpoint is typically defined in one route and the complimentary `crypto-cms:verify` in another, though for simplicity in the
 examples they appear one after the other.

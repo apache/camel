@@ -1,5 +1,5 @@
 [[HowdoesCamelworkwithActiveMQ-HowdoesCamelworkwithActiveMQ]]
-=== How does Camel work with ActiveMQ?
+= How does Camel work with ActiveMQ?
 
 You can use Camel to do smart routing and implement the
 xref:enterprise-integration-patterns.adoc[Enterprise Integration

@@ -1,5 +1,5 @@
 [[GettingStarted-GettingStarted]]
-=== Getting Started
+= Getting Started
 
 First you need to Download the Camel distribution;
 or you could grab the Source and try
@@ -17,7 +17,7 @@ Spring based xref:xml-configuration.adoc[Xml
 Configuration]
 
 [[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
-==== Working with CamelContexts and RouteBuilders
+== Working with CamelContexts and RouteBuilders
 
 To get started with Camel:
 
@@ -39,13 +39,13 @@ through another example] +
  And after the walks head over to the tutorials.
 
 [[GettingStarted-WorkingwithSpring]]
-==== Working with Spring
+== Working with Spring
 
 If you use Spring as a Dependency Injection container then please refer
 to the Camel Spring documentation.
 
 [[GettingStarted-OtherResources]]
-==== Other Resources
+== Other Resources
 
 We strongly suggest that you brew a cup of coffee or tea and take the 30
 minutes to read one or more of the following resources:

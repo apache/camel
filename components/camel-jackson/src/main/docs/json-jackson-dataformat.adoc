@@ -1,5 +1,5 @@
 [[json-jackson-dataformat]]
-== JSon Jackson DataFormat
+= JSon Jackson DataFormat
 
 *Available as of Camel version 2.0*
 
@@ -13,7 +13,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-=== Jackson Options
+== Jackson Options
 
 
 
@@ -47,7 +47,7 @@ The JSon Jackson dataformat supports 19 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -91,7 +91,7 @@ The component supports 19 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Using custom ObjectMapper
+== Using custom ObjectMapper
 
 You can configure `JacksonDataFormat` to use a custom `ObjectMapper` in case you need more control of the mapping configuration.
 
@@ -100,7 +100,7 @@ For example if you use Spring Boot, then Spring Boot can provide a default `Obje
 And this would allow Camel to detect that there is one bean of `ObjectMapper` class type in the Spring Boot bean registry
 and then use it. When this happens you should set a `INFO` logging from Camel.
 
-=== Dependencies
+== Dependencies
 
 To use Jackson in your camel routes you need to add the dependency
 on *camel-jackson* which implements this data format.

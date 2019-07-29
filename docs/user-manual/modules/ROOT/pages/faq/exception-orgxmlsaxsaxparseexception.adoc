@@ -1,5 +1,5 @@
 [[Exception-org.xml.sax.SAXParseException-Exceptionorg.xml.sax.SAXParseException]]
-=== Exception: `org.xml.sax.SAXParseException`
+= Exception: `org.xml.sax.SAXParseException`
 
 ----
 The reference to entity "..." must end with the ';' delimiter.

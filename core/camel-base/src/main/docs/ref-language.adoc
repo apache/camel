@@ -1,5 +1,5 @@
 [[ref-language]]
-== Ref Language
+= Ref Language
 
 *Available as of Camel version 2.8*
 
@@ -8,7 +8,7 @@ Expression or Predicate from the Registry.
 
 This is particular useable in XML DSLs.
 
-=== Ref Language options
+== Ref Language options
 
 // language options: START
 The Ref language supports 1 options, which are listed below.
@@ -22,7 +22,7 @@ The Ref language supports 1 options, which are listed below.
 |===
 // language options: END
 
-=== Example usage
+== Example usage
 
 The Splitter in XML DSL can utilize a custom
 expression using `<ref>` like:
@@ -52,6 +52,6 @@ And the same example using Java DSL:
 from("seda:a").split().ref("myExpression").to("seda:b");
 ----
 
-=== Dependencies
+== Dependencies
 
 The Ref language is part of *camel-core*.

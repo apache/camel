@@ -1,5 +1,5 @@
 [[Clustering-Clustering]]
-== Clustering
+= Clustering
 
 *Available as of Camel 2.20*
 
@@ -27,7 +27,7 @@ Represent a view of the cluster with its own set of isolated resources. As today
 Represent a member of the clutser.
 
 
-=== Cluster SPI Set-Up
+== Cluster SPI Set-Up
 
 A _Cluster Service_ is just like any other camel service so set it up you only need to register your implementations to the camel context:
 
@@ -93,7 +93,7 @@ camel.component.file.cluster.service.root = ${java.io.tmpdir}
 </beans>
 ----
 
-=== Cluster SPI Usage
+== Cluster SPI Usage
 
 The _Cluster SPI_ is leveraged by the folowing new implementations:
 

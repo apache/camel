@@ -1,5 +1,5 @@
 [[HowdoIuseJava14logging-HowdoIuseJava14logging]]
-=== How do I use Java 1.4 logging?
+= How do I use Java 1.4 logging?
 
 Camel uses http://www.slf4j.org/[sfl4j] which allows you to configure
 logging via, among others:

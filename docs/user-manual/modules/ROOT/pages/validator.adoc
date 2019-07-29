@@ -1,5 +1,5 @@
 [[Validator-Validator]]
-== Validator
+= Validator
 
 *Available as of Camel 2.19*
 
@@ -13,7 +13,7 @@ camel internal processor looks for a corresponding Validator from the registry a
 
 
 [[Validator-DataTypeFormat]]
-=== Data type format
+== Data type format
 
 [source]
 ----
@@ -24,7 +24,7 @@ where *scheme* is the type of data model like `java`, `xml` or `json`, and *name
 data type name.
 
 [[Validator-SupportedValidators]]
-=== Supported Validators
+== Supported Validators
 
 |===
 | Validator | Description
@@ -39,7 +39,7 @@ data type name.
 
 
 [[Validator-CommonOptions]]
-=== Common Options
+== Common Options
 All validators have following common options to specify which data type is supported by the validator.
 `type` must be specified.
 |===
@@ -51,7 +51,7 @@ All validators have following common options to specify which data type is suppo
 
 
 [[Validator-Predicate]]
-=== Predicate Validator Options
+== Predicate Validator Options
 
 |===
 | Name | Description
@@ -79,7 +79,7 @@ XML DSL:
 
 
 [[Validator-Endpoint]]
-=== Endpoint Validator Options
+== Endpoint Validator Options
 
 |===
 | Name | Description
@@ -109,7 +109,7 @@ xref:components::validator-component.adoc[Validation Component]. You can also us
 Bean Validation Component.
 
 [[Validator-Custom]]
-=== Custom Validator Options
+== Custom Validator Options
 
 Note that Validator must be a subclass of `org.apache.camel.spi.Validator`
 |===
@@ -138,7 +138,7 @@ XML DSL:
 
 
 [[Validator-Examples]]
-=== Examples
+== Examples
 
 For example to declare the Endpoint Validator which uses
 validator component to validate `xml:ABCOrder`, we can do as follows:

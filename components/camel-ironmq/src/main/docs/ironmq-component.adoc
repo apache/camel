@@ -1,5 +1,5 @@
 [[ironmq-component]]
-== IronMQ Component
+= IronMQ Component
 
 *Available as of Camel version 2.17*
 
@@ -24,7 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -32,7 +32,7 @@ for this component:
 -----------------------------
 Where **queueName** identifies the IronMQ queue you want to publish or consume messages from.
 
-### Options
+== Options
 
 
 
@@ -49,7 +49,7 @@ ironmq:queueName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -59,7 +59,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (32 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,7 +100,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -134,7 +134,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### IronMQComponent Options
+== IronMQComponent Options
 
 
 
@@ -156,10 +156,10 @@ The IronMQ component supports 2 options, which are listed below.
 
 
 
-### Message Body
+== Message Body
 Should be either a String or a array of Strings. In the latter case the batch of strings will be send to IronMQ as one request, creating one message pr. element in the array.
 
-### Producer message headers
+== Producer message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -168,7 +168,7 @@ Should be either a String or a array of Strings. In the latter case the batch of
 |CamelIronMQMessageId |String or io.iron.ironmq.Ids|The id of the IronMQ message as a String when sending a single message, or a Ids object when sending a array of strings.
 |=======================================================================
 
-### Consumer message headers
+== Consumer message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -179,7 +179,7 @@ Should be either a String or a array of Strings. In the latter case the batch of
 |=======================================================================
 
 
-### Consumer example
+== Consumer example
 
 Consume 50 messages pr. poll from the queue 'testqueue' on aws eu, and save the messages to files.
 
@@ -189,7 +189,7 @@ from("ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&projectId=
   .to("file:somefolder");
 --------------------------------------------------
 
-### Producer example
+== Producer example
 Dequeue from activemq jms and enqueue the messages on IronMQ.
 
 [source,java]

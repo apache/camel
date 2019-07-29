@@ -1,5 +1,5 @@
 [[wireTap-eip]]
-== Wire Tap EIP
+= Wire Tap EIP
 
 http://www.enterpriseintegrationpatterns.com/WireTap.html[Wire Tap]
 (from the xref:enterprise-integration-patterns.adoc[EIP patterns])
@@ -8,14 +8,14 @@ forwarded to the ultimate destination.
 
 image:http://www.enterpriseintegrationpatterns.com/img/WireTap.gif[image]
 
-=== Streams
+== Streams
 
 If you xref:wireTap-eip.adoc[Wire Tap] a stream message body then you
 should consider enabling xref:stream-caching.adoc[Stream caching] to
 ensure the message body can be read at each endpoint. See more details
 at xref:stream-caching.adoc[Stream caching].
 
-=== Options
+== Options
 
 // eip options: START
 The Wire Tap EIP supports 11 options which are listed below:
@@ -37,7 +37,7 @@ The Wire Tap EIP supports 11 options which are listed below:
 |===
 // eip options: END
 
-=== WireTap Thread pool
+== WireTap Thread pool
 
 The WireTap uses a thread pool to process the
 tapped messages. This thread pool will by default use the settings
@@ -48,7 +48,7 @@ you can configure an explicit thread pool on the xref:wireTap-eip.adoc[Wire
 Tap] having either a different rejection policy, a larger worker queue,
 or more worker threads.
 
-=== WireTap Node
+== WireTap Node
 
 Camel's Wire Tap node supports two flavors when tapping an
 xref:exchange.adoc[Exchange]:
@@ -66,7 +66,7 @@ copies could share objects from the original Exchange.
 xref:exchange.adoc[Exchange] allowing you to populate it with new
 values.
 
-=== Sending a Copy (traditional wiretap)
+== Sending a Copy (traditional wiretap)
 
 * Using the xref:fluent-builders.adoc[Fluent Builders]
 
@@ -93,7 +93,7 @@ values.
     }
 ----
 
-=== Sending a New xref:exchange.adoc[Exchange]
+== Sending a New xref:exchange.adoc[Exchange]
 
 *Using the xref:fluent-builders.adoc[Fluent Builders]*
 
@@ -139,7 +139,7 @@ xref:exchange.adoc[Exchange]
 ----
 
 
-=== Using Dynamic URIs
+== Using Dynamic URIs
 
 *Available as of Camel 2.16:*
 
@@ -154,7 +154,7 @@ part of the queue name:
         .to("bean:doSomething");
 ----
 
-=== Sending a New exchange and Set Headers in DSL
+== Sending a New exchange and Set Headers in DSL
 
 *Available as of Camel 2.8*
 
@@ -170,7 +170,7 @@ The following example sends a new message which has
 * A header with key *`id`* with the value *`123`*.
 * A header with key *`date`* which has current date as value.
 
-=== Java DSL
+== Java DSL
 
 [source,java]
 ----
@@ -202,7 +202,7 @@ The following example sends a new message which has
 
 ----
 
-=== Using `onPrepare` to Execute Custom Logic when Preparing Messages
+== Using `onPrepare` to Execute Custom Logic when Preparing Messages
 
 *Available as of Camel 2.8*
 

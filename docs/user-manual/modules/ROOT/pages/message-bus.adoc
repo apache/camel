@@ -1,5 +1,5 @@
 [[MessageBus-MessageBus]]
-== Message Bus
+= Message Bus
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Message
@@ -14,7 +14,7 @@ refer to the xref:components::jms-component.adoc[JMS] component for traditional 
 
 
 [[MessageBus-Example]]
-=== Samples
+== Samples
 
 The following demonstrates how the Camel message bus can be used to
 communicate with consumers and producers

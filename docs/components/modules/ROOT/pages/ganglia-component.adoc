@@ -1,5 +1,5 @@
 [[ganglia-component]]
-== Ganglia Component
+= Ganglia Component
 
 *Available as of Camel version 2.15*
 
@@ -34,7 +34,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,java]
 ----
@@ -44,7 +44,7 @@ ganglia:address:port[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Ganglia component and endpoint URI options
+== Ganglia component and endpoint URI options
 
 
 
@@ -78,7 +78,7 @@ ganglia:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,7 +113,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -158,19 +158,19 @@ The component supports 17 options, which are listed below.
 
 
 
-=== Message body
+== Message body
 
 Any value (such as a string or numeric type) in the body is sent to the
 Ganglia system.
 
-=== Return value / response
+== Return value / response
 
 Ganglia sends metrics using unidirectional UDP or multicast.  There is
 no response or change to the message body.
 
-=== Examples
+== Examples
 
-==== Sending a String metric
+=== Sending a String metric
 
 The message body will be converted to a String and sent as a metric
 value.  Unlike numeric metrics, String values can't be charted but
@@ -188,7 +188,7 @@ from("direct:ganglia.tx")
     .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
 ----
 
-==== Sending a numeric metric
+=== Sending a numeric metric
 
 [source,java]
 ----

@@ -1,5 +1,5 @@
 [[filter-eip]]
-== Filter EIP
+= Filter EIP
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
@@ -11,13 +11,13 @@ The following example shows how to create a Message Filter route
 consuming messages from an endpoint called *queue:a*, which if the
 xref:predicate.adoc[Predicate] is true will be dispatched to *queue:b*
 
-=== EIP options
+== EIP options
 
 // eip options: START
 The Filter EIP has no options.
 // eip options: END
 
-=== Samples
+== Samples
 
 Here is a little example in Java DSL:
 
@@ -71,7 +71,7 @@ And the example in XML:
 ----
 
 
-=== Using stop
+== Using stop
 
 Stop is a bit different than a message filter as it will filter out all
 messages and end the route entirely (filter only applies to its child
@@ -83,7 +83,7 @@ In the example below we do not want to route messages any further that
 has the word `Bye` in the message body. Notice how we prevent this in
 the when predicate by using the `.stop()`.
 
-=== Knowing if Exchange was filtered or not
+== Knowing if Exchange was filtered or not
 
 *Available as of Camel 2.5*
 

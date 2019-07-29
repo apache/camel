@@ -1,5 +1,5 @@
 [[jacksonxml-dataformat]]
-== JacksonXML DataFormat
+= JacksonXML DataFormat
 
 *Available as of Camel version 2.16*
 
@@ -28,7 +28,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-### JacksonXML Options
+== JacksonXML Options
 
 
 
@@ -58,7 +58,7 @@ The JacksonXML dataformat supports 15 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -101,7 +101,7 @@ The component supports 16 options, which are listed below.
 ND
 
 
-#### Using Jackson XML in Spring DSL
+=== Using Jackson XML in Spring DSL
 
 When using Data Format in Spring DSL you need to
 declare the data formats first. This is done in the *DataFormats* XML
@@ -127,7 +127,7 @@ And then you can refer to this id in the route:
         </route>
 -------------------------------------
 
-### Excluding POJO fields from marshalling
+== Excluding POJO fields from marshalling
 
 When marshalling a POJO to XML you might want to exclude certain fields
 from the XML output. With Jackson you can
@@ -147,7 +147,7 @@ Note that the weight field is missing in the resulting XML:
 <pojo age="30" weight="70"/>
 ----------------------------
 
-### Include/Exclude fields using the `jsonView` attribute with `JacksonXML`DataFormat
+== Include/Exclude fields using the `jsonView` attribute with `JacksonXML`DataFormat
 
 As an example of using this attribute you can instead of:
 
@@ -177,7 +177,7 @@ And the same in XML DSL:
   </marshal>
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Setting serialization include option
+== Setting serialization include option
 
 If you want to marshal a pojo to XML, and the pojo has some fields with
 null values. And you want to skip these null values, then you need to
@@ -210,7 +210,7 @@ Or from XML DSL you configure this as
     </dataFormats>
 ------------------------------------------------------
 
-### Unmarshalling from XML to POJO with dynamic class name
+== Unmarshalling from XML to POJO with dynamic class name
 
 If you use jackson to unmarshal XML to POJO, then you can now specify a
 header in the message that indicate which class name to unmarshal to. +
@@ -237,7 +237,7 @@ Or from XML DSL you configure this as
     </dataFormats>
 -------------------------------------------------------
 
-### Unmarshalling from XML to List<Map> or List<pojo>
+== Unmarshalling from XML to List<Map> or List<pojo>
 
 If you are using Jackson to unmarshal XML to a list of map/pojo, you can
 now specify this by setting `useList="true"` or use
@@ -273,7 +273,7 @@ And you can specify the pojo type also
     </dataFormats>
 -------------------------------------------------------------------------------
 
-### Using custom Jackson modules
+== Using custom Jackson modules
 
 You can use custom Jackson modules by specifying the class names of
 those using the moduleClassNames option as shown below.
@@ -305,7 +305,7 @@ to the module as shown below:
  Multiple modules can be specified separated by comma, such as
 moduleRefs="myJacksonModule,myOtherModule"
 
-### Enabling or disable features using Jackson
+== Enabling or disable features using Jackson
 
 Jackson has a number of features you can enable or disable, which its
 ObjectMapper uses. For example to disable failing on unknown properties
@@ -338,7 +338,7 @@ df.disableFeature(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 df.disableFeature(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
 ----------------------------------------------------------------------
 
-### Converting Maps to POJO using Jackson
+== Converting Maps to POJO using Jackson
 
 Jackson `ObjectMapper` can be used to convert maps to POJO objects.
 Jackson component comes with the data converter that can be used to
@@ -359,7 +359,7 @@ If there is a single `ObjectMapper` instance available in the Camel
 registry, it will used by the converter to perform the conversion.
 Otherwise the default mapper will be used.  
 
-### Formatted XML marshalling (pretty-printing)
+== Formatted XML marshalling (pretty-printing)
 
 Using the `prettyPrint` option one can output a well formatted XML while
 marshalling:
@@ -382,7 +382,7 @@ Please note that there are 5 different overloaded `jacksonxml()` DSL
 methods which support the `prettyPrint` option in combination with other
 settings for `unmarshalType`, `jsonView` etc. 
 
-### Dependencies
+== Dependencies
 
 To use Jackson XML in your camel routes you need to add the dependency
 on *camel-jacksonxml* which implements this data format.

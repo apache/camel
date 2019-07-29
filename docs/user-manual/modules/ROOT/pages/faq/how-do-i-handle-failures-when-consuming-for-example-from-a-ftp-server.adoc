@@ -1,5 +1,5 @@
 [[HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver-HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver]]
-=== How do I handle failures when consuming for example from a FTP server?
+= How do I handle failures when consuming for example from a FTP server?
 
 When you do a route such as:
 
@@ -25,7 +25,7 @@ Notice that the option `pollStrategy` applies for all consumers which is
 a `ScheduledPollConsumer` consumer. The page lists those.
 
 [[HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver-Seealso]]
-==== See also
+== See also
 
 * xref:components::ftp-component.adoc[FTP]
 * xref:polling-consumer.adoc[Polling Consumer]

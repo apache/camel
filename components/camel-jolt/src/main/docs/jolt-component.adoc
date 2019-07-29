@@ -1,5 +1,5 @@
 [[jolt-component]]
-== JOLT Component
+= JOLT Component
 
 *Available as of Camel version 2.16*
 
@@ -22,7 +22,7 @@ their `pom.xml` for this component:
 
  
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------
@@ -36,7 +36,7 @@ invoke; or the complete URL of the remote specification
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -69,7 +69,7 @@ jolt:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -127,7 +127,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Samples
+== Samples
 
 For example you could use something like
 
@@ -158,7 +158,7 @@ from("direct:in").
 
  
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

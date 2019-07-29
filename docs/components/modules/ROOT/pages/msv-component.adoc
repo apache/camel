@@ -1,5 +1,5 @@
 [[msv-component]]
-== MSV Component
+= MSV Component
 
 *Available as of Camel version 1.1*
 
@@ -25,7 +25,7 @@ Note that the xref:jing-component.adoc[Jing] component also supports
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax]
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------
@@ -46,7 +46,7 @@ msv:http://acme.com/cheese.rng
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -80,7 +80,7 @@ msv:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -90,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,7 +111,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -144,7 +144,7 @@ The component supports 5 options, which are listed below.
 
 
 
-### Example
+== Example
 
 The following
 https://github.com/apache/camel/blob/master/components/camel-msv/src/test/resources/org/apache/camel/component/validator/msv/camelContext.xml[example]
@@ -154,7 +154,7 @@ based on whether or not the XML matches the given
 http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

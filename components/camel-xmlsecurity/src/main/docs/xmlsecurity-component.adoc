@@ -1,5 +1,5 @@
 [[xmlsecurity-component]]
-== XML Security Component
+= XML Security Component
 
 *Available as of Camel version 2.12*
 
@@ -38,7 +38,7 @@ for this component:
 </dependency>
 ----
 
-### XML Signature Wrapping Modes
+== XML Signature Wrapping Modes
 
 XML Signature differs between enveloped, enveloping, and detached XML
 signature. In the
@@ -144,7 +144,7 @@ Elements):
 
  
 
-### URI Format
+== URI Format
 
 The camel component consists of two endpoints which have the following
 URI format:
@@ -167,7 +167,7 @@ signature and set to the body of the out-message.
 * The `name` part in the URI can be chosen by the user to distinguish
 between different signer/verifier endpoints within the camel context.
 
-### Basic Example
+== Basic Example
 
 The following example shows the basic usage of the component.
 
@@ -218,7 +218,7 @@ the parent element of the Signature element; see option
 For creating _detached_ XML signatures, see sub-chapter "Detached XML
 Signatures as Siblings of the Signed Elements".
 
-### Component Options
+== Component Options
 
 
 
@@ -244,7 +244,7 @@ The XML Security component supports 4 options, which are listed below.
 
 
 
-### Endpoint Options
+== Endpoint Options
 
 
 // endpoint options: START
@@ -256,7 +256,7 @@ xmlsecurity:command:name
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -267,7 +267,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (37 parameters):
+=== Query Parameters (37 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -313,7 +313,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -405,7 +405,7 @@ The component supports 64 options, which are listed below.
 
 
 
-#### Output Node Determination in Enveloping XML Signature Case
+=== Output Node Determination in Enveloping XML Signature Case
 
 After the validation the node is extracted from the XML signature
 document which is finally returned to the output-message body. In the
@@ -473,7 +473,7 @@ or the structure:
 </Signature>
 ----
 
-### Detached XML Signatures as Siblings of the Signed Elements
+== Detached XML Signatures as Siblings of the Signed Elements
 
 You can create detached signatures where the signature is a sibling of
 the signed element. The following example contains two detached
@@ -575,7 +575,7 @@ from("direct:detached")
 ----
 
 
-### XAdES-BES/EPES for the Signer Endpoint
+== XAdES-BES/EPES for the Signer Endpoint
 
 *Available as of Camel 2.15.0* 
 
@@ -750,7 +750,7 @@ from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefaul
 </bean>
 ----
 
-#### Headers
+=== Headers
 
 [width="100%",cols="1m,1m,4",options="header",]
 |=======================================================================
@@ -774,7 +774,7 @@ namespace parameter value
 parameter value
 |=======================================================================
 
-#### Limitations with regard to XAdES version 1.4.2
+=== Limitations with regard to XAdES version 1.4.2
 
 * No support for signature form XAdES-T and XAdES-C
 * Only signer part implemented. Verifier part currently not available.
@@ -799,6 +799,6 @@ the XML signer endpoint).
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
 
-### See Also
+== See Also
 
 * http://www.w3.org/TR/xmldsig-bestpractices/[Best Practices]

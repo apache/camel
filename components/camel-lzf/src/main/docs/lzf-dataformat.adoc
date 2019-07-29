@@ -1,5 +1,5 @@
 [[lzf-dataformat]]
-== LZF Deflate Compression DataFormat
+= LZF Deflate Compression DataFormat
 
 *Available as of Camel version 2.17*
 
@@ -12,7 +12,7 @@ endpoint. The compression capability is quite useful when you deal with
 large XML and Text based payloads or when you read messages previously
 comressed using LZF algotithm.
 
-### Options
+== Options
 
 // dataformat options: START
 The LZF Deflate Compression dataformat supports 2 options, which are listed below.
@@ -27,7 +27,7 @@ The LZF Deflate Compression dataformat supports 2 options, which are listed belo
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -56,7 +56,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Marshal
+== Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload employing LZF compression format and send it an ActiveMQ queue
@@ -67,7 +67,7 @@ called MY_QUEUE.
 from("direct:start").marshal().lzf().to("activemq:queue:MY_QUEUE");
 -------------------------------------------------------------------
 
-### Unmarshal
+== Unmarshal
 
 In this example we unmarshal a LZF payload from an ActiveMQ queue called
 MY_QUEUE to its original format, and forward it for processing to
@@ -78,7 +78,7 @@ the `UnGZippedMessageProcessor`.
 from("activemq:queue:MY_QUEUE").unmarshal().lzf().process(new UnCompressedMessageProcessor());
 ----------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To useLZF compression in your camel routes you need to add a dependency
 on *camel-lzf* which implements this data format.

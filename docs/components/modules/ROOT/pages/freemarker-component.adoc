@@ -1,5 +1,5 @@
 [[freemarker-component]]
-== Freemarker Component
+= Freemarker Component
 
 *Available as of Camel version 2.10*
 
@@ -20,7 +20,7 @@ for this component:
 </dependency>
 -------------------------------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
@@ -34,7 +34,7 @@ invoke; or the complete URL of the remote template (eg:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -66,7 +66,7 @@ freemarker:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -124,7 +124,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Headers
+== Headers
 
 Headers set during the FreeMarker evaluation are returned to the message
 and added as headers. This provides a mechanism for the FreeMarker
@@ -139,7 +139,7 @@ ${request.setHeader('fruit', 'Apple')}
 
 The header, `fruit`, is now accessible from the `message.out.headers`.
 
-### FreeMarker Context
+== FreeMarker Context
 
 Camel will provide exchange information in the FreeMarker context (just
 a `Map`). The `Exchange` is transferred as:
@@ -175,14 +175,14 @@ variableMap.put("exchange", exchange);
 exchange.getIn().setHeader("CamelFreemarkerDataModel", variableMap);
 --------------------------------------------------------------------
 
-### Hot reloading
+== Hot reloading
 
 The FreeMarker template resource is by default *not* hot reloadable for
 both file and classpath resources (expanded jar). If you set
 `contentCache=false`, then Camel will not cache the resource and hot
 reloading is thus enabled. This scenario can be used in development.
 
-### Dynamic templates
+== Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -201,7 +201,7 @@ configured.
 |FreemarkerConstants.FREEMARKER_TEMPLATE |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-### Samples
+== Samples
 
 For example you could use something like:
 
@@ -253,7 +253,7 @@ from("direct:in").
   to("freemarker:dummy");
 ---------------------------------------------------------------------------------------------
 
-### The Email Sample
+== The Email Sample
 
 In this sample we want to use FreeMarker templating for an order
 confirmation email. The email template is laid out in FreeMarker as:
@@ -270,7 +270,7 @@ ${body}
 
 And the java code:
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

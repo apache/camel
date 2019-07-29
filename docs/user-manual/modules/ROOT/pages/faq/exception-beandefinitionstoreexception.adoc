@@ -1,5 +1,5 @@
 [[Exception-BeanDefinitionStoreException-BeanDefinitionStoreException]]
-=== BeanDefinitionStoreException
+= BeanDefinitionStoreException
 
 If you use ActiveMQ 5.x that ships with Camel 1.x and you upgrade it to
 use Camel 2.0 you can get an exception while starting.

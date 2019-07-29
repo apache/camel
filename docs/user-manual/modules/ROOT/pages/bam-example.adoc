@@ -1,5 +1,5 @@
 [[BAMExample-BusinessActivityMonitorExample]]
-=== Business Activity Monitor (BAM) Example
+= Business Activity Monitor (BAM) Example
 
 The BAM (Business Activity Monitor) example shows how to
 monitor your transaction flows using Camel.
@@ -17,7 +17,7 @@ generated within the allowed amount of time and error is generated and
 sent to an Endpoint.
 
 [[BAMExample-Overview]]
-==== Overview
+== Overview
 
 This example lives in the _examples/camel-example-bam_ directory. It
 will poll the following directories
@@ -42,7 +42,7 @@ which defines the JPA `EntityManagerFactory` and tells Camel to look in
 the *org.apache.camel.example.bam* package to find its routes.
 
 [[BAMExample-Codewalkthrough]]
-==== Code walkthrough
+== Code walkthrough
 
 So lets start with the activities definition in
 http://svn.apache.org/repos/asf/camel/trunk/examples/camel-example-bam/src/main/java/org/apache/camel/example/bam/MyActivities.java[MyActivities]
@@ -89,7 +89,7 @@ xref:components::jms-component.adoc[JMS], xref:components::jms-component.adoc[IR
 xref:components::xmpp-component.adoc[XMPP] etc.
 
 [[BAMExample-Runningtheexample]]
-==== Running the example
+== Running the example
 
 To run the example we use the xref:camel-maven-plugin.adoc[Camel Maven Plugin].
 For example from the source or binary distribution the

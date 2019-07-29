@@ -1,5 +1,5 @@
 [[Openstack-OpenstackComponent]]
-== Openstack Component
+= Openstack Component
 
 *Available as of Camel 2.19*
 

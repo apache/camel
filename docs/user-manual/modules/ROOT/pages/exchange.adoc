@@ -1,5 +1,5 @@
 [[Exchange-MessageExchange]]
-=== Message Exchange
+= Message Exchange
 
 To support various message exchange patterns
 like one way Event Message and
@@ -12,7 +12,7 @@ Request Reply where there is an inbound and
 outbound Message.
 
 [[Exchange-SeeAlso]]
-==== See Also
+== See Also
 
 * Event Message
 * Request Reply

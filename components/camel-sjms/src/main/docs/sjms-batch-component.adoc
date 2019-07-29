@@ -1,5 +1,5 @@
 [[sjms-batch-component]]
-== Simple JMS Batch Component
+= Simple JMS Batch Component
 
 *Available as of Camel version 2.16*
 
@@ -75,7 +75,7 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -105,7 +105,7 @@ broker. A plain xref:sjms-component.adoc[SJMS] consumer endpoint can be used in
 conjunction with a regular non-persistence backed
 aggregator in this scenario.
 
-### Component Options and Configurations
+== Component Options and Configurations
 
 
 
@@ -144,7 +144,7 @@ sjms-batch:destinationName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -154,7 +154,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -187,7 +187,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

@@ -1,5 +1,5 @@
 [[ServletTomcatExample-ServletTomcatExample]]
-=== Servlet Tomcat Example
+= Servlet Tomcat Example
 
 *Available as of Camel 2.7*
 
@@ -15,13 +15,13 @@ mvn package
 ----
 
 [[ServletTomcatExample-About]]
-==== About
+== About
 
 This example demonstrates how you can use xref:components::servlet-component.adoc[Servlet] to expose
 a http service in a Camel route.
 
 [[ServletTomcatExample-Implementation]]
-==== Implementation
+== Implementation
 
 In the `web.xml` file in the `src/main/webapp/WEB-INF` folder the `CamelServlet`
 is defined. This is mandatory to do when using the xref:components::servlet-component.adoc[Servlet]
@@ -103,7 +103,7 @@ in the DSL XML as shown:
 ----
 
 [[ServletTomcatExample-Runningtheexample]]
-==== Running the example
+== Running the example
 
 This example runs in Apache Tomcat, so you will have to package the .war file and copy
 it to the webapp folder of Tomcat, which is the hot deploy folder.
@@ -114,7 +114,7 @@ You can then use a web browser and send a request to the
 http://localhost:8080/camel-example-servlet-tomcat/camel/hello URL.
 
 [[ServletTomcatExample-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:examples.adoc[Examples]
 *  xref:components::servlet-component.adoc[Servlet]

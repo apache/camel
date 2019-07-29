@@ -1,5 +1,5 @@
 [[HowcanIstoparoutefromaroute-HowcanIstoparoutefromaroute]]
-=== How can I stop a route from a route
+= How can I stop a route from a route
 
 The xref:camelcontext.adoc[CamelContext] provides API for managing
 routes at runtime. It has a `stopRoute(id)` and `startRoute(id)`
@@ -23,7 +23,7 @@ same thread that currently is processing a message from the route. This
 is not advised to do, and can cause unforeseen side effects.
 
 [[HowcanIstoparoutefromaroute-UsingalatchtostopCamelfromaroute]]
-==== Using a latch to stop Camel from a route
+== Using a latch to stop Camel from a route
 
 In this example we use a `CountdownLatch` to signal when Camel should
 stop, triggered from a route.
@@ -31,7 +31,7 @@ stop, triggered from a route.
 And in the route we call the latch as shown:
 
 [[HowcanIstoparoutefromaroute-Usingathreadtostoparoutefromaroute]]
-==== Using a thread to stop a route from a route
+== Using a thread to stop a route from a route
 
 In this example we use a separate `Thread` to stop the route, triggered
 from the route itself.
@@ -40,7 +40,7 @@ And in the route we create the thread and call the `stopRoute` method as
 shown:
 
 [[HowcanIstoparoutefromaroute-Alternativesolutions]]
-==== Alternative solutions
+== Alternative solutions
 
 Camel provides another feature for managing routes at runtime which is
 xref:route-policy.adoc[RoutePolicy].
@@ -62,7 +62,7 @@ NOTE: You can also use the xref:components::controlbus-component.adoc[ControlBus
 it stop/start routes.
 
 [[HowcanIstoparoutefromaroute-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:route-policy.adoc[RoutePolicy]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]

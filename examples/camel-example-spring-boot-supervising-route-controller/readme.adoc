@@ -2,7 +2,7 @@
 
 This example shows how to work with a simple Apache Camel application using Spring Boot and a Supervising Route Controller.
 
-## How to run
+= How to run
 
 You can run this example using
 
@@ -46,6 +46,6 @@ curl -XPOST -H "Content-Type: application/json" -s http://localhost:8080/actuato
 ----
 
 
-## More information
+== More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/

@@ -1,9 +1,9 @@
 [[inOnly-eip]]
-== In Only EIP
+= In Only EIP
 
 The *inOnly:* EIP define an InOnly ExchangePattern.
 
-=== EIP options
+== EIP options
 
 // eip options: START
 The In Only EIP supports 1 options which are listed below:

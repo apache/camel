@@ -1,5 +1,5 @@
 [[HowshouldIpackageapplicationsusingCamelandActiveMQ-HowshouldIpackageapplicationsusingCamelandActiveMQ]]
-=== How should I package applications using Camel and ActiveMQ?
+= How should I package applications using Camel and ActiveMQ?
 
 So you may wish to use Camel's
 xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
@@ -16,7 +16,7 @@ recommend you just create a normal Spring application; then add the
 necessary jars and customise the Spring XML and you're good to go.
 
 [[HowshouldIpackageapplicationsusingCamelandActiveMQ-WhatjarsdoIneed]]
-==== What jars do I need?
+== What jars do I need?
 
 * https://cwiki.apache.org/confluence/display/ACTIVEMQ/Initial+Configuration[What jars are required for ActiveMQ]
 * xref:faq/what-jars-do-i-need.adoc[What jars are required for Camel]

@@ -1,5 +1,5 @@
 [[GuaranteedDelivery-GuaranteedDelivery]]
-== Guaranteed Delivery
+= Guaranteed Delivery
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
@@ -19,7 +19,7 @@ xref:components::mybatis-component.adoc[MyBatis]
 image:http://www.enterpriseintegrationpatterns.com/img/GuaranteedMessagingSolution.gif[image]
 
 [[GuaranteedDelivery-Example]]
-=== Example
+== Example
 
 The following example demonstrates illustrates the use
 of http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed

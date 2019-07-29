@@ -1,8 +1,8 @@
 [[HowdoIsettheMEPwheninteractingwithJBI-HowdoIsettheMEPwheninteractingwithJBI]]
-=== How do I set the MEP when interacting with JBI?
+= How do I set the MEP when interacting with JBI?
 
 [[HowdoIsettheMEPwheninteractingwithJBI-Problem]]
-==== Problem
+== Problem
 
 If you are using the Camel JBI integration to send a
 `MessageExchange` to another JBI component from within your Camel route,
@@ -22,7 +22,7 @@ that really expects an InOut MEP. This would break the Camel
 route above.
 
 [[HowdoIsettheMEPwheninteractingwithJBI-Solution]]
-==== Solution
+== Solution
 
 For this case, you can override the MEP used from the Camel route
 like this, making sure that a JBI InOut `MessageExchange` is being used to

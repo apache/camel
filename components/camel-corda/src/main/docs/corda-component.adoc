@@ -1,5 +1,5 @@
 [[corda-component]]
-== corda Component
+= corda Component
 
 *Available as of Camel version 2.23*
 
@@ -19,14 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI Format
+== URI Format
 
 [source,text]
 ----
 corda://<host:port>[?options]
 ----
 
-=== Corda Options
+== Corda Options
 
 
 // component options: START
@@ -53,7 +53,7 @@ corda:configuration
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -63,7 +63,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -124,7 +124,7 @@ You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -136,7 +136,7 @@ You can append query options to the URI in the following format,
 
 
 
-### Samples
+== Samples
 
 Subscribe for new vault state changes:
 

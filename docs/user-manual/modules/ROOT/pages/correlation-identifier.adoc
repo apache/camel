@@ -1,5 +1,5 @@
 [[CorrelationIdentifier-CorrelationIdentifier]]
-== Correlation Identifier
+= Correlation Identifier
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/CorrelationIdentifier.html[Correlation
@@ -33,7 +33,7 @@ The following example demonstrates using the Camel JMSMessageID as the
 Correlation Identifier within a request/reply pattern in
 the xref:components::jms-component.adoc[JMS] component
 
-=== Samples
+== Samples
 
 [source,java]
 ----

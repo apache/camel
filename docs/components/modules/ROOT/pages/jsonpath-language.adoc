@@ -1,5 +1,5 @@
 [[jsonpath-language]]
-== JsonPath Language
+= JsonPath Language
 
 *Available as of Camel version 2.13*
 
@@ -19,7 +19,7 @@ from("queue:books.new")
       .to("jms:queue:book.expensive")
 -----------------------------------------------------
 
-=== JSonPath Options
+== JSonPath Options
 
 
 // language options: START
@@ -40,7 +40,7 @@ The JsonPath language supports 7 options, which are listed below.
 |===
 // language options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -75,7 +75,7 @@ The component supports 7 options, which are listed below.
 
 
 
-=== Using XML configuration
+== Using XML configuration
 
 If you prefer to configure your routes in your Spring
 XML file then you can use xref:jsonpath-language.adoc[JSonPath] expressions as
@@ -103,12 +103,12 @@ follows
 </camelContext>
 ----
 
-=== Syntax
+== Syntax
 
 See the https://code.google.com/p/json-path/[JSonPath] project page for
 further examples.
 
-=== Easy Syntax
+== Easy Syntax
 
 *Available as of Camel 2.19*
 
@@ -146,7 +146,7 @@ You can use Camel simple language in the right operator, eg
 store.book.price < ${header.limit}
 ----
 
-=== Supported message body types
+== Supported message body types
 
 Camel JSonPath supports message body using the following types:
 
@@ -167,7 +167,7 @@ If a message body is of unsupported type then an exception is thrown by default,
 can configure JSonPath to suppress exceptions (see below)
 
 
-=== Suppress exceptions
+== Suppress exceptions
 
 *Available as of Camel 2.16*
 
@@ -208,7 +208,7 @@ And in XML DSL:
 
 This option is also available on the `@JsonPath` annotation.
 
-=== Inline Simple exceptions
+== Inline Simple exceptions
 
 *Available as of Camel 2.18*
 
@@ -263,7 +263,7 @@ And in XML DSL:
 <jsonpath allowSimple="false">$.store.book[?(@.price < 10)]</jsonpath>
 ----
 
-=== JSonPath injection
+== JSonPath injection
 
 You can use Bean Integration to invoke a
 method on a bean and use various languages such as JSonPath to extract a
@@ -282,7 +282,7 @@ public class Foo {
 }
 ----
 
-=== Encoding Detection
+== Encoding Detection
 
 The encoding of the JSON document is
 detected automatically, if the document is encoded in unicode  (UTF-8,
@@ -292,7 +292,7 @@ you enter the document in String format to the JSONPath component or you
 can specify the encoding in the header "*CamelJsonPathJsonEncoding*"
 (JsonpathConstants.HEADER_JSON_ENCODING).
 
-=== Split JSon data into sub rows as JSon
+== Split JSon data into sub rows as JSon
 
 You can use jsonpath to split a JSon document, such as:
 
@@ -318,7 +318,7 @@ Then each book is logged as a String JSon value. For earlier versions of Camel y
 would need to use camel-jackson dataformat and marshal the message body to make it
 convert the message body from `Map` to a `String` type.
 
-=== Using header as input
+== Using header as input
 *Available as of Camel 2.20*
 
 By default jsonpath uses the message body as the input source. However you can also use a header as input
@@ -351,7 +351,7 @@ The same example in XML DSL would be:
 </route>
 ----
 
-=== Dependencies
+== Dependencies
 
 To use JSonPath in your camel routes you need to add the a dependency on
 *camel-jsonpath* which implements the JSonPath language.

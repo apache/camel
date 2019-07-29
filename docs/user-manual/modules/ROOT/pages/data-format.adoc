@@ -1,5 +1,5 @@
 [[DataFormat-DataFormat]]
-=== Data Format
+= Data Format
 
 Camel supports a pluggable DataFormat to allow messages to be marshalled
 to and from binary or text formats to support a kind of
@@ -56,7 +56,7 @@ And related is the following:
   type converting POJOs
 
 [[DataFormat-Unmarshalling]]
-==== Unmarshalling
+== Unmarshalling
 
 If you receive a message from one of the Camel
 xref:component.adoc[Components] such as xref:components::file-component.adoc[File],
@@ -96,7 +96,7 @@ from("file://foo/bar").
 ----
 
 [[DataFormat-Marshalling]]
-==== Marshalling
+== Marshalling
 
 Marshalling is the opposite of unmarshalling, where a bean is marshalled
 into some binary or textual format for transmission over some transport
@@ -119,7 +119,7 @@ from("file://foo/bar").
 ----
 
 [[DataFormat-UsingSpringXML]]
-==== Using Spring XML
+== Using Spring XML
 
 This example shows how to configure the data type just once and reuse it
 on multiple routes:

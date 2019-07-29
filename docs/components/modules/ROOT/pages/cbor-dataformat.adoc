@@ -1,5 +1,5 @@
 [[cbor-dataformat]]
-== CBOR DataFormat
+= CBOR DataFormat
 
 *Available as of Camel version 3.0*
 
@@ -16,7 +16,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-### CBOR Options
+== CBOR Options
 
 // dataformat options: START
 The CBOR dataformat supports 11 options, which are listed below.
@@ -40,7 +40,7 @@ The CBOR dataformat supports 11 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -77,7 +77,7 @@ The component supports 12 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-#### Using CBOR in Spring DSL
+=== Using CBOR in Spring DSL
 
 When using Data Format in Spring DSL you need to
 declare the data formats first. This is done in the *DataFormats* XML
@@ -103,7 +103,7 @@ And then you can refer to this id in the route:
         </route>
 -------------------------------------
 
-### Dependencies
+== Dependencies
 
 [source,java]
 -------------------------------------

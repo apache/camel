@@ -1,5 +1,5 @@
 [[customLoadBalancer-eip]]
-== Custom Load Balancer EIP
+= Custom Load Balancer EIP
 
 This EIP allows you to use your own Load Balancer implementation
 

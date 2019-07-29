@@ -1,5 +1,5 @@
 [[ssh-component]]
-== SSH Component
+= SSH Component
 
 *Available as of Camel version 2.10*
 
@@ -19,14 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------------------------
 ssh:[username[:password]@]host[:port][?options]
 -----------------------------------------------
 
-### Options
+== Options
 
 
 
@@ -69,7 +69,7 @@ ssh:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (34 parameters):
+=== Query Parameters (34 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -123,7 +123,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -182,7 +182,7 @@ The component supports 32 options, which are listed below.
 
 
 
-### Usage as a Producer endpoint
+== Usage as a Producer endpoint
 
 When the SSH Component is used as a Producer (`.to("ssh://...")`), it
 will send the message body as the command to execute on the remote SSH
@@ -203,7 +203,7 @@ an XML encoded newline (`+&#10;+`).
 </route>
 ----------------------------------------------
 
-### Authentication
+== Authentication
 
 The SSH Component can authenticate against the remote SSH server using
 one of two mechanisms: Public Key certificate or username/password.
@@ -273,12 +273,12 @@ of Camel you are using.
 </dependency>
 -----------------------------------------
 
-### Example
+== Example
 
 See the `examples/camel-example-ssh` and
 `examples/camel-example-ssh-security` in the Camel distribution.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

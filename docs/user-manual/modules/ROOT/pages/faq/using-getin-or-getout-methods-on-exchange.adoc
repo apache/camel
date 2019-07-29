@@ -1,5 +1,5 @@
 [[UsinggetInorgetOutmethodsonExchange-MessageexchangepatternsandtheExchangeobject]]
-=== Message Exchange Patterns and the Exchange object
+= Message Exchange Patterns and the Exchange object
 
 The Camel API is influenced by APIs such as
 http://en.wikipedia.org/wiki/Java_Business_Integration[JBI specification],
@@ -18,7 +18,7 @@ Obviously the `getIn` gets the IN message, and the `getOut` gets the OUT
 message.
 
 [[UsinggetInorgetOutmethodsonExchange-Flowofanexchangethrougharoute]]
-==== Flow of an exchange through a route
+== Flow of an exchange through a route
 
 image:images/using-getin-or-getout-methods-on-exchange.data/Message-flow-in-Route.png[image]
 
@@ -38,7 +38,7 @@ instead.
 ====
 
 [[UsinggetInorgetOutmethodsonExchange-UsinggetInorgetOutmethodsonExchange]]
-==== Using getIn or getOut methods on Exchange
+== Using getIn or getOut methods on Exchange
 
 Now suppose you want to use a Camel xref:processor.adoc[Processor] to
 adjust a message. This can be done as follows:
@@ -117,7 +117,7 @@ mind. Camel will detect that the xref:exchange.adoc[Exchange] has no OUT
 message and therefore use the IN message instead.
 
 [[UsinggetInorgetOutmethodsonExchange-AboutMessageExchangePatternandgetOut]]
-==== About Message Exchange Pattern and getOut
+== About Message Exchange Pattern and getOut
 
 If the xref:exchange.adoc[Exchange] is using `InOnly` as the MEP, then
 you may think that the xref:exchange.adoc[Exchange] has no OUT

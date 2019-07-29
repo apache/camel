@@ -1,5 +1,5 @@
 [[azure-queue-component]]
-== Azure Storage Queue Service Component
+= Azure Storage Queue Service Component
 
 *Available as of Camel version 2.19*
 
@@ -11,7 +11,7 @@ Prerequisites
 You must have a valid Microsoft Azure account. More information is available at
 https://azure.microsoft.com/en-us/free/[Azure Portal].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -31,7 +31,7 @@ from("azure-queue:/camelazure/messageQueue").
 to("file://queuedirectory");
 --------------------------------------------------------------------------------
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -67,7 +67,7 @@ azure-queue:containerAndQueueUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,7 +98,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -141,9 +141,9 @@ Required Azure Storage Queue Service component options
 
 You have to provide the containerAndQueue URI  and the credentials.
 
-### Usage
+== Usage
 
-#### Azure Queue Service operations
+=== Azure Queue Service operations
 
 [width="100%",cols="20%,80%",options="header",]
 |===
@@ -162,7 +162,7 @@ You have to provide the containerAndQueue URI  and the credentials.
 
 
 
-#### Azure Queue Client configuration
+=== Azure Queue Client configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the Azure Queue Client configuration, you can
@@ -185,7 +185,7 @@ from("azure-queue:/camelazure/messageQueue?azureQueueClient=#client")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -202,7 +202,7 @@ Maven users will need to add the following dependency to their pom.xml.
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

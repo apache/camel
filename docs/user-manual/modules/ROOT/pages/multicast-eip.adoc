@@ -1,5 +1,5 @@
 [[multicast-eip]]
-== Multicast EIP
+= Multicast EIP
 
 The Multicast EIP allows to route the same message to a number of endpoints
 and process them in a different way. The main difference between the
@@ -35,7 +35,7 @@ The following example shows how to take a request from the *direct:a*
 endpoint , then multicast these request to *direct:x*, *direct:y*,
 *direct:z*.
 
-=== Using the fluent builder
+== Using the fluent builder
 
 By default Multicast invokes each endpoint sequentially. If parallel
 processing is desired, simply use
@@ -59,7 +59,7 @@ from("direct:start")
   .to("mock:result");
 ----
 
-=== Stop processing in case of exception
+== Stop processing in case of exception
 
 The mutlicast EIP will by default continue to process
 the entire exchange even in case one of the
@@ -121,7 +121,7 @@ And using XML DSL you specify it as follows:
         </route>
 ----
 
-=== Using onPrepare to execute custom logic when preparing messages
+== Using onPrepare to execute custom logic when preparing messages
 
 The multicast EIP will copy the source
 exchange and multicast each copy. However the copy

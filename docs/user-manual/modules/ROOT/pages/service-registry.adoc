@@ -1,5 +1,5 @@
 [[ServiceRegistry-ServiceRegistry]]
-== Service Registry
+= Service Registry
 
 *Available as of Camel 2.22*
 
@@ -10,7 +10,7 @@
 
 Service registration is a key part of service discovery which Camel leverages through the _Service Call EIP_ and as of v 2.22.0 Camel provides an experimental support to ease the process to expose routes in a cloud environment and consume them with minimal configuration.
 
-=== Service Registry Set-Up
+== Service Registry Set-Up
 
 A _Service Registry_ is just like any other camel service so set it up you only need to register your implementations to the camel context:
 
@@ -34,7 +34,7 @@ Out of the box camel provides the following implementations:
 
 On Spring/Blueprint all the _Service Registry_ instances are automatically added to the camel context.
 
-=== Serice Registry Usage
+== Serice Registry Usage
 
 The _Service Registry SPI_ is leveraged by the following new implementations:
 

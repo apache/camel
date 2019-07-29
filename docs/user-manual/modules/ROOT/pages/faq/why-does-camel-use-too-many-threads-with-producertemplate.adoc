@@ -1,5 +1,5 @@
 [[WhydoesCamelusetoomanythreadswithProducerTemplate-WhydoesCamelusetoomanythreadswithProducerTemplate]]
-=== Why does Camel use too many threads with `ProducerTemplate`?
+= Why does Camel use too many threads with `ProducerTemplate`?
 
 A common reason is creating a new `ProducerTemplate` inside a `Processor` or
 xref:bean-integration.adoc[bean method invocation].

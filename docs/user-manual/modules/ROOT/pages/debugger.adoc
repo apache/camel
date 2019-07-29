@@ -1,5 +1,5 @@
 [[Debugger-Debugger]]
-=== Debugger
+= Debugger
 
 *Available as of Camel 2.6*
 
@@ -13,13 +13,13 @@ TIP:There is also a BacklogDebugger which allows
 to debug from JMX, and 3rd party tooling.
 
 [[Debugger-AbouttheDebugger]]
-==== About the Debugger
+== About the Debugger
 
 The Debugger allows tooling or the likes to attach breakpoints which is
 being invoked when Exchanges is being routed.
 
 [[Debugger-Defaultimplementation]]
-==== Default implementation
+== Default implementation
 
 Camel provides a default implementation
 `org.apache.camel.impl.DefaultDebugger` which you can set on the
@@ -33,7 +33,7 @@ breakpoints. And to suspend/resume all breakpoints etc. +
 the condition matches.
 
 [[Debugger-EasilydebuggingCamelroutesfromcamel-test]]
-==== Easily debugging Camel routes from `camel-test`
+== Easily debugging Camel routes from `camel-test`
 
 If you are developing unit tests using the `camel-test` component, then
 the Debugger comes out of the box. +
@@ -41,7 +41,7 @@ the Debugger comes out of the box. +
 debugger, by overriding `isUseDebugger()` method and return `true`.
 
 [[Debugger-Example]]
-===== Example
+=== Example
 
 In this unit test
 
@@ -110,7 +110,7 @@ endpoint.
 image:debugger.data/debug.png[image]
 
 [[Debugger-SeeAlso]]
-==== See Also
+== See Also
 
 * Tracer
 * xref:backlogdebugger.adoc[BacklogDebugger]

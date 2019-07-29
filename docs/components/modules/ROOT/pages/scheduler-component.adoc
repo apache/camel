@@ -1,5 +1,5 @@
 [[scheduler-component]]
-== Scheduler Component
+= Scheduler Component
 
 *Available as of Camel version 2.15*
 
@@ -11,7 +11,7 @@ JDK `ScheduledExecutorService`. Where as the timer uses a JDK `Timer`.
 
 You can only consume events from this endpoint.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -29,7 +29,7 @@ You can append query options to the URI in the following format,
 *Note:* The IN body of the generated exchange is `null`. So
 `exchange.getIn().getBody()` returns `null`.
 
-=== Options
+== Options
 
 // component options: START
 The Scheduler component supports 3 options, which are listed below.
@@ -55,7 +55,7 @@ scheduler:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,7 +96,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -125,7 +125,7 @@ The component supports 4 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== More information
+== More information
 
 This component is a scheduler
 http://camel.apache.org/polling-consumer.html[Polling Consumer] where
@@ -133,7 +133,7 @@ you can find more information about the options above, and examples at
 the http://camel.apache.org/polling-consumer.html[Polling
 Consumer] page.
 
-=== Exchange Properties
+== Exchange Properties
 
 When the timer is fired, it adds the following information as properties
 to the `Exchange`:
@@ -147,7 +147,7 @@ to the `Exchange`:
 |`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
 |===
 
-=== Sample
+== Sample
 
 To set up a route that generates an event every 60 seconds:
 
@@ -170,13 +170,13 @@ And the route in Spring DSL:
 </route>
 ----
 
-=== Forcing the scheduler to trigger immediately when completed
+== Forcing the scheduler to trigger immediately when completed
 
 To let the scheduler trigger as soon as the previous task is complete,
 you can set the option `greedy=true`. But beware then the scheduler will
 keep firing all the time. So use this with caution.
 
-=== Forcing the scheduler to be idle
+== Forcing the scheduler to be idle
 
 There can be use cases where you want the scheduler to trigger and be
 greedy. But sometimes you want "tell the scheduler" that there was no
@@ -190,7 +190,7 @@ The consumer will otherwise as by default return 1 message polled to the
 scheduler, every time the consumer has completed processing the
 exchange.
 
-=== See Also
+== See Also
 
 * xref:timer-component.adoc[Timer]
 * xref:quartz2-component.adoc[Quartz]

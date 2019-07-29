@@ -1,5 +1,5 @@
 [[PointtoPointChannel-PointtoPointChannel]]
-== Point to Point Channel
+= Point to Point Channel
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Point
@@ -20,7 +20,7 @@ The following example demonstrates point to point messaging using
 the xref:components::jms-component.adoc[JMS] component 
 
 [[PointtoPointChannel-Samples]]
-=== Samples
+== Samples
 
 [source,java]
 ----

@@ -1,5 +1,5 @@
 [[sql-component]]
-== SQL Component
+= SQL Component
 
 *Available as of Camel version 1.4*
 
@@ -32,7 +32,7 @@ further below.
 * a JDBC based repository for the Aggregator EIP
 pattern. See further below.
 
-=== URI format
+== URI format
 
 TIP: This component can be used as a
 http://camel.apache.org/transactional-client.html[Transactional Client].
@@ -100,7 +100,7 @@ also use comments such as the – dash line.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
@@ -131,7 +131,7 @@ sql:query
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -141,7 +141,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (47 parameters):
+=== Query Parameters (47 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -197,7 +197,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -229,7 +229,7 @@ The component supports 5 options, which are listed below.
 
 
 
-=== Treatment of the message body
+== Treatment of the message body
 
 The SQL component tries to convert the message body to an object of
 `java.util.Iterator` type and then uses this iterator to fill the query
@@ -254,7 +254,7 @@ parameters must be provided in a header with the
 key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
 more dynamic as the SQL query is from the message body.
 
-=== Result of the query
+== Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -276,7 +276,7 @@ from("jms:order.inbox")
     .to("jms:order.booking");
 ----
 
-=== Using StreamList
+== Using StreamList
 
 The producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
@@ -296,7 +296,7 @@ from("direct:withSplitModel")
 ----
  
 
-=== Header values
+== Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -331,7 +331,7 @@ message headers:
 |CamelSqlGeneratedKeyRows |Rows that contains the generated keys (a list of maps of keys).
 |===
 
-=== Generated keys
+== Generated keys
 
 *Available as of Camel 2.12.4, 2.13.1 and 2.14*
 
@@ -345,7 +345,7 @@ the table above.
 You can see more details in this
 https://gitbox.apache.org/repos/asf?p=camel.git;a=blob;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;h=54c19b7332bb0aa81ee24ff3d3a66885a6b9e9aa;hb=HEAD[unit test].
 
-=== DataSource
+== DataSource
 
 You can now set a reference to a `DataSource` in the URI directly:
 
@@ -354,7 +354,7 @@ You can now set a reference to a `DataSource` in the URI directly:
 sql:select * from table where id=# order by name?dataSource=myDS
 ----
 
-=== Using named parameters
+== Using named parameters
 
 *Available as of Camel 2.11*
 
@@ -383,7 +383,7 @@ parameters will be taken from the body.
      .to("sql:select * from projects where license = :#lic and id > :#min order by id")
 ----
 
-=== Using expression parameters in producers
+== Using expression parameters in producers
 
 *Available as of Camel 2.14*
 
@@ -399,7 +399,7 @@ from("direct:projects")
   .to("sql:select * from projects where license = :#${body} and id > :#${property.min} order by id")
 ----
 
-==== Using expression parameters in consumers
+=== Using expression parameters in consumers
 
 *Available as of Camel 2.23*
 
@@ -431,7 +431,7 @@ Notice that there is no existing `Exchange` with message body and headers, so
 the simple expression you can use in the consumer are most useable for calling
 bean methods as in this example.
 
-=== Using IN queries with dynamic values
+== Using IN queries with dynamic values
 
 *Available as of Camel 2.17*
 
@@ -497,7 +497,7 @@ from("direct:query")
 ----
  
 
-=== Using the JDBC based idempotent repository
+== Using the JDBC based idempotent repository
 
 *Available as of Camel 2.7*
 
@@ -538,7 +538,7 @@ does not map to any of the JDBC time types: *DATE*, *TIME*, or
 When working with concurrent consumers it is crucial to create a unique constraint on the columns processorName and messageId.
 Because the syntax for this constraint differs from database to database, we do not show it here.
 
-==== Customize the JdbcMessageIdRepository
+=== Customize the JdbcMessageIdRepository
 
 You have a few options to tune the
 `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` for
@@ -575,7 +575,7 @@ It takes two parameter. This first one is the processor name (`String`) and
 the second one is the message id (`String`).
 |===
 
-=== Using the JDBC based aggregation repository
+== Using the JDBC based aggregation repository
 
 *Available as of Camel 2.6*
 
@@ -601,7 +601,7 @@ You can see some examples in the unit tests of camel-sql, for example
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sql/src/test/java/org/apache/camel/processor/aggregate/jdbc/JdbcAggregateRecoverDeadLetterChannelTest.java[this
 test].
 
-==== Database
+=== Database
 
 To be operational, each aggregator uses two table: the aggregation and
 completed one. By convention the completed has the same name as the
@@ -636,7 +636,7 @@ CREATE TABLE aggregation_completed (
 -----
 
 
-=== Storing body and headers as text
+== Storing body and headers as text
 
 *Available as of Camel 2.11*
 
@@ -686,7 +686,7 @@ below:
 </bean>
 ----
 
-==== Codec (Serialization)
+=== Codec (Serialization)
 
 Since they can contain any type of payload, Exchanges are not
 serializable by design. It is converted into a byte array to be stored
@@ -701,18 +701,18 @@ the `currentThread` one. The benefit is to be able to load classes
 exposed by other bundles. This allows the exchange body and headers to
 have custom types object references.
 
-==== Transaction
+=== Transaction
 
 A Spring `PlatformTransactionManager` is required to orchestrate
 transaction.
 
-===== Service (Start/Stop)
+==== Service (Start/Stop)
 
 The `start` method verify the connection of the database and the
 presence of the required tables. If anything is wrong it will fail
 during starting.
 
-==== Aggregator configuration
+=== Aggregator configuration
 
 Depending on the targeted environment, the aggregator might need some
 configuration. As you already know, each aggregator should have its own
@@ -739,7 +739,7 @@ Here is the declaration for Oracle:
 </bean>
 ----
 
-==== Optimistic locking
+=== Optimistic locking
 
 You can turn on `optimisticLocking` and use
 this JDBC based aggregation repository in a clustered environment where
@@ -792,7 +792,7 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
 </bean>
 ----
 
-=== Camel Sql Starter
+== Camel Sql Starter
 
 A starter module is available to spring-boot users. When using the starter,
 the `DataSource` can be directly configured using spring-boot properties.

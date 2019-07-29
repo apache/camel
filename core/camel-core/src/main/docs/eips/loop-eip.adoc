@@ -1,15 +1,15 @@
 [[loop-eip]]
-== Loop EIP
+= Loop EIP
 
 The Loop allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
 
 [NOTE]
 .Default mode
-====
+===
 Notice by default the loop uses the same exchange throughout the looping. So the result from the previous iteration will be used for the next (eg Pipes and Filters). You can enable copy mode instead. See the options table for more details.
-====
+===
 
-=== Options
+== Options
 
 // eip options: START
 The Loop EIP supports 2 options which are listed below:
@@ -23,7 +23,7 @@ The Loop EIP supports 2 options which are listed below:
 // eip options: END
 
 
-=== Exchange properties
+== Exchange properties
 
 For each iteration two properties are set on the Exchange. Processors can rely on these properties to process the Message in different ways.
 
@@ -34,7 +34,7 @@ For each iteration two properties are set on the Exchange. Processors can rely o
 | CamelLoopIndex | Index of the current iteration (0 based)
 |===
 
-=== Samples
+== Samples
 The following example shows how to take a request from the *direct:x* endpoint, then send the message repetitively to *mock:result*. The number of times the message is sent is either passed as an argument to `loop()`, or determined at runtime by evaluating an expression. The expression *must* evaluate to an int, otherwise a `RuntimeCamelException` is thrown.
 
 Pass loop count as an argument
@@ -87,7 +87,7 @@ Use expression to determine loop count
 </route>
 ----
 
-=== Using copy mode
+== Using copy mode
 *Available as of Camel 2.8* +
 
 Now suppose we send a message to "direct:start" endpoint containing the letter A. +
@@ -137,7 +137,7 @@ The equivalent example in XML DSL in copy mode is as follows:
 </route>
 ----
 
-=== Using while mode
+== Using while mode
 *Available as of Camel 2.17* +
 
 The loop can act like a while loop that loops until the expression evaluates to false or null. +

@@ -1,5 +1,5 @@
 [[direct-component]]
-== Direct Component
+= Direct Component
 
 *Available as of Camel version 1.0*
 
@@ -16,7 +16,7 @@ TIP: *Connection to other camel contexts*
 The xref:vm-component.adoc[VM] component provides connections between Camel
 contexts as long they run in the same *JVM*.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -25,7 +25,7 @@ direct:someName[?options]
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-=== Options
+== Options
 
 
 
@@ -56,7 +56,7 @@ direct:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +85,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -115,7 +115,7 @@ The component supports 5 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Samples
+== Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -151,7 +151,7 @@ And the sample using spring DSL:
 See also samples from the xref:seda-component.adoc[SEDA] component, how they can
 be used together.
 
-=== See Also
+== See Also
 
 * xref:seda-component.adoc[SEDA]
 * xref:vm-component.adoc[VM]

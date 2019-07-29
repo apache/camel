@@ -1,5 +1,5 @@
 [[EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns]]
-=== Enterprise Integration Patterns
+= Enterprise Integration Patterns
 
 Camel supports most of the
 http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns]
@@ -25,7 +25,7 @@ http://www.eaipatterns.com/download/EIP_Visio_stencil.zip[Microsoft
 Visio], or http://www.graffletopia.com/stencils/137[Omnigraffle].
 
 [[EnterpriseIntegrationPatterns-MessagingSystems]]
-==== Messaging Systems
+== Messaging Systems
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
@@ -57,7 +57,7 @@ connect to a messaging channel to send and receive messages?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessagingChannels]]
-==== Messaging Channels
+== Messaging Channels
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
@@ -87,7 +87,7 @@ affecting the others?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageConstruction]]
-==== Message Construction
+== Message Construction
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
@@ -110,7 +110,7 @@ to send the reply?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageRouting]]
-==== Message Routing
+== Message Routing
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
@@ -199,7 +199,7 @@ of endpoints at the same time?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessageTransformation]]
-==== Message Transformation
+== Message Transformation
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
@@ -231,7 +231,7 @@ semantically equivalent, but arrive in a different format?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-MessagingEndpoints]]
-==== Messaging Endpoints
+== Messaging Endpoints
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================
@@ -283,7 +283,7 @@ and via non-messaging techniques?
 |=======================================================================
 
 [[EnterpriseIntegrationPatterns-SystemManagement]]
-==== System Management
+== System Management
 
 [width="100%",cols="10%,10%,80%",]
 |=======================================================================

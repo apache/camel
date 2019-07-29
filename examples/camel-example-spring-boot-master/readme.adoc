@@ -2,7 +2,7 @@
 
 This example shows how to work with a simple Apache Camel application using Spring Boot and a Master component.
 
-## How to run
+= How to run
 
 1. build the project:
 +
@@ -16,6 +16,6 @@ This example shows how to work with a simple Apache Camel application using Spri
 +
     mvn spring-boot:run
 
-## More information
+== More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/

@@ -1,5 +1,5 @@
 [[HowdoesCamellookupbeansandendpoints-HowdoesCamellookupbeans,componentsorendpoints]]
-=== How does Camel look up beans, components or endpoints?
+= How does Camel look up beans, components or endpoints?
 
 There are many times using Camel that a name is used for a bean such as
 using the xref:components::bean-component.adoc[Bean] endpoint or using the

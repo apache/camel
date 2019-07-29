@@ -1,5 +1,5 @@
 [[HowdoIimportrestsfromotherXMLfiles-HowdoIimportrestsfromotherXMLfiles]]
-=== How do I import rests from other XML files?
+= How do I import rests from other XML files?
 
 *Available as of Camel 2.14*
 

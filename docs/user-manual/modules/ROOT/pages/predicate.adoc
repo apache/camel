@@ -1,5 +1,5 @@
 [[Predicate-Predicates]]
-=== Predicates
+= Predicates
 
 Camel supports a pluggable interface called
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Predicate.html[Predicate]
@@ -58,7 +58,7 @@ from("jms:queue:order")
 ----
 
 [[Predicate-NegatingaPredicate]]
-==== Negating a Predicate
+== Negating a Predicate
 
 You can use the *not* method on the `PredicateBuilder` to negate a
 predicate.
@@ -84,7 +84,7 @@ from("direct:start")
 ----
 
 [[Predicate-CompoundPredicates]]
-==== Compound Predicates
+== Compound Predicates
 
 You can also create compound predicates using boolean operators such as
 `and, or, not` and many others.
@@ -146,7 +146,7 @@ from("direct:start").choice()
 ----
 
 [[Predicate-ExtensiblePredicates]]
-==== Extensible Predicates
+== Extensible Predicates
 
 Camel supports extensible Predicates using multiple
 xref:languages.adoc[Languages]; the following languages are supported
@@ -183,7 +183,7 @@ https://github.com/apache/camel/blob/master/core/camel-core/src/main/java/org/ap
 class]
 
 [[Predicate-UsingPredicatesinyourIDE]]
-==== Using Predicates in your IDE
+== Using Predicates in your IDE
 
 To use different expression and predicates in your IDE you need to
 perform a static import of the builder class for the language(s) you
@@ -202,6 +202,6 @@ wish to use.
 |=======================================================================
 
 [[Predicate-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:expression.adoc[Expression]

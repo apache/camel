@@ -1,5 +1,5 @@
 [[script-eip]]
-== Script EIP
+= Script EIP
 *Available as of Camel 2.16*
 
 Is used to execute a script which does not change the message (by default).
@@ -9,13 +9,13 @@ context has access to the current Exchange and can essentially change the messag
 But the return value from the script is discarded and not used.
 If the return value should be used as a changed message body then use xref:message-translator.adoc[Message Translator] EIP instead.
 
-=== Options
+== Options
 
 // eip options: START
 The Script EIP has no options.
 // eip options: END
 
-=== Samples
+== Samples
 The route below will read the file contents and validate them against a regular expression.
 
 [source,java]
@@ -55,7 +55,7 @@ Mind that you can use _CDATA_ in XML if the groovy scrip uses `< >` etc
 <bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
 ----
 
-=== Using external script files
+== Using external script files
 You can refer to external script files instead of inlining the script.
 For example to load a groovy script from the classpath you need to prefix the value with `resource:` as shown:
 

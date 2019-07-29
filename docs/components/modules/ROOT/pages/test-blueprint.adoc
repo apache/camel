@@ -1,4 +1,4 @@
-## Blueprint Testing
+= Blueprint Testing
 
 *Available as of Camel 2.10*
 
@@ -41,7 +41,7 @@ pom:
 </dependency>
 -----------------------------------------------
 
-### Classpath scanning
+== Classpath scanning
 
 By default PojoSR test container scans the test classpath for all the
 OSGi bundles available there. All the bundles with Blueprint descriptor
@@ -64,7 +64,7 @@ getBlueprintDescriptor method will not prevent the test container from
 loading a given descriptor. The `getBundleFilter` method is the proper
 way of filtering out bundles you don't want to start during the test.
 
-### Setting timeout when getting CamelContext
+== Setting timeout when getting CamelContext
 
 *Available as of Camel 2.13.0/2.12.1/2.11.2*
 
@@ -77,7 +77,7 @@ property.
 * Locally for each test, by overriding _getCamelContextCreationTimeout_
 method.
 
-### Adding services on startup
+== Adding services on startup
 
 *Available as of Camel 2.11.2/2.12.0*
 

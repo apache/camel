@@ -1,5 +1,5 @@
 [[jclouds-component]]
-== JClouds Component
+= JClouds Component
 
 *Available as of Camel version 2.9*
 
@@ -34,7 +34,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Configuring the component
+== Configuring the component
 
 The camel jclouds component will make use of multiple jclouds blobstores
 and compute services as long as they are passed to the component during
@@ -83,7 +83,7 @@ As you can see the component is capable of handling multiple blobstores
 and compute services. The actual implementation that will be used by
 each endpoint is specified by passing the provider inside the URI.
 
-### Jclouds Options
+== Jclouds Options
 
 [source,java]
 -----------------------------------------
@@ -97,7 +97,7 @@ target service (_e.g. aws-s3 or aws_ec2_).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Blobstore URI Options
+== Blobstore URI Options
 
 
 
@@ -131,7 +131,7 @@ jclouds:command:providerId
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -142,7 +142,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -182,7 +182,7 @@ passing the appropriate headers to the message.
 
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -213,7 +213,7 @@ The component supports 5 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-#### Message Headers for blobstore
+=== Message Headers for blobstore
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -228,9 +228,9 @@ The component supports 5 options, which are listed below.
 |`CamelJcloudsBlobName` |The name of the blob.
 |=======================================================================
 
-### Blobstore Usage Samples
+== Blobstore Usage Samples
 
-#### Example 1: Putting to the blob
+=== Example 1: Putting to the blob
 
 This example will show you how you can store any message inside a blob
 using the jclouds component.
@@ -257,7 +257,7 @@ route.
 </route>
 --------------------------------------------------------------------------------------------
 
-#### Example 2: Getting/Reading from a blob
+=== Example 2: Getting/Reading from a blob
 
 This example will show you how you can read the contnet of a blob using
 the jclouds component.
@@ -284,7 +284,7 @@ route.
 </route>
 --------------------------------------------------------------------------------------------
 
-#### Example 3: Consuming a blob
+=== Example 3: Consuming a blob
 
 This example will consume all blob that are under the specified
 container. The generated exchange will contain the payload of the blob
@@ -314,12 +314,12 @@ You can achieve the same goal by using xml, as you can see below.
 jclouds:compute:aws-ec2?operation=CamelJcloudsCreateNode&imageId=AMI_XXXXX&locationId=eu-west-1&group=mygroup
 -------------------------------------------------------------------------------------------------------------
 
-### Compute Usage Samples
+== Compute Usage Samples
 
 Below are some examples that demonstrate the use of jclouds compute
 producer in java dsl and spring/blueprint xml.
 
-#### Example 1: Listing the available images.
+=== Example 1: Listing the available images.
 
 [source,java]
 --------------------------------------------
@@ -339,7 +339,7 @@ its body. You can also do the same using xml.
 </route>
 --------------------------------------------------------------------------
 
-#### Example 2: Create a new node.
+=== Example 2: Create a new node.
 
 [source,java]
 ---------------------------------------------
@@ -364,7 +364,7 @@ spring xml.
 </route>
 -------------------------------------------------------------------------------------------------------------------------
 
-#### Example 3: Run a shell script on running node.
+=== Example 3: Run a shell script on running node.
 
 [source,java]
 --------------------------------------------
@@ -397,7 +397,7 @@ Here is the same using spring xml.
 </route>
 ----------------------------------------------------------------------------------------------
 
-#### See also
+=== See also
 
 If you want to find out more about jclouds here is list of interesting
 resources 

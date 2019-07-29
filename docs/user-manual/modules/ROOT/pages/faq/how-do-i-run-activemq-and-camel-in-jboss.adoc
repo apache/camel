@@ -1,5 +1,5 @@
 [[HowdoIrunActiveMQandCamelinJBoss-HowdoIrunActiveMQandCamelinJBoss]]
-=== How do I run ActiveMQ and Camel in JBoss?
+= How do I run ActiveMQ and Camel in JBoss?
 
 A user had a problem with running ActiveMQ embedded inside JBoss. He
 reported his findings on the Camel mailing list which you can read about
@@ -7,7 +7,7 @@ http://www.nabble.com/JBoss-%2B-ActiveMQ-%2B-Camel-%2B-Newbie-td24056976.html[hi
 solution here].
 
 [[HowdoIrunActiveMQandCamelinJBoss-UsingCamelinJBoss]]
-==== Using Camel in JBoss
+== Using Camel in JBoss
 
 *Available as of Camel 2.1*
 

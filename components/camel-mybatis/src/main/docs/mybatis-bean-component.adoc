@@ -1,5 +1,5 @@
 [[mybatis-bean-component]]
-== MyBatis Bean Component
+= MyBatis Bean Component
 
 *Available as of Camel version 2.22*
 
@@ -28,7 +28,7 @@ the root of the classpath with the expected name of
  If the file is located in another location, you will need to configure
 the `configurationUri` option on the `MyBatisComponent` component.
 
-=== Options
+== Options
 
 // component options: START
 The MyBatis Bean component supports 4 options, which are listed below.
@@ -55,7 +55,7 @@ mybatis-bean:beanName:methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +81,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -114,7 +114,7 @@ The component supports 5 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
 Camel will populate the result message, either IN or OUT with a header
 with the statement used:
@@ -128,7 +128,7 @@ instance an `INSERT` could return the auto-generated key, or number of
 rows etc.
 |===
 
-=== Message Body
+== Message Body
 
 The response from MyBatis will only be set as the body if it's a
 `SELECT` statement. That means, for example, for `INSERT` statements
@@ -136,7 +136,7 @@ Camel will not replace the body. This allows you to continue routing and
 keep the original body. The response from MyBatis is always stored in
 the header with the key `CamelMyBatisResult`.
 
-=== Samples
+== Samples
 
 For example if you wish to consume beans from a JMS queue and insert
 them into a database you could do the following:

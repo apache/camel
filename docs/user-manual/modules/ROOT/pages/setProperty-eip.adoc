@@ -1,9 +1,9 @@
 [[setProperty-eip]]
-== Set Property EIP
+= Set Property EIP
 
 The SetProperty EIP allows you to set a property on your exchange.
 
-=== Options
+== Options
 
 // eip options: START
 The Set Property EIP supports 1 options which are listed below:
@@ -15,7 +15,7 @@ The Set Property EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
-=== Examples
+== Examples
 
 The following example shows how to use the SetProperty EIP
 

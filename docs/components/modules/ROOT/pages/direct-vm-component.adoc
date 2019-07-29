@@ -1,5 +1,5 @@
 [[direct-vm-component]]
-== Direct VM Component
+= Direct VM Component
 
 *Available as of Camel version 2.10*
 
@@ -27,7 +27,7 @@ Transactions - Tx.
 
 image:camel-direct-vm.png[image]
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -36,7 +36,7 @@ direct-vm:someName
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-=== Options
+== Options
 
 
 
@@ -69,7 +69,7 @@ direct-vm:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,7 +100,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Samples
+== Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -138,7 +138,7 @@ And the sample using spring DSL:
 </route>
 ----
 
-=== See Also
+== See Also
 
 * xref:direct-component.adoc[Direct]
 * xref:seda-component.adoc[SEDA]

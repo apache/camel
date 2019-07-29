@@ -1,5 +1,5 @@
 [[as2-component]]
-== AS2 Component
+= AS2 Component
 
 *Available as of Camel version 2.22*
 
@@ -21,7 +21,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -34,7 +34,7 @@ apiName can be one of:
 * server
 
 
-=== AS2 Options
+== AS2 Options
 
 
 // component options: START
@@ -61,7 +61,7 @@ as2:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (33 parameters):
+=== Query Parameters (33 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,7 +114,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -171,7 +171,7 @@ The component supports 31 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Client Endpoints:
+== Client Endpoints:
 
 Client endpoints use the endpoint prefix *`client`* followed by the name of a method
 and associated options described next. The endpoint URI MUST contain the prefix *`client`*.
@@ -241,7 +241,7 @@ URI Options for _client_
 |===
 
 
-=== Server Endpoints:
+== Server Endpoints:
 
 Server endpoints use the endpoint prefix *`server`* followed by the name of a method
 and associated options described next. The endpoint URI MUST contain the prefix *`server`*.

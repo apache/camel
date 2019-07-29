@@ -1,5 +1,5 @@
 [[RunningCamelstandalone-IsitpossibletostartCamelasastandaloneapplication,withoutembeddingitinanotherapplication]]
-=== Is it possible to start Camel as a standalone application, without embedding it in another application?
+= Is it possible to start Camel as a standalone application, without embedding it in another application?
 
 Yes, Camel can run standalone or in any container. Running Standalone is
 as simple just to create a xref:camelcontext.adoc[CamelContext], add

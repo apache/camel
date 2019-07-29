@@ -1,5 +1,5 @@
 [[WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler-WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler]]
-=== Why does my file consumer not pick up the file, and how do I let the file consumer use the Camel error handler?
+= Why does my file consumer not pick up the file, and how do I let the file consumer use the Camel error handler?
 
 There could be several reasons why the xref:components::file-component.adoc[File] consumer is
 not picking up files. For example it may not run at all, or it cannot
@@ -10,7 +10,7 @@ xref:faq/how-do-i-enable-debug-logging.adoc[turn on DEBUG logging] at
 `org.apache.camel.component.file` to see more detail.
 
 [[WhydoesmyfileconsumernotpickupthefileandhowdoIletthefileconsumerusetheCamelerrorhandler-HowtouseCamelsroutingerrorhandlerswiththefileconsumer]]
-==== How to use Camel's routing error handlers with the file consumer
+== How to use Camel's routing error handlers with the file consumer
 
 Well, this is really a
 http://en.wikipedia.org/wiki/Chicken_or_the_egg["chicken or the egg"]

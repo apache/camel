@@ -1,11 +1,11 @@
 [[file-watch-component]]
-== file-watch Component
+= file-watch Component
 
 *Available as of Camel version 3.0*
 
 This component can be used to watch file modification events in folder. It is based on https://github.com/gmethvin/directory-watcher[gmethvin/directory-watcher].
 
-=== URI Options
+== URI Options
 
 // component options: START
 The file-watch component supports 7 options, which are listed below.
@@ -35,7 +35,7 @@ file-watch:path
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -45,7 +45,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,7 +69,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -102,23 +102,23 @@ The component supports 8 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Examples:
+== Examples:
 
-==== Recursive watch all events (file creation, file deletion, file modification):
+=== Recursive watch all events (file creation, file deletion, file modification):
 [source,java]
 ----
 from("file-watch://some-directory")
     .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
 ----
 
-==== Recursive watch for creation and deletion of txt files:
+=== Recursive watch for creation and deletion of txt files:
 [source,java]
 ----
 from("file-watch://some-directory?events=DELETE,CREATE&antInclude=**/*.txt")
     .log("File event: ${header.CamelFileEventType} occurred on file ${header.CamelFileName} at ${header.CamelFileLastModified}");
 ----
 
-==== Create snapshot of file when modified:
+=== Create snapshot of file when modified:
 [source,java]
 ----
 from("file-watch://some-directory?events=MODIFY&recursive=false")
@@ -126,11 +126,11 @@ from("file-watch://some-directory?events=MODIFY&recursive=false")
     .to("file:some-directory/snapshots");
 ----
 
-=== Message Headers
+== Message Headers
 
 The following headers are supported by this component:
 
-==== File Watch consumer only
+=== File Watch consumer only
 
 [width="100%",cols="10%,90%",options="header",]
 |===

@@ -1,6 +1,6 @@
 # Welcome to the Apache Camel Examples
 
-### Introduction
+= Introduction
 
 This directory contains the various examples for working with Apache
 Camel. The examples can be run using Maven. When using the Maven
@@ -8,7 +8,7 @@ command, Maven will attempt to download the required dependencies from a
 central repository to your local repository.
 View the individual example READMEs for details.
 
-### Examples
+== Examples
 
 // examples: START
 Number of Examples: 114 (0 deprecated)
@@ -267,7 +267,7 @@ Number of Examples: 114 (0 deprecated)
 // examples: END
 
 
-### Forum, Help, etc
+== Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums <http://camel.apache.org/discussion-forums.html>
 

@@ -1,5 +1,5 @@
 [[spel-language]]
-== SpEL Language
+= SpEL Language
 
 *Available as of Camel version 2.7*
 
@@ -10,7 +10,7 @@ to be used as an Expression or Predicate in the DSL or XML Configuration.
 NOTE: It is recommended to use SpEL in Spring runtimes. However, you can
 use SpEL in other runtimes (there may be functionality SpEL cannot do when not running in a Spring runtime)
 
-=== Variables
+== Variables
 
 The following variables are available in expressions and predicates written in SpEL:
 
@@ -41,7 +41,7 @@ The following variables are available in expressions and predicates written in S
 |property(name, type) |Type |the property by the given name as the given type
 |===
 
-=== Options
+== Options
 
 // language options: START
 The SpEL language supports 1 options, which are listed below.
@@ -55,9 +55,9 @@ The SpEL language supports 1 options, which are listed below.
 |===
 // language options: END
 
-=== Samples
+== Samples
 
-==== Expression templating
+=== Expression templating
 
 SpEL expressions need to be surrounded by `#{` `}` delimiters since
 expression templating is enabled. This allows you to combine SpEL
@@ -101,7 +101,7 @@ template.sendBodyAndHeader("direct:example", "World", "dayOrNight", "day");
 The output on `mock:result` will be _"Hello World! What a beautiful
 day"_
 
-==== Bean integration
+=== Bean integration
 
 You can reference beans defined in the Registry
 (most likely an `ApplicationContext`) in your SpEL expressions. For
@@ -113,7 +113,7 @@ can invoke the "bar" method on this bean like this:
 #{@foo.bar == 'xyz'}
 ----
 
-==== SpEL in enterprise integration patterns
+=== SpEL in enterprise integration patterns
 
 You can use SpEL as an expression for xref:manual::recipientList-eip.adoc[Recipient
 List] or as a predicate inside a xref:manual::filter-eip.adoc[Message
@@ -139,7 +139,7 @@ from("direct:foo")
     .to("direct:bar");
 ----
 
-=== Loading script from external resource
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 

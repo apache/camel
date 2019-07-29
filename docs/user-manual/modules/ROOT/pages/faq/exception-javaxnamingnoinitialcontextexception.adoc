@@ -1,5 +1,5 @@
 [[Exception-javax.naming.NoInitialContextException-Exceptionjavax.naming.NoInitialContextException]]
-=== Exception: `javax.naming.NoInitialContextException`
+= Exception: `javax.naming.NoInitialContextException`
 
 If you try to use Camel without xref:components::spring.adoc[Spring] using code
 something like this:

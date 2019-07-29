@@ -1,5 +1,5 @@
 [[solr-component]]
-== Solr Component
+= Solr Component
 
 *Available as of Camel version 2.9*
 
@@ -20,7 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------
@@ -29,7 +29,7 @@ solrs://host[:port]/solr?[options]
 solrCloud://host[:port]/solr?[options]
 --------------------------------------
 
-### Solr Options
+== Solr Options
 
 
 // component options: START
@@ -56,7 +56,7 @@ solr:url
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +66,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -122,7 +122,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Message Operations
+== Message Operations
 
 The following Solr operations are currently supported. Simply set an
 exchange header with a key of "SolrOperation" and a value set to one of
@@ -167,7 +167,7 @@ bean]
 optimize command
 |=======================================================================
 
-### Example
+== Example
 
 Below is a simple INSERT, DELETE and COMMIT example
 
@@ -226,7 +226,7 @@ delete routes and then call the commit route.
     template.sendBody("direct:commit", null);
 -----------------------------------------------
 
-### Querying Solr
+== Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
 added later). For now, you can query Solr using xref:http4-component.adoc[HTTP] as
@@ -250,7 +250,7 @@ Tutorial]
 
 http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

@@ -1,5 +1,5 @@
 [[DependencyInjection-DependencyInjection]]
-=== Dependency Injection
+= Dependency Injection
 
 _Dependency Injection_ or _Inversion of Control_ is a pattern where
 dependencies of an object are injected into the object without the

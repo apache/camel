@@ -1,4 +1,4 @@
-== Ignite endpoints Component
+= Ignite endpoints Component
 
 *Available as of Camel version 2.17*
 
@@ -28,13 +28,13 @@ To use this component, add the following dependency to your pom.xml:
 ----
 
 [IMPORTANT,title=Running in OSGi]
-====
+===
 If running in an OSGi container, please don't miss the <<Ignite-OsgiSupport,OSGi Support>> section below.
-====
+===
 
 
 
-=== Initializing the Ignite component
+== Initializing the Ignite component
 
 Each instance of the Ignite component is associated with an underlying org.apache.ignite.Ignite instance. You can interact with two Ignite clusters by initializing two instances of the Ignite component and binding them to different IgniteConfigurations. There are 3 ways to initialize the Ignite component:
 
@@ -79,7 +79,7 @@ Additionally, if using Camel programmatically, there are several convenience sta
 
 You may use those methods to quickly create an IgniteComponent with your chosen configuration technique.
 
-=== General options
+== General options
 
 All endpoints share the following options:
 [width="100%",cols="1,1,1,4,1,1",options="header"]
@@ -93,7 +93,7 @@ Some Ignite operations can deal with multiple elements at once, if passed a Coll
 |=======================================================================
 
 [[Ignite-OsgiSupport]]
-=== OSGi Support
+== OSGi Support
 
 TIP: Apache Ignite supports OSGi from version 1.5.0.final onwards.
 
@@ -104,7 +104,7 @@ When installing on Apache Karaf:
 
 Please refer to the OSGi section in the Ignite documentation for more information.
 
-=== See Also
+== See Also
 
 * http://camel.apache.org/configuring-camel.html[Configuring Camel]
 * http://camel.apache.org/component.html[Component]

@@ -1,5 +1,5 @@
 [[hazelcast-seda-component]]
-== Hazelcast SEDA Component
+= Hazelcast SEDA Component
 
 *Available as of Camel version 2.7*
 
@@ -7,7 +7,7 @@ The http://www.hazelcast.com/[Hazelcast] SEDA component is one of Camel Hazelcas
 SEDA component differs from the rest components provided. It implements a work-queue in order to support asynchronous SEDA architectures, similar to the core "SEDA" component.
 
 
-### Options
+== Options
 
 // component options: START
 The Hazelcast SEDA component supports 4 options, which are listed below.
@@ -32,7 +32,7 @@ hazelcast-seda:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -42,7 +42,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,7 +69,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -103,7 +103,7 @@ The component supports 7 options, which are listed below.
 
 
 
-### SEDA producer – to(“hazelcast-seda:foo”)
+== SEDA producer – to(“hazelcast-seda:foo”)
 
 The SEDA producer provides no operations. You only send data to the
 specified queue.
@@ -126,7 +126,7 @@ Spring DSL :
 </route>
 ----------------------------------
 
-### SEDA consumer – from(“hazelcast-seda:foo”)
+== SEDA consumer – from(“hazelcast-seda:foo”)
 
 The SEDA consumer provides no operations. You only retrieve data from
 the specified queue.

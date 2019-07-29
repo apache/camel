@@ -1,5 +1,5 @@
 [[stream-component]]
-== Stream Component
+= Stream Component
 
 *Available as of Camel version 1.3*
 
@@ -19,7 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,java]
 -----------------------
@@ -44,7 +44,7 @@ producers (that is, it cannot appear in `from()`).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 // component options: START
@@ -71,7 +71,7 @@ stream:kind
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,7 +114,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -144,7 +144,7 @@ The component supports 3 options, which are listed below.
 
 
 
-=== Message content
+== Message content
 
 The Stream component supports either `String` or `byte[]` for writing
 to streams. Just add either `String` or `byte[]` content to the
@@ -157,7 +157,7 @@ add a `java.io.OutputStream` object to `message.in.header` in the key
 `header`. +
  See samples for an example.
 
-=== Samples
+== Samples
 
 In the following sample we route messages from the `direct:in` endpoint
 to the `System.out` stream:

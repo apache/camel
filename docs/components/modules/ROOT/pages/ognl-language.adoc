@@ -1,5 +1,5 @@
 [[ognl-language]]
-== OGNL Language
+= OGNL Language
 
 *Available as of Camel version 1.1*
 
@@ -24,7 +24,7 @@ you can construct the syntax as follows:
 "getRequest().getBody().getFamilyName()"
 ----------------------------------------
 
-### OGNL Options
+== OGNL Options
 
 
 // language options: START
@@ -39,7 +39,7 @@ The OGNL language supports 1 options, which are listed below.
 |===
 // language options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -69,7 +69,7 @@ The component supports 2 options, which are listed below.
 
 
 
-### Variables
+== Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -96,7 +96,7 @@ The component supports 2 options, which are listed below.
 |property(name, type) |Type |the property by the given name as the given type
 |=======================================================================
 
-### Samples
+== Samples
 
 For example you could use OGNL inside a xref:manual::filter-eip.adoc[Message
 Filter] in XML
@@ -119,7 +119,7 @@ And the sample using Java DSL:
    from("seda:foo").filter().ognl("request.headers.foo == 'bar'").to("seda:bar");
 ---------------------------------------------------------------------------------
 
-### Loading script from external resource
+== Loading script from external resource
 
 *Available as of Camel 2.11*
 
@@ -133,7 +133,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").ognl("resource:classpath:myognl.txt")
 ------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use OGNL in your camel routes you need to add the a dependency on
 *camel-ognl* which implements the OGNL language.

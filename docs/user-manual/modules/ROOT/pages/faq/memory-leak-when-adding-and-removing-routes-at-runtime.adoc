@@ -1,5 +1,5 @@
 [[Memoryleakwhenaddingandremovingroutesatruntime-Memoryleakwhenaddingandremovingroutesatruntime]]
-=== Memory leak when adding and removing routes at runtime
+= Memory leak when adding and removing routes at runtime
 
 If you add and remove many routes at runtime, then take notice that
 xref:components::jmx-component.adoc[JMX] may take up memory when routes is added.

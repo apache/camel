@@ -1,5 +1,5 @@
 [[ProducerTemplate-ProducerTemplate]]
-=== ProducerTemplate
+= ProducerTemplate
 
 The ProducerTemplate interface allows you to send message exchanges to
 endpoints in a variety of different ways to make it easy to work with
@@ -32,7 +32,7 @@ You can also supply an `Exchange` or a `Processor` to customize the exchange.
 
 
 [[ProducerTemplate-requestmethods]]
-==== `request*()` methods
+== `request*()` methods
 
 The `send*()` methods use the default Message Exchange Pattern (InOnly,
 InOut etc) as the endpoint. If you want to explicitly perform a
@@ -54,7 +54,7 @@ String ret = template.requestBody("cxf:bean:HelloWorldService", "<hello/>", Stri
 
 
 [[ProducerTemplate-Fluentinterface]]
-==== Fluent interface
+== Fluent interface
 
 *Available as of Camel 2.18.0*
 

@@ -1,11 +1,11 @@
 [[sort-eip]]
-== Sort EIP
+= Sort EIP
 
 Sort can be used to sort a message. Imagine you consume text files and before processing each file you want to be sure the content is sorted.
 
 Sort will by default sort the body using a default comparator that handles numeric values or uses the string representation. You can provide your own comparator, and even an expression to return the value to be sorted. Sort requires the value returned from the expression evaluation is convertible to `java.util.List` as this is required by the JDK sort operation.
 
-=== Options
+== Options
 
 // eip options: START
 The Sort EIP supports 1 options which are listed below:
@@ -18,7 +18,7 @@ The Sort EIP supports 1 options which are listed below:
 // eip options: END
 
 
-=== Samples
+== Samples
 
 In the route below it will read the file content and tokenize by line breaks so each line can be sorted.
 

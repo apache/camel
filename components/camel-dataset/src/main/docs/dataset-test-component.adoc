@@ -1,5 +1,5 @@
 [[dataset-test-component]]
-== DataSet Test Component
+= DataSet Test Component
 
 *Available as of Camel version 1.3*
 
@@ -27,7 +27,7 @@ of expected messages and their message payloads are equal.
 The xref:test.adoc[Test] component is provided
 directly in the camel-core.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -38,7 +38,7 @@ Where *expectedMessagesEndpointUri* refers to some other
 Component URI that the expected message bodies are
 pulled from before starting the test.
 
-=== URI Options
+== URI Options
 
 // component options: START
 The DataSet Test component supports 2 options, which are listed below.
@@ -63,7 +63,7 @@ dataset-test:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,7 +98,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -127,7 +127,7 @@ The component supports 3 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Example
+== Example
 
 For example, you could write a test case as follows:
 
@@ -144,6 +144,6 @@ method], your test case will perform the necessary assertions.
 To see how you can set other expectations on the test endpoint, see the
 xref:mock-component.adoc[Mock] component.
 
-=== See Also
+== See Also
 
 * Spring Testing

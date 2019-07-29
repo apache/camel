@@ -1,5 +1,5 @@
 [[BacklogDebugger-BacklogDebugger]]
-=== BacklogDebugger
+= BacklogDebugger
 
 *Available as of Camel 2.12*
 
@@ -16,7 +16,7 @@ You can enable or disable the BacklogDebugger dynamically, by calling
 `enableDebugger` or `disableDebugger` methods.
 
 [[BacklogDebugger-Options]]
-==== Options
+== Options
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -39,7 +39,7 @@ is that the file content has to be read from the file.
 |=======================================================================
 
 [[BacklogDebugger-Operations]]
-==== Operations
+== Operations
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -89,12 +89,12 @@ Exchange at the node.
 |=======================================================================
 
 [[BacklogDebugger-Enabling]]
-==== Enabling
+== Enabling
 
 You would need to enable this using the JMX API.
 
 [[BacklogDebugger-SeeAlso]]
-==== See Also
+== See Also
 
 * BacklogTracer
 * xref:debugger.adoc[Debugger]

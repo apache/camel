@@ -1,5 +1,5 @@
 [[jmx-component]]
-== JMX Component
+= JMX Component
 ifdef::env-github[]
 *Available as of Camel version 2.6.0*
 
@@ -10,7 +10,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-=== Camel JMX
+== Camel JMX
 
 Apache Camel has extensive support for JMX to allow you to monitor and
 control the Camel managed objects with a JMX client.
@@ -20,7 +20,7 @@ subscribe to MBean notifications. This page is about how to manage and
 monitor Camel using JMX.
 
 
-=== Options
+== Options
 
 // component options: START
 The JMX component supports 2 options, which are listed below.
@@ -44,7 +44,7 @@ jmx:serverURL
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -54,7 +54,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

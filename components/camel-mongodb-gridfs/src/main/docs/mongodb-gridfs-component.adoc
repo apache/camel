@@ -1,5 +1,5 @@
 [[mongodb-gridfs-component]]
-== MongoDB GridFS Component
+= MongoDB GridFS Component
 
 *Available as of Camel version 2.18*
 
@@ -16,13 +16,13 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 ------------------------------------------------------------------------------
 mongodb-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
 ------------------------------------------------------------------------------
 
-### MongoDB GridFS options
+== MongoDB GridFS options
 
 
 // component options: START
@@ -50,7 +50,7 @@ mongodb-gridfs:connectionBean
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -60,7 +60,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -119,7 +119,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Configuration of database in Spring XML
+== Configuration of database in Spring XML
 
 The following Spring XML creates a bean defining the connection to a
 MongoDB instance.
@@ -136,7 +136,7 @@ MongoDB instance.
 </beans>
 ----------------------------------------------------------------------------------------------------------------------------------
 
-### Sample route
+== Sample route
 
 The following route defined in Spring XML executes the operation
 xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
@@ -155,9 +155,9 @@ xref:mongodb-gridfs-component.adoc[*findOne*] on a collection.
 
  
 
-### GridFS operations - producer endpoint
+== GridFS operations - producer endpoint
 
-#### count
+=== count
 
 Returns the total number of file in the collection, returning an Integer
 as the OUT message body.
@@ -179,7 +179,7 @@ headers.put(Exchange.FILE_NAME, "filename.txt");
 Integer count = template.requestBodyAndHeaders("direct:count", query, headers);
 -------------------------------------------------------------------------------
 
-#### listAll
+=== listAll
 
 Returns an Reader that lists all the filenames and their IDs in a tab
 separated stream.
@@ -194,7 +194,7 @@ filename2.txt   2897651254
 
  
 
-#### *findOne*
+=== *findOne*
 
 Finds a file in the GridFS system and sets the body to an InputStream of
 the content.   Also provides the metadata has headers.  It uses
@@ -211,7 +211,7 @@ InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevan
 
  
 
-#### create
+=== create
 
 Creates a new file in the GridFs database. It uses the
 Exchange.FILE_NAME from the incoming headers for the name and the body
@@ -226,7 +226,7 @@ InputStream stream = ... the data for the file ...
 template.requestBodyAndHeaders("direct:create", stream, headers);
 ------------------------------------------------------------------------
 
-#### remove
+=== remove
 
 Removes a file from the GridFS database.
 
@@ -238,7 +238,7 @@ headers.put(Exchange.FILE_NAME, "filename.txt");
 template.requestBodyAndHeaders("direct:remove", "", headers);
 ------------------------------------------------------------------------
 
-### GridFS Consumer
+== GridFS Consumer
 
 See also
 

@@ -1,5 +1,5 @@
 [[HowtodefineastaticCamelconvertermethodinScala-HowtodefineastaticCamelconvertermethodinScala]]
-=== How to define a static Camel converter method in Scala?
+= How to define a static Camel converter method in Scala?
 
 When you use Scala object you can define the static method for others to
 use. Scala will create a class which implements the singleton pattern

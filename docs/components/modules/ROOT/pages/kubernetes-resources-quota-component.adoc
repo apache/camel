@@ -1,5 +1,5 @@
 [[kubernetes-resources-quota-component]]
-== Kubernetes Resources Quota Component
+= Kubernetes Resources Quota Component
 
 *Available as of Camel version 2.17*
 
@@ -8,7 +8,7 @@ provides a producer to execute kubernetes resource quota operations.
 
 
 
-### Component Options
+== Component Options
 
 // component options: START
 The Kubernetes Resources Quota component supports 2 options, which are listed below.
@@ -24,7 +24,7 @@ The Kubernetes Resources Quota component supports 2 options, which are listed be
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Kubernetes Resources Quota endpoint is configured using URI syntax:
@@ -35,7 +35,7 @@ kubernetes-resources-quota:masterUrl
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -45,7 +45,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 

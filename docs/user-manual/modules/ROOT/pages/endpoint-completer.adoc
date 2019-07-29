@@ -1,5 +1,5 @@
 [[EndpointCompleter-EndpointCompleter]]
-=== EndpointCompleter
+= EndpointCompleter
 
 As of *Camel 2.12*.
 This API is an optional SPI interface for xref:component.adoc[Component]

@@ -1,5 +1,5 @@
 [[bean-validator-component]]
-== Bean Validator Component
+= Bean Validator Component
 
 *Available as of Camel version 2.3*
 
@@ -23,7 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------
@@ -41,7 +41,7 @@ Where *label* is an arbitrary text value describing the endpoint. +
  You can append query options to the URI in the following format,
 ?option=value&option=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
@@ -68,7 +68,7 @@ bean-validator:label
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -125,7 +125,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### OSGi deployment
+== OSGi deployment
 
 To use Hibernate Validator in the OSGi environment use dedicated
 `ValidationProviderResolver` implementation, just as
@@ -149,7 +149,7 @@ If no custom `ValidationProviderResolver` is defined and the validator
 component has been deployed into the OSGi environment,
 the `HibernateValidationProviderResolver` will be automatically used.
 
-### Example
+== Example
 
 Assumed we have a java bean with the following annotations
 
@@ -316,7 +316,7 @@ Note that the body should include an instance of a class to validate.
 
 
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

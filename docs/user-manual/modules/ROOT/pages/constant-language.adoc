@@ -1,5 +1,5 @@
 [[constant-language]]
-== Constant Language
+= Constant Language
 
 *Available as of Camel version 1.5*
 
@@ -9,7 +9,7 @@ constant strings as a type of expression.
 NOTE: This is a fixed constant value that is only set once during starting up the route,
       do not use this if you want dynamic values during routing.
 
-=== Constant Options
+== Constant Options
 
 
 // language options: START
@@ -25,7 +25,7 @@ The Constant language supports 1 options, which are listed below.
 // language options: END
 
 
-=== Example usage
+== Example usage
 
 The setHeader element of the Spring DSL can utilize a constant
 expression like:
@@ -54,7 +54,7 @@ from("seda:a")
   .to("mock:b");
 ----
 
-=== Loading constant from external resource
+== Loading constant from external resource
 
 You can externalize the constant and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -66,6 +66,6 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").constant("resource:classpath:constant.txt")
 ----
 
-=== Dependencies
+== Dependencies
 
 The Constant language is part of *camel-core*.

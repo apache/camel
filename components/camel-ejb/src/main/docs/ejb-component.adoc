@@ -1,5 +1,5 @@
 [[ejb-component]]
-== EJB Component
+= EJB Component
 
 *Available as of Camel version 2.4*
 
@@ -18,7 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------
@@ -28,7 +28,7 @@ ejb:ejbName[?options]
 Where *ejbName* can be any string which is used to look up the EJB in
 the Application Server JNDI Registry
 
-### Options
+== Options
 
 
 
@@ -60,7 +60,7 @@ ejb:beanName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,7 +86,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-### Bean Binding
+== Bean Binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
@@ -95,7 +95,7 @@ Bean Binding mechanism which is used throughout
 all of the various Bean Integration
 mechanisms in Camel.
 
-### Examples
+== Examples
 
 In the following examples we use the Greater EJB which is defined as
 follows:
@@ -133,7 +133,7 @@ public class GreaterImpl implements GreaterLocal {
 }
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Using Java DSL
+=== Using Java DSL
 
 In this example we want to invoke the `hello` method on the EJB. Since
 this example is based on an unit test using Apache OpenEJB we have to
@@ -181,7 +181,7 @@ usually allows it to access the JNDI registry and lookup the
 xref:ejb-component.adoc[EJB]s. However if you need to access a application server on a remote JVM or
 the likes, you have to prepare the properties beforehand.
 
-#### Using Spring XML
+=== Using Spring XML
 
 And this is the same example using Spring XML instead:
 
@@ -214,7 +214,7 @@ Before we are ready to use xref:ejb-component.adoc[EJB] in the Camel routes:
 </camelContext>
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

@@ -1,5 +1,5 @@
 [[BacklogTracer-BacklogTracerInterceptor]]
-=== BacklogTracer Interceptor
+= BacklogTracer Interceptor
 
 *Available as of Camel 2.11*
 
@@ -16,7 +16,7 @@ You can enable or disable the BacklogTracer's logging dynamically, by
 calling the backlogTracer's `setEnabled` method.
 
 [[BacklogTracer-BacklogTracerDifference]]
-==== What is the difference between BacklogTracer and Tracer
+== What is the difference between BacklogTracer and Tracer
 
 Camel also provides a xref:tracer.adoc[Tracer] which has similar
 capabilities as this backlog tracer. The difference is that the backlog
@@ -37,7 +37,7 @@ for the BacklogTracer which allows you to control the tracing from a
 Karaf shell.
 
 [[BacklogTracer-Options]]
-==== Options
+== Options
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -76,7 +76,7 @@ is that the file content has to be read from the file.
 |===
 
 [[BacklogTracer-Operations]]
-==== Operations
+== Operations
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -99,12 +99,12 @@ format.
 |===
 
 [[BacklogTracer-Enabling]]
-==== Enabling
+== Enabling
 
 You would need to enable this using the JMX API.
 
 [[BacklogTracer-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:tracer.adoc[Tracer]
 * xref:debugger.adoc[Debugger]

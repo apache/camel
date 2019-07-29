@@ -1,5 +1,5 @@
 [[spark-rest-component]]
-== Spark Rest Component
+= Spark Rest Component
 
 *Available as of Camel version 2.14*
 
@@ -21,14 +21,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-=== URI format
+== URI format
 
 [source,text]
 ----------------------------------
 spark-rest://verb:path?[options]
 ----------------------------------
 
-=== URI Options
+== URI Options
 
 
 
@@ -68,7 +68,7 @@ spark-rest:verb:path
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,7 +101,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 
-=== Path using Spark syntax
+== Path using Spark syntax
 
 The path option is defined using a Spark REST syntax where you define
 the REST context path using support for parameters and splat. See more
@@ -125,7 +125,7 @@ from("spark-rest:get:hello/:me")
   .transform().simple("Bye ${header.me}");
 --------------------------------------------
 
-=== Mapping to Camel Message
+== Mapping to Camel Message
 
 The Spark Request object is mapped to a Camel Message as
 a `org.apache.camel.component.sparkrest.SparkMessage` which has access
@@ -145,7 +145,7 @@ from("spark-rest:get:/hello/*/to/*")
   .transform().simple("Bye big ${header.splat[1]} from ${header.splat[0]}");
 ------------------------------------------------------------------------------
 
-=== Rest DSL
+== Rest DSL
 
 Apache Camel provides a new Rest DSL that allow to define the REST
 services in a nice REST style. For example we can define a REST hello
@@ -179,7 +179,7 @@ return new RouteBuilder() {
 
 See more details at the Rest DSL.
 
-=== More examples
+== More examples
 
 There is a *camel-example-spark-rest-tomcat* example in the Apache Camel
 distribution, that demonstrates how to use camel-spark-rest in a web

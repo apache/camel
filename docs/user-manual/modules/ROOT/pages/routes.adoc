@@ -1,5 +1,5 @@
 [[Routes-Routes]]
-=== Routes
+= Routes
 
 Camel supports the definition of routing rules using a Java DSL (domain specific language) which avoids the need for cumbersome XML using a RouteBuilder.
 
@@ -18,7 +18,7 @@ RouteBuilder builder = new RouteBuilder() {
 As you can see from the above Camel uses URIs to wire endpoints together.
 
 [[Routes-URI-String-Formatting]]
-==== URI String formatting
+== URI String formatting
 Available as of Camel 2.0
 
 If you have endpoint URIs that accept options and you want to be able to substitute the value, e.g. build the URI by concat the strings together, then you can use the java.lang.String.format method. But in Camel 2.0 we have added two convenient methods in the Java DSL so you can do fromF and toF that uses String formatting to build the URI.
@@ -31,7 +31,7 @@ fromF("file://%s?include=%s", path, pattern).toF("mock:%s", result);
 --------------------------------------------------------------------
 
 [[Routes-Filters]]
-==== Filters
+== Filters
 You can combine simple routes with filters which can be arbitrary Predicate implementations.
 
 [source,java]
@@ -48,7 +48,7 @@ RouteBuilder builder = new RouteBuilder() {
 -------------------------------------------------------------
 
 [[Routes-Choices]]
-==== Choices
+== Choices
 With a choice you provide a list of predicates and outcomes along with an optional default otherwise clause which is invoked if none of the conditions are met.
 
 [source,java]
@@ -70,7 +70,7 @@ RouteBuilder builder = new RouteBuilder() {
 -------------------------------------------------------------
 
 [[Routes-Using-a-custom-processor]]
-==== Using a custom processor
+== Using a custom processor
 
 Here is an example of using a custom Processor
 [source,java]

@@ -1,5 +1,5 @@
 [[Security-Security]]
-=== Security
+= Security
 
 Camel offers several forms & levels of security capabilities that can be
 utilized on camel routes. These various forms of security may be used in
@@ -17,7 +17,7 @@ utilized by endpointUri associated with the component
 information from configuration files
 
 [[Security-RouteSecurity-AuthenticationandAuthorizationServices]]
-==== Route Security - Authentication and Authorization Services
+== Route Security - Authentication and Authorization Services
 
 Camel offers Policy driven security capabilities that may be wired into
 routes or route segments. A Policy in Camel utilizes a strategy pattern
@@ -32,7 +32,7 @@ utilizing Route Policies are
 * xref:components::spring-security.adoc[Spring Security]
 
 [[Security-PayloadSecurity-DataFormatsandProducers/Consumersofferingencryption/decryptionservices]]
-==== Payload Security - Data Formats and Producers/Consumers offering encryption/decryption services
+== Payload Security - Data Formats and Producers/Consumers offering encryption/decryption services
 
 Camel offers encryption/decryption services to secure payloads or
 selectively apply encryption/decryption capabilities on
@@ -49,7 +49,7 @@ Signature support)
 support)
 
 [[Security-EndpointSecurity]]
-==== Endpoint Security
+== Endpoint Security
 
 Some components in camel offer an ability to secure their endpoints
 (using interceptors etc) and therefore ensure that they offer the
@@ -72,7 +72,7 @@ Authentication & WS-Security support
 broker communication
 
 [[Security-ConfigurationSecurity]]
-==== Configuration Security
+== Configuration Security
 
 *Available as of Camel 2.5*
 

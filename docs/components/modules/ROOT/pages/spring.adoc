@@ -1,5 +1,5 @@
 [[SpringSupport-SpringSupport]]
-== Spring Support
+= Spring Support
 
 Apache Camel is designed to work nicely with the
 http://www.springframework.org/[Spring Framework] in a number of ways.
@@ -25,7 +25,7 @@ Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
 xref:test.adoc[Test] endpoints
 Camel supports Spring Boot using the `camel-spring-boot` component.
 
-=== Using Spring to configure the CamelContext
+== Using Spring to configure the CamelContext
 
 You can configure a CamelContext inside any spring.xml using the
 http://camel.apache.org/maven/current/camel-spring/apidocs/org/apache/camel/spring/CamelContextFactoryBean.html[CamelContextFactoryBean].
@@ -40,7 +40,7 @@ instances.
 ** Using Java Code
 ** Using Spring XML
 
-=== Adding Camel Schema
+== Adding Camel Schema
 
 You need to add Camel to the `schemaLocation` declaration
 
@@ -60,7 +60,7 @@ So the XML file looks like this:
           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 ------------------------------------------------------------------------------------------------------------------
 
-==== Using camel: namespace
+=== Using camel: namespace
 
 Or you can refer to camel XSD in the XML declaration:
 
@@ -91,7 +91,7 @@ inline namespace declaration:
 </camel:camelContext>
 --------------------------------------------------------------------------------------------
 
-==== Advanced configuration using Spring
+=== Advanced configuration using Spring
 
 See more details at
 xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced
@@ -104,7 +104,7 @@ RouteBuilder implementations. These can be
 defined as beans in spring and then referenced in your camel context
 e.g.
 
-==== Using <package>
+=== Using <package>
 
 Camel also provides a powerful feature that allows for the automatic
 discovery and initialization of routes in given packages. This is
@@ -137,7 +137,7 @@ bean tag then that class will be skipped. You can include those beans
 using `<routeBuilder ref="theBeanId"/>` or the `<contextScan>` feature.
 ====
 
-==== Using <packageScan>
+=== Using <packageScan>
 
 The component allows selective inclusion and
 exclusion of discovered route classes using Ant like path matching. In
@@ -193,7 +193,7 @@ org.apache.camel.SomeExcludedRoute or org.example.RouteWhichIsExcluded
 **.??cluded* would match org.simple.IncludedRoute, org.simple.Excluded
 but not match org.simple.PrecludedRoute
 
-==== Using contextScan
+=== Using contextScan
 
 *Available as of Camel 2.4*
 
@@ -220,7 +220,7 @@ public class MyRoute extends SpringRouteBuilder {
 You can also use the ANT style for inclusion and exclusion, as mentioned
 above in the `<packageScan>` documentation.
 
-=== How do I import routes from other XML files
+== How do I import routes from other XML files
 
 *Available as of Camel 2.3*
 
@@ -261,7 +261,7 @@ The routes defined in `<routeContext/>` can be reused by multiple
 runtime each CamelContext will create its own instance of the route
 based on the definition.
 
-==== Test time exclusion.
+=== Test time exclusion.
 
 At test time it is often desirable to be able to selectively exclude
 matching routes from being initalized that are not applicable or useful
@@ -314,14 +314,14 @@ protected Class[] excludeRoutes() {
 }
 ---------------------------------------------------
 
-=== Using Spring XML
+== Using Spring XML
 
 You can use Spring 2.0 XML configuration to specify your
 Xml Configuration for
 Routes such as in the following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/spring/routingUsingCamelContextFactory.xml[example].
 
-=== Configuring Components and Endpoints
+== Configuring Components and Endpoints
 
 You can configure your Component or
 Endpoint instances in your Spring
@@ -339,7 +339,7 @@ URIs.
 For more detail see xref:manual::faq/how-do-i-configure-endpoints.adoc[Configuring
 Endpoints and Components].
 
-=== CamelContextAware
+== CamelContextAware
 
 If you want to be injected with the CamelContext
 in your POJO just implement the
@@ -348,13 +348,13 @@ interface]; then when Spring creates your POJO the CamelContext will be
 injected into your POJO. Also see the xref:manual::bean-integration.adoc[Bean
 Integration] for further injections.
 
-=== Integration Testing
+== Integration Testing
 
 To avoid a hung route when testing using Spring Transactions see the
 note about Spring Integration Testing
 under Transactional Client.
 
-=== See also
+== See also
 
 * Spring JMS Tutorial
 * xref:manual::creating-a-new-spring-based-camel-route.adoc[Creating a new

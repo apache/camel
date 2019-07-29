@@ -1,11 +1,11 @@
 [[IsCamelIoCfriendly-IsCamelIoCfriendly]]
-=== Is Camel IoC friendly?
+= Is Camel IoC friendly?
 
 The quick answer is, yes absolutely! :smile:
 Now for the longer answer...
 
 [[IsCamelIoCfriendly-Spring]]
-==== Spring
+== Spring
 
 In particular we've gone out of our way to make Camel work great with
 xref:components::spring.adoc[Spring] and to reuse all of Spring 2.x's power. For
@@ -28,7 +28,7 @@ can overload default configurations to add more explicit configuration
 as and when you need it.
 
 [[IsCamelIoCfriendly-OtherIoCcontainers]]
-==== Other IoC containers
+== Other IoC containers
 
 Spring is clearly the leading IoC container; though there are some
 others such as Guice, OSGi, Pico, HiveMind & Plexus so we have made the
@@ -50,7 +50,7 @@ the ApplicationContext such as to use JNDI or OSGi to lookup services on
 demand
 
 [[IsCamelIoCfriendly-UsingnoIoCcontainer]]
-==== Using no IoC container
+== Using no IoC container
 
 Some folks don't even use an IoC container and thats fine too :smile:
 For example you can just use camel-core with pure Java and then wire

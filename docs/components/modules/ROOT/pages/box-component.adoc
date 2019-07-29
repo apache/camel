@@ -1,5 +1,5 @@
 [[box-component]]
-== Box Component
+= Box Component
 
 *Available as of Camel version 2.14*
 
@@ -29,23 +29,23 @@ for this component:
 </dependency>
 ----
 
-=== Connection Authentication Types
+== Connection Authentication Types
 
 The Box component supports three different types of authenticated connections.
 
-==== Standard Authentication
+=== Standard Authentication
 
 *Standard Authentication* uses the *OAuth 2.0 three-legged authentication process* to authenticate its connections with Box.com. This type of authentication enables Box *managed users* and *external users* to access, edit, and save their Box content through the Box component.
 
-==== App Enterprise Authentication
+=== App Enterprise Authentication
 
 *App Enterprise Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as a *Service Account* for a *Box Application*. This type of authentication enables a service account to access, edit, and save the Box content of its *Box Application* through the Box component.
 
-==== App User Authentication
+=== App User Authentication
 
 *App User Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as an *App User* for a *Box Application*. This type of authentication enables app users to access, edit, and save their Box content in its *Box Application* through the Box component.
 
-=== Box Options
+== Box Options
 
 // component options: START
 The Box component supports 3 options, which are listed below.
@@ -70,7 +70,7 @@ box:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,7 +112,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -157,7 +157,7 @@ The component supports 20 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -178,7 +178,7 @@ apiName can be one of:
 * users
 
 
-=== Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -206,7 +206,7 @@ RuntimeCamelException with a
 *com.box.sdk.BoxAPIException* derived exception
 cause.
 
-==== Endpoint Prefix _collaborations_
+=== Endpoint Prefix _collaborations_
 
 For more information on Box collaborations see
 https://developer.box.com/reference#collaboration-object[https://developer.box.com/reference#collaboration-object]. The
@@ -257,7 +257,7 @@ URI Options for _collaborations_
 |info |com.box.sdk.BoxCollaboration.Info
 |===
 
-==== Endpoint Prefix _comments_
+=== Endpoint Prefix _comments_
 
 For more information on Box comments see
 https://developer.box.com/reference#comment-object[https://developer.box.com/reference#comment-object]. The
@@ -301,7 +301,7 @@ URI Options for _collaborations_
 
 |===
 
-==== Endpoint Prefix _events-logs_
+=== Endpoint Prefix _events-logs_
 
 For more information on Box event logs see
 https://developer.box.com/reference#events[https://developer.box.com/reference#events].
@@ -334,7 +334,7 @@ URI Options for _event-logs_
 |types |com.box.sdk.BoxEvent.Types[]
 |===
 
-==== Endpoint Prefix _files_
+=== Endpoint Prefix _files_
 
 For more information on Box files see
 https://developer.box.com/reference#file-object[https://developer.box.com/reference#file-object].
@@ -454,7 +454,7 @@ URI Options for _files_
 |typeName |String
 |===
 
-==== Endpoint Prefix _folders_
+=== Endpoint Prefix _folders_
 
 For more information on Box folders see
 https://developer.box.com/reference#folder-object[https://developer.box.com/reference#folder-object].
@@ -530,7 +530,7 @@ URI Options for _folders_
 |permissions |com.box.sdk.BoxSharedLink.Permissions
 |===
 
-==== Endpoint Prefix _groups_
+=== Endpoint Prefix _groups_
 
 For more information on Box groups see
 https://developer.box.com/reference#group-object[https://developer.box.com/reference#group-object].
@@ -589,7 +589,7 @@ URI Options for _groups_
 
 |===
 
-==== Endpoint Prefix _search_
+=== Endpoint Prefix _search_
 
 For more information on Box search API see
 https://developer.box.com/reference#searching-for-content[https://developer.box.com/reference#searching-for-content]. The
@@ -619,7 +619,7 @@ URI Options for _search_
 |query |String
 |===
 
-==== Endpoint Prefix _tasks_
+=== Endpoint Prefix _tasks_
 
 For information on Box tasks see
 https://developer.box.com/reference#task-object-1[https://developer.box.com/reference#task-object-1].
@@ -677,7 +677,7 @@ URI Options for _tasks_
 |taskAssignmentId |String
 |===
 
-==== Endpoint Prefix _users_
+=== Endpoint Prefix _users_
 
 For information on Box users see
 https://developer.box.com/reference#user-object[https://developer.box.com/reference#user-object].
@@ -747,7 +747,7 @@ URI Options for _users_
 |userId |String
 |===
 
-=== Consumer Endpoints:
+== Consumer Endpoints:
 
 For more information on Box events see
 https://developer.box.com/reference#events[https://developer.box.com/reference#events].
@@ -775,18 +775,18 @@ URI Options for _events_
 |startingPosition |Long
 |===
 
-=== Message header
+== Message header
 
 Any of the options can be provided in a message header for producer
 endpoints with *CamelBox.* prefix.
 
-=== Message body
+== Message body
 
 All result message bodies utilize objects provided by the Box Java SDK.
 Producer endpoints can specify the option name for incoming message body
 in the *inBody* endpoint parameter.
 
-=== Samples
+== Samples
 
 The following route uploads new files to the user's root folder:
 

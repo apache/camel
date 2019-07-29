@@ -1,5 +1,5 @@
 [[HowdoesCamelcomparetoSynapse-HowdoesCamelcomparetoSynapse]]
-=== How does Camel compare to Synapse?
+= How does Camel compare to Synapse?
 
 We are Camel developers so take what you read here with a pinch of salt.
 If you want to read a less biased comparison

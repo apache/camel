@@ -1,5 +1,5 @@
 [[WhyismyprocessornotshowingupinJConsole-WhyismyprocessornotshowingupinJConsole]]
-=== Why is my processor not showing up in JConsole?
+= Why is my processor not showing up in JConsole?
 
 Not every processor is managed, and thus not all are visible in
 JConsole.
@@ -33,6 +33,6 @@ Notice that from Camel 2.9 onwards its encouraged to use the
 to not depend on Spring JARs anymore.
 
 [[WhyismyprocessornotshowingupinJConsole-Seealso]]
-==== See also
+== See also
 
 * xref:components::jmx-component.adoc[Camel JMX]

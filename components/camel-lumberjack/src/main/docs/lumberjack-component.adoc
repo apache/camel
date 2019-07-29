@@ -1,5 +1,5 @@
 [[lumberjack-component]]
-== Lumberjack Component
+= Lumberjack Component
 
 *Available as of Camel version 2.18*
 
@@ -21,7 +21,7 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------------
@@ -32,7 +32,7 @@ lumberjack:host:port
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
@@ -67,7 +67,7 @@ lumberjack:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +93,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -128,13 +128,13 @@ The component supports 5 options, which are listed below.
 
 
 
-### Result
+== Result
 
 The result body is a `Map<String, Object>` object.
 
-### Lumberjack Usage Samples
+== Lumberjack Usage Samples
 
-#### Example 1: Streaming the log messages
+=== Example 1: Streaming the log messages
 
 [source,java]
 ------------------------------------------------------------------------------------

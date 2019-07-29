@@ -1,5 +1,5 @@
 [[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication]]
-=== Should I deploy Camel inside the ActiveMQ broker or in another application
+= Should I deploy Camel inside the ActiveMQ broker or in another application
 
 Whether you deploy the
 xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
@@ -7,7 +7,7 @@ inside the ActiveMQ Broker or in a separate application
 depends on your requirements.
 
 [[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-AdvantagesofdeployingEIPinsidethebroker]]
-==== Advantages of deploying EIP inside the broker
+== Advantages of deploying EIP inside the broker
 
 * It is a single JVM so less moving parts and you're less likely to forget
 to deploy something.
@@ -19,7 +19,7 @@ its all in the same JVM (so you can use the xref:components::vm-component.adoc[V
 to avoid network overhead.
 
 [[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-AdvantagesofdeployingEIPinsideaseparateapplication]]
-==== Advantages of deploying EIP inside a separate application
+== Advantages of deploying EIP inside a separate application
 
 * It is easier to deploy loads of JVMs containing the EIP routing rules to
 get better load balancing.
@@ -31,6 +31,6 @@ https://issues.apache.org/activemq/browse/CAMEL-234[Camel will support auto-relo
 so one day this won't be such a big benefit.
 
 [[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-SeeAlso]]
-==== See Also
+== See Also
 
 * http://activemq.apache.org/should-i-deploy-the-broker-inside-my-jvm-or-appserver.html[Should I embed the broker in my JVM or run it separately]

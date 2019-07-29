@@ -1,5 +1,5 @@
 [[infinispan-component]]
-== Infinispan Component
+= Infinispan Component
 
 *Available as of Camel version 2.13*
 
@@ -23,14 +23,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------
 infinispan://cacheName?[options]
 -------------------------------
 
-### URI Options
+== URI Options
 
 The producer allows sending messages to a local infinispan cache
 configured in the registry, or to a remote cache using the HotRod
@@ -65,7 +65,7 @@ infinispan:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,7 +75,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,7 +105,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -156,7 +156,7 @@ The component supports 23 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |=======================================================================
@@ -177,7 +177,7 @@ The component supports 23 options, which are listed below.
 |CamelInfinispanOperationResultHeader |null |String |Producer |Store the operation result in a header instead of the message body
 |=======================================================================
 
-### Examples
+== Examples
 
 * Retrieve a specific key from the default cache using a custom cache container:
 
@@ -247,7 +247,7 @@ from("direct:start")
 ----
 
 
-### Using the Infinispan based idempotent repository
+== Using the Infinispan based idempotent repository
 
 In this section we will use the Infinispan based idempotent repository.
 
@@ -291,9 +291,9 @@ XML file as well:
 </camelContext>
 ----
 
-### Using the Infinispan based route policy
+== Using the Infinispan based route policy
 
-### See Also
+== See Also
 
 * Configuring Camel
 * Component

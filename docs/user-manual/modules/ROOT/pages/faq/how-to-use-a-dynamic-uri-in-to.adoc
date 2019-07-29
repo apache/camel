@@ -1,5 +1,5 @@
 [[HowtouseadynamicURIinto-HowtouseadynamicURIinto]]
-=== How to use a dynamic URI in `to()`
+= How to use a dynamic URI in `to()`
 
 A dynamic URI is an endpoint URI that varies depending on inflight
 routing information, such as Exchange properties, message headers, the

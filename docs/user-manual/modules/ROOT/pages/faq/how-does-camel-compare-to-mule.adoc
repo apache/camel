@@ -1,5 +1,5 @@
 [[HowdoesCamelcomparetoMule-HowdoesCamelcomparetoMule]]
-=== How does Camel compare to Mule?
+= How does Camel compare to Mule?
 
 This FAQ entry was written when Mule 1.x and 2.x existed. It doesn't
 cater for how Mule may go in Mule 3.x.

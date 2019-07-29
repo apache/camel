@@ -1,5 +1,5 @@
 [[Support-GettingHelp]]
-=== Getting Help
+= Getting Help
 
 If you are experiencing problems using Camel then please report your
 problem to our mailing list. This allows the entire community to help
@@ -40,7 +40,7 @@ Also on the mailing lists there are more people active to help you better.
 * xref:faq.adoc[FAQ]
 
 [[Support-Alternativediscussionforums]]
-==== Alternative discussion forums
+== Alternative discussion forums
 
 There are a number of sites outside Apache that offer discussion forums on
 Camel. For example, http://stackoverflow.com/[Stack Overflow] is a
@@ -52,7 +52,7 @@ https://www.google.com/search?q=apache+camel[Google], or even on
 https://twitter.com/search?q=apache%20camel[Twitter].
 
 [[Support-Usingdeprecatedcomponents]]
-==== Using deprecated components
+== Using deprecated components
 
 Deprecated components are *not* supported and issues such as bugs may
 not be fixed. We encourage users to migrate away from using any
@@ -61,7 +61,7 @@ github page at:
 https://github.com/apache/camel/tree/master/components#components
 
 [[Support-Howtogethelp]]
-==== How to get help
+== How to get help
 
 Before you report a problem, you may wish to read the
 xref:faq.adoc[FAQ].
@@ -103,7 +103,7 @@ xref:mailing-lists.adoc[Mailing Lists]. If you want to get help faster
 or in private, then see further below.
 
 [[Support-Howtogethelpfaster]]
-==== How to get help faster
+== How to get help faster
 
 We can help you much quicker if you try the following:
 
@@ -124,7 +124,7 @@ leaks it's quicker to resolve if you can tell us what classes are taking
 up all of the RAM; we can normally figure out what's wrong from that.
 
 [[Support-CommercialSupport]]
-==== Commercial Support
+== Commercial Support
 
 This is an open source project, so the amount of time we have available
 to help resolve your issue is often limited as all help is provided on a

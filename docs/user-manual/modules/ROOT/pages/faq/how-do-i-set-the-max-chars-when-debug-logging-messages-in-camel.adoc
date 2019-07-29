@@ -1,5 +1,5 @@
 [[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-HowdoIsetthemaxcharswhendebugloggingmessagesinCamel]]
-=== How do I set the max chars when debug logging messages in Camel?
+= How do I set the max chars when debug logging messages in Camel?
 
 *Available as of Camel 2.0*
 
@@ -28,7 +28,7 @@ the message body is not logged. For earlier Camel versions, you would
 need to set the value to 1, and have the first char logged.
 
 [[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-CustomizingfromJavaDSL]]
-==== Customizing from Java DSL
+== Customizing from Java DSL
 
 You add to the Camel properties the limit. For example to limit at 500
 chars:
@@ -39,7 +39,7 @@ chars:
 ----
 
 [[HowdoIsetthemaxcharswhendebugloggingmessagesinCamel-CustomizingfromSpringDSL]]
-==== Customizing from Spring DSL
+== Customizing from Spring DSL
 
 You add to the Camel properties the limit. For example to limit at 500
 chars:

@@ -1,5 +1,5 @@
 [[seda-component]]
-== SEDA Component
+= SEDA Component
 
 *Available as of Camel version 1.1*
 
@@ -23,7 +23,7 @@ TIP:*Synchronous*
 The xref:direct-component.adoc[Direct] component provides synchronous invocation
 of any consumers when a producer sends a message exchange.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -36,7 +36,7 @@ within the current CamelContext.
 You can append query options to the URI in the following format:
 `?option=value&option=value&…`
 
-=== Options
+== Options
 
 // component options: START
 The SEDA component supports 7 options, which are listed below.
@@ -66,7 +66,7 @@ seda:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,7 +105,7 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -138,7 +138,7 @@ The component supports 8 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
-=== Choosing BlockingQueue implementation
+== Choosing BlockingQueue implementation
 
 *Available as of Camel 2.12*
 
@@ -173,7 +173,7 @@ ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
 <from>seda:priority?queueFactory=#priorityQueueFactory&size=100</from>
 ----
 
-=== Use of Request Reply
+== Use of Request Reply
 
 The xref:seda-component.adoc[SEDA] component supports using
 Request Reply, where the caller will wait for
@@ -192,7 +192,7 @@ it is a Request Reply message, we wait for the
 response. When the consumer on the `seda:input` queue is complete, it
 copies the response to the original message response.
 
-=== Concurrent consumers
+== Concurrent consumers
 
 By default, the SEDA endpoint uses a single consumer thread, but you can
 configure it to use concurrent consumer threads. So instead of thread
@@ -207,7 +207,7 @@ As for the difference between the two, note a _thread pool_ can
 increase/shrink dynamically at runtime depending on load, whereas the
 number of concurrent consumers is always fixed.
 
-=== Thread pools
+== Thread pools
 
 Be aware that adding a thread pool to a SEDA endpoint by doing something
 like:
@@ -231,7 +231,7 @@ from("direct:stageName").thread(5).process(...)
 You can also directly configure number of threads that process messages
 on a SEDA endpoint using the `concurrentConsumers` option.
 
-=== Sample
+== Sample
 
 In the route below we use the SEDA queue to send the request to this
 async queue to be able to send a fire-and-forget message for further
@@ -245,7 +245,7 @@ another thread for further processing. Since this is from a unit test,
 it will be sent to a `mock` endpoint where we can do assertions in the
 unit test.
 
-=== Using multipleConsumers
+== Using multipleConsumers
 
 *Available as of Camel 2.2*
 
@@ -260,7 +260,7 @@ As the beans are part of an unit test they simply send the message to a
 mock endpoint, but notice how we can use @Consume to consume from the
 seda queue.
 
-=== Extracting queue information.
+== Extracting queue information.
 
 If needed, information such as queue size, etc. can be obtained without
 using JMX in this fashion:
@@ -271,7 +271,7 @@ SedaEndpoint seda = context.getEndpoint("seda:xxxx");
 int size = seda.getExchanges().size();
 ----
 
-=== See Also
+== See Also
 
 * xref:vm-component.adoc[VM]
 * xref:disruptor-component.adoc[Disruptor]

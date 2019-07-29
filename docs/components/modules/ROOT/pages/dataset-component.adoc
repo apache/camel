@@ -1,5 +1,5 @@
 [[dataset-component]]
-== Dataset Component
+= Dataset Component
 
 *Available as of Camel version 1.3*
 
@@ -21,7 +21,7 @@ data set is received.
 Camel will use the xref:log-component.adoc[throughput logger] when sending
 dataset's.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -41,7 +41,7 @@ some implementations that can be used for testing:
 and `org.apache.camel.component.dataset.FileDataSet`, all of which
 extend `DataSetSupport`.
 
-=== Options
+== Options
 
 
 // component options: START
@@ -68,7 +68,7 @@ dataset:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+=== Query Parameters (18 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,7 +105,7 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -136,7 +136,7 @@ The component supports 3 options, which are listed below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Configuring DataSet
+== Configuring DataSet
 
 Camel will lookup in the Registry for a bean
 implementing the DataSet interface. So you can register your own DataSet
@@ -149,7 +149,7 @@ as:
 </bean>
 ----
 
-=== Example
+== Example
 
 For example, to test that a set of messages are sent to a queue and then
 consumed from the queue without losing any messages:
@@ -171,12 +171,12 @@ Then you create a DataSet implementation, such as using the
 data set is and what the messages look like etc.  
  
 
-=== DataSetSupport (abstract class)
+== DataSetSupport (abstract class)
 
 The DataSetSupport abstract class is a nice starting point for new
 DataSets, and provides some useful features to derived classes.
 
-==== Properties on DataSetSupport
+=== Properties on DataSetSupport
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
@@ -195,11 +195,11 @@ progress. Useful for showing progress of a large load test. If < 0, then
 `size` / 5, if is 0 then `size`, else set to `reportCount` value.
 |===
 
-=== SimpleDataSet
+== SimpleDataSet
 
 The `SimpleDataSet` extends `DataSetSupport`, and adds a default body.
 
-==== Additional Properties on SimpleDataSet
+=== Additional Properties on SimpleDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
@@ -212,14 +212,14 @@ configure the `SimpleDataSet` to use it by setting the
 `outputTransformer` property.
 |===
 
-=== ListDataSet
+== ListDataSet
 
 *Available since Camel 2.17*
 
 The List`DataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
-==== Additional Properties on ListDataSet
+=== Additional Properties on ListDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===
@@ -240,14 +240,14 @@ the payload for the exchange will be selected using the modulus of the
 `CamelDataSetIndex % defaultBodies.size()` )
 |===
 
-=== FileDataSet
+== FileDataSet
 
 *Available since Camel 2.17*
 
 The `FileDataSet` extends `ListDataSet`, and adds support for loading
 the bodies from a file.
 
-==== Additional Properties on FileDataSet
+=== Additional Properties on FileDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |===

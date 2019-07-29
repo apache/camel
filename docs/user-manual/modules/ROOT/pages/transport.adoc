@@ -1,12 +1,12 @@
 [[Transport-Transports]]
-=== Transports
+= Transports
 
 Apache Camel supports a number of different plugable componets for
 talking to different transports. The transports is implement as Camel
 components.
 
 [[Transport-ComponentsIncluded]]
-==== Components Included
+== Components Included
 
 Camel includes the following Component implementations via xref:uris.adoc[URIs].
 
@@ -20,7 +20,7 @@ xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
 
 [[Transport-SeeAlso]]
-==== See Also
+== See Also
 
 * xref:endpoint.adoc[Endpoint]
 * xref:uris.adoc[URIs]

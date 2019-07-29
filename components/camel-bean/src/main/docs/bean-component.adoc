@@ -1,11 +1,11 @@
 [[bean-component]]
-== Bean Component
+= Bean Component
 
 *Available as of Camel version 1.0*
 
 The Bean component binds beans to Camel message exchanges.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -15,7 +15,7 @@ bean:beanName[?options]
 Where *beanID* can be any string which is used to look up the bean in
 the Registry
 
-=== Options
+== Options
 
 
 // component options: START
@@ -43,7 +43,7 @@ bean:beanName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -53,7 +53,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +72,7 @@ with the following path and query parameters:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Using
+== Using
 
 The object instance that is used to consume messages must be explicitly
 registered with the Registry. For example, if you
@@ -103,7 +103,7 @@ And the same route using Spring DSL:
 </route>
 ----------------------------
 
-=== Bean as endpoint
+== Bean as endpoint
 
 Camel also supports invoking xref:bean-component.adoc[Bean] as an Endpoint. In the
 route below:
@@ -116,7 +116,7 @@ Camel will use Bean Binding to invoke the
 `sayHello` method, by converting the Exchange's In body to the `String`
 type and storing the output of the method on the Exchange Out body.
 
-=== Java DSL bean syntax
+== Java DSL bean syntax
 
 Java DSL comes with syntactic sugar for the xref:bean-component.adoc[Bean]
 component. Instead of specifying the bean explicitly as the endpoint
@@ -148,7 +148,7 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 from("direct:start").bean(ExampleBean.class);
 ---------------------------------------------------------------
 
-=== Bean Binding
+== Bean Binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are

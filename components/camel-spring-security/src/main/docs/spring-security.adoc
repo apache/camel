@@ -1,5 +1,5 @@
 [[SpringSecurity-SpringSecurity]]
-== Spring Security
+= Spring Security
 
 *Available as of Camel 2.3*
 
@@ -16,7 +16,7 @@ authorization system, please review the current reference documentation
 on the SpringSource web site linked above.
 
 [[SpringSecurity-Creatingauthorizationpolicies]]
-=== Creating authorization policies
+== Creating authorization policies
 
 Access to a route is controlled by an instance of a
 `SpringSecurityAuthorizationPolicy` object. A policy object contains the
@@ -60,7 +60,7 @@ header under Exchange.AUTHENTICATION, check the Spring Security
 |=======================================================================
 
 [[SpringSecurity-ControllingaccesstoCamelroutes]]
-=== Controlling access to Camel routes
+== Controlling access to Camel routes
 
 A Spring Security `AuthenticationManager` and `AccessDecisionManager`
 are required to use this component. Here is an example of how to
@@ -77,7 +77,7 @@ authenticated and contains the `ROLE_ADMIN` authority can be located by
 the _admin_ `SpringSecurityAuthorizationPolicy`.
 
 [[SpringSecurity-Authentication]]
-=== Authentication
+== Authentication
 
 The process of obtaining security credentials that are used for
 authorization is not specified by this component. You can write your own
@@ -147,7 +147,7 @@ with components that do not use Spring Security but do provide a
 the `Exchange.AUTHENTICATION` header.
 
 [[SpringSecurity-Handlingauthenticationandauthorizationerrors]]
-=== Handling authentication and authorization errors
+== Handling authentication and authorization errors
 
 If authentication or authorization fails in the
 `SpringSecurityAuthorizationPolicy`, a `CamelAuthorizationException`
@@ -179,7 +179,7 @@ policy as well as the type of exception:
 ------------------------------------------------------------------------------------------
 
 [[SpringSecurity-Dependencies]]
-=== Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -199,7 +199,7 @@ This dependency will also pull in
 `org.springframework.security:spring-security-config:3.0.3.RELEASE`.
 
 [[SpringSecurity-SeeAlso]]
-=== See Also
+== See Also
 
 * Configuring Camel
 * Component

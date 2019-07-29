@@ -1,9 +1,9 @@
 [[removeProperty-eip]]
-== Remove Property EIP
+= Remove Property EIP
 
 The RemoveProperty EIP allows you to remove a Property from your exchange.
 
-=== Options
+== Options
 
 // eip options: START
 The Remove Property EIP supports 1 options which are listed below:
@@ -15,7 +15,7 @@ The Remove Property EIP supports 1 options which are listed below:
 |===
 // eip options: END
 
-=== Examples
+== Examples
 
 The following example shows how to use the Remove Property EIP
 
