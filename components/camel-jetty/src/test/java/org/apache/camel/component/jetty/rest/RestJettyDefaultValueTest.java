@@ -22,7 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.jetty.JettyRestHttpBinding;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;

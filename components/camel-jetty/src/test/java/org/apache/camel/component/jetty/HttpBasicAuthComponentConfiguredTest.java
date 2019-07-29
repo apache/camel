@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.HttpComponent;
 import org.apache.camel.http.common.HttpConfiguration;
-import org.apache.camel.impl.JndiRegistry;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
