@@ -22,6 +22,7 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -43,6 +44,8 @@ import org.springframework.util.ErrorHandler;
 
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
+    @BindToRegistry("myConnectionFactory")
+    private ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm:myBroker");
     private final Processor failProcessor = new Processor() {
         public void process(Exchange exchange) throws Exception {
             fail("Should not be reached");
@@ -157,7 +160,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
         JmsOperations operations = consumer.getEndpointMessageListener().getTemplate();
         assertTrue(operations instanceof JmsTemplate);
-        JmsTemplate template = (JmsTemplate) operations;
+        JmsTemplate template = (JmsTemplate)operations;
         assertTrue("Wrong delivery mode on reply template; expected  " + " DeliveryMode.NON_PERSISTENT but was DeliveryMode.PERSISTENT",
                    template.getDeliveryMode() == DeliveryMode.NON_PERSISTENT);
     }
@@ -353,7 +356,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setAcceptMessagesWhileStopping(true);
         assertTrue(endpoint.isAcceptMessagesWhileStopping());
-        
+
         endpoint.setAllowReplyManagerQuickStop(true);
         assertTrue(endpoint.isAllowReplyManagerQuickStop());
 
@@ -516,13 +519,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myConnectionFactory", new ActiveMQConnectionFactory("vm:myBroker"));
-        return jndi;
     }
 
 }

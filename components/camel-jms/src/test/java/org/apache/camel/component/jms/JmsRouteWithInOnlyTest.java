@@ -18,9 +18,11 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsRouteWithInOnlyAndMultipleAcksTest.MyOrderServiceBean;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -34,6 +36,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsRouteWithInOnlyTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
+
+    @BindToRegistry("orderService")
+    private MyOrderServiceBean serviceBean = new MyOrderServiceBean();
 
     @Test
     public void testSendOrder() throws Exception {
@@ -53,13 +58,6 @@ public class JmsRouteWithInOnlyTest extends CamelTestSupport {
         assertEquals(ExchangePattern.InOnly, order.getReceivedExchanges().get(0).getPattern());
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("orderService", new MyOrderServiceBean());
-        return jndi;
-    }
-
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -74,13 +72,9 @@ public class JmsRouteWithInOnlyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:inbox")
-                    .to("mock:inbox")
-                    .inOnly("activemq:topic:order")
-                    .bean("orderService", "handleOrder");
+                from("activemq:queue:inbox").to("mock:inbox").inOnly("activemq:topic:order").bean("orderService", "handleOrder");
 
-                from("activemq:topic:order")
-                    .to("mock:topic");
+                from("activemq:topic:order").to("mock:topic");
             }
         };
     }
