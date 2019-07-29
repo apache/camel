@@ -43,17 +43,17 @@ import org.junit.Test;
 
 public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
-	@BindToRegistry("myMultipartFilter")
-	private MyMultipartFilter multipartFilter = new MyMultipartFilter();
-	
+    @BindToRegistry("myMultipartFilter")
+    private MyMultipartFilter multipartFilter = new MyMultipartFilter();
+
     private static class MyMultipartFilter extends MultiPartFilter {
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {            
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
             // set a marker attribute to show that this filter class was used
             ((HttpServletResponse)response).addHeader("MyMultipartFilter", "true");
-            
+
             super.doFilter(request, response, chain);
-        }        
+        }
     }
 
     @Test
@@ -61,10 +61,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         HttpClient httpclient = new HttpClient();
         File file = new File("src/test/resources/log4j2.properties");
         PostMethod httppost = new PostMethod("http://localhost:" + getPort() + "/test");
-        Part[] parts = {
-            new StringPart("comment", "A binary file of some kind"),
-            new FilePart(file.getName(), file)
-        };
+        Part[] parts = {new StringPart("comment", "A binary file of some kind"), new FilePart(file.getName(), file)};
 
         MultipartRequestEntity reqEntity = new MultipartRequestEntity(parts, httppost.getParams());
         httppost.setRequestEntity(reqEntity);
@@ -77,7 +74,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         assertEquals("Get a wrong result", "A binary file of some kind", result);
         assertNotNull("Did not use custom multipart filter", httppost.getResponseHeader("MyMultipartFilter"));
     }
-    
+
     @Test
     public void testSendMultiPartFormOverrideEnableMultpartFilterFalse() throws Exception {
         HttpClient httpclient = new HttpClient();
@@ -85,10 +82,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         File file = new File("src/test/resources/log4j2.properties");
 
         PostMethod httppost = new PostMethod("http://localhost:" + getPort() + "/test2");
-        Part[] parts = {
-            new StringPart("comment", "A binary file of some kind"),
-            new FilePart(file.getName(), file)
-        };
+        Part[] parts = {new StringPart("comment", "A binary file of some kind"), new FilePart(file.getName(), file)};
 
         MultipartRequestEntity reqEntity = new MultipartRequestEntity(parts, httppost.getParams());
         httppost.setRequestEntity(reqEntity);
@@ -98,16 +92,18 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
         assertEquals("Get a wrong response status", 200, status);
         assertNotNull("Did not use custom multipart filter", httppost.getResponseHeader("MyMultipartFilter"));
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // Set the jetty temp directory which store the file for multi part form
-                // camel-jetty will clean up the file after it handled the request.
+                // Set the jetty temp directory which store the file for multi
+                // part form
+                // camel-jetty will clean up the file after it handled the
+                // request.
                 // The option works rightly from Camel 2.4.0
                 getContext().getGlobalOptions().put("CamelJettyTempDir", "target");
-                
+
                 from("jetty://http://localhost:{{port}}/test?multipartFilterRef=myMultipartFilter").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
@@ -116,22 +112,27 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                         DataHandler data = in.getAttachment("log4j2.properties");
 
                         assertNotNull("Should get the DataHandle log4j2.properties", data);
-                        // This assert is wrong, but the correct content-type (application/octet-stream)
-                        // will not be returned until Jetty makes it available - currently the content-type
-                        // returned is just the default for FileDataHandler (for the implentation being used)
-                        //assertEquals("Get a wrong content type", "text/plain", data.getContentType());
+                        // This assert is wrong, but the correct content-type
+                        // (application/octet-stream)
+                        // will not be returned until Jetty makes it available -
+                        // currently the content-type
+                        // returned is just the default for FileDataHandler (for
+                        // the implentation being used)
+                        // assertEquals("Get a wrong content type",
+                        // "text/plain", data.getContentType());
                         assertEquals("Got the wrong name", "log4j2.properties", data.getName());
 
-                        assertTrue("We should get the data from the DataHandle", data.getDataSource()
-                            .getInputStream().available() > 0);
+                        assertTrue("We should get the data from the DataHandle", data.getDataSource().getInputStream().available() > 0);
 
-                        // The other form date can be get from the message header
+                        // The other form date can be get from the message
+                        // header
                         exchange.getOut().setBody(in.getHeader("comment"));
                     }
                 });
                 // END SNIPPET: e1
 
-                // Test to ensure that setting a multipartFilterRef overrides the enableMultipartFilter=false parameter
+                // Test to ensure that setting a multipartFilterRef overrides
+                // the enableMultipartFilter=false parameter
                 from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         AttachmentMessage in = exchange.getMessage(AttachmentMessage.class);
@@ -139,7 +140,8 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                         DataHandler data = in.getAttachment("log4j2.properties");
 
                         assertNotNull("Should get the DataHandle log4j2.properties", data);
-                        // The other form date can be get from the message header
+                        // The other form date can be get from the message
+                        // header
                         exchange.getOut().setBody(in.getHeader("comment"));
                     }
                 });

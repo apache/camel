@@ -26,7 +26,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestJettyGetCustomHttpBindingTest extends BaseJettyTest {
-	
+
     @BindToRegistry("mybinding")
     private JettyRestHttpBinding binding = new MyCustomHttpBinding("I was here;");
 
@@ -45,16 +45,12 @@ public class RestJettyGetCustomHttpBindingTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef", "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }

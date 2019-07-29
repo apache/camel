@@ -39,7 +39,7 @@ import org.junit.Test;
 
 public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
-	@BindToRegistry("myAuthHandler")
+    @BindToRegistry("myAuthHandler")
     public SecurityHandler getSecurityHandler() throws IOException {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
@@ -54,7 +54,7 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[]{cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
 
         return sh;
     }
@@ -63,7 +63,7 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
     public void testHttpBasicAuth() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("Bye World", out);
-        
+
         out = template.requestBody("http://localhost:{{port}}/anotherTest", "Hello World", String.class);
         assertEquals("See you later", out);
     }
@@ -81,20 +81,17 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
                 HttpComponent http = context.getComponent("http", HttpComponent.class);
                 http.setHttpConfiguration(config);
 
-                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                            assertNotNull(req);
-                            Principal user = req.getUserPrincipal();
-                            assertNotNull(user);
-                            assertEquals("donald", user.getName());
-                        }
-                    })
-                    .transform(constant("Bye World"));
-                
-                from("jetty://http://localhost:{{port}}/anotherTest?handlers=myAuthHandler")
-                    .transform(constant("See you later"));
+                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                        assertNotNull(req);
+                        Principal user = req.getUserPrincipal();
+                        assertNotNull(user);
+                        assertEquals("donald", user.getName());
+                    }
+                }).transform(constant("Bye World"));
+
+                from("jetty://http://localhost:{{port}}/anotherTest?handlers=myAuthHandler").transform(constant("See you later"));
             }
         };
     }

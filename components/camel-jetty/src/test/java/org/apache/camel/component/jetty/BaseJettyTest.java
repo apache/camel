@@ -32,7 +32,7 @@ import org.junit.BeforeClass;
 public abstract class BaseJettyTest extends CamelTestSupport {
 
     private static volatile int port;
-    
+
     private static volatile int port2;
 
     private final AtomicInteger counter = new AtomicInteger(1);
@@ -88,7 +88,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     protected static int getPort() {
         return port;
     }
-    
+
     protected static int getPort2() {
         return port2;
     }

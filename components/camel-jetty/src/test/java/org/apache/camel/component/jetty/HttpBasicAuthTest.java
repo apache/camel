@@ -39,7 +39,7 @@ import org.junit.Test;
 
 public class HttpBasicAuthTest extends BaseJettyTest {
 
-	@BindToRegistry("myAuthHandler")
+    @BindToRegistry("myAuthHandler")
     public SecurityHandler getSecurityHandler() throws IOException {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
@@ -54,7 +54,7 @@ public class HttpBasicAuthTest extends BaseJettyTest {
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[]{cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
 
         return sh;
     }
@@ -81,17 +81,15 @@ public class HttpBasicAuthTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                            assertNotNull(req);
-                            Principal user = req.getUserPrincipal();
-                            assertNotNull(user);
-                            assertEquals("donald", user.getName());
-                        }
-                    })
-                    .transform(constant("Bye World"));
+                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                        assertNotNull(req);
+                        Principal user = req.getUserPrincipal();
+                        assertNotNull(user);
+                        assertEquals("donald", user.getName());
+                    }
+                }).transform(constant("Bye World"));
             }
         };
     }

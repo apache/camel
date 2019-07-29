@@ -28,7 +28,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
-    
+
     @BindToRegistry("sslContextParameters")
     public SSLContextParameters loadSSLParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();

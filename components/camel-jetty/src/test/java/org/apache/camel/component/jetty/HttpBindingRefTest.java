@@ -35,10 +35,10 @@ public class HttpBindingRefTest extends BaseJettyTest {
 
     @BindToRegistry("default")
     private DefaultHttpBinding binding = new DefaultHttpBinding();
-    
+
     @BindToRegistry("myownbinder")
     private MyHttpBinding bindingHttp = new MyHttpBinding();
-    
+
     @Test
     public void testDefaultHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
@@ -74,8 +74,9 @@ public class HttpBindingRefTest extends BaseJettyTest {
 
         @Override
         public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
-            // we override the doWriteExceptionResponse as we only want to alter the binding how exceptions is
-            // written back to the client. 
+            // we override the doWriteExceptionResponse as we only want to alter
+            // the binding how exceptions is
+            // written back to the client.
 
             // we just return HTTP 200 so the client thinks its okay
             response.setStatus(200);
@@ -86,4 +87,3 @@ public class HttpBindingRefTest extends BaseJettyTest {
     // END SNIPPET: e1
 
 }
-
