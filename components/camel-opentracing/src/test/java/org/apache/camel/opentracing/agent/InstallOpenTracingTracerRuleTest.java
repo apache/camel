@@ -23,6 +23,7 @@ import io.opentracing.mock.MockTracer;
 import io.opentracing.mock.MockTracer.Propagator;
 import io.opentracing.tag.Tags;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -37,6 +38,7 @@ import org.junit.Test;
 @Ignore
 public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
 
+    @BindToRegistry("tracer")
     private static MockTracer tracer = new MockTracer(Propagator.TEXT_MAP);
 
     @EndpointInject("mock:result")
@@ -55,16 +57,6 @@ public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        // Add the mock tracer to the registry
-        registry.bind("tracer", tracer);
-
-        return registry;
-    }
-
-    @Override
     public boolean isDumpRouteCoverage() {
         return true;
     }
@@ -75,7 +67,7 @@ public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader(expectedBody,  "foo",  "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
 
         resultEndpoint.assertIsSatisfied();
 

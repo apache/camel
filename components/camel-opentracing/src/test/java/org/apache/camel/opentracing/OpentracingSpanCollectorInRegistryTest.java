@@ -19,6 +19,7 @@ package org.apache.camel.opentracing;
 import io.opentracing.noop.NoopTracer;
 import io.opentracing.noop.NoopTracerFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -27,6 +28,8 @@ import org.junit.Test;
 public class OpentracingSpanCollectorInRegistryTest extends CamelTestSupport {
 
     private OpenTracingTracer openTracing;
+    @BindToRegistry("tracer")
+    private NoopTracer c = NoopTracerFactory.create();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -36,13 +39,6 @@ public class OpentracingSpanCollectorInRegistryTest extends CamelTestSupport {
         openTracing.init(context);
 
         return context;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("tracer", NoopTracerFactory.create());
-        return registry;
     }
 
     @Test
