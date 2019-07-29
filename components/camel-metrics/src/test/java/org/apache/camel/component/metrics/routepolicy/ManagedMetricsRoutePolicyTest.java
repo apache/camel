@@ -22,6 +22,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import com.codahale.metrics.MetricRegistry;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.metrics.MetricsComponent;
@@ -31,6 +33,7 @@ import org.junit.Test;
 
 public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
+	@BindToRegistry(MetricsComponent.METRIC_REGISTRY_NAME)
     private MetricRegistry metricRegistry = new MetricRegistry();
 
     @Override
@@ -40,14 +43,6 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
-    }
-    
-    // Setup the common MetricsRegistry for MetricsComponent and MetricsRoutePolicy to use
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind(MetricsComponent.METRIC_REGISTRY_NAME, metricRegistry);
-        return registry;
     }
 
     @Override
