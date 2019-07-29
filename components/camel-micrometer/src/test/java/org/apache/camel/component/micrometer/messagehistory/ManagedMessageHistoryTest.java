@@ -24,6 +24,8 @@ import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 import io.micrometer.jmx.JmxMeterRegistry;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
@@ -33,7 +35,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class ManagedMessageHistoryTest extends CamelTestSupport {
-
+	
+    @BindToRegistry(MicrometerConstants.METRICS_REGISTRY_NAME)
     private CompositeMeterRegistry meterRegistry;
 
     @Override
@@ -45,21 +48,16 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
     
-    // Setup the common MetricsRegistry for MetricsComponent and MetricsMessageHistoryFactory to use
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    public void addRegistry() throws Exception {
         meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(new SimpleMeterRegistry());
         meterRegistry.add(new JmxMeterRegistry(CamelJmxConfig.DEFAULT, Clock.SYSTEM, HierarchicalNameMapper.DEFAULT));
-        registry.bind(MicrometerConstants.METRICS_REGISTRY_NAME, meterRegistry);
-        return registry;
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
+        addRegistry();
         MicrometerMessageHistoryFactory factory = new MicrometerMessageHistoryFactory();
         factory.setPrettyPrint(true);
         factory.setMeterRegistry(meterRegistry);
