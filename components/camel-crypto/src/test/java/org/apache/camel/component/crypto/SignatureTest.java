@@ -28,6 +28,7 @@ import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -50,22 +51,8 @@ public class SignatureTest extends CamelTestSupport {
     private KeyPair keyPair;
     private String payload = "Dear Alice, Rest assured it's me, signed Bob";
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        KeyStore keystore = loadKeystore();
-        Certificate cert = keystore.getCertificate("bob");
-        KeyStoreParameters keystoreParameters = new KeyStoreParameters();
-        keystoreParameters.setPassword("letmein");
-        keystoreParameters.setResource("./ks.keystore");
-        registry.bind("signatureParams", keystoreParameters);
-        registry.bind("keystore", keystore);
-        registry.bind("myPublicKey", cert.getPublicKey());
-        registry.bind("myCert", cert);
-        registry.bind("myPrivateKey", keystore.getKey("bob", "letmein".toCharArray()));
-        registry.bind("someRandom", new SecureRandom());
-        return registry;
-    }
+    @BindToRegistry("someRandom")
+    private SecureRandom random = new SecureRandom();
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
@@ -117,13 +104,15 @@ public class SignatureTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: buffersize
-                from("direct:buffersize").to("crypto:sign:buffer?privateKey=#myPrivateKey&buffersize=1024", "crypto:verify:buffer?publicKey=#myPublicKey&buffersize=1024", "mock:result");
+                from("direct:buffersize").to("crypto:sign:buffer?privateKey=#myPrivateKey&buffersize=1024", "crypto:verify:buffer?publicKey=#myPublicKey&buffersize=1024",
+                                             "mock:result");
                 // END SNIPPET: buffersize
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: provider
-                from("direct:provider").to("crypto:sign:provider?privateKey=#myPrivateKey&provider=SUN", "crypto:verify:provider?publicKey=#myPublicKey&provider=SUN", "mock:result");
+                from("direct:provider").to("crypto:sign:provider?privateKey=#myPrivateKey&provider=SUN", "crypto:verify:provider?publicKey=#myPublicKey&provider=SUN",
+                                           "mock:result");
                 // END SNIPPET: provider
             }
         }, new RouteBuilder() {
@@ -135,14 +124,15 @@ public class SignatureTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: keystore
-                from("direct:keystore").to("crypto:sign:keystore?keystore=#keystore&alias=bob&password=letmein", "crypto:verify:keystore?keystore=#keystore&alias=bob", "mock:result");
+                from("direct:keystore").to("crypto:sign:keystore?keystore=#keystore&alias=bob&password=letmein", "crypto:verify:keystore?keystore=#keystore&alias=bob",
+                                           "mock:result");
                 // END SNIPPET: keystore
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: keystore
                 from("direct:keystoreParameters").to("crypto:sign:keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob&password=letmein",
-                    "crypto:verify:keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
+                                                     "crypto:verify:keyStoreParameters?keyStoreParameters=#signatureParams&alias=bob", "mock:result");
                 // END SNIPPET: keystore
             }
         }, new RouteBuilder() {
@@ -155,8 +145,8 @@ public class SignatureTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: random
-                from("direct:random").to("crypto:sign:another?privateKey=#myPrivateKey&secureRandom=#someRandom", "crypto:verify:another?publicKey=#myPublicKey&secureRandom=#someRandom",
-                                         "mock:result");
+                from("direct:random").to("crypto:sign:another?privateKey=#myPrivateKey&secureRandom=#someRandom",
+                                         "crypto:verify:another?publicKey=#myPublicKey&secureRandom=#someRandom", "mock:result");
                 // END SNIPPET: random
             }
         }, new RouteBuilder() {
@@ -358,7 +348,7 @@ public class SignatureTest extends CamelTestSupport {
     }
 
     public Exchange doTestSignatureRoute(RouteBuilder builder) throws Exception {
-        return doSignatureRouteTest(builder, null, Collections.<String, Object>emptyMap());
+        return doSignatureRouteTest(builder, null, Collections.<String, Object> emptyMap());
     }
 
     public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {
@@ -400,6 +390,7 @@ public class SignatureTest extends CamelTestSupport {
         return keyGen.generateKeyPair();
     }
 
+    @BindToRegistry("keystore")
     public static KeyStore loadKeystore() throws Exception {
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
         InputStream in = SignatureTest.class.getResourceAsStream("/ks.keystore");
@@ -407,13 +398,29 @@ public class SignatureTest extends CamelTestSupport {
         return keystore;
     }
 
+    @BindToRegistry("myCert")
     public Certificate getCertificateFromKeyStore() throws Exception {
         Certificate c = loadKeystore().getCertificate("bob");
         return c;
     }
 
+    @BindToRegistry("myPublicKey")
+    public PublicKey getPublicKey() throws Exception {
+        Certificate c = loadKeystore().getCertificate("bob");
+        return c.getPublicKey();
+    }
+
+    @BindToRegistry("myPrivateKey")
     public PrivateKey getKeyFromKeystore() throws Exception {
         return (PrivateKey)loadKeystore().getKey("bob", "letmein".toCharArray());
+    }
+
+    @BindToRegistry("signatureParams")
+    public KeyStoreParameters getParams() {
+        KeyStoreParameters keystoreParameters = new KeyStoreParameters();
+        keystoreParameters.setPassword("letmein");
+        keystoreParameters.setResource("./ks.keystore");
+        return keystoreParameters;
     }
 
 }

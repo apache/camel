@@ -29,15 +29,13 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class SpringSignatureTest extends SignatureTest {
 
     private static KeyPair rsaPair;
 
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA");
-        return SpringCamelContext.springCamelContext(
-                new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);
     }
 
     public static KeyStore keystore() throws Exception {
@@ -74,11 +72,6 @@ public class SpringSignatureTest extends SignatureTest {
 
     public static SecureRandom random() throws Exception {
         return new SecureRandom();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        return super.createRegistry();
     }
 
     @Override
