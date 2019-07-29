@@ -25,8 +25,6 @@ import org.apache.camel.Processor;
  * processors in a route with interceptors.  For example, a possible
  * usecase is to gather performance statistics at the processor's level.
  * <p/>
- * <b>Important: </b> This SPI is not intended to be used by Camel end users - do NOT use this.
- * <p/>
  * Its <b>strongly</b> adviced to use an {@link org.apache.camel.AsyncProcessor} as the returned wrapped
  * {@link Processor} which ensures the interceptor works well with the asynchronous routing engine.
  * You can use the {@link org.apache.camel.processor.DelegateAsyncProcessor} to easily return an
@@ -35,8 +33,6 @@ import org.apache.camel.Processor;
  * implement your interceptor logic. And just invoke the super method to <b>continue</b> routing.
  */
 public interface InterceptStrategy {
-
-    // TODO: Camel 3.0 make this an internal API
 
     /**
      * This method is invoked by
