@@ -16,42 +16,29 @@
  */
 package org.apache.camel.management;
 
-import java.util.List;
-
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
+public class ManagedTracerTest extends ManagementTestSupport {
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testBacklogTracerPattern() throws Exception {
+    public void testDefaultTracer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=DefaultTracer");
         assertNotNull(on);
-        mbeanServer.isRegistered(on);
+        assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
-
-        Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
-
-        // set the pattern to match only coolRoute
-        mbeanServer.setAttribute(on, new Attribute("TracePattern", "coolRoute"));
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+        assertEquals("Should be enabled", Boolean.TRUE, enabled);
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -61,23 +48,39 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+        Long count = (Long) mbeanServer.getAttribute(on, "TraceCounter");
+        assertEquals(4, count.intValue());
+    }
 
-        assertNotNull(events);
-        assertEquals(2, events.size());
+    @Test
+    public void testDefaultTracerPattern() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
 
-        // there should also be messages on bar
-        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"bar"}, new String[]{"java.lang.String"});
-        assertNotNull(events);
-        assertEquals(2, events.size());
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=DefaultTracer");
+        assertNotNull(on);
+        assertTrue(mbeanServer.isRegistered(on));
 
-        // but not on beer
-        events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"beer"}, new String[]{"java.lang.String"});
-        assertNotNull(events);
-        assertEquals(0, events.size());
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+
+        mbeanServer.setAttribute(on, new Attribute("TracePattern", "foo*"));
+        mbeanServer.invoke(on, "resetTraceCounter", null, null);
+
+        getMockEndpoint("mock:foo").expectedMessageCount(2);
+        getMockEndpoint("mock:bar").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+
+        // should only be 2 as we filter by pattern
+        Long count = (Long) mbeanServer.getAttribute(on, "TraceCounter");
+        assertEquals(2, count.intValue());
     }
 
     @Override
@@ -86,16 +89,11 @@ public class BacklogTracerPatternRouteTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
-                context.setBacklogTracing(true);
+                context.setTracing(true);
 
-                from("direct:start").routeId("coolRoute")
-                        .to("direct:beer")
+                from("direct:start")
                         .to("mock:foo").id("foo")
                         .to("mock:bar").id("bar");
-
-                from("direct:beer").routeId("beerRoute")
-                        .to("mock:beer").id("beer");
-
             }
         };
     }

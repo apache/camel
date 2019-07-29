@@ -130,6 +130,7 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
+                context.setBacklogTracing(true);
 
                 from("direct:start")
                     .choice()

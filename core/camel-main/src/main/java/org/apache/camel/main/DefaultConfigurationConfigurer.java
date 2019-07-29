@@ -149,7 +149,9 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
+        camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());
+        camelContext.setTracingPattern(config.getTracingPattern());
 
         if (config.getThreadNamePattern() != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());

@@ -46,6 +46,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -1072,6 +1073,18 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @param debugger the debugger
      */
     void setDebugger(Debugger debugger);
+
+    /**
+     * Gets the current {@link Tracer}
+     *
+     * @return the tracer
+     */
+    Tracer getTracer();
+
+    /**
+     * Sets a custom {@link Tracer}
+     */
+    void setTracer(Tracer tracer);
 
     /**
      * Gets the current {@link UuidGenerator}

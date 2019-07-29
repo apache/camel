@@ -104,6 +104,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String dependsOn;
     @XmlAttribute
     private String trace;
+    @XmlAttribute
+    private String tracePattern;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String messageHistory;
     @XmlAttribute @Metadata(defaultValue = "false")
@@ -657,6 +659,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setTrace(String trace) {
         this.trace = trace;
+    }
+
+    public String getTracePattern() {
+        return tracePattern;
+    }
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    public void setTracePattern(String tracePattern) {
+        this.tracePattern = tracePattern;
     }
 
     public String getMessageHistory() {

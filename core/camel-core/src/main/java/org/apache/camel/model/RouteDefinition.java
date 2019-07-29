@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -50,7 +51,7 @@ import org.apache.camel.spi.RoutePolicy;
 @XmlType(propOrder = {"input", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
-public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implements OutputNode {
+public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implements OutputNode, NamedRoute {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
     private FromDefinition input;
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
@@ -141,6 +142,21 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     @Override
     public String getShortName() {
         return "route";
+    }
+
+    @Override
+    public String getLabel() {
+        return "Route[" + input.getLabel() + "]";
+    }
+
+    @Override
+    public String getRouteId() {
+        return getId();
+    }
+
+    @Override
+    public String getEndpointUrl() {
+        return input != null ? input.getEndpointUri() : null;
     }
 
     // Fluent API
