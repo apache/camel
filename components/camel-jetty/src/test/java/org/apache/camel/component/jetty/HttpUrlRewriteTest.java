@@ -27,7 +27,7 @@ public class HttpUrlRewriteTest extends BaseJettyTest {
 
     private int port1;
     private int port2;
-    
+
     @BindToRegistry("myRewrite")
     private MyUrlRewrite urlRew = new MyUrlRewrite();
 
@@ -51,11 +51,9 @@ public class HttpUrlRewriteTest extends BaseJettyTest {
                 from("jetty:http://localhost:" + port1 + "?matchOnUriPrefix=true")
                     .to("http://localhost:" + port2 + "?throwExceptionOnFailure=false&bridgeEndpoint=true&urlRewrite=#myRewrite");
 
-                from("jetty://http://localhost:" + port2 + "/bar")
-                        .transform().simple("${header.phrase} ${body}")
-                        .to("mock:result");
+                from("jetty://http://localhost:" + port2 + "/bar").transform().simple("${header.phrase} ${body}").to("mock:result");
             }
         };
-    }    
+    }
 
 }

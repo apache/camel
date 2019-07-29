@@ -27,9 +27,9 @@ import org.junit.Test;
 
 public class HttpFilterCamelHeadersTest extends BaseJettyTest {
 
-	@BindToRegistry("foo")
-	private MyFooBean bean = new MyFooBean();
-	
+    @BindToRegistry("foo")
+    private MyFooBean bean = new MyFooBean();
+
     @Test
     public void testFilterCamelHeaders() throws Exception {
         Exchange out = template.send("http://localhost:{{port}}/test/filter", new Processor() {

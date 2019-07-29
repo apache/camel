@@ -43,8 +43,9 @@ public class CustomFiltersTest extends BaseJettyTest {
 
     private static class MyTestFilter implements Filter {
         private String keyWord;
+
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {            
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
             // set a marker attribute to show that this filter class was used
             ((HttpServletResponse)response).addHeader("MyTestFilter", "true");
             ((HttpServletResponse)response).setHeader("KeyWord", keyWord);
@@ -59,14 +60,14 @@ public class CustomFiltersTest extends BaseJettyTest {
         @Override
         public void destroy() {
             // do nothing here
-        }        
+        }
     }
-    
+
     private void sendRequestAndVerify(String url) throws Exception {
         HttpClient httpclient = new HttpClient();
-        
+
         PostMethod httppost = new PostMethod(url);
-        
+
         StringRequestEntity reqEntity = new StringRequestEntity("This is a test", null, null);
         httppost.setRequestEntity(reqEntity);
 
@@ -81,7 +82,7 @@ public class CustomFiltersTest extends BaseJettyTest {
         // just make sure the KeyWord header is set
         assertEquals("Did not set the right KeyWord header", "KEY", httppost.getResponseHeader("KeyWord").getValue());
     }
-    
+
     @Test
     public void testFilters() throws Exception {
         sendRequestAndVerify("http://localhost:" + getPort() + "/testFilters");
@@ -93,17 +94,18 @@ public class CustomFiltersTest extends BaseJettyTest {
         filters.add(new MyTestFilter());
         return filters;
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                                
+
                 // Test the filter list options
                 from("jetty://http://localhost:{{port}}/testFilters?filtersRef=myFilters&filterInit.keyWord=KEY").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);
-                        // The other form date can be get from the message header
+                        // The other form date can be get from the message
+                        // header
                         exchange.getOut().setBody(request + " response");
                     }
                 });

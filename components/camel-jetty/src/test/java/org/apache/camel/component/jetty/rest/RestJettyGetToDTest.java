@@ -45,18 +45,14 @@ public class RestJettyGetToDTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef", "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .get("{id}/basic")
-                        .toD("seda:${header.id}");
+                rest("/users/").get("{id}/basic").toD("seda:${header.id}");
 
-                from("seda:123")
-                    .to("mock:input")
-                    .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                from("seda:123").to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }

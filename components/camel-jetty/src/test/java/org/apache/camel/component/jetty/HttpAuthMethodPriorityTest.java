@@ -42,7 +42,7 @@ import org.junit.Test;
 
 @Ignore
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
-	
+
     @BindToRegistry("myAuthHandler")
     public SecurityHandler getSecurityHandler() throws IOException {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
@@ -58,20 +58,22 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[]{cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
 
         return sh;
     }
 
     @Test
     public void testAuthMethodPriorityBasicDigest() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck", "Hello World",
+                                          String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testAuthMethodPriorityNTLMBasic() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck", "Hello World", String.class);
+        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck", "Hello World",
+                                          String.class);
         assertEquals("Bye World", out);
     }
 
@@ -82,9 +84,8 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
             fail("Should have thrown an exception");
         } catch (FailedToCreateProducerException e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
-            //JAXB 2.2 uses a slightly different message
-            boolean b = cause.getMessage().contains("No enum const")
-                && cause.getMessage().contains("org.apache.camel.component.http4.AuthMethod.foo");
+            // JAXB 2.2 uses a slightly different message
+            boolean b = cause.getMessage().contains("No enum const") && cause.getMessage().contains("org.apache.camel.component.http4.AuthMethod.foo");
             assertTrue("Bad fault message: " + cause.getMessage(), b);
         }
     }
@@ -105,17 +106,15 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                            assertNotNull(req);
-                            Principal user = req.getUserPrincipal();
-                            assertNotNull(user);
-                            assertEquals("donald", user.getName());
-                        }
-                    })
-                    .transform(constant("Bye World"));
+                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                        assertNotNull(req);
+                        Principal user = req.getUserPrincipal();
+                        assertNotNull(user);
+                        assertEquals("donald", user.getName());
+                    }
+                }).transform(constant("Bye World"));
             }
         };
     }
