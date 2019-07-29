@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
