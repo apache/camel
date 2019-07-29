@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +30,11 @@ import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.junit.Test;
 
 public class HandlerTest extends BaseJettyTest {
+	@BindToRegistry("statisticsHandler1")
     private StatisticsHandler statisticsHandler1 = new StatisticsHandler();
+	@BindToRegistry("statisticsHandler2")
     private StatisticsHandler statisticsHandler2 = new StatisticsHandler();
+	@BindToRegistry("statisticsHandler3")
     private StatisticsHandler statisticsHandler3 = new StatisticsHandler();
 
     private String htmlResponse = "<html><body>Book 123 is Camel in Action</body></html>";
@@ -87,15 +91,6 @@ public class HandlerTest extends BaseJettyTest {
         assertEquals(0, statisticsHandler1.getRequests());
         assertEquals(2, statisticsHandler2.getRequests());
         assertEquals(2, statisticsHandler3.getRequests());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("statisticsHandler1", statisticsHandler1);
-        jndi.bind("statisticsHandler2", statisticsHandler2);
-        jndi.bind("statisticsHandler3", statisticsHandler3);
-        return jndi;
     }
 
     @Override

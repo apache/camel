@@ -28,6 +28,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -86,13 +87,11 @@ public class CustomFiltersTest extends BaseJettyTest {
         sendRequestAndVerify("http://localhost:" + getPort() + "/testFilters");
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("myFilters")
+    public List<Filter> loadFilter() throws Exception {
         List<Filter> filters = new ArrayList<>();
         filters.add(new MyTestFilter());
-        jndi.bind("myFilters", filters);
-        return jndi;
+        return filters;
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty.rest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,13 +26,9 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class RestJettyGetWildcardsTest extends BaseJettyTest {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mybinding", new JettyRestHttpBinding());
-        return jndi;
-    }
+    
+    @BindToRegistry("mybinding")
+    private JettyRestHttpBinding binding = new JettyRestHttpBinding();
 
     @Test
     public void testJettyProducerGet() throws Exception {

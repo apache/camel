@@ -26,6 +26,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.HttpClientConfigurer;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
 
                 errorHandler(noErrorHandler());
 
-                context.getRegistry(JndiRegistry.class).bind("configurer", new HttpClientConfigurer() {
+                context.getRegistry(Registry.class).bind("configurer", new HttpClientConfigurer() {
                     @Override
                     public void configureHttpClient(HttpClientBuilder clientBuilder) {
                         clientBuilder.disableContentCompression();

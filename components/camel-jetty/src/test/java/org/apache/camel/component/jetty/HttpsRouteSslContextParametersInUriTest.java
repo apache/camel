@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.net.URISyntaxException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,8 +29,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("sslContextParameters")
+    public SSLContextParameters loadSSLParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
         ksp.setPassword(pwd);
@@ -41,10 +42,7 @@ public class HttpsRouteSslContextParametersInUriTest extends HttpsRouteTest {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
 
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", sslContextParameters);
-
-        return registry;
+        return sslContextParameters;
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,14 +39,8 @@ import org.junit.Test;
 
 public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myAuthHandler", getSecurityHandler());
-        return jndi;
-    }
-
-    private SecurityHandler getSecurityHandler() throws IOException {
+	@BindToRegistry("myAuthHandler")
+    public SecurityHandler getSecurityHandler() throws IOException {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
 

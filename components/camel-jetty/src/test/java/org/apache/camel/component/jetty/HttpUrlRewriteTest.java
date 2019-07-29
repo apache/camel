@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,13 +27,9 @@ public class HttpUrlRewriteTest extends BaseJettyTest {
 
     private int port1;
     private int port2;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myRewrite", new MyUrlRewrite());
-        return jndi;
-    }
+    
+    @BindToRegistry("myRewrite")
+    private MyUrlRewrite urlRew = new MyUrlRewrite();
 
     @Test
     public void testUrlRewrite() throws Exception {
