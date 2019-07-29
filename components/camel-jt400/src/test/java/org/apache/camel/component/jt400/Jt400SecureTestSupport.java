@@ -27,12 +27,12 @@ import org.junit.Before;
 
 /**
  * Useful base class for JT400 secured component unit tests. It creates a mock
- * secured connection pool, registers it under the ID {@code "mockPool"} and releases it
- * after the test runs.
+ * secured connection pool, registers it under the ID {@code "mockPool"} and
+ * releases it after the test runs.
  */
 public abstract class Jt400SecureTestSupport extends CamelTestSupport {
 
-	@BindToRegistry("mockPool")
+    @BindToRegistry("mockPool")
     private AS400ConnectionPool connectionPool;
 
     protected Jt400SecureTestSupport() {
