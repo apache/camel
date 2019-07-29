@@ -20,6 +20,7 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -34,14 +35,8 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailIdempotentRepositoryTest extends CamelTestSupport {
 
+	@BindToRegistry("myRepo")
     private MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myRepo", myRepo);
-        return jndi;
-    }
 
     @Override
     @Before

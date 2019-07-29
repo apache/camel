@@ -23,6 +23,7 @@ import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.Session;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,20 +35,13 @@ import org.jvnet.mock_javamail.Mailbox;
 
 public class MailUsingCustomSessionTest extends CamelTestSupport {
 
-    private Session mailSession;
+	@BindToRegistry("myCustomMailSession")
+    private Session mailSession = Session.getInstance(new Properties());
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         Mailbox.clearAll();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        mailSession = Session.getInstance(new Properties());
-        registry.bind("myCustomMailSession", mailSession);
-        return registry;
     }
 
     @Test

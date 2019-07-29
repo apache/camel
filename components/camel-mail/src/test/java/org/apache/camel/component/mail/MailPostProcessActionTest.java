@@ -20,6 +20,7 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -36,21 +37,14 @@ import org.slf4j.LoggerFactory;
 public class MailPostProcessActionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(MailPostProcessActionTest.class);
 
-    private TestPostProcessAction action;
+    @BindToRegistry("postProcessAction")
+    private TestPostProcessAction action = new TestPostProcessAction();
 
     @Override
     @Before
     public void setUp() throws Exception {
         prepareMailbox();
-        action = new TestPostProcessAction();
         super.setUp();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("postProcessAction", action);
-        return jndi;
     }
 
     @Test
