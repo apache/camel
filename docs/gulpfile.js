@@ -68,9 +68,9 @@ function createUserManualSymlinks() {
 }
 
 function titleFrom(file) {
-    const maybeName = /(?:==|##) (.*)/.exec(file.contents.toString())
+    const maybeName = /(?:=|#) (.*)/.exec(file.contents.toString())
     if (maybeName == null) {
-        throw new Error(`${file.path} doesn't contain Asciidoc heading ('== <Title>') or ('## <Title')`);
+        throw new Error(`${file.path} doesn't contain Asciidoc heading ('= <Title>') or ('# <Title')`);
     }
 
     return maybeName[1];
