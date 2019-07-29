@@ -19,6 +19,7 @@ package org.apache.camel.component.scp;
 import java.io.File;
 import java.nio.file.Files;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -140,11 +141,9 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry("privKey")
+    public byte[] loadPrivateKey() throws Exception {
         byte[] privKey = Files.readAllBytes(new File("src/test/resources/camel-key.priv").toPath());
-        registry.bind("privKey", privKey);
-        return registry;
+        return privKey;
     }
 }
