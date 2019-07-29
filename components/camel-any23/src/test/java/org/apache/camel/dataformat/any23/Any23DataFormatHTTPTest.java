@@ -26,15 +26,15 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.rdf4j.model.Model;
 import org.junit.Test;
 
-public class Any23DataFormatDefaultTest extends CamelTestSupport {
+public class Any23DataFormatHTTPTest extends CamelTestSupport {
 
   private final String BASEURI = "http://mock.foo/bar";
 
   @Test
   public void test() throws Exception {
     MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-    String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
-    template.sendBody("direct:start", contenhtml);
+    //String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
+    //template.sendBody("direct:start", contenhtml);
     List<Exchange> list = resultEndpoint.getReceivedExchanges();
     for (Exchange exchange : list) {
       Message in = exchange.getIn();
@@ -47,7 +47,7 @@ public class Any23DataFormatDefaultTest extends CamelTestSupport {
   protected RouteBuilder createRouteBuilder() {
     return new RouteBuilder() {
       public void configure() {
-        from("direct:start").unmarshal().any23(BASEURI).to("mock:result");
+        from("http://dbpedia.org/page/Ecuador").unmarshal().any23(BASEURI).to("mock:result");
       }
     };
   }
