@@ -22,6 +22,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,12 +36,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 public class ProduceMessageConverterTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myMessageConverter", new MyMessageConverter());
-        return jndi;
-    }
+    @BindToRegistry("myMessageConverter")
+    private MyMessageConverter conv = new MyMessageConverter();
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -81,5 +78,5 @@ public class ProduceMessageConverterTest extends CamelTestSupport {
             return null;
         }
     }
-    
+
 }
