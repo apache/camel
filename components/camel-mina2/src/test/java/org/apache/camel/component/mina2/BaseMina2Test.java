@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina2;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
@@ -49,21 +50,8 @@ public class BaseMina2Test extends CamelTestSupport {
         return false;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        
-        if (isUseSslContext()) {
-            addSslContextParametersToRegistry(reg);
-        }
-        return reg;
-    }
-    
-    protected void addSslContextParametersToRegistry(JndiRegistry registry) {
-        registry.bind("sslContextParameters", createSslContextParameters());
-    }
-
-    protected SSLContextParameters createSslContextParameters() {
+    @BindToRegistry("sslContextParameters")
+    public SSLContextParameters createSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
         ksp.setPassword(KEY_STORE_PASSWORD);

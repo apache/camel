@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,7 +35,10 @@ import org.junit.Test;
  * Unit test with custom codec using the VM protocol.
  */
 public class Mina2VMCustomCodecTest extends BaseMina2Test {
-
+	
+    @BindToRegistry("myCodec")
+    private MyCodec codec1 = new MyCodec();
+    
     @Test
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -76,12 +80,6 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
         } catch (ResolveEndpointFailedException e) {
             // ok
         }
-    }
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCodec", new MyCodec());
-        return jndi;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

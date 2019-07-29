@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +35,9 @@ import org.junit.Test;
  * Unit test to test what happens if remote server closes session but doesn't reply
  */
 public class Mina2NoResponseFromServerTest extends BaseMina2Test {
+	
+    @BindToRegistry("myCodec")
+    private MyCodec codec1 = new MyCodec();
 
     @Test
     public void testNoResponse() throws Exception {
@@ -48,12 +52,6 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         }
 
         mock.assertIsSatisfied();
-    }
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCodec", new MyCodec());
-        return jndi;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

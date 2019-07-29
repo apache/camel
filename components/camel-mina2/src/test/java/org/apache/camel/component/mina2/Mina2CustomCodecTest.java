@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,6 +36,12 @@ import org.junit.Test;
  * Unit test with custom codec.
  */
 public class Mina2CustomCodecTest extends BaseMina2Test {
+	
+	@BindToRegistry("myCodec")
+	private MyCodec codec1 = new MyCodec();
+	
+    @BindToRegistry("failingCodec")
+    private MyCodec codec2 = new MyCodec(true);
 
     @Test
     public void testMyCodec() throws Exception {
@@ -99,14 +106,6 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
         } catch (ResolveEndpointFailedException e) {
             // ok
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCodec", new MyCodec());
-        jndi.bind("failingCodec", new MyCodec(true));
-        return jndi;
     }
 
     @Override
