@@ -35,10 +35,10 @@ import org.junit.Test;
  * Unit test with custom codec using the VM protocol.
  */
 public class Mina2VMCustomCodecTest extends BaseMina2Test {
-	
+
     @BindToRegistry("myCodec")
     private MyCodec codec1 = new MyCodec();
-    
+
     @Test
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -97,10 +97,9 @@ public class Mina2VMCustomCodecTest extends BaseMina2Test {
         public ProtocolEncoder getEncoder(IoSession is) throws Exception {
             return new ProtocolEncoder() {
 
-                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
-                    throws Exception {
+                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String) message;
+                    String s = (String)message;
                     bb.put(s.getBytes("US-ASCII"));
                     bb.flip();
                     out.write(bb);
