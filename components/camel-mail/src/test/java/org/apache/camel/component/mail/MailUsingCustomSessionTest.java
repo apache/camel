@@ -35,7 +35,7 @@ import org.jvnet.mock_javamail.Mailbox;
 
 public class MailUsingCustomSessionTest extends CamelTestSupport {
 
-	@BindToRegistry("myCustomMailSession")
+    @BindToRegistry("myCustomMailSession")
     private Session mailSession = Session.getInstance(new Properties());
 
     @Before
@@ -46,7 +46,8 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
 
     @Test
     public void testEndpointConfigurationWithCustomSession() {
-        // Verify that the mail session bound to the bean registry is identical to the session tied to the endpoint configuration
+        // Verify that the mail session bound to the bean registry is identical
+        // to the session tied to the endpoint configuration
         assertSame(mailSession, getEndpointMailSession("smtp://james@localhost?session=#myCustomMailSession"));
     }
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -35,9 +36,9 @@ import static org.apache.camel.component.mail.SearchTermBuilder.Op;
 
 public class MailSearchTermTest extends CamelTestSupport {
 
-	@BindToRegistry("myTerm")
-	private SearchTerm term = createSearchTerm();
-	
+    @BindToRegistry("myTerm")
+    private SearchTerm term = createSearchTerm();
+
     @Override
     @Before
     public void setUp() throws Exception {

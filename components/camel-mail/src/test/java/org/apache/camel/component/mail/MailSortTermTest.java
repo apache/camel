@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import java.util.Date;
 
 import javax.mail.Folder;
@@ -35,17 +36,17 @@ import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * This is a test that checks integration of the sort term in Camel. The actual sorting logic is tested in the
- * SortUtilTest.
+ * This is a test that checks integration of the sort term in Camel. The actual
+ * sorting logic is tested in the SortUtilTest.
  */
 public class MailSortTermTest extends CamelTestSupport {
-	
-	@BindToRegistry("sortAscendingDate")
-	private SortTerm[] termAscDate = new SortTerm[]{SortTerm.DATE};
-	
+
+    @BindToRegistry("sortAscendingDate")
+    private SortTerm[] termAscDate = new SortTerm[] {SortTerm.DATE};
+
     @BindToRegistry("sortDescendingDate")
-    private SortTerm[] termDescDate = new SortTerm[]{SortTerm.REVERSE, SortTerm.DATE};
-    
+    private SortTerm[] termDescDate = new SortTerm[] {SortTerm.REVERSE, SortTerm.DATE};
+
     @BindToRegistry("searchTerm")
     private SearchTerm searchTerm = new SearchTermBuilder().subject("Camel").build();
 
@@ -80,7 +81,8 @@ public class MailSortTermTest extends CamelTestSupport {
         folder.open(Folder.READ_WRITE);
         folder.expunge();
 
-        // inserts 3 messages, one with earlier, one with later sent date and one with invalid subject (not returned in search)
+        // inserts 3 messages, one with earlier, one with later sent date and
+        // one with invalid subject (not returned in search)
         Message[] messages = new Message[3];
         messages[0] = new MimeMessage(sender.getSession());
         messages[0].setText("Earlier date");
@@ -109,7 +111,8 @@ public class MailSortTermTest extends CamelTestSupport {
             public void configure() throws Exception {
                 context.setAutoStartup(false);
 
-                from("pop3://bill@localhost?password=secret&searchTerm=#searchTerm&sortTerm=#sortAscendingDate&consumer.initialDelay=100&consumer.delay=100").to("mock:resultAscending");
+                from("pop3://bill@localhost?password=secret&searchTerm=#searchTerm&sortTerm=#sortAscendingDate&consumer.initialDelay=100&consumer.delay=100")
+                    .to("mock:resultAscending");
             }
         };
     }
