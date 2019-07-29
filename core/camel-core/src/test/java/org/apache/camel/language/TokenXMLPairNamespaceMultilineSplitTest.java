@@ -29,7 +29,7 @@ public class TokenXMLPairNamespaceMultilineSplitTest extends TokenXMLPairNamespa
     public void testTokenXMLPair() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
+        mock.message(0).body().isEqualTo("<order id=\"1\"\nxmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
         mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
 
@@ -50,7 +50,8 @@ public class TokenXMLPairNamespaceMultilineSplitTest extends TokenXMLPairNamespa
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\"?>\n");
         sb.append("<orders xmlns=\"http:acme.com\"\n");
         sb.append("        xmlns:foo=\"http:foo.com\">\n");
-        sb.append("  <order id=\"1\">Camel in Action</order>\n");
+        sb.append("  <order id=\"1\"\n");
+        sb.append("xmlns=\"http:acme.com\">Camel in Action</order>\n");
         sb.append("  <order id=\"2\">ActiveMQ in Action</order>\n");
         sb.append("  <order id=\"3\">DSL in Action</order>\n");
         sb.append("</orders>");

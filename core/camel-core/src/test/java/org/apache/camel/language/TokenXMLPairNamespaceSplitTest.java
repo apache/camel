@@ -66,7 +66,7 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
     protected String createBody() {
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\"?>\n");
         sb.append("<orders xmlns=\"http:acme.com\">\n");
-        sb.append("  <order id=\"1\">Camel in Action</order>\n");
+        sb.append("  <order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order>\n");
         sb.append("  <order id=\"2\">ActiveMQ in Action</order>\n");
         sb.append("  <order id=\"3\">DSL in Action</order>\n");
         sb.append("</orders>");
