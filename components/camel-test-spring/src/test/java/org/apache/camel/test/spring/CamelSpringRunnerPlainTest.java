@@ -39,6 +39,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+// tag::example[]
 @RunWith(CamelSpringRunner.class)
 // must tell Spring to bootstrap with Camel
 @BootstrapWith(CamelTestContextBootstrapper.class)
@@ -108,3 +109,5 @@ public class CamelSpringRunnerPlainTest {
     }
 
 }
+// end::example[]
+
