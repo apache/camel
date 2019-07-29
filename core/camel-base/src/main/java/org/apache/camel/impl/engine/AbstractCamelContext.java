@@ -129,6 +129,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -191,8 +192,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
-    private Boolean trace = Boolean.TRUE;
-    private Boolean debug = Boolean.TRUE;
+    private Boolean backlogTrace = Boolean.FALSE;
+    private Boolean trace = Boolean.FALSE;
+    private String tracePattern;
+    private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.TRUE;
     private Boolean logMask = Boolean.FALSE;
     private Boolean logExhaustedMessageBody = Boolean.FALSE;
@@ -264,6 +267,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
+    private Tracer tracer;
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
@@ -1902,6 +1906,22 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return trace;
     }
 
+    public String getTracingPattern() {
+        return tracePattern;
+    }
+
+    public void setTracingPattern(String tracePattern) {
+        this.tracePattern = tracePattern;
+    }
+
+    public Boolean isBacklogTracing() {
+        return backlogTrace;
+    }
+
+    public void setBacklogTracing(Boolean backlogTrace) {
+        this.backlogTrace = backlogTrace;
+    }
+
     public void setDebugging(Boolean debug) {
         this.debug = debug;
     }
@@ -2398,9 +2418,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             log.info("StreamCaching is enabled on CamelContext: {}", getName());
         }
 
+        if (isBacklogTracing()) {
+            // tracing is added in the DefaultChannel so we can enable it on the fly
+            log.info("Backlog Tracing is enabled on CamelContext: {}", getName());
+        }
         if (isTracing()) {
-            // tracing is added in the DefaultChannel so we can enable it on the
-            // fly
+            // tracing is added in the DefaultChannel so we can enable it on the fly
             log.info("Tracing is enabled on CamelContext: {}", getName());
         }
 
@@ -3729,6 +3752,25 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             throw new IllegalStateException("Can not set debugger on a started CamelContext");
         }
         this.debugger = doAddService(debugger);
+        // enable debugging if we set a custom debugger
+        setDebugging(true);
+    }
+
+    public Tracer getTracer() {
+        if (tracer == null) {
+            synchronized (lock) {
+                if (tracer == null) {
+                    setTracer(createTracer());
+                }
+            }
+        }
+        return tracer;
+    }
+
+    public void setTracer(Tracer tracer) {
+        this.tracer = tracer;
+        // enable tracing if we set a custom tracer
+        setTracing(true);
     }
 
     public UuidGenerator getUuidGenerator() {
@@ -4018,6 +4060,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract BeanProxyFactory createBeanProxyFactory();
 
     protected abstract BeanProcessorFactory createBeanProcessorFactory();
+
+    protected abstract Tracer createTracer();
 
     protected abstract LanguageResolver createLanguageResolver();
 

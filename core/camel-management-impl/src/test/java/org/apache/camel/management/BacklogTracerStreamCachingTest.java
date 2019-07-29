@@ -86,6 +86,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
+                context.setBacklogTracing(true);
 
                 from("direct:start").streamCaching()
                         .process(exchange -> {

@@ -54,6 +54,7 @@ import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedThreadPool;
+import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
@@ -167,6 +168,9 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else if (managedObject instanceof ManagedEventNotifier) {
             ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
             objectName = getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
+        } else if (managedObject instanceof ManagedTracer) {
+            ManagedTracer mt = (ManagedTracer) managedObject;
+            objectName = getObjectNameForTracer(mt.getContext(), mt.getTracer());
         } else if (managedObject instanceof ManagedThreadPool) {
             ManagedThreadPool mes = (ManagedThreadPool) managedObject;
             objectName = getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());

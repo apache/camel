@@ -27,6 +27,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WrapProcessor;
@@ -38,6 +39,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -160,7 +162,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                             NamedNode childDefinition,
                             List<InterceptStrategy> interceptors,
                             Processor nextProcessor,
-                            NamedNode route,
+                            NamedRoute route,
                             boolean first,
                             boolean routeScoped) throws Exception {
         this.routeContext = routeContext;
@@ -186,15 +188,14 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        // then wrap the output with the tracer and debugger (debugger first,
-        // as we do not want regular tracer to trace the debugger)
-        if (routeContext.isTracing()) {
-            BacklogTracer tracer = getOrCreateBacklogTracer();
-            camelContext.setExtension(BacklogTracer.class, tracer);
-            addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
+        if (routeContext.isMessageHistory()) {
+            // add message history advice
+            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
+            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
 
-        // add debugger as well so we have both tracing and debugging out of the box
+        // then wrap the output with the tracer and debugger (debugger first,
+        // as we do not want regular tracer to trace the debugger)
         if (routeContext.isDebugging()) {
             if (camelContext.getDebugger() != null) {
                 // use custom debugger
@@ -208,10 +209,15 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
         }
 
-        if (routeContext.isMessageHistory()) {
-            // add message history advice
-            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
-            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
+        if (routeContext.isBacklogTracing()) {
+            // add jmx backlog tracer
+            BacklogTracer backlogTracer = getOrCreateBacklogTracer();
+            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
+        }
+        if (routeContext.isTracing()) {
+            // add logger tracer
+            Tracer tracer = camelContext.getTracer();
+            addAdvice(new TracingAdvice(tracer, targetOutputDef, route, first));
         }
 
         // sort interceptors according to ordered
@@ -291,6 +297,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
         if (tracer == null) {
             tracer = BacklogTracer.createTracer(camelContext);
+            camelContext.setExtension(BacklogTracer.class, tracer);
         }
         return tracer;
     }

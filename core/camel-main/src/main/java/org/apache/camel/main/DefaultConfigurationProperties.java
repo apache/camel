@@ -49,7 +49,9 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
+    private boolean backlogTracing;
     private boolean tracing;
+    private String tracingPattern;
     private boolean messageHistory = true;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
@@ -396,6 +398,33 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracing(boolean tracing) {
         this.tracing = tracing;
+    }
+
+    public String getTracingPattern() {
+        return tracingPattern;
+    }
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    public void setTracingPattern(String tracingPattern) {
+        this.tracingPattern = tracingPattern;
+    }
+
+    public boolean isBacklogTracing() {
+        return backlogTracing;
+    }
+
+    /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    public void setBacklogTracing(boolean backlogTracing) {
+        this.backlogTracing = backlogTracing;
     }
 
     public boolean isMessageHistory() {
@@ -876,6 +905,16 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withTracing(boolean tracing) {
         this.tracing = tracing;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    public T withBacklogTracing(boolean backlogTracing) {
+        this.backlogTracing = backlogTracing;
         return (T) this;
     }
 

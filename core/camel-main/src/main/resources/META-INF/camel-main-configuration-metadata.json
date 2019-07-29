@@ -79,6 +79,12 @@
 			"description":"Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. This option is default disabled."
 		},
 		{
+			"name":"camel.main.backlog-tracing",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether backlog tracing is enabled or not. Default is false."
+		},
+		{
 			"name":"camel.main.consumer-template-cache-size",
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -318,6 +324,12 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether tracing is enabled or not. Default is false."
+		},
+		{
+			"name":"camel.main.tracing-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to. The pattern matches by node and route id's Multiple patterns can be separated by comma."
 		},
 		{
 			"name":"camel.main.use-breadcrumb",

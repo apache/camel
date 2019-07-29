@@ -48,6 +48,9 @@ public final class MessageHelper {
     private static final String MESSAGE_HISTORY_HEADER = "%-20s %-20s %-80s %-12s";
     private static final String MESSAGE_HISTORY_OUTPUT = "[%-18.18s] [%-18.18s] [%-78.78s] [%10.10s]";
 
+    private static final String TRACING_HEADER = "%-8s %-20s %-20s %-40s %-12s";
+    private static final String TRACING_OUTPUT = "[%-6.6s] [%-18.18s] [%-18.18s] [%-38.38s] [%10.10s]";
+
     /**
      * Utility classes should not have a public constructor.
      */
@@ -543,7 +546,7 @@ public final class MessageHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static String doDumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
+    private static String doDumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
         List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
         if (list == null || list.isEmpty()) {
             return null;
@@ -553,9 +556,9 @@ public final class MessageHelper {
         sb.append("\n");
         sb.append("Message History\n");
         sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
-        String goMessageHistoryHeaeder = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
+        String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(
-                         goMessageHistoryHeaeder == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeaeder,
+                         goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
                          "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
         sb.append("\n");
 
@@ -564,7 +567,7 @@ public final class MessageHelper {
         String id = routeId;
         String label = "";
         if (exchange.getFromEndpoint() != null) {
-            label = URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+            label = "from[" + URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri() + "]");
         }
         long elapsed = 0;
         Date created = exchange.getCreated();
