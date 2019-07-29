@@ -160,7 +160,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         private final String inheritNamespaceToken;
         private final boolean wrapToken;
         private Pattern inheritNamespaceTokenPattern;
-        private String rootTokenNamespaces;
+        private String[] rootTokenNamespaces;
         private String wrapHead;
         private String wrapTail;
 
@@ -201,7 +201,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         String getNext(boolean first) {
             // initialize inherited namespaces on first
             if (first && inheritNamespaceToken != null && !wrapToken) {
-                rootTokenNamespaces =  getNamespacesFromNamespaceToken(scanner.findWithinHorizon(inheritNamespaceTokenPattern, 0));
+                rootTokenNamespaces =  getNamespacesFromNamespaceToken(scanner.findWithinHorizon(inheritNamespaceTokenPattern, 0)).split(" ");
             }
 
             String next = scanner.findWithinHorizon(tagTokenPattern, 0);
@@ -216,7 +216,6 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
             // build answer accordingly to whether namespaces should be inherited or not
             if (inheritNamespaceToken != null && rootTokenNamespaces != null) {
-                // REVISIT should skip the prefixes that are declared within the child itself.
                 String head = StringHelper.before(next, ">");
                 boolean empty = false;
                 if (head.endsWith("/")) {
@@ -227,8 +226,8 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                 // append root namespaces to local start token
                 // grab the text
                 String tail = StringHelper.after(next, ">");
-                // build result with inherited namespaces
-                next = sb.append(head).append(rootTokenNamespaces).append(empty ? "/>" : ">").append(tail).toString();
+                // build result with inherited namespaces and skip the prefixes that are declared within the child itself.
+                next = sb.append(head).append(getMissingInherritNamespaces(head)).append(empty ? "/>" : ">").append(tail).toString();
             } else if (wrapToken) {
                 // wrap the token
                 StringBuilder sb = new StringBuilder();
@@ -236,6 +235,31 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             }
             
             return next;
+        }
+        
+        private String getMissingInherritNamespaces(final String text) {
+            if (text == null) {
+                return "";
+            }
+            final String namespaces = getNamespacesFromNamespaceToken(text);
+            final String[] containedNamespaces = namespaces == null ? new String[0] : namespaces.split(" ");
+            final StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (String rn : rootTokenNamespaces) {
+                boolean nsExists = false;
+                for (String cn : containedNamespaces) {
+                    if (rn.equals(cn)) {
+                        nsExists = true;
+                        first = false;
+                        break;
+                    }
+                }
+                if (!nsExists) {
+                    sb.append(first ? rn : " " + rn);
+                    first = false;
+                }
+            }
+            return sb.toString();
         }
 
         private String getNamespacesFromNamespaceToken(String text) {
