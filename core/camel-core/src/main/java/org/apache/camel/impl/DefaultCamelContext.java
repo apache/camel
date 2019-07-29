@@ -45,10 +45,10 @@ import org.apache.camel.impl.engine.DefaultMessageHistoryFactory;
 import org.apache.camel.impl.engine.DefaultNodeIdFactory;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.engine.DefaultProcessorFactory;
-import org.apache.camel.impl.engine.DefaultReactiveExecutor;
 import org.apache.camel.impl.engine.DefaultRouteController;
 import org.apache.camel.impl.engine.DefaultShutdownStrategy;
 import org.apache.camel.impl.engine.DefaultStreamCachingStrategy;
+import org.apache.camel.impl.engine.DefaultTracer;
 import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
 import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.impl.engine.EndpointKey;
@@ -89,6 +89,7 @@ import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -290,6 +291,25 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
 
     protected BeanProcessorFactory createBeanProcessorFactory() {
         return new BeanProcessorFactoryResolver().resolve(this);
+    }
+
+    protected Tracer createTracer() {
+        Tracer tracer = null;
+        if (getRegistry() != null) {
+            // lookup in registry
+            Map<String, Tracer> map = getRegistry().findByTypeWithName(Tracer.class);
+            if (map.size() == 1) {
+                tracer = map.values().iterator().next();
+            }
+        }
+        if (tracer == null) {
+            tracer = getExtension(Tracer.class);
+        }
+        if (tracer == null) {
+            tracer = new DefaultTracer();
+            setExtension(Tracer.class, tracer);
+        }
+        return tracer;
     }
 
     protected LanguageResolver createLanguageResolver() {

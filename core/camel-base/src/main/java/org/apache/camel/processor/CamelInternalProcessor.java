@@ -38,7 +38,6 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
-import org.apache.camel.processor.interceptor.DefaultTracer;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InflightRepository;
@@ -794,10 +793,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public Object before(Exchange exchange) throws Exception {
             if (!added && tracingAfterRoute != null) {
-                // add before route and after route tracing
-                added = true;
-                tracer.traceBeforeRoute(routeDefinition, exchange);
-                exchange.addOnCompletion(tracingAfterRoute);
+                // add before route and after route tracing but only once per route, so check if there is already an existing
+                boolean contains = exchange.getUnitOfWork().containsSynchronization(tracingAfterRoute);
+                if (!contains) {
+                    added = true;
+                    tracer.traceBeforeRoute(routeDefinition, exchange);
+                    exchange.addOnCompletion(tracingAfterRoute);
+                }
             }
 
             tracer.traceBeforeNode(processorDefinition, exchange);
@@ -824,6 +826,25 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (routeId.equals(route.getId())) {
                     tracer.traceAfterRoute(route, exchange);
                 }
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                // only match equals on route id so we can check this from containsSynchronization
+                // to avoid adding multiple times for the same route id
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                TracingAfterRoute that = (TracingAfterRoute) o;
+                return routeId.equals(that.routeId);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(routeId);
             }
         }
     }

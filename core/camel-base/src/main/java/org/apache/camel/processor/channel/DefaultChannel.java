@@ -34,7 +34,6 @@ import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.DefaultTracer;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
@@ -217,7 +216,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
         if (routeContext.isTracing()) {
             // add logger tracer
-            Tracer tracer = getOrCreateDefaultTracer();
+            Tracer tracer = camelContext.getTracer();
             addAdvice(new TracingAdvice(tracer, targetOutputDef, route, first));
         }
 
@@ -299,25 +298,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (tracer == null) {
             tracer = BacklogTracer.createTracer(camelContext);
             camelContext.setExtension(BacklogTracer.class, tracer);
-        }
-        return tracer;
-    }
-
-    private Tracer getOrCreateDefaultTracer() {
-        Tracer tracer = null;
-        if (camelContext.getRegistry() != null) {
-            // lookup in registry
-            Map<String, Tracer> map = camelContext.getRegistry().findByTypeWithName(Tracer.class);
-            if (map.size() == 1) {
-                tracer = map.values().iterator().next();
-            }
-        }
-        if (tracer == null) {
-            tracer = camelContext.getExtension(Tracer.class);
-        }
-        if (tracer == null) {
-            tracer = DefaultTracer.createTracer(camelContext);
-            camelContext.setExtension(Tracer.class, tracer);
         }
         return tracer;
     }

@@ -51,6 +51,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean streamCachingStatisticsEnabled;
     private boolean backlogTracing;
     private boolean tracing;
+    private String tracingPatterns;
     private boolean messageHistory = true;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
@@ -397,6 +398,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setTracing(boolean tracing) {
         this.tracing = tracing;
+    }
+
+    public String getTracingPatterns() {
+        return tracingPatterns;
+    }
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    public void setTracingPatterns(String tracingPatterns) {
+        this.tracingPatterns = tracingPatterns;
     }
 
     public boolean isBacklogTracing() {

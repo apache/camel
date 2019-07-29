@@ -88,28 +88,30 @@ public interface Tracer extends StaticService {
     void setEnabled(boolean enabled);
 
     /**
-     * Trace pattern to match which node EIPs to trace.
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
      * Multiple patterns can be separated by comma.
-     * For example to match all to patterns, use to*.
      */
     String getTracePattern();
 
     /**
-     * Trace pattern to match which node EIPs to trace.
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
      * Multiple patterns can be separated by comma.
-     * For example to match all to patterns, use to*.
      */
     void setTracePattern(String tracePattern);
 
     /**
      * Whether to include tracing of before/after routes to trace the input and responses of routes.
      */
-    boolean isTraceBeforeAfterRoute();
+    boolean isTraceBeforeAndAfterRoute();
 
     /**
      * Whether to include tracing of before/after routes to trace the input and responses of routes.
      */
-    void setTraceBeforeAfterRoute(boolean traceBeforeAfterRoute);
+    void setTraceBeforeAndAfterRoute(boolean traceBeforeAndAfterRoute);
 
     /**
      * To use a custom exchange formatter for formatting the output of the {@link Exchange} in the trace logs.

@@ -192,9 +192,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
-    // TODO: backlogTrace vs trace
     private Boolean backlogTrace = Boolean.FALSE;
     private Boolean trace = Boolean.FALSE;
+    private String tracePattern;
     private Boolean debug = Boolean.FALSE;
     private Boolean messageHistory = Boolean.TRUE;
     private Boolean logMask = Boolean.FALSE;
@@ -1904,6 +1904,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     public Boolean isTracing() {
         return trace;
+    }
+
+    public String getTracingPattern() {
+        return tracePattern;
+    }
+
+    public void setTracingPattern(String tracePattern) {
+        this.tracePattern = tracePattern;
     }
 
     public Boolean isBacklogTracing() {
@@ -3749,6 +3757,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     }
 
     public Tracer getTracer() {
+        if (tracer == null) {
+            synchronized (lock) {
+                if (tracer == null) {
+                    setTracer(createTracer());
+                }
+            }
+        }
         return tracer;
     }
 
@@ -4045,6 +4060,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract BeanProxyFactory createBeanProxyFactory();
 
     protected abstract BeanProcessorFactory createBeanProcessorFactory();
+
+    protected abstract Tracer createTracer();
 
     protected abstract LanguageResolver createLanguageResolver();
 

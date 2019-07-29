@@ -271,6 +271,18 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     @Override
+    public String getTracingPattern() {
+        // can only set this on context level
+        return getCamelContext().getTracingPattern();
+    }
+
+    @Override
+    public void setTracingPattern(String tracePattern) {
+        // can only set this on context level
+        getCamelContext().setTracingPattern(tracePattern);
+    }
+
+    @Override
     public void setBacklogTracing(Boolean backlogTrace) {
         this.backlogTrace = backlogTrace;
     }

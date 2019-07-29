@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.interceptor;
+package org.apache.camel.impl.engine;
 
 import java.util.Objects;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Default {@link Tracer} implementation that will log traced messages
  * to the logger named <tt>org.apache.camel.Tracing</tt>.
  */
-public class DefaultTracer extends ServiceSupport implements Tracer {
+public class DefaultTracer extends ServiceSupport implements CamelContextAware, Tracer {
 
     // TODO: Expose these options in Tracer API / Main Configuration
     // TODO: Add options for spring-boot configuration too
@@ -48,27 +49,26 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
 
     // use a fixed logger name so its easy to spot
     private static final Logger LOG = LoggerFactory.getLogger("org.apache.camel.Tracing");
-    private final CamelContext camelContext;
+    private CamelContext camelContext;
     private boolean enabled = true;
     private long traceCounter;
 
     private ExchangeFormatter exchangeFormatter;
     private String tracePattern;
     private transient String[] patterns;
-    private boolean traceBeforeAfterRoute = true;
+    private boolean traceBeforeAndAfterRoute = true;
 
-    public DefaultTracer(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public DefaultTracer() {
     }
 
-    /**
-     * Creates a new tracer.
-     *
-     * @param context Camel context
-     * @return a new tracer
-     */
-    public static DefaultTracer createTracer(CamelContext context) {
-        return new DefaultTracer(context);
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @SuppressWarnings("unchecked")
@@ -100,7 +100,7 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
 
     @Override
     public void traceBeforeRoute(NamedRoute route, Exchange exchange) {
-        if (!traceBeforeAfterRoute) {
+        if (!traceBeforeAndAfterRoute) {
             return;
         }
 
@@ -126,7 +126,7 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
 
     @Override
     public void traceAfterRoute(Route route, Exchange exchange) {
-        if (!traceBeforeAfterRoute) {
+        if (!traceBeforeAndAfterRoute) {
             return;
         }
 
@@ -205,13 +205,13 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
     }
 
     @Override
-    public boolean isTraceBeforeAfterRoute() {
-        return traceBeforeAfterRoute;
+    public boolean isTraceBeforeAndAfterRoute() {
+        return traceBeforeAndAfterRoute;
     }
 
     @Override
-    public void setTraceBeforeAfterRoute(boolean traceBeforeAfterRoute) {
-        this.traceBeforeAfterRoute = traceBeforeAfterRoute;
+    public void setTraceBeforeAndAfterRoute(boolean traceBeforeAndAfterRoute) {
+        this.traceBeforeAndAfterRoute = traceBeforeAndAfterRoute;
     }
 
     @Override
@@ -256,7 +256,7 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
             formatter.setMultiline(false);
             formatter.setShowHeaders(false);
             formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
-            exchangeFormatter = formatter;
+            setExchangeFormatter(formatter);
         }
     }
 

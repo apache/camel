@@ -51,6 +51,22 @@ public interface RuntimeConfiguration {
     Boolean isTracing();
 
     /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    String getTracingPattern();
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    void setTracingPattern(String tracePattern);
+
+    /**
      * Sets whether backlog tracing is enabled or not (default is disabled).
      *
      * @param backlogTrace whether to enable backlog tracing.
