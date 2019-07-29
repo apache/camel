@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class ManagedMessageHistoryTest extends CamelTestSupport {
 
-	@BindToRegistry(MetricsComponent.METRIC_REGISTRY_NAME)
+    @BindToRegistry(MetricsComponent.METRIC_REGISTRY_NAME)
     private MetricRegistry metricRegistry = new MetricRegistry();
 
     @Override
@@ -83,10 +83,10 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         // get the message history service using JMX
         String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsMessageHistoryService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
-        String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        String json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
-        
+
         assertTrue(json.contains("foo.history"));
         assertTrue(json.contains("bar.history"));
         assertTrue(json.contains("baz.history"));
@@ -101,7 +101,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 
@@ -115,12 +115,9 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo")
-                        .to("mock:foo").id("foo");
+                from("seda:foo").to("mock:foo").id("foo");
 
-                from("seda:bar")
-                        .to("mock:bar").id("bar")
-                        .to("mock:baz").id("baz");
+                from("seda:bar").to("mock:bar").id("bar").to("mock:baz").id("baz");
             }
         };
     }

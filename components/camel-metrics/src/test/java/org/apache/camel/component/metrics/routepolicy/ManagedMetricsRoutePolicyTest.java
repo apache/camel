@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
-	@BindToRegistry(MetricsComponent.METRIC_REGISTRY_NAME)
+    @BindToRegistry(MetricsComponent.METRIC_REGISTRY_NAME)
     private MetricRegistry metricRegistry = new MetricRegistry();
 
     @Override
@@ -80,10 +80,10 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
         String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsRegistryService", context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
-        String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        String json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
-        
+
         assertTrue(json.contains("test"));
         assertTrue(json.contains("bar.responses"));
         assertTrue(json.contains("foo.responses"));
@@ -94,11 +94,9 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").routeId("foo").to("metrics:counter:test")
-                    .to("mock:result");
+                from("seda:foo").routeId("foo").to("metrics:counter:test").to("mock:result");
 
-                from("seda:bar").routeId("bar")
-                    .to("mock:result");
+                from("seda:bar").routeId("bar").to("mock:result");
             }
         };
     }
