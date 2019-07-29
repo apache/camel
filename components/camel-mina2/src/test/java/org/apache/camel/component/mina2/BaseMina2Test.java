@@ -17,7 +17,6 @@
 package org.apache.camel.component.mina2;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
