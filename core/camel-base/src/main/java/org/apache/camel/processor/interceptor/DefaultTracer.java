@@ -41,11 +41,8 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultTracer extends ServiceSupport implements Tracer {
 
-    // TODO: Custom exchange formatter
-    // TODO: Allow to configure exchange formatter options more easily
     // TODO: Expose these options in Tracer API / Main Configuration
     // TODO: Add options for spring-boot configuration too
-    // TODO: Trace intercept, onCompletion (not routes)
 
     private static final String TRACING_OUTPUT = "%-4.4s [%-12.12s] [%-33.33s]";
 
@@ -74,17 +71,8 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
         return new DefaultTracer(context);
     }
 
-    /**
-     * A helper method to return the BacklogTracer instance if one is enabled
-     *
-     * @return the backlog tracer or null if none can be found
-     */
-    public static DefaultTracer getDefaultTracer(CamelContext context) {
-        return context.getExtension(DefaultTracer.class);
-    }
-
     @SuppressWarnings("unchecked")
-    public void trace(NamedNode node, Exchange exchange) {
+    public void traceBeforeNode(NamedNode node, Exchange exchange) {
         if (shouldTrace(node)) {
             traceCounter++;
             String routeId = ExpressionBuilder.routeIdExpression().evaluate(exchange, String.class);
@@ -105,6 +93,12 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
         }
     }
 
+    @Override
+    public void traceAfterNode(NamedNode node, Exchange exchange) {
+        // noop
+    }
+
+    @Override
     public void traceBeforeRoute(NamedRoute route, Exchange exchange) {
         if (!traceBeforeAfterRoute) {
             return;
@@ -130,6 +124,7 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
         LOG.info(out);
     }
 
+    @Override
     public void traceAfterRoute(Route route, Exchange exchange) {
         if (!traceBeforeAfterRoute) {
             return;
@@ -155,10 +150,6 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
         dumpTrace(out);
     }
 
-    public void dumpTrace(String out) {
-        LOG.info(out);
-    }
-
     @Override
     public boolean shouldTrace(NamedNode definition) {
         if (!enabled) {
@@ -175,25 +166,6 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
             LOG.trace("Should trace evaluated {} -> pattern: {}", definition.getId(), pattern);
         }
         return pattern;
-    }
-
-    private boolean shouldTracePattern(NamedNode definition) {
-        for (String pattern : patterns) {
-            // match either route id, or node id
-            String id = definition.getId();
-            // use matchPattern method from endpoint helper that has a good matcher we use in Camel
-            if (PatternHelper.matchPattern(id, pattern)) {
-                return true;
-            }
-            String routeId = CamelContextHelper.getRouteId(definition);
-            if (routeId != null && !Objects.equals(routeId, id)) {
-                if (PatternHelper.matchPattern(routeId, pattern)) {
-                    return true;
-                }
-            }
-        }
-        // not matched the pattern
-        return false;
     }
 
     @Override
@@ -242,12 +214,37 @@ public class DefaultTracer extends ServiceSupport implements Tracer {
         this.traceBeforeAfterRoute = traceBeforeAfterRoute;
     }
 
+    @Override
     public ExchangeFormatter getExchangeFormatter() {
         return exchangeFormatter;
     }
 
+    @Override
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
+    }
+
+    protected void dumpTrace(String out) {
+        LOG.info(out);
+    }
+
+    protected boolean shouldTracePattern(NamedNode definition) {
+        for (String pattern : patterns) {
+            // match either route id, or node id
+            String id = definition.getId();
+            // use matchPattern method from endpoint helper that has a good matcher we use in Camel
+            if (PatternHelper.matchPattern(id, pattern)) {
+                return true;
+            }
+            String routeId = CamelContextHelper.getRouteId(definition);
+            if (routeId != null && !Objects.equals(routeId, id)) {
+                if (PatternHelper.matchPattern(routeId, pattern)) {
+                    return true;
+                }
+            }
+        }
+        // not matched the pattern
+        return false;
     }
 
     @Override

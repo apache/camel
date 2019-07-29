@@ -793,21 +793,20 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public Object before(Exchange exchange) throws Exception {
-            // first time add before route and after route tracing
             if (!added && tracingAfterRoute != null) {
+                // add before route and after route tracing
                 added = true;
-                // only do this for routes, as interceptors are not route based and we dont trace those
                 tracer.traceBeforeRoute(routeDefinition, exchange);
                 exchange.addOnCompletion(tracingAfterRoute);
             }
 
-            tracer.trace(processorDefinition, exchange);
+            tracer.traceBeforeNode(processorDefinition, exchange);
             return null;
         }
 
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
-            // noop
+            tracer.traceAfterNode(processorDefinition, exchange);
         }
 
         private static final class TracingAfterRoute extends SynchronizationAdapter {
@@ -825,23 +824,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 if (routeId.equals(route.getId())) {
                     tracer.traceAfterRoute(route, exchange);
                 }
-            }
-
-            @Override
-            public boolean equals(Object o) {
-                if (this == o) {
-                    return true;
-                }
-                if (o == null || getClass() != o.getClass()) {
-                    return false;
-                }
-                TracingAfterRoute that = (TracingAfterRoute) o;
-                return routeId.equals(that.routeId);
-            }
-
-            @Override
-            public int hashCode() {
-                return Objects.hash(routeId);
             }
         }
     }

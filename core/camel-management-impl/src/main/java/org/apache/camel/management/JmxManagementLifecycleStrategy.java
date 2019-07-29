@@ -67,6 +67,7 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
 import org.apache.camel.management.mbean.ManagedThrottlingExceptionRoutePolicy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
+import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.management.mbean.ManagedTransformerRegistry;
 import org.apache.camel.management.mbean.ManagedTypeConverterRegistry;
 import org.apache.camel.management.mbean.ManagedValidatorRegistry;
@@ -98,6 +99,7 @@ import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWork;
@@ -489,6 +491,10 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
                 managedBacklogDebuggers.put(backlogDebugger, md);
             }
             return md;
+        } else if (service instanceof Tracer) {
+            ManagedTracer mt = new ManagedTracer(camelContext, (Tracer) service);
+            mt.init(getManagementStrategy());
+            answer = mt;
         } else if (service instanceof DataFormat) {
             answer = getManagementObjectStrategy().getManagedObjectForDataFormat(context, (DataFormat) service);
         } else if (service instanceof Producer) {

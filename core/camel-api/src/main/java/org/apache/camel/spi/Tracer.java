@@ -44,12 +44,20 @@ public interface Tracer extends StaticService {
     void traceBeforeRoute(NamedRoute route, Exchange exchange);
 
     /**
-     * Trace at the given node
+     * Trace before the given node
      *
      * @param node      the node EIP
      * @param exchange  the exchange
      */
-    void trace(NamedNode node, Exchange exchange);
+    void traceBeforeNode(NamedNode node, Exchange exchange);
+
+    /**
+     * Trace after the given node
+     *
+     * @param node      the node EIP
+     * @param exchange  the exchange
+     */
+    void traceAfterNode(NamedNode node, Exchange exchange);
 
     /**
      * Trace after the route (eg output from route)
@@ -69,21 +77,47 @@ public interface Tracer extends StaticService {
      */
     void resetTraceCounter();
 
-    // TODO: Add javadoc
-
+    /**
+     * Whether the tracer is enabled
+     */
     boolean isEnabled();
 
+    /**
+     * Whether the tracer is enabled
+     */
     void setEnabled(boolean enabled);
 
+    /**
+     * Trace pattern to match which node EIPs to trace.
+     * Multiple patterns can be separated by comma.
+     * For example to match all to patterns, use to*.
+     */
     String getTracePattern();
 
+    /**
+     * Trace pattern to match which node EIPs to trace.
+     * Multiple patterns can be separated by comma.
+     * For example to match all to patterns, use to*.
+     */
     void setTracePattern(String tracePattern);
 
+    /**
+     * Whether to include tracing of before/after routes to trace the input and responses of routes.
+     */
     boolean isTraceBeforeAfterRoute();
 
+    /**
+     * Whether to include tracing of before/after routes to trace the input and responses of routes.
+     */
     void setTraceBeforeAfterRoute(boolean traceBeforeAfterRoute);
 
+    /**
+     * To use a custom exchange formatter for formatting the output of the {@link Exchange} in the trace logs.
+     */
     ExchangeFormatter getExchangeFormatter();
 
+    /**
+     * To use a custom exchange formatter for formatting the output of the {@link Exchange} in the trace logs.
+     */
     void setExchangeFormatter(ExchangeFormatter exchangeFormatter);
 }
