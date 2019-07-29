@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.micrometer.CamelJmxConfig;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.component.micrometer.eventnotifier.AbstractMicrometerEventNotifier;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 abstract class AbstractMicrometerEventNotifierTest extends CamelTestSupport {
