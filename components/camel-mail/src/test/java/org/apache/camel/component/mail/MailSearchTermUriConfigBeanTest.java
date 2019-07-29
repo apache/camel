@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.mail;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
 public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("mySearchTerm")
+    public SimpleSearchTerm addSearchTerm() throws Exception {
         SimpleSearchTerm mySearchTerm = new SimpleSearchTerm();
         mySearchTerm.setSubjectOrBody("Camel");
 
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySearchTerm", mySearchTerm);
-        return jndi;
+        return mySearchTerm;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

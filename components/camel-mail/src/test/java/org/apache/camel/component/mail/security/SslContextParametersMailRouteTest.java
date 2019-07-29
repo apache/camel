@@ -21,11 +21,13 @@ import java.util.Map;
 
 import javax.net.ssl.SSLHandshakeException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mail.MailTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,6 +45,9 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
     private String imapHost = "imap.gmail.com";
     private String smtpHost = "smtp.gmail.com";
     private String password = "PASSWORD";
+    
+    @BindToRegistry("sslContextParameters")
+    private SSLContextParameters params = MailTestHelper.createSslContextParameters();
     
     @Test
     public void testSendAndReceiveMails() throws Exception {
@@ -103,19 +108,6 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
             assertTrue(e.getCause().getCause().getMessage().contains(
                     "unable to find valid certification path to requested target"));
         }
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        
-        addSslContextParametersToRegistry(reg);
-    
-        return reg;
-    }
-    
-    protected void addSslContextParametersToRegistry(JndiRegistry registry) {
-        registry.bind("sslContextParameters", MailTestHelper.createSslContextParameters());
     }
     
     /**

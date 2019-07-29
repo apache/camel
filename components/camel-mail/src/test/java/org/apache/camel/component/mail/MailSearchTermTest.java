@@ -22,6 +22,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -34,6 +35,9 @@ import static org.apache.camel.component.mail.SearchTermBuilder.Op;
 
 public class MailSearchTermTest extends CamelTestSupport {
 
+	@BindToRegistry("myTerm")
+	private SearchTerm term = createSearchTerm();
+	
     @Override
     @Before
     public void setUp() throws Exception {
@@ -47,13 +51,6 @@ public class MailSearchTermTest extends CamelTestSupport {
         build.unseen().subject("Camel").body(Op.or, "Camel");
 
         return build.build();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myTerm", createSearchTerm());
-        return jndi;
     }
 
     @Test

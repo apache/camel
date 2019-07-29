@@ -21,8 +21,11 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
+import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -36,21 +39,21 @@ import org.jvnet.mock_javamail.Mailbox;
  * SortUtilTest.
  */
 public class MailSortTermTest extends CamelTestSupport {
+	
+	@BindToRegistry("sortAscendingDate")
+	private SortTerm[] termAscDate = new SortTerm[]{SortTerm.DATE};
+	
+    @BindToRegistry("sortDescendingDate")
+    private SortTerm[] termDescDate = new SortTerm[]{SortTerm.REVERSE, SortTerm.DATE};
+    
+    @BindToRegistry("searchTerm")
+    private SearchTerm searchTerm = new SearchTermBuilder().subject("Camel").build();
 
     @Override
     @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("sortAscendingDate", new SortTerm[]{SortTerm.DATE});
-        jndi.bind("sortDescendingDate", new SortTerm[]{SortTerm.REVERSE, SortTerm.DATE});
-        jndi.bind("searchTerm", new SearchTermBuilder().subject("Camel").build());
-        return jndi;
     }
 
     @Test
