@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StringHelper;
 
 /**
