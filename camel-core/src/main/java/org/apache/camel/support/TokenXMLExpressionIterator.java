@@ -201,7 +201,8 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         String getNext(boolean first) {
             // initialize inherited namespaces on first
             if (first && inheritNamespaceToken != null && !wrapToken) {
-                rootTokenNamespaces =  getNamespacesFromNamespaceToken(scanner.findWithinHorizon(inheritNamespaceTokenPattern, 0)).split(" ");
+            	String rootTokenNamespacesString = getNamespacesFromNamespaceToken(scanner.findWithinHorizon(inheritNamespaceTokenPattern, 0));
+                rootTokenNamespaces =  rootTokenNamespacesString == null ? null : rootTokenNamespacesString.split(" ");
             }
 
             String next = scanner.findWithinHorizon(tagTokenPattern, 0);
