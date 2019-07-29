@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -61,15 +62,13 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
         return context;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry("target")
+    public SjmsComponent addTargetComponent() throws Exception {
 
         SjmsComponent target = new SjmsComponent();
         target.setConnectionFactory(new ActiveMQConnectionFactory(broker.getVmURL()));
-        registry.bind("target", target);
 
-        return registry;
+        return target;
     }
 
     @Override
