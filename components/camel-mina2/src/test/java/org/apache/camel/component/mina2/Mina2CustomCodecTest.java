@@ -36,10 +36,10 @@ import org.junit.Test;
  * Unit test with custom codec.
  */
 public class Mina2CustomCodecTest extends BaseMina2Test {
-	
-	@BindToRegistry("myCodec")
-	private MyCodec codec1 = new MyCodec();
-	
+
+    @BindToRegistry("myCodec")
+    private MyCodec codec1 = new MyCodec();
+
     @BindToRegistry("failingCodec")
     private MyCodec codec2 = new MyCodec(true);
 
@@ -136,10 +136,9 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
             return new ProtocolEncoder() {
 
                 @Override
-                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
-                    throws Exception {
+                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String) message;
+                    String s = (String)message;
                     bb.put(s.getBytes("US-ASCII"));
                     bb.flip();
                     out.write(bb);

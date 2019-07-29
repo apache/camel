@@ -32,10 +32,11 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.junit.Test;
 
 /**
- * Unit test to test what happens if remote server closes session but doesn't reply
+ * Unit test to test what happens if remote server closes session but doesn't
+ * reply
  */
 public class Mina2NoResponseFromServerTest extends BaseMina2Test {
-	
+
     @BindToRegistry("myCodec")
     private MyCodec codec1 = new MyCodec();
 
@@ -68,8 +69,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         public ProtocolEncoder getEncoder(IoSession session) throws Exception {
             return new ProtocolEncoder() {
 
-                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
-                    throws Exception {
+                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out) throws Exception {
                     // close session instead of returning a reply
                     ioSession.closeNow();
                 }
@@ -84,14 +84,12 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         public ProtocolDecoder getDecoder(IoSession session) throws Exception {
             return new ProtocolDecoder() {
 
-                public void decode(IoSession ioSession, IoBuffer in,
-                                   ProtocolDecoderOutput out) throws Exception {
+                public void decode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
                     // close session instead of returning a reply
                     ioSession.closeNow();
                 }
 
-                public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput)
-                    throws Exception {
+                public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput) throws Exception {
                     // do nothing
                 }
 

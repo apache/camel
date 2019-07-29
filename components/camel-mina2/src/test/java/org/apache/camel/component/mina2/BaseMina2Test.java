@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina2;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
@@ -28,7 +29,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
 
 public class BaseMina2Test extends CamelTestSupport {
-    
+
     protected static final String KEY_STORE_PASSWORD = "changeit";
 
     private static volatile int port;
@@ -45,7 +46,7 @@ public class BaseMina2Test extends CamelTestSupport {
     protected int getPort() {
         return port;
     }
-    
+
     protected boolean isUseSslContext() {
         return false;
     }
@@ -63,8 +64,10 @@ public class BaseMina2Test extends CamelTestSupport {
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(ksp);
 
-        // NOTE: Needed since the client uses a loose trust configuration when no ssl context
-        // is provided.  We turn on WANT client-auth to prefer using authentication
+        // NOTE: Needed since the client uses a loose trust configuration when
+        // no ssl context
+        // is provided. We turn on WANT client-auth to prefer using
+        // authentication
         SSLContextServerParameters scsp = new SSLContextServerParameters();
         scsp.setClientAuthentication(ClientAuthentication.WANT.name());
 
