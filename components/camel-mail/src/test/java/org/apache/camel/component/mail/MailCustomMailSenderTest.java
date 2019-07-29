@@ -30,7 +30,7 @@ import org.junit.Test;
 public class MailCustomMailSenderTest extends CamelTestSupport {
 
     private static boolean sent;
-    
+
     @BindToRegistry("mySender")
     private MySender sender = new MySender();
 

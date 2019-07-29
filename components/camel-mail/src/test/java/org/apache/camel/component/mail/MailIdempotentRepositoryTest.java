@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -35,7 +36,7 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailIdempotentRepositoryTest extends CamelTestSupport {
 
-	@BindToRegistry("myRepo")
+    @BindToRegistry("myRepo")
     private MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
@@ -60,7 +61,8 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
         Thread.sleep(500);
 
         assertEquals(0, Mailbox.get("jones@localhost").getNewMessageCount());
-        // they get deleted after processing by default so we should be back to 0
+        // they get deleted after processing by default so we should be back to
+        // 0
         assertEquals(0, myRepo.getCacheSize());
     }
 
@@ -89,7 +91,7 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&consumer.initialDelay=100&consumer.delay=100").routeId("foo").noAutoStartup()
-                        .to("mock:result");
+                    .to("mock:result");
             }
         };
     }

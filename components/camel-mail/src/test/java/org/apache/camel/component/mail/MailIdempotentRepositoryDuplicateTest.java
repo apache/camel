@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -35,7 +36,7 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
 
-	@BindToRegistry("myRepo")
+    @BindToRegistry("myRepo")
     MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
@@ -94,7 +95,7 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&consumer.initialDelay=100&consumer.delay=100").routeId("foo").noAutoStartup()
-                        .to("mock:result");
+                    .to("mock:result");
             }
         };
     }
