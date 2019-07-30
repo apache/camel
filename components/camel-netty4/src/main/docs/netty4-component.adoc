@@ -654,7 +654,7 @@ very simple way.
 
 In order to add a custom pipeline, a custom channel pipeline factory
 must be created and registered with the context via the context registry
-(JNDIRegistry, or the camel-spring ApplicationContextRegistry etc).
+(Registry, or the camel-spring ApplicationContextRegistry etc).
 
 A custom pipeline factory must be constructed as follows
 
