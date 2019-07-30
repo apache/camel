@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.ProducerTemplate;
@@ -44,14 +45,8 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     // ************************************************
     // Setup
     // ************************************************
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("hello", new SampleBean());
-
-        return registry;
-    }
+    @BindToRegistry("hello")
+    private SampleBean bean = new SampleBean();
 
     public static class SampleBean {
         public String hello(String name) {
