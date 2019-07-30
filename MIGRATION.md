@@ -64,10 +64,11 @@ We have also modularized many of the core components and moved them out of `came
 Multiple CamelContexts per application not supported
 ----------------------------------------------------
 
-Support for multiple CamelContext's has been deprecated and only 1 CamelContext per deployment is supported.
+Support for multiple CamelContext's has been removed/deprecated and only 1 CamelContext per deployment is supported.
 The latter was not recommended anyway and was also not 100% implemented (for example in camel-cdi). For Camel 3 only 1 CamelContext per deployment is recommended and supported.
 
 The `context` attribute on the various Camel annotations such as `@EndpointInject`, `@Produce`, `@Consume` etc has therefore been removed.
+
 
 Migrating custom components
 ---------------------------
@@ -138,6 +139,9 @@ To
 
 And the same for `<setProperty>`.
 
+#### camel-cdi
+
+Support for multiple CamelContext's has been removed, and therefore `@ContextName` has been removed. Instead use standard CDI annotations such as `@Named` and `@ApplicationScoped`.
 
 ### javax.script
 
