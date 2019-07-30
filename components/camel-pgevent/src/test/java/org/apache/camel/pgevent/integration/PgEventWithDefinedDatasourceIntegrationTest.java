@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import com.impossibl.postgres.jdbc.PGDataSource;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -42,8 +43,8 @@ public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEvent
     @EndpointInject("mock:result")
     private MockEndpoint mockEndpoint;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("pgDataSource")
+    public PGDataSource loadDataSource() throws Exception {
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/test-options.properties"));
 
@@ -54,10 +55,8 @@ public class PgEventWithDefinedDatasourceIntegrationTest extends AbstractPgEvent
         dataSource.setUser(properties.getProperty("userName"));
         dataSource.setPassword(properties.getProperty("password"));
 
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("pgDataSource", dataSource);
 
-        return registry;
+        return dataSource;
     }
 
     @Test
