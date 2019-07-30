@@ -37,7 +37,8 @@ import org.apache.camel.support.service.ServiceHelper;
 public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, ShutdownableService {
 
     private final Endpoint delegate;
-    private Processor detour;
+    private Processor before;
+    private Processor after;
     private boolean skip;
 
     /**
@@ -51,13 +52,36 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
         this.skip = skip;
     }
 
+    @Deprecated
     public void setDetour(Processor detour) {
-        this.detour = detour;
+        setBefore(detour);
+    }
+
+    public void setBefore(Processor before) {
+        this.before = before;
+    }
+
+    public void setAfter(Processor after) {
+        this.after = after;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
     }
 
     @Override
     public Processor getDetour() {
-        return detour;
+        return getBefore();
+    }
+
+    @Override
+    public Processor getBefore() {
+        return before;
+    }
+
+    @Override
+    public Processor getAfter() {
+        return after;
     }
 
     @Override
@@ -125,16 +149,16 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     }
 
     public void start() {
-        ServiceHelper.startService(detour, delegate);
+        ServiceHelper.startService(before, delegate);
     }
 
     public void stop() {
-        ServiceHelper.stopService(delegate, detour);
+        ServiceHelper.stopService(delegate, before);
     }
 
     @Override
     public void shutdown() {
-        ServiceHelper.stopAndShutdownServices(delegate, detour);
+        ServiceHelper.stopAndShutdownServices(delegate, before);
     }
 
     @Override

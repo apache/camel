@@ -100,7 +100,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
             // allow custom logic
             producer = onInterceptEndpoint(uri, endpoint, mock, producer);
-            proxy.setDetour(producer);
+            proxy.setBefore(producer);
 
             return proxy;
         } else {

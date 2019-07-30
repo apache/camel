@@ -26,7 +26,10 @@ import org.apache.camel.impl.engine.DefaultInterceptSendToEndpoint;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
+import org.apache.camel.processor.SendDynamicProcessor;
+import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.EndpointHelper;
@@ -40,8 +43,23 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
 
     @Override
     public Processor createProcessor(final RouteContext routeContext) throws Exception {
-        // create the detour
-        final Processor detour = this.createChildProcessor(routeContext, true);
+        // create the before
+        final Processor before = this.createChildProcessor(routeContext, true);
+        // create the after
+        Processor afterProcessor = null;
+        if (definition.getAfterUri() != null) {
+            ToDefinition to = new ToDefinition(definition.getAfterUri());
+            // at first use custom factory
+            if (routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
+                afterProcessor = routeContext.getCamelContext().adapt(ExtendedCamelContext.class)
+                        .getProcessorFactory().createProcessor(routeContext, to);
+            }
+            // fallback to default implementation if factory did not create the processor
+            if (afterProcessor == null) {
+                afterProcessor = reifier(to).createProcessor(routeContext);
+            }
+        }
+        final Processor after = afterProcessor;
         final String matchURI = definition.getUri();
 
         // register endpoint callback so we can proxy the endpoint
@@ -55,7 +73,8 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
                     // should be false by default
                     boolean skip = definition.getSkipSendToOriginalEndpoint() != null && definition.getSkipSendToOriginalEndpoint();
                     DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
-                    proxy.setDetour(detour);
+                    proxy.setBefore(before);
+                    proxy.setAfter(after);
                     return proxy;
                 } else {
                     // no proxy so return regular endpoint
@@ -64,7 +83,6 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
             }
         });
 
-
         // remove the original intercepted route from the outputs as we do not intercept as the regular interceptor
         // instead we use the proxy endpoints producer do the triggering. That is we trigger when someone sends
         // an exchange to the endpoint, see InterceptSendToEndpoint for details.
@@ -72,7 +90,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         List<ProcessorDefinition<?>> outputs = route.getOutputs();
         outputs.remove(this);
 
-        return new InterceptEndpointProcessor(matchURI, detour);
+        return new InterceptEndpointProcessor(matchURI, before);
     }
 
     /**
