@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
-public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
+public class AdviceWithInterceptFromRemoveTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -30,50 +30,44 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAdviceOnExceptionRemove() throws Exception {
+    public void testAdviceInterceptRemove() throws Exception {
         context.addRoutes(createRouteBuilder());
 
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:c").expectedMessageCount(0);
         getMockEndpoint("mock:d").expectedMessageCount(0);
-        getMockEndpoint("mock:dead").expectedMessageCount(0);
+        getMockEndpoint("mock:intercept").expectedMessageCount(0);
 
         RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                weaveById("myException").remove();
+                weaveById("myIntercept").remove();
             }
         });
 
         context.start();
 
-        try {
-            template.sendBody("direct:foo", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertEquals("Forced", e.getCause().getMessage());
-        }
+        template.sendBody("direct:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testAdviceOnExceptionReplace() throws Exception {
+    public void testAdviceInterceptReplace() throws Exception {
         context.addRoutes(createRouteBuilder());
 
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:c").expectedMessageCount(0);
         getMockEndpoint("mock:d").expectedMessageCount(0);
-        getMockEndpoint("mock:dead").expectedMessageCount(0);
-        getMockEndpoint("mock:dead2").expectedMessageCount(1);
+        getMockEndpoint("mock:intercept").expectedMessageCount(0);
+        getMockEndpoint("mock:intercept2").expectedMessageCount(1);
 
         RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                weaveById("myException").replace().onException(Exception.class)
-                        .handled(true).to("mock:dead2");
+                weaveById("myIntercept").replace().to("mock:intercept2");
             }
         });
 
@@ -89,17 +83,13 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).id("myException")
-                        .handled(true)
-                        .transform(constant("Bye World")).to("mock:dead");
+                interceptFrom().id("myIntercept").transform(constant("Bye World")).to("mock:intercept");
 
                 from("direct:bar").routeId("bar")
                         .to("mock:c").to("mock:d");
 
                 from("direct:foo").routeId("foo")
-                        .to("mock:a")
-                        .throwException(new IllegalArgumentException("Forced"))
-                        .to("mock:b");
+                        .to("mock:a").to("mock:b");
 
             }
         };

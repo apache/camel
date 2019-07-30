@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.model.PipelineDefinition;
+import org.apache.camel.model.AdviceWithDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 
@@ -130,7 +130,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
      */
     public ProcessorDefinition<?> replace() {
         RouteDefinition route = builder.getOriginalRoute();
-        PipelineDefinition answer = new PipelineDefinition();
+        AdviceWithDefinition answer = new AdviceWithDefinition();
         if (id != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.replaceById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
@@ -166,7 +166,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
      */
     public ProcessorDefinition<?> before() {
         RouteDefinition route = builder.getOriginalRoute();
-        PipelineDefinition answer = new PipelineDefinition();
+        AdviceWithDefinition answer = new AdviceWithDefinition();
         if (id != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.beforeById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {
@@ -186,7 +186,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
      */
     public ProcessorDefinition<?> after() {
         RouteDefinition route = builder.getOriginalRoute();
-        PipelineDefinition answer = new PipelineDefinition();
+        AdviceWithDefinition answer = new AdviceWithDefinition();
         if (id != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.afterById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo, maxDeep));
         } else if (toString != null) {

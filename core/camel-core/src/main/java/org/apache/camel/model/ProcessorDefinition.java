@@ -172,8 +172,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             return;
         }
 
-        // validate that top-level is only added on the route (eg top level)
-        boolean parentIsRoute = RouteDefinition.class.isAssignableFrom(this.getClass());
+        // validate that top-level is only added on the route (eg top level) (or still allow if using advice-with)
+        boolean parentIsRoute = RouteDefinition.class.isAssignableFrom(this.getClass())
+                || AdviceWithDefinition.class.isAssignableFrom(this.getClass());
         if (output.isTopLevelOnly() && !parentIsRoute) {
             throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
         }
