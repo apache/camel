@@ -157,8 +157,7 @@ final class XmlCdiBeanFactory {
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
         if (hasId(factory)) {
-            addAll(annotations,
-                ContextName.Literal.of(factory.getId()), NamedLiteral.of(factory.getId()));
+            addAll(annotations, NamedLiteral.of(factory.getId()));
         } else {
             annotations.add(DEFAULT);
             factory.setImplicitId(true);
@@ -250,7 +249,6 @@ final class XmlCdiBeanFactory {
 
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
-        // FIXME: should add @ContextName if the Camel context bean has it
         annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : DEFAULT);
 
         // TODO: should that be @Singleton to enable injection points with bean instance type?

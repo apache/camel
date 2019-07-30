@@ -273,24 +273,6 @@ public class CdiCamelExtension implements Extension {
             .map(Bean::getQualifiers)
             .forEach(contextQualifiers::addAll);
 
-        // From the @ContextName qualifiers on RoutesBuilder and RouteContainer beans
-        List<Bean<?>> routeBeans = cdiBeans.stream()
-            .filter(hasType(RoutesBuilder.class).or(hasType(RouteContainer.class)))
-            .filter(bean -> bean.getQualifiers()
-                .stream()
-                .filter(isAnnotationType(ContextName.class).and(name -> !contextQualifiers.contains(name)))
-                .peek(contextQualifiers::add)
-                .count() > 0
-            )
-            .collect(Collectors.toList());
-
-        for (Bean<?> bean : routeBeans) {
-            Optional<Annotation> annotation = bean.getQualifiers()
-                .stream()
-                .filter(isAnnotationType(ContextName.class)).findFirst();
-            extraBeans.add(camelContextBean(manager, bean.getBeanClass(), ANY, annotation.get(), APPLICATION_SCOPED));
-        }
-
         Set<Bean<?>> allBeans = concat(cdiBeans.stream(), extraBeans.stream())
             .collect(toSet());
         Set<Bean<?>> contexts = allBeans.stream()

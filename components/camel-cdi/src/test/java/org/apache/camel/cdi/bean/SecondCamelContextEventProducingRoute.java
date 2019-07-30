@@ -18,17 +18,17 @@ package org.apache.camel.cdi.bean;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CdiEventEndpoint;
-import org.apache.camel.cdi.ContextName;
 
 @ApplicationScoped
-@ContextName("second")
+@Named("second")
 public class SecondCamelContextEventProducingRoute extends RouteBuilder {
 
     @Inject
-    @ContextName("second")
+    @Named("second")
     private CdiEventEndpoint<String> stringCdiEventEndpoint;
 
     @Override
