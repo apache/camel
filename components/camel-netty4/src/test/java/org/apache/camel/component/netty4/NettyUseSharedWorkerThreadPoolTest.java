@@ -20,7 +20,6 @@ import io.netty.channel.EventLoopGroup;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {

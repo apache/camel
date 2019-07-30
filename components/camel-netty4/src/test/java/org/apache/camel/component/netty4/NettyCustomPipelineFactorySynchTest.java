@@ -28,11 +28,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty4.NettyCustomPipelineFactoryAsynchTest.TestClientChannelInitializerFactory;
-import org.apache.camel.component.netty4.NettyCustomPipelineFactoryAsynchTest.TestServerChannelPipelineFactory;
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
