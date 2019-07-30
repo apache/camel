@@ -25,8 +25,8 @@ import org.junit.Test;
 
 public class NettySSLPassphaseBeanTest extends BaseNettyTest {
 
-	@BindToRegistry("myBean")
-	private String bean = "changeit"; 
+    @BindToRegistry("myBean")
+    private String bean = "changeit";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -45,16 +45,16 @@ public class NettySSLPassphaseBeanTest extends BaseNettyTest {
                 from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");                           
+                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                         }
                     });
             }
         });
         context.start();
 
-        String response = template.requestBody(
-                "netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks",
-                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
+        String response = template
+            .requestBody("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#myBean&keyStoreResource=classpath:keystore.jks&trustStoreResource=classpath:keystore.jks",
+                         "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
 

@@ -41,10 +41,10 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
     private int port1;
     private int port2;
-    
+
     @BindToRegistry("length-decoder")
     private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-    
+
     @BindToRegistry("length-decoder2")
     private ChannelHandlerFactory decoder2 = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
@@ -52,8 +52,8 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
     public void canSupplyMultipleCodecsToEndpointPipeline() throws Exception {
         byte[] sPort1 = new byte[8192];
         byte[] sPort2 = new byte[16383];
-        Arrays.fill(sPort1, (byte) 0x38);
-        Arrays.fill(sPort2, (byte) 0x39);
+        Arrays.fill(sPort1, (byte)0x38);
+        Arrays.fill(sPort2, (byte)0x39);
         byte[] bodyPort1 = (new String(LENGTH_HEADER) + new String(sPort1)).getBytes();
         byte[] bodyPort2 = (new String(LENGTH_HEADER) + new String(sPort2)).getBytes();
 
@@ -83,12 +83,9 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
                 port1 = getPort();
                 port2 = getNextPort();
 
-                from("netty4:tcp://localhost:" + port1 + "?decoders=#length-decoder&sync=false")
-                        .process(processor);
+                from("netty4:tcp://localhost:" + port1 + "?decoders=#length-decoder&sync=false").process(processor);
 
-                from("netty4:tcp://localhost:" + port2 + "?decoders=#length-decoder2&sync=false")
-                        .process(processor)
-                        .to("mock:result");
+                from("netty4:tcp://localhost:" + port2 + "?decoders=#length-decoder2&sync=false").process(processor).to("mock:result");
             }
         };
     }
