@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.support.ReactiveStreamsTestSupport;
-import org.apache.camel.impl.JndiRegistry;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
