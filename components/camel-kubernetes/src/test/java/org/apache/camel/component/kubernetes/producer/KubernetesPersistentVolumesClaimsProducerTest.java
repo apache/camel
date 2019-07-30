@@ -34,7 +34,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 
