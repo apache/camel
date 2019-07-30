@@ -190,7 +190,7 @@ public interface UnitOfWork extends Service {
     /**
      * Strategy for optional work to be execute before processing
      * <p/>
-     * For example the {@link org.apache.camel.impl.MDCUnitOfWork} leverages this
+     * For example the MDCUnitOfWork leverages this
      * to ensure MDC is handled correctly during routing exchanges using the
      * asynchronous routing engine.
      *
@@ -214,15 +214,13 @@ public interface UnitOfWork extends Service {
     /**
      * Create a child unit of work, which is associated to this unit of work as its parent.
      * <p/>
-     * This is often used when EIPs need to support {@link SubUnitOfWork}s. For example a splitter,
+     * This is often used when EIPs need to support child unit of works. For example a splitter,
      * where the sub messages of the splitter all participate in the same sub unit of work.
      * That sub unit of work then decides whether the Splitter (in general) is failed or a
      * processed successfully.
      *
      * @param childExchange the child exchange
      * @return the created child unit of work
-     * @see SubUnitOfWork
-     * @see SubUnitOfWorkCallback
      */
     UnitOfWork createChildUnitOfWork(Exchange childExchange);
 
@@ -232,31 +230,5 @@ public interface UnitOfWork extends Service {
      * @param parentUnitOfWork the parent
      */
     void setParentUnitOfWork(UnitOfWork parentUnitOfWork);
-
-    /**
-     * Gets the {@link SubUnitOfWorkCallback} if this unit of work participates in a sub unit of work.
-     *
-     * @return the callback, or <tt>null</tt> if this unit of work is not part of a sub unit of work.
-     * @see #beginSubUnitOfWork(org.apache.camel.Exchange)
-     */
-    SubUnitOfWorkCallback getSubUnitOfWorkCallback();
-
-    /**
-     * Begins a {@link SubUnitOfWork}, where sub (child) unit of works participate in a parent unit of work.
-     * The {@link SubUnitOfWork} will callback to the parent unit of work using {@link SubUnitOfWorkCallback}s.
-     *
-     * @param exchange the exchange
-     */
-    void beginSubUnitOfWork(Exchange exchange);
-
-    /**
-     * Ends a {@link SubUnitOfWork}.
-     * <p/>
-     * The {@link #beginSubUnitOfWork(org.apache.camel.Exchange)} must have been invoked
-     * prior to this operation.
-     *
-     * @param exchange the exchange
-     */
-    void endSubUnitOfWork(Exchange exchange);
 
 }

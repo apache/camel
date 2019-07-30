@@ -627,25 +627,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
-     * Advice when an EIP uses the <tt>shareUnitOfWork</tt> functionality.
-     */
-    public static class SubUnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
-
-        @Override
-        public UnitOfWork before(Exchange exchange) throws Exception {
-            // begin savepoint
-            exchange.getUnitOfWork().beginSubUnitOfWork(exchange);
-            return exchange.getUnitOfWork();
-        }
-
-        @Override
-        public void after(Exchange exchange, UnitOfWork unitOfWork) throws Exception {
-            // end sub unit of work
-            unitOfWork.endSubUnitOfWork(exchange);
-        }
-    }
-
-    /**
      * Advice when Message History has been enabled.
      */
     @SuppressWarnings("unchecked")

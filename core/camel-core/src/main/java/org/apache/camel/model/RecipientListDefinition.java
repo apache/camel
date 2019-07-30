@@ -329,7 +329,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      * This means each sub exchange has its own individual unit of work.
      *
      * @return the builder.
-     * @see org.apache.camel.spi.SubUnitOfWork
      */
     public RecipientListDefinition<Type> shareUnitOfWork() {
         setShareUnitOfWork(true);
