@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
-public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
+public class AdviceWithErrorHandlerRemoveTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -30,7 +30,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAdviceOnExceptionRemove() throws Exception {
+    public void testAdviceErrorHandlerRemove() throws Exception {
         context.addRoutes(createRouteBuilder());
 
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
@@ -42,7 +42,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                weaveById("myException").remove();
+                getOriginalRoute().errorHandler(noErrorHandler());
             }
         });
 
@@ -59,7 +59,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
     }
 
     @Test
-    public void testAdviceOnExceptionReplace() throws Exception {
+    public void testAdviceErrorHandlerReplace() throws Exception {
         context.addRoutes(createRouteBuilder());
 
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
@@ -72,8 +72,8 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                weaveById("myException").replace().onException(Exception.class)
-                        .handled(true).to("mock:dead2");
+                // override errorHandler by using on exception
+                weaveAddFirst().onException(Exception.class).handled(true).to("mock:dead2");
             }
         });
 
@@ -89,18 +89,14 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).id("myException")
-                        .handled(true)
-                        .transform(constant("Bye World")).to("mock:dead");
-
                 from("direct:bar").routeId("bar")
                         .to("mock:c").to("mock:d");
 
                 from("direct:foo").routeId("foo")
+                        .errorHandler(deadLetterChannel("mock:dead"))
                         .to("mock:a")
                         .throwException(new IllegalArgumentException("Forced"))
                         .to("mock:b");
-
             }
         };
     }

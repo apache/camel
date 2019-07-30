@@ -21,9 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.model.AdviceWithDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.OnCompletionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -174,16 +180,19 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output, route);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                outputs.add(index + 1, replace);
+                                // flattern as replace uses a pipeline as temporary holder
+                                ProcessorDefinition<?> flattern = flatternOutput(replace);
+                                outputs.add(index + 1, flattern);
                                 Object old = outputs.remove(index);
                                 // must set parent on the node we added in the route
-                                replace.setParent(output.getParent());
-                                LOG.info("AdviceWith ({}) : [{}] --> replace [{}]", matchBy.getId(), old, replace);
+                                ProcessorDefinition parent = output.getParent() != null ? output.getParent() : route;
+                                flattern.setParent(parent);
+                                LOG.info("AdviceWith ({}) : [{}] --> replace [{}]", matchBy.getId(), old, flattern);
                             }
                         }
                     }
@@ -229,7 +238,7 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output, route);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
@@ -281,16 +290,19 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output, route);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
+                                // flattern as before uses a pipeline as temporary holder
+                                ProcessorDefinition<?> flattern = flatternOutput(before);
                                 Object existing = outputs.get(index);
-                                outputs.add(index, before);
+                                outputs.add(index, flattern);
                                 // must set parent on the node we added in the route
-                                before.setParent(output.getParent());
-                                LOG.info("AdviceWith ({}) : [{}] --> before [{}]", matchBy.getId(), existing, before);
+                                ProcessorDefinition parent = output.getParent() != null ? output.getParent() : route;
+                                flattern.setParent(parent);
+                                LOG.info("AdviceWith ({}) : [{}] --> before [{}]", matchBy.getId(), existing, flattern);
                             }
                         }
                     }
@@ -336,16 +348,19 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        List<ProcessorDefinition<?>> outputs = getOutputs(output);
+                        List<ProcessorDefinition<?>> outputs = getOutputs(output, route);
                         if (outputs != null) {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
+                                // flattern as after uses a pipeline as temporary holder
+                                ProcessorDefinition<?> flattern = flatternOutput(after);
                                 Object existing = outputs.get(index);
-                                outputs.add(index + 1, after);
+                                outputs.add(index + 1, flattern);
                                 // must set parent on the node we added in the route
-                                after.setParent(output.getParent());
-                                LOG.info("AdviceWith ({}) : [{}] --> after [{}]", matchBy.getId(), existing, after);
+                                ProcessorDefinition parent = output.getParent() != null ? output.getParent() : route;
+                                flattern.setParent(parent);
+                                LOG.info("AdviceWith ({}) : [{}] --> after [{}]", matchBy.getId(), existing, flattern);
                             }
                         }
                     }
@@ -366,10 +381,21 @@ public final class AdviceWithTasks {
      * @param node the node
      * @return <tt>null</tt> if not outputs to be used
      */
-    private static List<ProcessorDefinition<?>> getOutputs(ProcessorDefinition<?> node) {
+    private static List<ProcessorDefinition<?>> getOutputs(ProcessorDefinition<?> node, RouteDefinition route) {
         if (node == null) {
             return null;
         }
+        // for intercept/onException/onCompletion then we want to work on the route outputs as they are top-level
+        if (node instanceof InterceptDefinition) {
+            return route.getOutputs();
+        } else if (node instanceof InterceptSendToEndpointDefinition) {
+            return route.getOutputs();
+        } else if (node instanceof OnExceptionDefinition) {
+            return route.getOutputs();
+        } else if (node instanceof OnCompletionDefinition) {
+            return route.getOutputs();
+        }
+
         ProcessorDefinition<?> parent = node.getParent();
         if (parent == null) {
             return null;
@@ -517,6 +543,21 @@ public final class AdviceWithTasks {
                 // noop
             }
         };
+    }
+
+    private static ProcessorDefinition<?> flatternOutput(ProcessorDefinition<?> output) {
+        if (output instanceof AdviceWithDefinition) {
+            AdviceWithDefinition advice = (AdviceWithDefinition) output;
+            if (advice.getOutputs().size() == 1) {
+                return advice.getOutputs().get(0);
+            } else {
+                // it should be a pipeline
+                PipelineDefinition pipe = new PipelineDefinition();
+                pipe.setOutputs(advice.getOutputs());
+                return pipe;
+            }
+        }
+        return output;
     }
 
 }

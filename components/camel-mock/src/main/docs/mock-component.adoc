@@ -164,7 +164,6 @@ invoked. This can be configured by setting the
 
 == Using assertPeriod
 
-*Available as of Camel 2.7* +
 When the assertion is satisfied then Camel will stop waiting and
 continue from the `assertIsSatisfied` method. That means if a new
 message arrives on the mock endpoint, just a bit later, that arrival
@@ -249,8 +248,6 @@ https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/
 processor tests].
 
 == Mocking existing endpoints
-
-*Available as of Camel 2.7*
 
 Camel now allows you to automatically mock existing endpoints in your
 Camel routes.
@@ -376,8 +373,6 @@ in the constructor for the bean:
 
 == Mocking endpoints and skip sending to original endpoint
 
-*Available as of Camel 2.10*
-
 Sometimes you want to easily mock and skip sending to a certain
 endpoints. So the message is detoured and send to the mock endpoint
 only. You can now use the `mockEndpointsAndSkip`
@@ -401,8 +396,6 @@ include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test
 ----
 
 == Limiting the number of messages to keep
-
-*Available as of Camel 2.10*
 
 The xref:mock-component.adoc[Mock] endpoints will by default keep a copy of every
 Exchange that it received. So if you test with a lot
@@ -436,8 +429,6 @@ the retained messages. In the example above they can test only the
 expectations on the 10 retained messages.
 
 == Testing with arrival times
-
-*Available as of Camel 2.7*
 
 The xref:mock-component.adoc[Mock] endpoint stores the arrival time of the message
 as a property on the Exchange.
