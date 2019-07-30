@@ -643,6 +643,9 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected void initCamelContext() throws Exception {
         camelContext = createCamelContext();
+        if (camelContext == null) {
+            throw new IllegalStateException("Created CamelContext is null");
+        }
         postProcessCamelContext(camelContext);
     }
 
