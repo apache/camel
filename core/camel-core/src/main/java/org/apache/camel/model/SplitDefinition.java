@@ -292,7 +292,6 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
      * This means each splitted exchange has its own individual unit of work.
      *
      * @return the builder.
-     * @see org.apache.camel.spi.SubUnitOfWork
      */
     public SplitDefinition shareUnitOfWork() {
         setShareUnitOfWork(true);

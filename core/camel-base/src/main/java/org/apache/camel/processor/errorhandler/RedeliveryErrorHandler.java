@@ -40,7 +40,6 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ShutdownPrepared;
-import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -409,25 +408,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
             if (!redeliverAllowed || exhausted) {
-                Processor target = null;
-                boolean deliver = true;
-
-                // the unit of work may have an optional callback associated we need to leverage
-                UnitOfWork uow = exchange.getUnitOfWork();
-                if (uow != null) {
-                    SubUnitOfWorkCallback uowCallback = uow.getSubUnitOfWorkCallback();
-                    if (uowCallback != null) {
-                        // signal to the callback we are exhausted
-                        uowCallback.onExhausted(exchange);
-                        // do not deliver to the failure processor as its been handled by the callback instead
-                        deliver = false;
-                    }
-                }
-
-                if (deliver) {
-                    // should deliver to failure processor (either from onException or the dead letter channel)
-                    target = failureProcessor != null ? failureProcessor : deadLetter;
-                }
+                Processor target = failureProcessor != null ? failureProcessor : deadLetter;
                 // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
                 // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
                 boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;

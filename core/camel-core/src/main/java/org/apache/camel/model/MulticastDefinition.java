@@ -297,7 +297,6 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      * This means each sub exchange has its own individual unit of work.
      *
      * @return the builder.
-     * @see org.apache.camel.spi.SubUnitOfWork
      */
     public MulticastDefinition shareUnitOfWork() {
         setShareUnitOfWork(true);
