@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,8 +31,8 @@ import org.junit.Test;
 
 public class NettySSLContextParametersTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("sslContextParameters")
+    public SSLContextParameters loadSSLContextParams() throws Exception {
         
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("keystore.jks").toString());
@@ -54,9 +55,7 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
 
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", sslContextParameters);
-        return registry;
+        return sslContextParameters;
     }
     
     @Override

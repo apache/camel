@@ -16,27 +16,30 @@
  */
 package org.apache.camel.component.netty4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
+import io.netty.channel.ChannelHandler;
+
 public class NettyCustomCodecTest extends BaseNettyTest {
+	
+	@BindToRegistry("myCustomDecoder")
+	private ChannelHandlerFactory customDec = MyCustomCodec.createMyCustomDecoder();
+	
+	@BindToRegistry("myCustomDecoder2")
+	private ChannelHandler customDec2 = MyCustomCodec.createMyCustomDecoder2();
+	
+	@BindToRegistry("myCustomEncoder")
+	private ChannelHandler customEnc = MyCustomCodec.createMyCustomEncoder();
 
     private String uri = "netty4:tcp://localhost:{{port}}?disconnect=true&sync=false"
         + "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoders=#myCustomEncoder";
 
     // use reaadble bytes
     private byte[] data = new byte[]{65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0};
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCustomDecoder", MyCustomCodec.createMyCustomDecoder());
-        jndi.bind("myCustomDecoder2", MyCustomCodec.createMyCustomDecoder2());
-        jndi.bind("myCustomEncoder", MyCustomCodec.createMyCustomEncoder());
-        return jndi;
-    }
 
     @Test
     public void testCustomCodec() throws Exception {

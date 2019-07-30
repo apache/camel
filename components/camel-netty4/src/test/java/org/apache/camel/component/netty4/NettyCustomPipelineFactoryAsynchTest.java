@@ -23,6 +23,8 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,14 +37,12 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
 
     private volatile boolean clientInvoked;
     private volatile boolean serverInvoked;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cpf", new TestClientChannelInitializerFactory(null));
-        registry.bind("spf", new TestServerChannelPipelineFactory(null));
-        return registry;
-    }
+    
+    @BindToRegistry("cpf")
+    private TestClientChannelInitializerFactory testClientFactory = new TestClientChannelInitializerFactory(null);
+    
+    @BindToRegistry("spf")
+    private TestServerChannelPipelineFactory testServerFactory = new TestServerChannelPipelineFactory(null);
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

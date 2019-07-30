@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,17 +39,9 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
 
     private Processor processor = new P();
     private int port;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        // create a single decoder
-        ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-        registry.bind("length-decoder", decoder);
-
-        return registry;
-    }
+    
+    @BindToRegistry("length-decoder")
+    private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @Test
     public void unsharableCodecsConflictsTest() throws Exception {

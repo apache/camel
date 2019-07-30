@@ -23,9 +23,13 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty4.NettyCustomPipelineFactoryAsynchTest.TestClientChannelInitializerFactory;
+import org.apache.camel.component.netty4.NettyCustomPipelineFactoryAsynchTest.TestServerChannelPipelineFactory;
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.impl.JndiRegistry;
@@ -36,13 +40,11 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
     private volatile boolean clientInvoked;
     private volatile boolean serverInvoked;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("cpf", new TestClientChannelPipelineFactory(null));
-        registry.bind("spf", new TestServerChannelPipelineFactory(null));
-        return registry;
-    }
+    @BindToRegistry("cpf")
+    private TestClientChannelPipelineFactory testClientFactory = new TestClientChannelPipelineFactory(null);
+    
+    @BindToRegistry("spf")
+    private TestServerChannelPipelineFactory testServerFactory = new TestServerChannelPipelineFactory(null);
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
