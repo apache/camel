@@ -17,7 +17,6 @@
 package org.apache.camel.component.rabbitmq;
 
 import com.rabbitmq.client.ConnectionFactory;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
