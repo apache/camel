@@ -23,6 +23,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -33,6 +35,9 @@ import org.junit.Test;
 import org.reactivestreams.Publisher;
 
 public class DirectClientAPITest extends ReactiveStreamsTestSupport {
+	
+	@BindToRegistry("hello")
+	private SampleBean bean = new SampleBean();
 
     @Test
     public void testFromDirect() throws Exception {
@@ -271,13 +276,6 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
             String content = ex.getIn().getBody(String.class);
             assertEquals("after stream: " + (-id++), content);
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("hello", new SampleBean());
-        return registry;
     }
 
     public static class SampleBean {
