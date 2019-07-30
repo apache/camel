@@ -27,7 +27,6 @@ import io.netty.handler.codec.http.HttpContentDecompressor;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyHttpCompressTest extends BaseNettyTest {
