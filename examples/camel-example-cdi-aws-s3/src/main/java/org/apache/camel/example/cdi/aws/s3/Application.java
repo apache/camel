@@ -17,7 +17,7 @@
 package org.apache.camel.example.cdi.aws.s3;
 
 import java.io.File;
-
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
@@ -28,15 +28,13 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 
 public class Application {
 
-    @ContextName("camel-example-aws-s3-cdi")
+    @ApplicationScoped
     static class AwsS3Route extends RouteBuilder {
 
         @Override
