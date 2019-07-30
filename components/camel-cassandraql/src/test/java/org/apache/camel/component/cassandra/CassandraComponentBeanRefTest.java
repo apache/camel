@@ -21,6 +21,8 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.cassandraunit.CassandraCQLUnit;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,8 +39,8 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
         if (canTest()) {
             Cluster cluster = Cluster.builder()
                     .addContactPoint("localhost")
