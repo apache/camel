@@ -18,14 +18,12 @@ package org.apache.camel.component.netty4;
 
 import java.util.concurrent.TimeUnit;
 
-import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettySingleCodecTest extends BaseNettyTest {
