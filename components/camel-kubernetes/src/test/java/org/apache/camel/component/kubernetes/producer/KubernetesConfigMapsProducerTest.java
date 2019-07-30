@@ -24,8 +24,10 @@ import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.api.model.ConfigMapListBuilder;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,11 +42,9 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     @Rule
     public KubernetesServer server = new KubernetesServer();
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("kubernetesClient", server.getClient());
-        return registry;
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+    return server.getClient();
     }
 
     @Test

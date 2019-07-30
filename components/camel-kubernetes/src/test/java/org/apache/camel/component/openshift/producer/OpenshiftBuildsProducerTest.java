@@ -25,6 +25,7 @@ import io.fabric8.openshift.api.model.BuildListBuilder;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.server.mock.OpenShiftServer;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,11 +40,9 @@ public class OpenshiftBuildsProducerTest extends KubernetesTestSupport {
     @Rule
     public OpenShiftServer server = new OpenShiftServer();
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("client", server.getKubernetesClient().adapt(OpenShiftClient.class));
-        return registry;
+    @BindToRegistry("client")
+    public OpenShiftClient loadClient() throws Exception {
+        return server.getKubernetesClient().adapt(OpenShiftClient.class);
     }
 
     @Test
