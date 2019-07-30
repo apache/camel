@@ -492,7 +492,7 @@ Imagine you have the following route in your application:
 ----
 public class Application {
 
-    @ContextName("camel-test-cdi")
+    @ApplicationScoped
     static class Hello extends RouteBuilder {
 
         @Override
@@ -606,7 +606,7 @@ class, e.g.:
 public class CamelCdiTest {
 
     @Default
-    @ContextName("camel-test-cdi")
+    @Named("camel-test-cdi")
     @ApplicationScoped
     static class CustomCamelContext extends DefaultCamelContext {
 

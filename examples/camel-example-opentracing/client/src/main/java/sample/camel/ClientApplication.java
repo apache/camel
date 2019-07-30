@@ -16,13 +16,13 @@
  */
 package sample.camel;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.opentracing.OpenTracingTracer;
 import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 
-@ContextName("Server1")
+@ApplicationScoped
 public class ClientApplication {
 
     public void setupCamel(@Observes CamelContextStartingEvent event) {

@@ -113,17 +113,14 @@ TypeConverter converter;
 == Camel context configuration
 
 If you just want to change the name of the default `CamelContext` bean,
-you can used the `@ContextName` qualifier provided by Camel CDI, e.g.:
+you can used the `@Named` qualifier provided by CDI, e.g.:
 
 [source,java]
 ----
-@ContextName("camel-context")
-class MyRouteBean extends RouteBuilder {
+@ApplicationScoped
+@Named("myCamelName")
+class CustomCamelContext extends DefaultCamelContext {
 
-    @Override
-    public void configure() {
-        from("jms:invoices").to("file:/invoices");
-    }
 }
 ----
 
@@ -139,7 +136,7 @@ class CustomCamelContext extends DefaultCamelContext {
 
     @PostConstruct
     void customize() {
-        // Set the Camel context name
+        // Or set the Camel context name here
         setName("custom");
         // Disable JMX
         disableJMX();
@@ -351,7 +348,6 @@ Endpoint endpoint;
 
 ----
 @Inject
-@ContextName("foo")
 @Uri("direct:inbound")
 Endpoint contextEndpoint;
 ----
@@ -481,23 +477,6 @@ void onRouteStarted(@Observes @Named("foo") RouteStartedEvent event) {
 }
 ----
 
-When multiple Camel contexts exist in the CDI container, the Camel
-context bean qualifiers, like `@ContextName`, can be used to refine the
-observer method resolution to a particular Camel context as specified
-in http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_resolution[observer
-resolution], e.g.:
-
-[source,java]
-----
-void onRouteStarted(@Observes @ContextName("foo") RouteStartedEvent event) {
-    // Called after the route 'event.getRoute()' for the Camel context 'foo' has started
-}
- 
-void onContextStarted(@Observes @Manual CamelContextStartedEvent event) {
-    // Called after the Camel context qualified with '@Manual' has started
-}
-----
-
 Similarly, the `@Default` qualifier can be used to observe Camel events
 for the _default_ Camel context if multiples contexts exist, e.g.:
 
@@ -606,25 +585,6 @@ void observeCdiEvents(@Observes @FooQualifier List<String> event) {
 }
 ----
 
-When multiple Camel contexts exist in the CDI container, the Camel
-context bean qualifiers, like `@ContextName`, can be used to qualify
-the `CdiEventEndpoint<T>` injection points, e.g.:
-
-[source,java]
-----
-@Inject
-@ContextName("foo")
-CdiEventEndpoint<List<String>> cdiEventEndpoint;
-// Only observes / consumes events having the @ContextName("foo") qualifier
-from(cdiEventEndpoint).log("Camel context (foo) > CDI event received: ${body}");
-// Produces / fires events with the @ContextName("foo") qualifier
-from("...").to(cdiEventEndpoint);
-
-void observeCdiEvents(@Observes @ContextName("foo") List<String> event) {
-    logger.info("Camel context (foo) > CDI event: {}", event);
-}
-----
-
 Note that the CDI event Camel endpoint dynamically adds
 an http://docs.jboss.org/cdi/spec/1.2/cdi-spec.html#observer_methods[observer
 method] for each unique combination of _event type_ and _event
@@ -705,18 +665,12 @@ injected, e.g.:
 [source,java]
 ----
 @Inject
-@ContextName("foo")
 CamelContext context;
 
 @Inject
 @Named("bar")
 Endpoint endpoint;
 ----
-
-Note that the `CamelContext` beans are automatically qualified with both
-the `@Named` and `@ContextName` qualifiers. If the
-imported `CamelContext` element doesn't have an `id` attribute, the
-corresponding bean is deployed with the built-in `@Default` qualifier.
 
 Conversely, CDI beans deployed in the application can be referred to
 from the Camel XML configuration, usually using the `ref` attribute,
@@ -878,49 +832,6 @@ Instance<Endpoint> endpoints;
 MockEndpoint outbound = endpoints
     .select(MockEndpoint.class, Uri.Literal.of("mock:outbound"))
     .get();
-----
-
-Similarly, you can use the provided annotation literal for
-the `@ContextName` qualifier to lazily lookup for `CamelContext`
-beans, e.g.:
-
-[source,java]
-----
-@Any
-@Inject
-Instance<CamelContext> contexts;
-
-CamelContext context = contexts
-    .select(ContextName.Literal.of("foo"))
-    .get();
-----
-
-You can also refined the selection based on the Camel context type, e.g.:
-
-[source,java]
-----
-@Any
-@Inject
-Instance<CamelContext> contexts;
-
-// Refine the selection by type
-Instance<DefaultCamelContext> context = contexts.select(DefaultCamelContext.class);
-
-// Check if such a bean exists then retrieve a reference
-if (!context.isUnsatisfied())
-    context.get();
-----
-
-Or even iterate over a selection of Camel contexts, e.g.:
-
-[source,java]
-----
-@Any
-@Inject
-Instance<CamelContext> contexts;
-
-for (CamelContext context : contexts)
-    context.setUseBreadcrumb(true);
 ----
 
 

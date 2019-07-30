@@ -75,24 +75,6 @@ import org.apache.camel.support.DefaultEndpoint;
  *      logger.info("CDI event: {}", event);
  *  }
  * </code></pre>
- *
- * When multiple Camel contexts exist in the CDI container, the {@code @ContextName} qualifier can be used
- * to qualify the {@code CdiEventEndpoint<T>} injection points, e.g.:
- * <pre><code>
- * {@literal @}Inject
- * {@literal @}ContextName("foo")
- *  CdiEventEndpoint{@literal <}List{@literal <}String{@literal >}{@literal >} cdiEventEndpoint;
- *
- *  // Only observe / consume events having the {@literal @}ContextName("foo") qualifier
- *  from(cdiEventEndpoint).log("Camel context 'foo'{@literal >} CDI event received: ${body}");
- *
- *  // Produce / fire events with the {@literal @}ContextName("foo") qualifier
- *  from("...").to(cdiEventEndpoint);
- *
- *  void observeCdiEvents({@literal @}Observes {@literal @}ContextName("foo") List{@literal <}String{@literal >} event) {
- *      logger.info("Camel context 'foo'{@literal >} CDI event: {}", event);
- *  }
- * </code></pre>
  */
 public final class CdiEventEndpoint<T> extends DefaultEndpoint {
 

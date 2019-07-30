@@ -16,38 +16,20 @@
  */
 package org.apache.camel.cdi;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.CamelPostProcessorHelper;
 import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;
-import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
 @Vetoed
 final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
 
     private final BeanManager manager;
 
-    private final Map<String, CamelPostProcessorHelper> postProcessorHelpers = new HashMap<>();
-
     CdiCamelBeanPostProcessor(BeanManager manager) {
         this.manager = manager;
-    }
-
-    private CamelPostProcessorHelper getPostProcessorHelper(String contextName) {
-        return postProcessorHelpers.computeIfAbsent(contextName, k -> new CamelPostProcessorHelper(getOrLookupCamelContext(k)));
-    }
-
-    private CamelContext getOrLookupCamelContext(String contextName) {
-        // TODO: proper support for custom context qualifiers
-        return getReferenceByType(manager, CamelContext.class,
-            contextName.isEmpty() ? DEFAULT : ContextName.Literal.of(contextName))
-            .orElseThrow(() -> new UnsatisfiedResolutionException("No Camel context with name [" + contextName + "] is deployed!"));
     }
 
     @Override

@@ -17,13 +17,11 @@
 package org.apache.camel.example.cdi.cassandraql;
 
 import java.util.Arrays;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesLookup;
@@ -35,7 +33,7 @@ import org.apache.deltaspike.core.api.config.ConfigResolver;
  */
 public class Application {
 
-    @ContextName("camel-example-cassandraql-cdi")
+    @ApplicationScoped
     static class KubernetesRoute extends RouteBuilder {
 
         @Override

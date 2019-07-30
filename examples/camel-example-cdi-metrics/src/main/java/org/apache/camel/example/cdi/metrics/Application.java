@@ -17,7 +17,7 @@
 package org.apache.camel.example.cdi.metrics;
 
 import java.util.concurrent.TimeUnit;
-
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
@@ -33,7 +33,6 @@ import io.astefanutti.metrics.cdi.MetricsConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.metrics.MetricsConstants;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 
@@ -55,7 +54,7 @@ import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
  */
 class Application {
 
-    @ContextName("camel-example-metrics-cdi")
+    @ApplicationScoped
     static class MetricsRoute extends RouteBuilder {
 
         @Override

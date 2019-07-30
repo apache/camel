@@ -17,12 +17,11 @@
 package org.apache.camel.cdi.bean;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.impl.DefaultCamelContext;
 
 @ApplicationScoped
-@ContextName("first")
 public class FirstCamelContextBean extends DefaultCamelContext {
 
 }
