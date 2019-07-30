@@ -17,6 +17,7 @@
 package org.apache.camel.component.paho;
 
 import org.apache.activemq.broker.BrokerService;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
@@ -27,6 +28,7 @@ import org.junit.Test;
 
 public class PahoOverrideTopicTest extends CamelTestSupport {
 
+	@BindToRegistry("connectOptions")
     MqttConnectOptions connectOptions = new MqttConnectOptions();
 
     BrokerService broker;
@@ -64,13 +66,6 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
 
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("connectOptions", connectOptions);
-        return registry;
     }
 
     // Tests
