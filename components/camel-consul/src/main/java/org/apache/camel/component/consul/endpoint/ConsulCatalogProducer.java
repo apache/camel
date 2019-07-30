@@ -20,11 +20,11 @@ import com.orbitz.consul.CatalogClient;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.catalog.CatalogDeregistration;
 import com.orbitz.consul.model.catalog.CatalogRegistration;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
 
 public final class ConsulCatalogProducer extends AbstractConsulProducer<CatalogClient> {
 

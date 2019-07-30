@@ -21,16 +21,17 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.Response;
-
 import org.web3j.protocol.core.methods.response.DbGetHex;
 import org.web3j.protocol.core.methods.response.DbGetString;
 import org.web3j.protocol.core.methods.response.DbPutHex;
@@ -92,10 +93,6 @@ import org.web3j.quorum.methods.response.PrivatePayload;
 import org.web3j.quorum.methods.response.QuorumNodeInfo;
 import org.web3j.quorum.methods.response.Vote;
 import org.web3j.quorum.methods.response.Voter;
-
-/**
- * The web3j producer.
- */
 
 public class Web3jProducer extends HeaderSelectorProducer {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jProducer.class);

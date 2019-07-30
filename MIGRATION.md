@@ -316,6 +316,8 @@ The annotation `org.apache.camel.Constant` has been removed, use `@Simple` inste
 
 The annotation `org.apache.camel.language.SpEL` has been moved to `org.apache.camel.language.spel.SpEL` and in the `camel-spring` JAR.
 
+The annotation `org.apache.camel.InvokeOnHeader` and `org.apache.camel.InvokeOnHeaders` has been moved to the `org.apache.camel.spi` package.
+
 Rename various APIs in camel-core to fix the typo `chiper` to `cipher`.
 
 The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been removed.

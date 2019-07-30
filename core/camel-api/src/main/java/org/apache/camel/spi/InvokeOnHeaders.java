@@ -14,15 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.spi;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.camel.Message;
+
 /**
  * Marks a method as being invoked for a specific header value.
+ * <p/>
+ * This can be used by Component implementations that uses org.apache.camel.support.HeaderSelectorProducer.
  *
  * @see Message#getHeader(String)
  */
@@ -30,10 +34,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface InvokeOnHeaders {
 
-    // TODO: Move to spi as its more for component developers
-    
     /**
-     * Name of headers
+     * Name of headers.
      */
     InvokeOnHeader[] value();
 }

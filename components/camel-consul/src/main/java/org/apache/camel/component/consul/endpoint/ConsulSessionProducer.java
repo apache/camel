@@ -19,11 +19,11 @@ package org.apache.camel.component.consul.endpoint;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.SessionClient;
 import com.orbitz.consul.model.session.Session;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ConsulSessionProducer extends AbstractConsulProducer<SessionClient> {

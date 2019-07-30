@@ -20,11 +20,11 @@ import com.orbitz.consul.Consul;
 import com.orbitz.consul.EventClient;
 import com.orbitz.consul.option.EventOptions;
 import com.orbitz.consul.option.QueryOptions;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
 
 public final class ConsulEventProducer extends AbstractConsulProducer<EventClient> {
 
