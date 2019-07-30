@@ -42,14 +42,13 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() throws Exception {
-    return server.getClient();
+        return server.getClient();
     }
-    
+
     @Test
     public void listTest() throws Exception {
         server.expect().withPath("/api/v1/nodes").andReturn(200, new NodeListBuilder().addNewItem().and().build()).once();
-        List<Node> result = template.requestBody("direct:list", "",
-                List.class);
+        List<Node> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(1, result.size());
     }
@@ -57,7 +56,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/nodes?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-        .andReturn(200, new NodeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+            .andReturn(200, new NodeListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
         Exchange ex = template.request("direct:listByLabels", new Processor() {
 
             @Override
@@ -65,15 +64,12 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
                 Map<String, String> labels = new HashMap<>();
                 labels.put("key1", "value1");
                 labels.put("key2", "value2");
-                exchange.getIn()
-                        .setHeader(
-                                KubernetesConstants.KUBERNETES_NODES_LABELS,
-                                labels);
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, labels);
             }
         });
 
         List<Node> result = ex.getOut().getBody(List.class);
-        
+
         assertEquals(3, result.size());
     }
 
@@ -82,10 +78,8 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes");
-                from("direct:listByLabels")
-                        .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
+                from("direct:list").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes");
+                from("direct:listByLabels").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
             }
         };
     }

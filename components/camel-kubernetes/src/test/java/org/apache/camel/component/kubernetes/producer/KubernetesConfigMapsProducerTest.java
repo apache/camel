@@ -44,7 +44,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() throws Exception {
-    return server.getClient();
+        return server.getClient();
     }
 
     @Test
@@ -73,7 +73,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
 
         assertEquals(3, result.size());
     }
-    
+
     @Test
     public void getConfigMapTestDefaultNamespace() throws Exception {
         ObjectMeta meta = new ObjectMeta();

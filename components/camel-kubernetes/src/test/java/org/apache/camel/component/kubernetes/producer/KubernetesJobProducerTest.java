@@ -44,12 +44,13 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() throws Exception {
-    return server.getClient();
+        return server.getClient();
     }
 
     @Test
     public void listTest() throws Exception {
-        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs").andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+        server.expect().withPath("/apis/batch/v1/namespaces/test/jobs").andReturn(200, new JobListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+            .once();
         List<Secret> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());

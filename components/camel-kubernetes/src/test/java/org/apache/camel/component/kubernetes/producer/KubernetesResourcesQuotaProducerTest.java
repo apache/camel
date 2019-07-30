@@ -41,14 +41,13 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() throws Exception {
-    return server.getClient();
+        return server.getClient();
     }
-    
+
     @Test
     public void listTest() throws Exception {
         server.expect().withPath("/api/v1/resourcequotas").andReturn(200, new ResourceQuotaListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        List<ResourceQuota> result = template.requestBody("direct:list", "",
-                List.class);
+        List<ResourceQuota> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
     }
@@ -62,12 +61,8 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_NAMESPACE_NAME,
-                        "test");
-                exchange.getIn().setHeader(
-                        KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME,
-                        "rq1");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, "rq1");
             }
         });
 
@@ -81,10 +76,8 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list")
-                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
-                from("direct:delete")
-                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=deleteResourceQuota");
+                from("direct:list").to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
+                from("direct:delete").to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=deleteResourceQuota");
             }
         };
     }

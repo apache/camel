@@ -43,7 +43,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
 
     @BindToRegistry("kubernetesClient")
     public KubernetesClient getClient() throws Exception {
-    return server.getClient();
+        return server.getClient();
     }
 
     @Test
