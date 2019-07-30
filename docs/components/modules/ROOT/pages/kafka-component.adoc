@@ -385,7 +385,7 @@ Here how to use it :
 FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
 
 // Bind this repository into the Camel registry
-JndiRegistry registry = new JndiRegistry();
+Registry registry = createCamelRegistry();
 registry.bind("offsetRepo", repository);
 
 // Configure the camel context
@@ -451,7 +451,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 
 // Bind this SSLContextParameters into the Camel registry
-JndiRegistry registry = new JndiRegistry();
+Registry registry = createCamelRegistry();
 registry.bind("ssl", scp);
 
 // Configure the camel context
