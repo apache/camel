@@ -35,6 +35,8 @@ import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -44,8 +46,9 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     private Envelope envelope = Mockito.mock(Envelope.class);
     private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @Override
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
 
         HashMap<String, Object> args = new HashMap<>();
         args.put("foo", "bar");
