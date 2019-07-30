@@ -18,6 +18,7 @@ package org.apache.camel.component.corda;
 
 import java.io.InputStream;
 import java.security.PublicKey;
+
 import net.corda.core.contracts.ContractState;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.flows.FlowLogic;
@@ -29,8 +30,8 @@ import net.corda.core.node.services.vault.AttachmentSort;
 import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.node.services.vault.Sort;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
 
 import static org.apache.camel.component.corda.CordaConstants.ARGUMENTS;

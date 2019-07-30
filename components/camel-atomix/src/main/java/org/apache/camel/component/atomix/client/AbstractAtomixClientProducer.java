@@ -25,10 +25,10 @@ import java.util.concurrent.ConcurrentMap;
 import io.atomix.resource.Resource;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 

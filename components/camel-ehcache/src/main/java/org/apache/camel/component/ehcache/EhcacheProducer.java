@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
 import org.ehcache.Cache;
 
