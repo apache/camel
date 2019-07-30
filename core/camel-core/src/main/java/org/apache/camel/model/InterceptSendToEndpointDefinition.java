@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
@@ -37,6 +38,8 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     private String uri;
     @XmlAttribute
     private Boolean skipSendToOriginalEndpoint;
+    @XmlAttribute
+    private String afterUri;
 
     public InterceptSendToEndpointDefinition() {
     }
@@ -89,6 +92,16 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
      */
     public InterceptSendToEndpointDefinition skipSendToOriginalEndpoint() {
         setSkipSendToOriginalEndpoint(Boolean.TRUE);
+        return this;
+    }
+
+    /**
+     * After sending to the endpoint then send the message to this url which allows to process its result.
+     *
+     * @return the builder
+     */
+    public InterceptSendToEndpointDefinition afterUrl(String url) {
+        setAfterUri(url);
         return this;
     }
 
@@ -155,4 +168,16 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     public void setUri(String uri) {
         this.uri = uri;
     }
+
+    public String getAfterUri() {
+        return afterUri;
+    }
+
+    /**
+     * After sending to the endpoint then send the message to this uri which allows to process its result.
+     */
+    public void setAfterUri(String afterProcessor) {
+        this.afterUri = afterProcessor;
+    }
+
 }

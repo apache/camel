@@ -58,21 +58,29 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // process the detour so we do the detour routing
         if (log.isDebugEnabled()) {
-            log.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(), endpoint.getDetour(), exchange);
+            log.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(), endpoint.getBefore(), exchange);
         }
         // add header with the real endpoint uri
         exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());
 
-        if (endpoint.getDetour() != null) {
+        if (endpoint.getBefore() != null || endpoint.getAfter() != null) {
             // detour the exchange using synchronous processing
-            AsyncProcessor detour = AsyncProcessorConverterHelper.convert(endpoint.getDetour());
+            AsyncProcessor before = null;
+            if (endpoint.getBefore() != null) {
+                before = AsyncProcessorConverterHelper.convert(endpoint.getBefore());
+            }
             AsyncProcessor ascb = new AsyncProcessorSupport() {
                 @Override
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     return callback(exchange, callback, true);
                 }
             };
-            return new Pipeline(exchange.getContext(), Arrays.asList(detour, ascb)).process(exchange, callback);
+            AsyncProcessor after = null;
+            if (endpoint.getAfter() != null) {
+                after = AsyncProcessorConverterHelper.convert(endpoint.getAfter());
+            }
+
+            return new Pipeline(exchange.getContext(), Arrays.asList(before, ascb, after)).process(exchange, callback);
         }
 
         return callback(exchange, callback, true);
@@ -121,13 +129,13 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     }
 
     public void start() {
-        ServiceHelper.startService(endpoint.getDetour());
+        ServiceHelper.startService(endpoint.getBefore(), endpoint.getAfter());
         // here we also need to start the producer
         ServiceHelper.startService(producer);
     }
 
     public void stop() {
-        // do not stop detour as it should only be stopped when the interceptor stops
+        // do not stop before/after as it should only be stopped when the interceptor stops
         // we should stop the producer here
         ServiceHelper.stopService(producer);
     }

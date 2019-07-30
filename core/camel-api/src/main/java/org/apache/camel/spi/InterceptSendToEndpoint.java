@@ -30,9 +30,22 @@ public interface InterceptSendToEndpoint extends Endpoint {
     Endpoint getOriginalEndpoint();
 
     /**
-     * The processor for routing in a detour
+     * The processor for routing in a detour before sending to the original endpoint.
+     *
+     * @deprecated use {@link #getBefore()}
      */
+    @Deprecated
     Processor getDetour();
+
+    /**
+     * The processor for routing in a detour before sending to the original endpoint.
+     */
+    Processor getBefore();
+
+    /**
+     * The processor for routing after sending to the original endpoint.
+     */
+    Processor getAfter();
 
     /**
      * Whether to skip sending after the detour to the original endpoint.
