@@ -19,6 +19,7 @@ package org.apache.camel.component.paho;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.activemq.broker.BrokerService;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +34,7 @@ import org.junit.Test;
 
 public class PahoComponentTest extends CamelTestSupport {
 
+	@BindToRegistry("connectOptions")
     MqttConnectOptions connectOptions = new MqttConnectOptions();
 
     @EndpointInject("mock:test")
@@ -87,13 +89,6 @@ public class PahoComponentTest extends CamelTestSupport {
                 from("paho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("connectOptions", connectOptions);
-        return registry;
     }
 
     // Tests
