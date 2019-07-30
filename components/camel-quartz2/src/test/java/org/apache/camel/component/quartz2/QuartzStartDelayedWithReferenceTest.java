@@ -18,7 +18,6 @@ package org.apache.camel.component.quartz2;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 
 public class QuartzStartDelayedWithReferenceTest extends QuartzStartDelayedTest {
 
