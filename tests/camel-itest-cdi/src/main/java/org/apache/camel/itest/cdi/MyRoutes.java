@@ -16,15 +16,38 @@
  */
 package org.apache.camel.itest.cdi;
 
-public final class Constants {
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-    public static final Object[] EXPECTED_BODIES_A = {"messageA1", "messageA2"};
-    public static final Object[] EXPECTED_BODIES_B = {"messageB1", "messageB2"};
-    public static final Object[] EXPECTED_BODIES_C = {"messageC1", "messageC2"};
-    public static final Object[] EXPECTED_BODIES_D = {"messageD1", "messageD2"};
-    public static final Object[] EXPECTED_BODIES_D_A = {"messageDa1", "messageDa2"};
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.Uri;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private Constants() {
+@ApplicationScoped
+public class MyRoutes extends RouteBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MyRoutes.class);
+
+    @Inject
+    @Uri(value = "seda:a")
+    Endpoint a;
+
+    @EndpointInject(value = "mock:b")
+    MockEndpoint b;
+
+    @Inject
+    @Uri(value = "seda:a")
+    ProducerTemplate producer;
+
+    @Override
+    public void configure() {
+        LOG.info("Adding route from " + a + " to " + b);
+        from(a).to(b);
     }
 
 }
