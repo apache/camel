@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz2;
 
 import java.util.Date;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -49,15 +50,13 @@ public class QuartzCustomCalendarNoFireTest extends BaseQuartzTest {
         assertMockEndpointsSatisfied();
     }
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("calendar")
+    public HolidayCalendar loadCalendar() throws Exception {
 
         HolidayCalendar cal = new HolidayCalendar();
         cal.addExcludedDate(new Date());
 
-        jndi.bind("calendar", cal);
-        return jndi;
+        return cal;
     }
     
     @Override
