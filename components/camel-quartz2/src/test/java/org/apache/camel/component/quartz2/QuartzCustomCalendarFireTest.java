@@ -21,7 +21,6 @@ import java.util.Date;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 import org.quartz.Calendar;
 import org.quartz.Scheduler;
