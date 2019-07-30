@@ -26,8 +26,11 @@ import org.junit.Test;
 
 import static org.apache.camel.Exchange.HTTP_QUERY;
 
-public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
+import org.apache.camel.BindToRegistry;
 
+public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
+    
+    @BindToRegistry("headerFilterStrategy")
     NettyHttpHeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
 
     @EndpointInject("mock:test")
@@ -55,13 +58,6 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
         template.sendBodyAndHeader("netty4-http:http://localhost:" + getPort() + "/?" + options, "message", headerToFilter, "headerValue");
 
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("headerFilterStrategy", headerFilterStrategy);
-        return registry;
     }
 
     @Override

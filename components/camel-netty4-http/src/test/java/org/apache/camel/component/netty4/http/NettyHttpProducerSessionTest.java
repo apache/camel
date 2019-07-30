@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4.http;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +30,12 @@ import org.junit.Test;
 
 public class NettyHttpProducerSessionTest extends BaseNettyTest {
 
+	@BindToRegistry("instanceCookieHandler")
+	private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
+	
+	@BindToRegistry("exchangeCookieHandler")
+	private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
+	
     @Test
     public void testNoSession() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("New New World", "New New World");
@@ -51,14 +58,6 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         template.sendBody("direct:exchange", "World");
         template.sendBody("direct:exchange", "World");
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        return jndiRegistry;
     }
 
     @Override

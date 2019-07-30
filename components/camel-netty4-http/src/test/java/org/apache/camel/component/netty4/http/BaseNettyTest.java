@@ -22,6 +22,8 @@ import java.util.Properties;
 
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ResourceLeakDetector;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.converter.IOConverter;
@@ -104,15 +106,13 @@ public class BaseNettyTest extends CamelTestSupport {
         return context;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("prop")
+    public Properties loadProp() throws Exception {
 
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
-        jndi.bind("prop", prop);
 
-        return jndi;
+        return prop;
     }
 
     protected int getNextPort() {

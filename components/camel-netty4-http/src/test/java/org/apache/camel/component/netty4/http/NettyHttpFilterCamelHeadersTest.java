@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4.http;
 
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +26,9 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
+	
+	@BindToRegistry("foo")
+	private MyFooBean bean = new MyFooBean();
 
     @Test
     public void testFilterCamelHeaders() throws Exception {
@@ -47,13 +51,6 @@ public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
             }
         }
         assertEquals(200, headers.get(Exchange.HTTP_RESPONSE_CODE));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("foo", new MyFooBean());
-        return jndi;
     }
 
     @Override

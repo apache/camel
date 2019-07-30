@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -38,9 +39,8 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
         super.tearDown();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("mySecurityConfig")
+    public NettyHttpSecurityConfiguration loadSecConfig() throws Exception {
 
         NettyHttpSecurityConfiguration security = new NettyHttpSecurityConfiguration();
         security.setRealm("karaf");
@@ -48,9 +48,7 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
         auth.setName("karaf");
         security.setSecurityAuthenticator(auth);
 
-        jndi.bind("mySecurityConfig", security);
-
-        return jndi;
+        return security;
     }
 
     @Test

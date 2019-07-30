@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +26,9 @@ import org.junit.Test;
 
 public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTest {
 
+	@BindToRegistry("customHeaderFilterStrategy")
+	private CustomHeaderFilterStrategy customHeaderFilterStrategy = new CustomHeaderFilterStrategy();
+	
     @Test
     public void testEndpointUriWithCustomHeaderStrategy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:outbound");
@@ -37,12 +41,6 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
 
         String date = out.getOut().getHeader("sub-date", String.class);
         assertNull(date);
-    }
-
-    @Override protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("customHeaderFilterStrategy", new CustomHeaderFilterStrategy());
-        return registry;
     }
 
     @Override
