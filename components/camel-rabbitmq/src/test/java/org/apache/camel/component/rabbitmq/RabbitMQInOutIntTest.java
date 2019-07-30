@@ -40,6 +40,8 @@ import org.apache.camel.component.rabbitmq.testbeans.TestNonSerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableObject;
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
 public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
@@ -70,14 +72,14 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     private MockEndpoint resultEndpoint;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry reg = new SimpleRegistry();
 
         HashMap<String, Object> args = new HashMap<>();
         args.put("queue.x-expires", 60000);
-        jndi.bind("args", args);
+        reg.bind("args", args);
 
-        return jndi;
+        return reg;
     }
 
     @Override

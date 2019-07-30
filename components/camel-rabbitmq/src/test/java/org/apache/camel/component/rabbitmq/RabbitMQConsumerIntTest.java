@@ -26,6 +26,8 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,6 +53,9 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
 
     @EndpointInject("rabbitmq:localhost:5672/" + "ex7" + "?username=cameltest&password=cameltest&exchangeType=headers&autoDelete=false&durable=true&queue=q7&arg.binding.fizz=buzz")
     private Endpoint headersExchangeWithQueueDefiniedInline;
+    
+    @BindToRegistry("args")
+    private Map<String, Object> bindingArgs = new HashMap<>();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -63,16 +68,6 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
                 from(headersExchangeWithQueueDefiniedInline).to(to);
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        Map<String, Object> bindingArgs = new HashMap<>();
-        jndi.bind("args", bindingArgs);
-
-        return jndi;
     }
 
     @Test
