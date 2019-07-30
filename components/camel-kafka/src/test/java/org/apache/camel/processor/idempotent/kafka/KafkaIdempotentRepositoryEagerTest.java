@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.idempotent.kafka;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.RoutesBuilder;
@@ -39,23 +40,14 @@ public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
     @Rule
     public EmbeddedKafkaBroker kafkaBroker = new EmbeddedKafkaBroker(0, zookeeper.getConnection());
 
-    private KafkaIdempotentRepository kafkaIdempotentRepository;
+    @BindToRegistry("kafkaIdempotentRepository")
+    private KafkaIdempotentRepository kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_IDEM", kafkaBroker.getBrokerList());
 
     @EndpointInject("mock:out")
     private MockEndpoint mockOut;
 
     @EndpointInject("mock:before")
     private MockEndpoint mockBefore;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_IDEM", kafkaBroker.getBrokerList());
-        jndi.bind("kafkaIdempotentRepository", kafkaIdempotentRepository);
-
-        return jndi;
-    }
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

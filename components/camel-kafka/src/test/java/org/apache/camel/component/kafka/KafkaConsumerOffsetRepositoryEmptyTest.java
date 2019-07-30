@@ -18,6 +18,7 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,6 +36,7 @@ public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTes
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
+    @BindToRegistry("offset")
     private MemoryStateRepository stateRepository;
 
     // FIXME lifecycle issue here
@@ -75,13 +77,6 @@ public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTes
 
         assertEquals("partition-0", "4", stateRepository.getState(TOPIC + "/0"));
         assertEquals("partition-1", "4", stateRepository.getState(TOPIC + "/1"));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("offset", stateRepository);
-        return registry;
     }
 
     @Override

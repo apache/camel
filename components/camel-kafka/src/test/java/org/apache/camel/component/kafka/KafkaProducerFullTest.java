@@ -28,6 +28,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -96,14 +97,12 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     @Produce("direct:propagatedHeaders")
     private ProducerTemplate propagatedHeadersTemplate;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myStrategy", new MyHeaderFilterStrategy());
-        jndi.bind("myHeaderSerializer", new MyKafkaHeadersSerializer());
-        return jndi;
-    }
+    
+    @BindToRegistry("myStrategy")
+    private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
+    
+    @BindToRegistry("myHeaderSerializer")
+    private MyKafkaHeadersSerializer serializer = new MyKafkaHeadersSerializer();
 
     @BeforeClass
     public static void before() {
