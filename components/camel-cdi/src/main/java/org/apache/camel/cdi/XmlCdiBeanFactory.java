@@ -157,8 +157,7 @@ final class XmlCdiBeanFactory {
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
         if (hasId(factory)) {
-            addAll(annotations,
-                ContextName.Literal.of(factory.getId()), NamedLiteral.of(factory.getId()));
+            addAll(annotations, NamedLiteral.of(factory.getId()));
         } else {
             annotations.add(DEFAULT);
             factory.setImplicitId(true);

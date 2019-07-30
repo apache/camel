@@ -16,10 +16,11 @@
  */
 package org.apache.camel.cdi.bean;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
+import javax.enterprise.context.ApplicationScoped;
 
-@ContextName("first")
+import org.apache.camel.builder.RouteBuilder;
+
+@ApplicationScoped
 public class FirstCamelContextRoute extends RouteBuilder {
 
     @Override

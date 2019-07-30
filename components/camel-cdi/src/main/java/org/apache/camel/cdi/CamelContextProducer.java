@@ -115,9 +115,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
     }
 
     private static CamelContextNameStrategy nameStrategy(Annotated annotated) {
-        if (annotated.isAnnotationPresent(ContextName.class)) {
-            return new ExplicitCamelContextNameStrategy(annotated.getAnnotation(ContextName.class).value());
-        } else if (annotated.isAnnotationPresent(Named.class)) {
+        if (annotated.isAnnotationPresent(Named.class)) {
             // TODO: support stereotype with empty @Named annotation
             String name = annotated.getAnnotation(Named.class).value();
             if (name.isEmpty()) {
