@@ -23,6 +23,8 @@ import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.Component;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public abstract class AtomixClientTestSupport extends CamelTestSupport {
@@ -31,8 +33,8 @@ public abstract class AtomixClientTestSupport extends CamelTestSupport {
     protected AtomixClient client;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
 
         createComponents().entrySet().stream()
             .forEach(e -> registry.bind(e.getKey(), e.getValue()));

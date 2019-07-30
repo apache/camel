@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.atomix.collections.DistributedMap;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Component;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,8 +40,8 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     // Setup
     // ************************************
 
-    @Override
-    protected Map<String, Component> createComponents() {
+    @BindToRegistry("atomix-map")
+    public Map<String, Component> createComponents() {
         AtomixMapComponent component = new AtomixMapComponent();
         component.setNodes(Collections.singletonList(getReplicaAddress()));
 
