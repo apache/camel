@@ -26,9 +26,9 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
-	
-	@BindToRegistry("foo")
-	private MyFooBean bean = new MyFooBean();
+
+    @BindToRegistry("foo")
+    private MyFooBean bean = new MyFooBean();
 
     @Test
     public void testFilterCamelHeaders() throws Exception {

@@ -26,9 +26,9 @@ import org.junit.Test;
 
 public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTest {
 
-	@BindToRegistry("customHeaderFilterStrategy")
-	private CustomHeaderFilterStrategy customHeaderFilterStrategy = new CustomHeaderFilterStrategy();
-	
+    @BindToRegistry("customHeaderFilterStrategy")
+    private CustomHeaderFilterStrategy customHeaderFilterStrategy = new CustomHeaderFilterStrategy();
+
     @Test
     public void testEndpointUriWithCustomHeaderStrategy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:outbound");
@@ -48,21 +48,19 @@ public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNett
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:request")
-                    .setHeader("Date", constant("31-03-2014"))
+                from("direct:request").setHeader("Date", constant("31-03-2014"))
                     .to("netty4-http:http://localhost:{{port}}/myapp/mytest?headerFilterStrategy=#customHeaderFilterStrategy");
 
-                from("netty4-http:http://localhost:{{port}}/myapp/mytest")
-                    .to("mock:outbound")
-                    .setHeader("sub-date", constant("31-05-2014"));
+                from("netty4-http:http://localhost:{{port}}/myapp/mytest").to("mock:outbound").setHeader("sub-date", constant("31-05-2014"));
             }
         };
     }
 
     private class CustomHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         CustomHeaderFilterStrategy() {
-            // allow all outbound headers to pass through but only filter out below inbound header 
+            // allow all outbound headers to pass through but only filter out
+            // below inbound header
             getInFilter().add("sub-date");
-        }   
+        }
     }
 }

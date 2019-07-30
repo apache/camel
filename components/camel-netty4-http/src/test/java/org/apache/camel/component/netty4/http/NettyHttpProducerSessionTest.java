@@ -30,12 +30,12 @@ import org.junit.Test;
 
 public class NettyHttpProducerSessionTest extends BaseNettyTest {
 
-	@BindToRegistry("instanceCookieHandler")
-	private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
-	
-	@BindToRegistry("exchangeCookieHandler")
-	private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
-	
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
+
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
+
     @Test
     public void testNoSession() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("New New World", "New New World");
@@ -65,36 +65,28 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toF("netty4-http:http://127.0.0.1:%d/session", getPort())
-                    .toF("netty4-http:http://127.0.0.1:%d/session", getPort())
-                    .to("mock:result");
+                from("direct:start").toF("netty4-http:http://127.0.0.1:%d/session", getPort()).toF("netty4-http:http://127.0.0.1:%d/session", getPort()).to("mock:result");
 
-                from("direct:instance")
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
-                    .to("mock:result");
+                from("direct:instance").toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort()).to("mock:result");
 
-                from("direct:exchange")
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
-                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
-                    .to("mock:result");
+                from("direct:exchange").toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort()).to("mock:result");
 
-                fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort())
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            HttpMessage message = exchange.getIn(HttpMessage.class);
-                            HttpSession session = message.getRequest().getSession();
-                            String body = message.getBody(String.class);
-                            if ("bar".equals(session.getAttribute("foo"))) {
-                                message.setBody("Old " + body);
-                            } else {
-                                session.setAttribute("foo", "bar");
-                                message.setBody("New " + body);
-                            }
+                fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort()).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        HttpMessage message = exchange.getIn(HttpMessage.class);
+                        HttpSession session = message.getRequest().getSession();
+                        String body = message.getBody(String.class);
+                        if ("bar".equals(session.getAttribute("foo"))) {
+                            message.setBody("Old " + body);
+                        } else {
+                            session.setAttribute("foo", "bar");
+                            message.setBody("New " + body);
                         }
-                    });
+                    }
+                });
             }
         };
     }

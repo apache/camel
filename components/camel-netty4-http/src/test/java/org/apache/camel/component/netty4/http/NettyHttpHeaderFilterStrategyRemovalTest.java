@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4.http;
 
 import static java.util.Collections.singleton;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,10 +27,8 @@ import org.junit.Test;
 
 import static org.apache.camel.Exchange.HTTP_QUERY;
 
-import org.apache.camel.BindToRegistry;
-
 public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
-    
+
     @BindToRegistry("headerFilterStrategy")
     NettyHttpHeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
 
@@ -65,8 +64,7 @@ public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4-http:http://0.0.0.0:{{port}}/")
-                        .to(mockEndpoint);
+                from("netty4-http:http://0.0.0.0:{{port}}/").to(mockEndpoint);
             }
         };
     }
