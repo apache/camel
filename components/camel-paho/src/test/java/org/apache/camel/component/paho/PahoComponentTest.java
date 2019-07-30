@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class PahoComponentTest extends CamelTestSupport {
 
-	@BindToRegistry("connectOptions")
+    @BindToRegistry("connectOptions")
     MqttConnectOptions connectOptions = new MqttConnectOptions();
 
     @EndpointInject("mock:test")
@@ -95,11 +95,7 @@ public class PahoComponentTest extends CamelTestSupport {
 
     @Test
     public void checkOptions() {
-        String uri = "paho:/test/topic"
-                + "?clientId=sampleClient"
-                + "&brokerUrl=tcp://localhost:" + mqttPort
-                + "&qos=2"
-                + "&persistence=file";
+        String uri = "paho:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=tcp://localhost:" + mqttPort + "&qos=2" + "&persistence=file";
 
         PahoEndpoint endpoint = getMandatoryEndpoint(uri, PahoEndpoint.class);
 
@@ -139,9 +135,8 @@ public class PahoComponentTest extends CamelTestSupport {
     @Test
     public void shouldUseConnectionOptionsFromRegistry() {
         // Given
-        PahoEndpoint pahoWithConnectOptionsFromRegistry = getMandatoryEndpoint(
-                "paho:registryConnectOptions?connectOptions=#connectOptions&brokerUrl=tcp://localhost:" + mqttPort,
-                PahoEndpoint.class);
+        PahoEndpoint pahoWithConnectOptionsFromRegistry = getMandatoryEndpoint("paho:registryConnectOptions?connectOptions=#connectOptions&brokerUrl=tcp://localhost:" + mqttPort,
+                                                                               PahoEndpoint.class);
 
         // Then
         assertSame(connectOptions, pahoWithConnectOptionsFromRegistry.resolveMqttConnectOptions());
@@ -150,9 +145,7 @@ public class PahoComponentTest extends CamelTestSupport {
     @Test
     public void shouldAutomaticallyUseConnectionOptionsFromRegistry() {
         // Given
-        PahoEndpoint pahoWithConnectOptionsFromRegistry = getMandatoryEndpoint(
-                "paho:registryConnectOptions?brokerUrl=tcp://localhost:" + mqttPort,
-                PahoEndpoint.class);
+        PahoEndpoint pahoWithConnectOptionsFromRegistry = getMandatoryEndpoint("paho:registryConnectOptions?brokerUrl=tcp://localhost:" + mqttPort, PahoEndpoint.class);
 
         // Then
         assertSame(connectOptions, pahoWithConnectOptionsFromRegistry.resolveMqttConnectOptions());
@@ -171,7 +164,7 @@ public class PahoComponentTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        String payload = new String((byte[]) exchange.getIn().getBody(), "utf-8");
+        String payload = new String((byte[])exchange.getIn().getBody(), "utf-8");
 
         assertEquals("queue", exchange.getIn().getHeader(PahoConstants.MQTT_TOPIC));
         assertEquals(msg, payload);
@@ -219,5 +212,5 @@ public class PahoComponentTest extends CamelTestSupport {
         // Then
         mock.assertIsSatisfied();
     }
-    
+
 }

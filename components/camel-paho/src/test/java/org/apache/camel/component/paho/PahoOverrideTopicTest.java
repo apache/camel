@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class PahoOverrideTopicTest extends CamelTestSupport {
 
-	@BindToRegistry("connectOptions")
+    @BindToRegistry("connectOptions")
     MqttConnectOptions connectOptions = new MqttConnectOptions();
 
     BrokerService broker;
