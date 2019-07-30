@@ -36,11 +36,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
-	
-    @BindToRegistry("myHeaderDeserializer")
-	private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
-	
+
     public static final String TOPIC = "test";
+    
+    @BindToRegistry("myHeaderDeserializer")
+    private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
 
     @EndpointInject("kafka:" + TOPIC
             + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
