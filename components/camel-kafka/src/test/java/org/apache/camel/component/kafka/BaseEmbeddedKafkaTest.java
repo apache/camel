@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 import java.util.Properties;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.embedded.EmbeddedKafkaBroker;
 import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
@@ -63,15 +64,12 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         return props;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
+    @BindToRegistry("prop")
+    public Properties loadProperties() throws Exception {
         Properties prop = new Properties();
         prop.setProperty("zookeeperPort", "" + getZookeeperPort());
         prop.setProperty("kafkaPort", "" + getKafkaPort());
-        jndi.bind("prop", prop);
-        return jndi;
+        return prop;
     }
 
     @Override
