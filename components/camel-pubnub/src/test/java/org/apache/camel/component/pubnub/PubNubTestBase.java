@@ -23,6 +23,7 @@ import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.enums.PNLogVerbosity;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -36,18 +37,11 @@ import static com.pubnub.api.enums.PNHeartbeatNotificationOptions.NONE;
 public class PubNubTestBase extends CamelTestSupport {
     private final int port = AvailablePortFinder.getNextAvailable(3344);
 
-    private PubNub pubnub;
+    @BindToRegistry("pubnub")
+    private PubNub pubnub = createPubNubInstance();
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(options().port(port));
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        this.pubnub = createPubNubInstance();
-        registry.bind("pubnub", this.pubnub);
-        return registry;
-    }
 
 
     @Before
