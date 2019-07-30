@@ -21,13 +21,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
 public class QuartzStartDelayedWithReferenceTest extends QuartzStartDelayedTest {
-    
-	@BindToRegistry("interval")
-	private Long interval = new Long(2);
-	
-	@BindToRegistry("count")
-	private Integer count = new Integer(1);
-    
+
+    @BindToRegistry("interval")
+    private Long interval = new Long(2);
+
+    @BindToRegistry("count")
+    private Integer count = new Integer(1);
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

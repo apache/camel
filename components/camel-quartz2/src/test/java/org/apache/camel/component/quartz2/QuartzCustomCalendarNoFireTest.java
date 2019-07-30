@@ -39,7 +39,7 @@ public class QuartzCustomCalendarNoFireTest extends BaseQuartzTest {
 
         QuartzComponent component = context.getComponent("quartz2", QuartzComponent.class);
         Scheduler scheduler = component.getScheduler();
-        
+
         Calendar c = scheduler.getCalendar(QuartzConstants.QUARTZ_CAMEL_CUSTOM_CALENDAR);
         Date now = new Date();
         java.util.Calendar tomorrow = java.util.Calendar.getInstance();
@@ -49,7 +49,7 @@ public class QuartzCustomCalendarNoFireTest extends BaseQuartzTest {
         assertEquals(false, c.isTimeIncluded(now.getTime()));
         assertMockEndpointsSatisfied();
     }
-    
+
     @BindToRegistry("calendar")
     public HolidayCalendar loadCalendar() throws Exception {
 
@@ -58,7 +58,7 @@ public class QuartzCustomCalendarNoFireTest extends BaseQuartzTest {
 
         return cal;
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
