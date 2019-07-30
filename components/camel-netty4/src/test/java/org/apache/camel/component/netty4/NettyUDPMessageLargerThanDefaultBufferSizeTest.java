@@ -18,6 +18,8 @@ package org.apache.camel.component.netty4;
 
 import io.netty.channel.ChannelOption;
 import io.netty.channel.FixedRecvByteBufAllocator;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
@@ -49,12 +51,10 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         sendMessage(2048);
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("RCVBUF_ALLOCATOR")
+    public FixedRecvByteBufAllocator loadRecv() throws Exception {
         FixedRecvByteBufAllocator fixedRecvByteBufAllocator = new FixedRecvByteBufAllocator(4096);
-        jndi.bind(ChannelOption.RCVBUF_ALLOCATOR.name(), fixedRecvByteBufAllocator);
-        return jndi;
+        return fixedRecvByteBufAllocator;
     }
 
     @Override

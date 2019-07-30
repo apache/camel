@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,12 +25,8 @@ import org.junit.Test;
 
 public class NettySSLPassphaseBeanTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBean", "changeit");
-        return jndi;
-    }
+	@BindToRegistry("myBean")
+	private String bean = "changeit"; 
 
     @Override
     public boolean isUseRouteBuilder() {

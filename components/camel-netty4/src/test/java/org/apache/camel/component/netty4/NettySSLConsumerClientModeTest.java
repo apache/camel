@@ -48,6 +48,8 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslHandler;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -69,12 +71,14 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         }
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ksf", new File("src/test/resources/keystore.jks"));
-        registry.bind("tsf", new File("src/test/resources/keystore.jks"));
-        return registry;
+    @BindToRegistry("ksf")
+    public File loadKeystoreKsf() throws Exception {
+        return new File("src/test/resources/keystore.jks");
+    }
+    
+    @BindToRegistry("tsf")
+    public File loadKeystoreTsf() throws Exception {
+        return new File("src/test/resources/keystore.jks");
     }
     
     @Test

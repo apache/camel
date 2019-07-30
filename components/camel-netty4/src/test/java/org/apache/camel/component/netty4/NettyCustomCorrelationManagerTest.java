@@ -18,6 +18,8 @@ package org.apache.camel.component.netty4;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -25,14 +27,8 @@ import org.junit.Test;
 
 public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
 
+	@BindToRegistry("myManager")
     private final MyCorrelationManager myManager = new MyCorrelationManager();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myManager", myManager);
-        return jndi;
-    }
 
     @Test
     public void testCustomCorrelationManager() throws Exception {

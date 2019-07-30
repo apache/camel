@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,19 +41,12 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
     private int port1;
     private int port2;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        // we can share the decoder between multiple netty consumers, because they have the same configuration
-        // and we use a ChannelHandlerFactory
-        ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-        registry.bind("length-decoder", decoder);
-        registry.bind("length-decoder2", decoder);
-
-        return registry;
-    }
+    
+    @BindToRegistry("length-decoder")
+    private ChannelHandlerFactory decoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+    
+    @BindToRegistry("length-decoder2")
+    private ChannelHandlerFactory decoder2 = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 
     @Test
     public void canSupplyMultipleCodecsToEndpointPipeline() throws Exception {

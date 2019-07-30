@@ -18,18 +18,21 @@ package org.apache.camel.component.netty4;
 
 import java.io.File;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class NettySSLClientCertHeadersTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ksf", new File("src/test/resources/keystore.jks"));
-        registry.bind("tsf", new File("src/test/resources/keystore.jks"));
-        return registry;
+    @BindToRegistry("ksf")
+    public File loadKeystoreKsf() throws Exception {
+        return new File("src/test/resources/keystore.jks");
+    }
+    
+    @BindToRegistry("tsf")
+    public File loadKeystoreTsf() throws Exception {
+        return new File("src/test/resources/keystore.jks");
     }
     
     @Override

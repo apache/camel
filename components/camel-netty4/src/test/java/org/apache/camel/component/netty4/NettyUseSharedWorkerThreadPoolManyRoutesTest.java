@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty4;
 import io.netty.channel.EventLoopGroup;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
@@ -23,9 +25,10 @@ import org.junit.Test;
 
 public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest {
 
-    private JndiRegistry jndi;
-    private EventLoopGroup sharedBoosGroup;
-    private EventLoopGroup sharedWorkerGroup;
+	@BindToRegistry("sharedWorker")
+    private EventLoopGroup sharedBoosGroup = new NettyWorkerPoolBuilder().withWorkerCount(10).build();
+	@BindToRegistry("sharedBoss")
+    private EventLoopGroup sharedWorkerGroup = new NettyServerBossPoolBuilder().withBossCount(20).build();
     private int before;
 
     @Override
@@ -38,12 +41,6 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     public void setUp() throws Exception {
         before = Thread.activeCount();
         super.setUp();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        jndi = super.createRegistry();
-        return jndi;
     }
 
     @Test
@@ -62,10 +59,6 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                sharedWorkerGroup = new NettyWorkerPoolBuilder().withWorkerCount(10).build();
-                jndi.bind("sharedWorker", sharedWorkerGroup);
-                sharedBoosGroup = new NettyServerBossPoolBuilder().withBossCount(20).build();
-                jndi.bind("sharedBoss", sharedBoosGroup);
 
                 for (int i = 0; i < 60; i++) {
                     from("netty4:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&usingExecutorService=false"
