@@ -19,6 +19,7 @@ package org.apache.camel.component.netty4.http;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -26,12 +27,8 @@ import org.junit.Test;
 
 public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myAuthenticator", new MyAuthenticator());
-        return jndi;
-    }
+	@BindToRegistry("myAuthenticator")
+	private MyAuthenticator auth = new MyAuthenticator();
 
     @Test
     public void testBasicAuth() throws Exception {

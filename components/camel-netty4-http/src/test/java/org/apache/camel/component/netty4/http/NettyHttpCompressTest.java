@@ -24,6 +24,8 @@ import java.util.Map;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.HttpContentDecompressor;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
@@ -31,13 +33,11 @@ import org.junit.Test;
 public class NettyHttpCompressTest extends BaseNettyTest {
     
     // setup the decompress decoder here
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry("myDecoders")
+    public List<ChannelHandler> addChannelHandlers() throws Exception {
         List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(new HttpContentDecompressor());
-        registry.bind("myDecoders", decoders);
-        return registry;
+        return decoders;
     }
     
 

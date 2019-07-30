@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.After;
@@ -24,8 +25,8 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
 
     private NettySharedHttpServer nettySharedHttpServer;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("myNettyServer")
+    public NettySharedHttpServer createServer() throws Exception {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
         nettySharedHttpServer.setCamelContext(context);
 
@@ -39,9 +40,7 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
 
         nettySharedHttpServer.start();
 
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myNettyServer", nettySharedHttpServer);
-        return jndi;
+        return nettySharedHttpServer;
     }
 
     @Override

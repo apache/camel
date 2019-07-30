@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -38,17 +39,14 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
         super.tearDown();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("myConstraint")
+    public SecurityConstraintMapping loadSecurityConstraintMapping() throws Exception {
 
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/*");
         matcher.addExclusion("/public/*");
 
-        jndi.bind("myConstraint", matcher);
-
-        return jndi;
+        return matcher;
     }
 
     @Test

@@ -22,6 +22,8 @@ import java.util.List;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,29 +36,29 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     private static final String REQUEST_STRING = "user: Willem\n" 
         + "GET http://localhost:8101/test HTTP/1.1\n" + "another: value\n Host: localhost\n";
     private int port1;
+    
+    @BindToRegistry("string-decoder")
+    private StringDecoder stringDecoder = new StringDecoder();
+    
+    @BindToRegistry("string-encoder")
+    private StringEncoder stringEncoder = new StringEncoder();
    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        // setup the String encoder and decoder 
-       
-        StringDecoder stringDecoder = new StringDecoder();
-        registry.bind("string-decoder", stringDecoder);
-
-        StringEncoder stringEncoder = new StringEncoder();
-        registry.bind("string-encoder", stringEncoder);
-
-        List<ChannelHandler> decoders = new ArrayList<>();
-        decoders.add(stringDecoder);
+    @BindToRegistry("encoders")
+    public List<ChannelHandler> addEncoders() throws Exception {
 
         List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(stringEncoder);
-
-        registry.bind("encoders", encoders);
-        registry.bind("decoders", decoders);
         
-        return registry;
+        return encoders;
+    }
+    
+    @BindToRegistry("decoders")
+    public List<ChannelHandler> addDecoders() throws Exception {
+
+        List<ChannelHandler> decoders = new ArrayList<>();
+        decoders.add(stringDecoder);
+        
+        return decoders;
     }
     
     @Test
