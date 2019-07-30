@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
@@ -35,7 +36,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  *
@@ -84,15 +84,15 @@ public class BaseNettyTest extends CamelTestSupport {
 
     @AfterClass
     public static void verifyNoLeaks() throws Exception {
-        //Force GC to bring up leaks
+        // Force GC to bring up leaks
         System.gc();
-        //Kick leak detection logging
+        // Kick leak detection logging
         ByteBufAllocator.DEFAULT.buffer(1).release();
         Collection<LogEvent> events = LogCaptureAppender.getEvents();
         if (!events.isEmpty()) {
             String message = "Leaks detected while running tests: " + events;
             // Just write the message into log to help debug
-            for (LogEvent event: events) {
+            for (LogEvent event : events) {
                 LOG.info(event.getMessage().getFormattedMessage());
             }
             LogCaptureAppender.reset();
@@ -137,8 +137,7 @@ public class BaseNettyTest extends CamelTestSupport {
         byte data[] = new byte[hexstr.length() / 2];
         int i = 0;
         for (int n = hexstr.length(); i < n; i += 2) {
-            data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
-                    + hexstr.charAt(i + 1))).byteValue();
+            data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i) + hexstr.charAt(i + 1))).byteValue();
         }
         return data;
     }

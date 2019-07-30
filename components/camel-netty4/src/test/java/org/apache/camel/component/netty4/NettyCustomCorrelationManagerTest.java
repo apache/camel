@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
 
-	@BindToRegistry("myManager")
+    @BindToRegistry("myManager")
     private final MyCorrelationManager myManager = new MyCorrelationManager();
 
     @Test
@@ -56,14 +56,10 @@ public class NettyCustomCorrelationManagerTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start")
-                    .log("before ${body}")
-                    .to("netty4:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false&correlationManager=#myManager")
-                    .log("after ${body}")
-                    .to("mock:result");
+                from("seda:start").log("before ${body}").to("netty4:tcp://localhost:{{port}}?textline=true&sync=true&producerPoolEnabled=false&correlationManager=#myManager")
+                    .log("after ${body}").to("mock:result");
 
-                from("netty4:tcp://localhost:{{port}}?textline=true&sync=true")
-                    .transform(body().prepend("Bye "));
+                from("netty4:tcp://localhost:{{port}}?textline=true&sync=true").transform(body().prepend("Bye "));
             }
         };
     }

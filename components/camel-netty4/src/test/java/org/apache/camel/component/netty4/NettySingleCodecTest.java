@@ -30,11 +30,11 @@ import org.junit.Test;
 
 public class NettySingleCodecTest extends BaseNettyTest {
 
-	@BindToRegistry("decoder")
+    @BindToRegistry("decoder")
     private StringDecoder stringDecoder = new StringDecoder();
-	
-	@BindToRegistry("encoder")
-	private StringEncoder stringEncoder = new StringEncoder();
+
+    @BindToRegistry("encoder")
+    private StringEncoder stringEncoder = new StringEncoder();
 
     @Test
     public void canSupplySingleCodecToEndpointPipeline() throws Exception {

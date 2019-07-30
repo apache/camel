@@ -34,12 +34,12 @@ public class NettySSLTest extends BaseNettyTest {
     public File loadKeystoreKsf() throws Exception {
         return new File("src/test/resources/keystore.jks");
     }
-    
+
     @BindToRegistry("tsf")
     public File loadKeystoreTsf() throws Exception {
         return new File("src/test/resources/keystore.jks");
     }
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -54,7 +54,8 @@ public class NettySSLTest extends BaseNettyTest {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                // needClientAuth=true so we can get the client certificate details
+                // needClientAuth=true so we can get the client certificate
+                // details
                 from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -73,9 +74,9 @@ public class NettySSLTest extends BaseNettyTest {
         });
         context.start();
 
-        String response = template.requestBody(
-                "netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
-                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
+        String response = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
+                                               "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
+                                               String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
 

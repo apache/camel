@@ -25,10 +25,10 @@ import org.junit.Test;
 
 public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
 
-	@BindToRegistry("sharedServerPool")
+    @BindToRegistry("sharedServerPool")
     private EventLoopGroup sharedWorkerServerGroup = new NettyWorkerPoolBuilder().withWorkerCount(2).withName("NettyServer").build();
     @BindToRegistry("sharedClientPool")
-	private EventLoopGroup sharedWorkerClientGroup = new NettyWorkerPoolBuilder().withWorkerCount(3).withName("NettyClient").build();
+    private EventLoopGroup sharedWorkerClientGroup = new NettyWorkerPoolBuilder().withWorkerCount(3).withName("NettyClient").build();
     private int port;
     private int port2;
     private int port3;
@@ -70,22 +70,13 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
                 port3 = getNextPort();
 
                 from("netty4:tcp://localhost:" + port + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
-                    .validate(body().isInstanceOf(String.class))
-                    .to("log:result")
-                    .to("mock:result")
-                    .transform(body().regexReplaceAll("Hello", "Bye"));
+                    .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result").transform(body().regexReplaceAll("Hello", "Bye"));
 
                 from("netty4:tcp://localhost:" + port2 + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
-                    .validate(body().isInstanceOf(String.class))
-                    .to("log:result")
-                    .to("mock:result")
-                    .transform(body().regexReplaceAll("Hello", "Hi"));
+                    .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result").transform(body().regexReplaceAll("Hello", "Hi"));
 
                 from("netty4:tcp://localhost:" + port3 + "?textline=true&sync=true&workerGroup=#sharedServerPool&usingExecutorService=false")
-                    .validate(body().isInstanceOf(String.class))
-                    .to("log:result")
-                    .to("mock:result")
-                    .transform(body().regexReplaceAll("Hello", "Hej"));
+                    .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result").transform(body().regexReplaceAll("Hello", "Hej"));
             }
         };
     }

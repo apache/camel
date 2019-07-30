@@ -33,18 +33,18 @@ import org.junit.Test;
 
 public class MultipleCodecsTest extends BaseNettyTest {
 
-	@BindToRegistry("length-decoder")
+    @BindToRegistry("length-decoder")
     private ChannelHandlerFactory lengthDecoder = ChannelHandlerFactories.newLengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
-	
-	@BindToRegistry("string-decoder")
+
+    @BindToRegistry("string-decoder")
     private StringDecoder stringDecoder = new StringDecoder();
-	
-	@BindToRegistry("length-decoder")
+
+    @BindToRegistry("length-decoder")
     private LengthFieldPrepender lengthEncoder = new LengthFieldPrepender(4);
-	
-	@BindToRegistry("string-encoder")
-	private StringEncoder stringEncoder = new StringEncoder();
-	
+
+    @BindToRegistry("string-encoder")
+    private StringEncoder stringEncoder = new StringEncoder();
+
     @BindToRegistry("encoders")
     public List<ChannelHandler> addEncoders() throws Exception {
 
@@ -54,14 +54,14 @@ public class MultipleCodecsTest extends BaseNettyTest {
 
         return encoders;
     }
-    
+
     @BindToRegistry("decoders")
     public List<ChannelHandler> addDecoders() throws Exception {
 
         List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(lengthDecoder);
         decoders.add(stringDecoder);
-        
+
         return decoders;
     }
 
@@ -81,7 +81,7 @@ public class MultipleCodecsTest extends BaseNettyTest {
             public void configure() throws Exception {
                 // START SNIPPET: routes
                 from("direct:multiple-codec").to("netty4:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
-                
+
                 from("netty4:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
                 // START SNIPPET: routes
             }

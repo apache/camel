@@ -59,12 +59,12 @@ import org.junit.Test;
 
 public class NettySSLConsumerClientModeTest extends BaseNettyTest {
     private MyServer server;
-    
+
     public void startNettyServer() throws Exception {
         server = new MyServer(getPort());
         server.start();
     }
-   
+
     public void shutdownServer() {
         if (server != null) {
             server.shutdown();
@@ -75,12 +75,12 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
     public File loadKeystoreKsf() throws Exception {
         return new File("src/test/resources/keystore.jks");
     }
-    
+
     @BindToRegistry("tsf")
     public File loadKeystoreTsf() throws Exception {
         return new File("src/test/resources/keystore.jks");
     }
-    
+
     @Test
     public void testNettyRoute() throws Exception {
         try {
@@ -92,32 +92,32 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         } finally {
             shutdownServer();
         }
-        
+
     }
-      
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("netty4:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf").id("sslclient")
-                .process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
-                }).to("mock:receive").noAutoStartup();
+                    .process(new Processor() {
+                        public void process(final Exchange exchange) {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getOut().setBody("Bye " + body);
+                        }
+                    }).to("mock:receive").noAutoStartup();
             }
         };
     }
-    
+
     private static class MyServer {
         private int port;
         private ServerBootstrap bootstrap;
         private Channel channel;
         private EventLoopGroup bossGroup;
         private EventLoopGroup workerGroup;
-        
+
         MyServer(int port) {
             this.port = port;
         }
@@ -127,24 +127,23 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             workerGroup = new NioEventLoopGroup();
 
             bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(new ServerInitializer());
+            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
             channel = cf.channel();
 
         }
-        
+
         public void shutdown() {
             channel.disconnect();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
-        
+
     }
-    
+
     private static class ServerHandler extends SimpleChannelInboundHandler<String> {
-        
+
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
             ctx.write("Willem\r\n");
             ctx.flush();
@@ -155,16 +154,17 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             cause.printStackTrace();
             ctx.close();
         }
+
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
             // Do nothing here
         }
-        
+
         public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
             ctx.flush();
         }
     }
-    
+
     private static class ServerInitializer extends ChannelInitializer<SocketChannel> {
         private static final StringDecoder DECODER = new StringDecoder();
         private static final StringEncoder ENCODER = new StringEncoder();
@@ -175,13 +175,14 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         ServerInitializer() {
             super();
             try {
-                // create the SSLContext that will be used to create SSLEngine instances
+                // create the SSLContext that will be used to create SSLEngine
+                // instances
                 char[] pass = "changeit".toCharArray();
-                
+
                 KeyManagerFactory kmf;
                 kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                 TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                
+
                 KeyStore ks = KeyStore.getInstance("JKS");
                 try (InputStream ksStream = new FileInputStream(new File("src/test/resources/keystore.jks"))) {
                     ks.load(ksStream, pass);
@@ -196,7 +197,7 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
                 e.printStackTrace();
             }
         }
-       
+
         @Override
         public void initChannel(SocketChannel ch) throws Exception {
             ChannelPipeline pipeline = ch.pipeline();
@@ -206,10 +207,9 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             engine.setUseClientMode(false);
             engine.setNeedClientAuth(true);
             pipeline.addLast("ssl", new SslHandler(engine));
-            
+
             // Add the text line codec combination,
-            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                    8192, Delimiters.lineDelimiter()));
+            pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
             // the encoder and decoder are static as these are sharable
             pipeline.addLast("decoder", DECODER);
             pipeline.addLast("encoder", ENCODER);
@@ -218,5 +218,5 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             pipeline.addLast("handler", SERVERHANDLER);
         }
     }
-    
+
 }

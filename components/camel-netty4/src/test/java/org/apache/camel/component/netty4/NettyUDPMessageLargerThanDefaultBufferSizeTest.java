@@ -47,7 +47,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
 
     @Test
     public void testSend2048Message() throws Exception {
-        //Will fail unless the buffer was increased correctly
+        // Will fail unless the buffer was increased correctly
         sendMessage(2048);
     }
 
@@ -62,8 +62,7 @@ public class NettyUDPMessageLargerThanDefaultBufferSizeTest extends BaseNettyTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#" + ChannelOption.RCVBUF_ALLOCATOR.name())
-                    .to("mock:result");
+                from("netty4:udp://localhost:{{port}}?option." + ChannelOption.RCVBUF_ALLOCATOR.name() + "=#" + ChannelOption.RCVBUF_ALLOCATOR.name()).to("mock:result");
             }
         };
     }
