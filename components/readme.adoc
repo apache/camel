@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 298 in 235 JAR artifacts (0 deprecated)
+Number of Components: 297 in 234 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -246,9 +246,6 @@ Number of Components: 298 in 235 JAR artifacts (0 deprecated)
 
 | link:camel-ehcache/src/main/docs/ehcache-component.adoc[Ehcache] (camel-ehcache) +
 `ehcache:cacheName` | 2.18 | The ehcache component enables you to perform caching operations using Ehcache as cache implementation.
-
-| link:camel-ejb/src/main/docs/ejb-component.adoc[EJB] (camel-ejb) +
-`ejb:beanName` | 2.4 | The ejb component is for invoking EJB Java beans from Camel.
 
 | link:camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc[Elastichsearch Rest] (camel-elasticsearch-rest) +
 `elasticsearch-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using REST API.

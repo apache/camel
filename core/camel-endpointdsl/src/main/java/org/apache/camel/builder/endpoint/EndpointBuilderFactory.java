@@ -93,7 +93,6 @@ public interface EndpointBuilderFactory extends
         ECSEndpointBuilderFactory,
         EKSEndpointBuilderFactory,
         EhcacheEndpointBuilderFactory,
-        EjbEndpointBuilderFactory,
         ElasticsearchEndpointBuilderFactory,
         ElsqlEndpointBuilderFactory,
         EtcdEndpointBuilderFactory,

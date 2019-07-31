@@ -233,7 +233,6 @@ camel routes without them knowing
 ** xref:components::drill-component.adoc[Drill]
 ** xref:components::dropbox-component.adoc[Dropbox]
 ** xref:components::ehcache-component.adoc[Ehcache]
-** xref:components::ejb-component.adoc[EJB]
 ** xref:components::elasticsearch-rest-component.adoc[Elastichsearch Rest]
 ** xref:components::elsql-component.adoc[ElSQL]
 ** xref:components::etcd-component.adoc[etcd]
