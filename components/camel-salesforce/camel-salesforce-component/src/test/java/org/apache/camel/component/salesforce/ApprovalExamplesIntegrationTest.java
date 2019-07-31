@@ -23,7 +23,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegrationTest {
