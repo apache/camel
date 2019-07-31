@@ -122,7 +122,6 @@
         <include>org.apache.camel:camel-drill</include>
         <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-ehcache</include>
-        <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch-rest</include>
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-etcd</include>

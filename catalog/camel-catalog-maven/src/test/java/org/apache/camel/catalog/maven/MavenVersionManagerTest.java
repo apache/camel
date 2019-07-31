@@ -105,8 +105,6 @@ public class MavenVersionManagerTest extends Assert {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("jms"));
-        // camel-ejb does not work in spring-boot
-        assertFalse(names.contains("ejb"));
         // camel-pax-logging does not work in spring-boot
         assertFalse(names.contains("paxlogging"));
     }
@@ -133,8 +131,6 @@ public class MavenVersionManagerTest extends Assert {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("jms"));
-        // camel-ejb does not work in spring-boot
-        assertFalse(names.contains("ejb"));
         // camel-pax-logging does not work in spring-boot
         assertFalse(names.contains("paxlogging"));
     }

@@ -62,8 +62,6 @@ public class SpringBootRuntimeProviderTest {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("jms"));
-        // camel-ejb does not work in spring-boot
-        assertFalse(names.contains("ejb"));
         // camel-pac-logging does not work in spring-boot
         assertFalse(names.contains("paxlogging"));
     }

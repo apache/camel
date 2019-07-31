@@ -17,7 +17,6 @@ The following components do not have a starter because of compatibility issues:
 * **camel-cdi** (intended for CDI only)
 * **camel-core-osgi** (intended for OSGi only)
 * **camel-core-xml**
-* **camel-ejb**  (intended for JEE only)
 * **camel-eventadmin** (intended for OSGi only)
 * **camel-ibatis** (`camel-mybatis-starter` is included)
 * **camel-mina** (`camel-mina2-starter` is included)
