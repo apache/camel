@@ -54,9 +54,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate") @AsPredicate
     private ExpressionSubElementDefinition completionPredicate;
-    @XmlElement(name = "completionTimeout")
+    @XmlElement(name = "completionTimeoutExpression")
     private ExpressionSubElementDefinition completionTimeoutExpression;
-    @XmlElement(name = "completionSize")
+    @XmlElement(name = "completionSizeExpression")
     private ExpressionSubElementDefinition completionSizeExpression;
     @XmlElement(name = "optimisticLockRetryPolicy")
     private OptimisticLockRetryPolicyDefinition optimisticLockRetryPolicyDefinition;
