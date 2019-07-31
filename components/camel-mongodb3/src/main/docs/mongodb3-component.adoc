@@ -185,7 +185,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/context
 == Sample route
 
 The following route defined in Spring XML executes the operation
-xref:mongodb3-component.adoc[*dbStats*] on a collection.
+<<getDbStats>> on a collection.
 
 *Get DB stats for specified collection*
 
@@ -208,7 +208,7 @@ xref:mongodb3-component.adoc[*dbStats*] on a collection.
 This operation retrieves only one element from the collection whose _id
 field matches the content of the IN message body. The incoming object
 can be anything that has an equivalent to a `Bson` type. See
-http://bsonspec.org/#/specification[http://bsonspec.org/#/specification]
+http://bsonspec.org/spec.html[http://bsonspec.org/spec.html]
 and
 http://www.mongodb.org/display/DOCS/Java+Types[http://www.mongodb.org/display/DOCS/Java+Types].
 
@@ -219,9 +219,9 @@ from("direct:findById")
     .to("mock:resultFindById");
 ------------------------------------------------------------------------------
 
-
-TIP: *Supports optional parameters*. This operation supports specifying a fields filter. See
-xref:mongodb3-component.adoc[Specifying optional parameters].
+TIP: *Supports optional parameters*.
+This operation supports specifying a fields filter.
+See <<Specifying a fields filter (projection)>>.
 
 ==== findOneByQuery
 
@@ -229,8 +229,9 @@ Use this operation to retrieve just one element (the first) from the collection 
 matches a MongoDB query. *The query object is extracted `CamelMongoDbCriteria` header*.
 if the CamelMongoDbCriteria header is null the query object is extracted 
 message body, i.e. it should be of type `Bson` or convertible to
-`Bson`. It can be a JSON String or a Hashmap. See xref:mongodb3-component.adoc[#Type conversions] for more info.
-you can use the Filters class from MongoDB Driver.
+`Bson`. It can be a JSON String or a Hashmap.
+See <<Type conversions>> for more info.
+You can use the Filters class from MongoDB Driver.
 
 Example with no query (returns any object of the collection):
 
@@ -251,8 +252,9 @@ from("direct:findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
-TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
-xref:mongodb3-component.adoc[Specifying optional parameters].
+TIP: *Supports optional parameters*.
+This operation supports specifying a fields projection and/or a sort clause.
+See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
 
 ==== findAll
 
@@ -260,10 +262,9 @@ The `findAll` operation returns all documents matching a query, or none
 at all, in which case all documents contained in the collection are
 returned.  *The query object is extracted `CamelMongoDbCriteria` header*.
 if the CamelMongoDbCriteria header is null the query object is extracted 
-message body, i.e. it should be of type `Bson` or convertible to
-`Bson`. It can be
-a JSON String or a Hashmap. See xref:mongodb3-component.adoc[#Type conversions] for
-more info.
+message body, i.e. it should be of type `Bson` or convertible to `Bson`.
+It can be a JSON String or a Hashmap.
+See <<Type conversions>> for more info.
 
 Example with no query (returns all object in the collection):
 
@@ -334,8 +335,9 @@ consideration. |int/Integer
 consideration. |int/Integer
 |=======================================================================
 
-TIP: *Supports optional parameters*. This operation supports specifying a fields projection and/or a sort clause. See
-xref:mongodb3-component.adoc[Specifying optional parameters].
+TIP: *Supports optional parameters*.
+This operation supports specifying a fields projection and/or a sort clause.
+See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
 
 ==== count
 
@@ -963,7 +965,7 @@ Because change streams use the aggregation framework, applications can also filt
 
 To configure Change Streams Consumer you need to specify `consumerType`, `database`, `collection`
 and optional JSON property `streamFilter` to filter events.
-That JSON property is standart MongoDB `$match` aggregation.
+That JSON property is standard MongoDB `$match` aggregation.
 It could be easily specified using XML DSL configuration:
 
 [source,xml]
