@@ -288,72 +288,25 @@ public final class ExchangeHelper {
      * which will copy the message contents, exchange properties and the exception.
      * Notice the {@link ExchangePattern} is <b>not</b> copied/altered.
      *
-     * @param result the result exchange which will have the output and error state added
+     * @param target the target exchange which will have the output and error state added (result)
      * @param source the source exchange which is not modified
      */
-    public static void copyResults(Exchange result, Exchange source) {
-
-        // --------------------------------------------------------------------
-        //  TODO: merge logic with that of copyResultsPreservePattern()
-        // --------------------------------------------------------------------
-
-        if (result == source) {
-            // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
-            // and the result is not failed
-            if (result.getPattern() == ExchangePattern.InOptionalOut) {
-                // keep as is
-            } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
-                // copy IN to OUT as we expect a OUT response
-                result.getOut().copyFrom(source.getIn());
-            }
-            return;
-        }
-
-        if (result != source) {
-            result.setException(source.getException());
-            if (source.hasOut()) {
-                result.getOut().copyFrom(source.getOut());
-            } else if (result.getPattern() == ExchangePattern.InOptionalOut) {
-                // special case where the result is InOptionalOut and with no OUT response
-                // so we should return null to indicate this fact
-                result.setOut(null);
-            } else {
-                // no results so lets copy the last input
-                // as the final processor on a pipeline might not
-                // have created any OUT; such as a mock:endpoint
-                // so lets assume the last IN is the OUT
-                if (result.getPattern().isOutCapable()) {
-                    // only set OUT if its OUT capable
-                    result.getOut().copyFrom(source.getIn());
-                } else {
-                    // if not replace IN instead to keep the MEP
-                    result.getIn().copyFrom(source.getIn());
-                    // clear any existing OUT as the result is on the IN
-                    if (result.hasOut()) {
-                        result.setOut(null);
-                    }
-                }
-            }
-
-            if (source.hasProperties()) {
-                result.getProperties().putAll(source.getProperties());
-            }
-        }
+    public static void copyResults(Exchange target, Exchange source) {
+        doCopyResults(target, source, false);
     }
 
     /**
      * Copies the <code>source</code> exchange to <code>target</code> exchange
      * preserving the {@link ExchangePattern} of <code>target</code>.
      *
-     * @param result target exchange.
+     * @param target the target exchange which will have the output and error state added (result)
      * @param source source exchange.
      */
-    public static void copyResultsPreservePattern(Exchange result, Exchange source) {
+    public static void copyResultsPreservePattern(Exchange target, Exchange source) {
+        doCopyResults(target, source, true);
+    }
 
-        // --------------------------------------------------------------------
-        //  TODO: merge logic with that of copyResults()
-        // --------------------------------------------------------------------
-
+    private static void doCopyResults(Exchange result, Exchange source, boolean preserverPattern) {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
@@ -366,23 +319,41 @@ public final class ExchangeHelper {
             return;
         }
 
-        // copy in message
-        result.getIn().copyFrom(source.getIn());
-
-        // copy out message
         if (source.hasOut()) {
-            // exchange pattern sensitive
-            Message resultMessage = getResultMessage(result);
-            resultMessage.copyFrom(source.getOut());
+            if (preserverPattern) {
+                // exchange pattern sensitive
+                Message resultMessage = getResultMessage(result);
+                resultMessage.copyFrom(source.getOut());
+            } else {
+                result.getOut().copyFrom(source.getOut());
+            }
+        } else if (result.getPattern() == ExchangePattern.InOptionalOut) {
+            // special case where the result is InOptionalOut and with no OUT response
+            // so we should return null to indicate this fact
+            result.setOut(null);
+        } else {
+            // no results so lets copy the last input
+            // as the final processor on a pipeline might not
+            // have created any OUT; such as a mock:endpoint
+            // so lets assume the last IN is the OUT
+            if (!preserverPattern && result.getPattern().isOutCapable()) {
+                // only set OUT if its OUT capable
+                result.getOut().copyFrom(source.getIn());
+            } else {
+                // if not replace IN instead to keep the MEP
+                result.getIn().copyFrom(source.getIn());
+                // clear any existing OUT as the result is on the IN
+                if (result.hasOut()) {
+                    result.setOut(null);
+                }
+            }
         }
 
-        // copy exception
-        result.setException(source.getException());
-
-        // copy properties
         if (source.hasProperties()) {
             result.getProperties().putAll(source.getProperties());
         }
+
+        result.setException(source.getException());
     }
 
     /**

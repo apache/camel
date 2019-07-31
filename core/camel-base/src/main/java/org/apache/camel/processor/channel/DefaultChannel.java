@@ -70,7 +70,6 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         // the errorHandler is already decorated with interceptors
         // so it contain the entire chain of processors, so we can safely use it directly as output
         // if no error handler provided we use the output
-        // TODO: Camel 3.0 we should determine the output dynamically at runtime instead of having the
         // the error handlers, interceptors, etc. woven in at design time
         return errorHandler != null ? errorHandler : output;
     }
