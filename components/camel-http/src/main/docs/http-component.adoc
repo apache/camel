@@ -170,7 +170,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-http4-starter</artifactId>
+  <artifactId>camel-http-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -184,26 +184,26 @@ The component supports 20 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.http4.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
-| *camel.component.http4.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.http4.client-connection-manager* | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. The option is a org.apache.http.conn.HttpClientConnectionManager type. |  | String
-| *camel.component.http4.connect-timeout* | Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
-| *camel.component.http4.connection-request-timeout* | The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
-| *camel.component.http4.connection-time-to-live* | The time for connection to live, the time unit is millisecond, the default value is always keep alive. |  | Long
-| *camel.component.http4.connections-per-route* | The maximum number of connections per route. | 20 | Integer
-| *camel.component.http4.cookie-store* | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). The option is a org.apache.http.client.CookieStore type. |  | String
-| *camel.component.http4.enabled* | Enable http4 component | true | Boolean
-| *camel.component.http4.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.http4.http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
-| *camel.component.http4.http-client-configurer* | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used. The option is a org.apache.camel.component.http4.HttpClientConfigurer type. |  | String
-| *camel.component.http4.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
-| *camel.component.http4.http-context* | To use a custom org.apache.http.protocol.HttpContext when executing requests. The option is a org.apache.http.protocol.HttpContext type. |  | String
-| *camel.component.http4.max-total-connections* | The maximum number of connections. | 200 | Integer
-| *camel.component.http4.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.http4.socket-timeout* | Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
-| *camel.component.http4.ssl-context-parameters* | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
-| *camel.component.http4.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
-| *camel.component.http4.x509-hostname-verifier* | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier. The option is a javax.net.ssl.HostnameVerifier type. |  | String
+| *camel.component.http.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.http.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.http.client-connection-manager* | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. The option is a org.apache.http.conn.HttpClientConnectionManager type. |  | String
+| *camel.component.http.connect-timeout* | Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
+| *camel.component.http.connection-request-timeout* | The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of zero is interpreted as an infinite timeout. A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
+| *camel.component.http.connection-time-to-live* | The time for connection to live, the time unit is millisecond, the default value is always keep alive. |  | Long
+| *camel.component.http.connections-per-route* | The maximum number of connections per route. | 20 | Integer
+| *camel.component.http.cookie-store* | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). The option is a org.apache.http.client.CookieStore type. |  | String
+| *camel.component.http.enabled* | Whether to enable auto configuration of the http component. This is enabled by default. |  | Boolean
+| *camel.component.http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.http.http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
+| *camel.component.http.http-client-configurer* | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used. The option is a org.apache.camel.component.http4.HttpClientConfigurer type. |  | String
+| *camel.component.http.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
+| *camel.component.http.http-context* | To use a custom org.apache.http.protocol.HttpContext when executing requests. The option is a org.apache.http.protocol.HttpContext type. |  | String
+| *camel.component.http.max-total-connections* | The maximum number of connections. | 200 | Integer
+| *camel.component.http.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.http.socket-timeout* | Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: -1 | -1 | Integer
+| *camel.component.http.ssl-context-parameters* | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
+| *camel.component.http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+| *camel.component.http.x509-hostname-verifier* | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier. The option is a javax.net.ssl.HostnameVerifier type. |  | String
 |===
 // spring-boot-auto-configure options: END
 
