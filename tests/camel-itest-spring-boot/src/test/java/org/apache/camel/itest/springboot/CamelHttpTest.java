@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 
 
 @RunWith(Arquillian.class)
-public class CamelHttp4Test extends AbstractSpringBootTestSupport {
+public class CamelHttpTest extends AbstractSpringBootTestSupport {
 
     @Deployment
     public static Archive<?> createSpringBootPackage() throws Exception {
@@ -34,7 +34,7 @@ public class CamelHttp4Test extends AbstractSpringBootTestSupport {
 
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
-                .module(inferModuleName(CamelHttp4Test.class))
+                .module(inferModuleName(CamelHttpTest.class))
                 .build();
     }
 
