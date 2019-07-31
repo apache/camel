@@ -23,6 +23,8 @@ import java.util.function.Function;
 
 import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.ProducerTemplate;
@@ -36,18 +38,9 @@ import org.junit.Test;
 import org.reactivestreams.Publisher;
 
 public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
-    
-    // ************************************************
-    // Setup
-    // ************************************************
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("hello", new SampleBean());
-
-        return registry;
-    }
+	
+	@BindToRegistry("hello")
+	private SampleBean bean = new SampleBean();
 
     public static class SampleBean {
         public String hello(String name) {
