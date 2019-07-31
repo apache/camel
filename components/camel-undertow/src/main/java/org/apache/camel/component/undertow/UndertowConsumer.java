@@ -36,6 +36,8 @@ import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
 import io.undertow.util.StatusCodes;
 import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.spi.WebSocketHttpExchange;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -198,14 +200,18 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
      * {@code connectionKey}.
      *
      * @param connectionKey an identifier of {@link WebSocketChannel} through which the {@code message} was received
+     * @param channel the {@link WebSocketChannel} through which the {@code message} was received
      * @param message the message received via the {@link WebSocketChannel}
      */
-    public void sendMessage(final String connectionKey, final Object message) {
+    public void sendMessage(final String connectionKey, WebSocketChannel channel, final Object message) {
 
         final Exchange exchange = getEndpoint().createExchange();
 
         // set header and body
         exchange.getIn().setHeader(UndertowConstants.CONNECTION_KEY, connectionKey);
+        if(channel != null) {
+            exchange.getIn().setHeader(UndertowConstants.CHANNEL, channel);
+        }
         exchange.getIn().setBody(message);
 
         // send exchange using the async routing engine
@@ -223,16 +229,23 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
      * Send a notification related a WebSocket peer.
      *
      * @param connectionKey of WebSocket peer
+     * @param transportExchange the exchange for the websocket transport, only available for ON_OPEN events
+     * @param channel the {@link WebSocketChannel} through which the {@code message} was received
      * @param eventType the type of the event
      */
-    public void sendEventNotification(String connectionKey, EventType eventType) {
+    public void sendEventNotification(String connectionKey, WebSocketHttpExchange transportExchange, WebSocketChannel channel, EventType eventType) {
         final Exchange exchange = getEndpoint().createExchange();
 
         final Message in = exchange.getIn();
         in.setHeader(UndertowConstants.CONNECTION_KEY, connectionKey);
         in.setHeader(UndertowConstants.EVENT_TYPE, eventType.getCode());
         in.setHeader(UndertowConstants.EVENT_TYPE_ENUM, eventType);
-
+        if(channel != null){
+            in.setHeader(UndertowConstants.CHANNEL, channel);
+        }
+        if(transportExchange != null){
+            in.setHeader(UndertowConstants.EXCHANGE, transportExchange);
+        }
         // send exchange using the async routing engine
         getAsyncProcessor().process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {

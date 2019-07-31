@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.undertow.ws;
 
+import io.undertow.websockets.core.WebSocketChannel;
+import io.undertow.websockets.spi.WebSocketHttpExchange;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -125,7 +128,9 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
         Assert.assertEquals(1, exchanges.size());
-        Object body = result.getReceivedExchanges().get(0).getIn().getBody();
+        Exchange exchange = result.getReceivedExchanges().get(0);
+        assertNotNull(exchange.getIn().getHeader(UndertowConstants.CHANNEL));
+        Object body = exchange.getIn().getBody();
         Assert.assertTrue("body is " + body.getClass().getName(), body instanceof Reader);
         Reader r = (Reader) body;
         Assert.assertEquals("Test", IOConverter.toString(r));
@@ -208,7 +213,9 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
         Assert.assertEquals(1, exchanges.size());
-        Object body = result.getReceivedExchanges().get(0).getIn().getBody();
+        Exchange exchange = result.getReceivedExchanges().get(0);
+        assertNotNull(exchange.getIn().getHeader(UndertowConstants.CHANNEL));
+        Object body = exchange.getIn().getBody();
         Assert.assertTrue("body is " + body.getClass().getName(), body instanceof InputStream);
         InputStream in = (InputStream) body;
         Assert.assertArrayEquals(testmessage, IOConverter.toBytes(in));
@@ -376,6 +383,12 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
             final Message in = exchange.getIn();
             final String key = (String) in.getHeader(UndertowConstants.CONNECTION_KEY);
             Assert.assertNotNull(key);
+            final WebSocketChannel channel = in.getHeader(UndertowConstants.CHANNEL, WebSocketChannel.class);
+            Assert.assertNotNull(channel);
+            if(in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class) == EventType.ONOPEN){
+                final WebSocketHttpExchange transportExchange = in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
+                Assert.assertNotNull(transportExchange);
+            }
             List<String> messages = connections.get(key);
             if (messages == null) {
                 messages = new ArrayList<>();
