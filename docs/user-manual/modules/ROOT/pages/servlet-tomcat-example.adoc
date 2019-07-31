@@ -118,4 +118,4 @@ http://localhost:8080/camel-example-servlet-tomcat/camel/hello URL.
 
 * xref:examples.adoc[Examples]
 *  xref:components::servlet-component.adoc[Servlet]
-*  xref:components::http4-component.adoc[HTTP]
+*  xref:components::http-component.adoc[HTTP]

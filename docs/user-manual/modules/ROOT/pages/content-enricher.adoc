@@ -305,7 +305,7 @@ And for Spring DSL:
 From Camel 2.16 onwards enrich and pollEnrich supports using dynamic
 uris computed based on information from the
 current xref:exchange.adoc[Exchange]. For example to enrich from
-a xref:components::http4-component.adoc[HTTP] endpoint where the header with key orderId is
+a xref:components::http-component.adoc[HTTP] endpoint where the header with key orderId is
 used as part of the content-path of the HTTP url:
 
 [source,java]
