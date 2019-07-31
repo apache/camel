@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  *
  */
-public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
+public class TokenXMLPairNamespaceSplitChildNamespaceTest extends ContextTestSupport {
 
     @Override
     @Before
@@ -39,10 +39,11 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
     @Test
     public void testTokenXMLPair() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order>");
-        mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order>");
-        mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
+        mock.expectedMessageCount(4);
+        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
+        mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
+        mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
+        mock.message(3).body().isEqualTo("<order id=\"4\" xmlns:foo=\"http:foo.com\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
         template.sendBodyAndHeader("file:target/pair", body, Exchange.FILE_NAME, "orders.xml");
@@ -54,9 +55,10 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
     public void testTokenXMLPair2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order>");
-        mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order>");
-        mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
+        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
+        mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
+        mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
+        mock.message(3).body().isEqualTo("<order id=\"4\" xmlns:foo=\"http:foo.com\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
         template.sendBodyAndHeader("file:target/pair2", body, Exchange.FILE_NAME, "orders.xml");
@@ -66,10 +68,13 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
 
     protected String createBody() {
         StringBuilder sb = new StringBuilder("<?xml version=\"1.0\"?>\n");
-        sb.append("<orders xmlns=\"http:acme.com\">\n");
+        sb.append("<orders xmlns=\"http:acme.com\"\n");
+        sb.append("        xmlns:foo=\"http:foo.com\">\n");
         sb.append("  <order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order>\n");
-        sb.append("  <order id=\"2\">ActiveMQ in Action</order>\n");
+        sb.append("  <order id=\"2\"");
+        sb.append(" xmlns=\"http:acme.com\">ActiveMQ in Action</order>\n");
         sb.append("  <order id=\"3\">DSL in Action</order>\n");
+        sb.append("  <order id=\"4\" xmlns:foo=\"http:foo.com\">DSL in Action</order>\n");
         sb.append("</orders>");
         return sb.toString();
     }
