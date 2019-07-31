@@ -26,6 +26,8 @@ import static java.util.Arrays.asList;
 import com.google.common.truth.Truth;
 import org.apache.camel.component.spark.annotations.RddCallback;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaRDDLike;
@@ -70,8 +72,8 @@ public class SparkProducerTest extends CamelTestSupport {
     // Routes fixtures
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
 
         registry.bind("testFileRdd", sparkContext.textFile("src/test/resources/testrdd.txt"));
 
