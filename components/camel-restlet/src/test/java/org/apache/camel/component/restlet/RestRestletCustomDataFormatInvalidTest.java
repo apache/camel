@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.restlet;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.impl.JndiRegistry;
@@ -24,16 +25,12 @@ import org.junit.Test;
 
 public class RestRestletCustomDataFormatInvalidTest extends RestletTestSupport {
 
+	@BindToRegistry("bla")
+	private JacksonDataFormat df = new JacksonDataFormat();
+	
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("bla", new JacksonDataFormat());
-        return jndi;
     }
 
     @Test

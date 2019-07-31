@@ -18,6 +18,7 @@ package org.apache.camel.component.restlet;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +30,12 @@ import org.junit.Test;
 
 public class RestletProducerSessionTest extends RestletTestSupport {
     private String url = "restlet:http://127.0.0.1:" + portNum + "/session?restletMethod=POST";
+    
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
+    
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
     @Test
     public void testProducerNoSession() throws Exception {
@@ -52,14 +59,6 @@ public class RestletProducerSessionTest extends RestletTestSupport {
         template.sendBodyAndHeader("direct:exchange", "{World}", Exchange.CONTENT_TYPE, "application/json");
         template.sendBodyAndHeader("direct:exchange", "{World}", Exchange.CONTENT_TYPE, "application/json");
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        return jndiRegistry;
     }
 
     @Override

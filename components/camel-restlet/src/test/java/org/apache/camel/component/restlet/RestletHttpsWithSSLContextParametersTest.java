@@ -18,6 +18,7 @@ package org.apache.camel.component.restlet;
 
 import java.net.URL;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,8 +36,8 @@ public class RestletHttpsWithSSLContextParametersTest extends RestletTestSupport
     private static final String REQUEST_MESSAGE = 
         "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("mySSLContextParameters")
+    public SSLContextParameters loadSSLContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").getPath().toString());
         ksp.setPassword("changeit");
@@ -48,10 +49,7 @@ public class RestletHttpsWithSSLContextParametersTest extends RestletTestSupport
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setKeyManagers(kmp);
 
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("mySSLContextParameters", sslContextParameters);
-
-        return registry;
+        return sslContextParameters;
     }
 
     
