@@ -116,6 +116,8 @@ The `camel-jetty` component no longer supports producer (eg to) which has been r
 
 The `test` component has been renamed to `dataset-test` and moved out of `camel-core` into `camel-dataset` JAR.
 
+The `http4` component has been renamed to `http`. The supported scheme are now only `http` and `https`.
+
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
 ### Tracing
