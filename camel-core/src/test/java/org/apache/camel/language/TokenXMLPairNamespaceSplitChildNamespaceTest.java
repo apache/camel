@@ -54,7 +54,7 @@ public class TokenXMLPairNamespaceSplitChildNamespaceTest extends ContextTestSup
     @Test
     public void testTokenXMLPair2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
-        mock.expectedMessageCount(3);
+        mock.expectedMessageCount(4);
         mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">Camel in Action</order>");
         mock.message(1).body().isEqualTo("<order id=\"2\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">ActiveMQ in Action</order>");
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
