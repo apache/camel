@@ -19,6 +19,8 @@ package org.apache.camel.component.servlet.rest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.component.servlet.ServletRestHttpBinding;
@@ -27,12 +29,8 @@ import org.junit.Test;
 
 public class RestServletOptionsTest extends ServletCamelRouterTestSupport {
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBinding", new ServletRestHttpBinding());
-        return jndi;
-    }
+	@BindToRegistry("myBinding")
+    private ServletRestHttpBinding restHttpBinding = new ServletRestHttpBinding();
 
     @Test
     public void testServletOptions() throws Exception {
