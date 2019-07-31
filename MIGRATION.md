@@ -12,8 +12,8 @@ Camel 3 supports Java 11. Support for Java 8 is best effort for the earlier vers
 Modularization of camel-core
 ----------------------------
 
-One of the biggest change is the modularization of camel-core.
-In Camel 2.x camel-core was one JAR file, which now has been splitup into many JARs as follows:
+One of the biggest changes is the modularization of camel-core.
+In Camel 2.x camel-core was one JAR file, it has now been split up into many JARs as follows:
 
 - camel-api
 - camel-base
@@ -27,9 +27,9 @@ In Camel 2.x camel-core was one JAR file, which now has been splitup into many J
 - camel-support
 - camel-util
 - camel-util-json
- 
+
 Maven users of Apache Camel can keep using the dependency *camel-core* which will have transitive dependency on all of its modules, and therefore no migration is needed.
-However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
+However, users who want to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
 You may find how to do that in the examples.
 
 We have also modularized many of the core components and moved them out of `camel-core` to individual components:
@@ -100,7 +100,7 @@ The `properties` component has configuring custom prefix and suffix tokens remov
 
 The `properties` component has some advanced options removed: `propertyPrefix`, `propertySuffix`, and `fallbackToUnaugmented`; these options was never really useable for end users anyway. The option `propertiesResolver` has also been removed as you should use `PropertiesSource` instead.
 
-The properties component will now use OS environment variables as perferred value. This means you can set an OS environment variable which will override any property values that has been set in property files, JVM system properties etc. You can configure this with the `environmentVariableMode` option on the properties component.
+The properties component will now use OS environment variables as preferred value. This means you can set an OS environment variable which will override any property values that has been set in property files, JVM system properties etc. You can configure this with the `environmentVariableMode` option on the properties component.
 
 ### Removed components
 
@@ -129,7 +129,7 @@ In JMX the `BacklogTracer` is no longer enabled by default, which you need to en
 
 We have renamed the attribute `headerName` and `propertyName` in the XML DSL for the `<setHeader>` and `<setProperty`> EIPs, to be just `name`.
 
-So migrate 
+So migrate
 
     <setHeader headerName="foo"><simple>Hello ${body}</simple></setHeader>
 
@@ -175,15 +175,15 @@ Also the `@OutHeaders` annotation for bean parameter binding has been removed, i
 
 ### Mock component
 
-The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use. 
+The `mock` component has been moved out of `camel-core` and as part of this work, we had to remove a number of methods on its _assertion clause builder_ that were seldom in use.
 
 ### ActiveMQ
 
 If you are using the `activemq-camel` component, then you should migrate to use `camel-activemq` component, where the component name has changed from `org.apache.activemq.camel.component.ActiveMQComponent` to `org.apache.camel.component.activemq.ActiveMQComponent`.
 
-### AWS 
+### AWS
 
-The component `camel-aws` has been splitted in multiple components:
+The component `camel-aws` has been split into multiple components:
 
 - camel-aws-cw
 - camel-aws-ddb (which contains both ddb and ddbstreams components)
@@ -206,7 +206,7 @@ So you'll have to add explicitly the dependencies for these components. From the
 
 ### JMX
 
-If you run Camel standalone with just `camel-core` as dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as dependency.
+If you run Camel standalone with just `camel-core` as a dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as a dependency.
 
 For using `ManagedCamelContext` you now need to get this an extension from `CamelContext` as follows:
 
@@ -229,15 +229,15 @@ In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `
 
 ### Extended CamelContext
 
-The APIs on `CamelContext` has been reducded a bit to focus on relevant API for Camel end users. The advanced use-cases and for SPI and component developers, then some of the APIs from `CamelContext` has been moved to `ExtendedCamelContext` which you can access via adapt:
+The APIs on `CamelContext` has been reduced a bit to focus on relevant API for Camel end users. The advanced use-cases and for SPI and component developers, then some of the APIs from `CamelContext` has been moved to `ExtendedCamelContext` which you can access via adapt:
 
     ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
 
 ### Main class
 
-The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufy code for multiple Camels. The method `getCamelContextMap` has been removed, and there is just a `getCamelContext` method now.
+The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufty code for multiple Camels. The method `getCamelContextMap` has been removed, and there is just a `getCamelContext` method now.
 
-### POJO annotations 
+### POJO annotations
 
 The `ref` attribute on `@Consume`, `@Produce` and `@EndpointInject` has been removed. Instead use the ref component in the `uri` attribute, eg `uri = "ref:myName"`.
 
@@ -274,7 +274,7 @@ The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has 
 
 #### Checked vs unchecked exceptions
 
-Most of the Camel exception classes has been migrated to be unchecked (eg extends `RuntimeException`). 
+Most of the Camel exception classes has been migrated to be unchecked (eg extends `RuntimeException`).
 
 Also the lifecycle of the `start`, `stop` and `suspend`, `resume` methods on `Service` and `SuspendableService` has been changed to not throw checked exceptions.
 
@@ -328,7 +328,7 @@ The classes `ReloadStrategySupport` and `FileWatcherReloadStrategy` has been rem
 
 The `MessageHistoryFactory` interface has some options to filter and copy the message and a slight change in its API.
 
-Removed `TypeConverterAware` as you shoudld instead use `Exchange` as parameter to the type converter method.
+Removed `TypeConverterAware` as you should instead use `Exchange` as parameter to the type converter method.
 
 The `Component` and `DataFormat` interfaces now extend `Service` as components and data formats should also have service contract to manage their lifecycle. The default base classes already implements these interfaces.
 
@@ -338,7 +338,7 @@ If you are using camel-test and override the `createRegistry` method, for exampl
 you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
 
     context.getRegistry().bind("myId", myBean);
-    
+
 
 #### Controlling routes
 
@@ -426,9 +426,9 @@ The class `UnitOfWorkHelper` has been moved from `org.apache.camel.util.UnitOfWo
 
 #### Idempotent Repositories
 
-The class `FileIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.FileIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` and moved to the `camel-suppor` JAR.
+The class `FileIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.FileIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` and moved to the `camel-support` JAR.
 
-The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.MemoryIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository` and moved to the `camel-suppor` JAR.
+The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.MemoryIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository` and moved to the `camel-support` JAR.
 
 
 #### Route Policies
@@ -458,13 +458,13 @@ The APIs that could find, and explain EIPs, components, endpoints etc has been r
 
 The default for use breadcrumbs has been changed from `true` to `false`.
 
-The `ProducerTemplate` and `ConsumerTemplate` now fails when being used, if `CamelContext` has not been started first. 
+The `ProducerTemplate` and `ConsumerTemplate` now fails when being used, if `CamelContext` has not been started first.
 
 ### XML DSL Migration
 
 The XML DSL has been changed slightly.
 
-The custom load balancer EIP has changed from `<custom>` to `<customLoadBalancer>` 
+The custom load balancer EIP has changed from `<custom>` to `<customLoadBalancer>`
 
 The XMLSecurity data format has renamed the attribute `keyOrTrustStoreParametersId` to `keyOrTrustStoreParametersRef` in the `<secureXML>` tag.
 
@@ -474,7 +474,7 @@ The `<zipFile>` data format has been renamed to `<zipfile>`.
 Migrating Camel Maven Plugins
 -----------------------------
 
-The `camel-maven-plugin` has been splitup into two maven plugins:
+The `camel-maven-plugin` has been split up into two maven plugins:
 
 - camel-maven-plugin
 - camel-report-maven-plugin
@@ -487,7 +487,7 @@ The `camel-report-maven-plugin` has the `validate` and `route-coverage` goals wh
 Known Issues
 ------------
 
-There is an issue with MDC logging and correctly transfering the Camel breadscrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, which may not correctly transfer the span id's when using MDC logging as well. 
+There is an issue with MDC logging and correctly transferring the Camel breadcrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, which may not correctly transfer the span id's when using MDC logging as well.
 
 The tracer feature does not work (the implementation from Camel 2.x was deprecated), and we plan to implement a new and improved tracer.
 
