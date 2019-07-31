@@ -21,7 +21,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
+@Ignore // on purpose to ignore
 public class MyNettyTest extends CamelTestSupport {
 
     public int getNextPort() {
