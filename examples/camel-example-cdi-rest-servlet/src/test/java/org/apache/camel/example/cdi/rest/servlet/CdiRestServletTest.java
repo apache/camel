@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 @RunWith(Arquillian.class)
 public class CdiRestServletTest {
@@ -58,6 +59,6 @@ public class CdiRestServletTest {
     @RunAsClient
     public void testWithUriTemplate(@ArquillianResource URL url) throws Exception {
         assertThat(IOHelper.loadText(new URL(url, "camel/say/hello/Antonin").openStream()),
-            is(equalTo("Hello Antonin, I'm CamelContext(hello)!\n")));
+            is(startsWith("Hello Antonin")));
     }
 }
