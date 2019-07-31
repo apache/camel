@@ -25,9 +25,9 @@ import org.junit.Test;
 
 public class RestRestletCustomDataFormatInvalidTest extends RestletTestSupport {
 
-	@BindToRegistry("bla")
-	private JacksonDataFormat df = new JacksonDataFormat();
-	
+    @BindToRegistry("bla")
+    private JacksonDataFormat df = new JacksonDataFormat();
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -41,14 +41,8 @@ public class RestRestletCustomDataFormatInvalidTest extends RestletTestSupport {
                 restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.json).jsonDataFormat("bla");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-                        .route()
-                            .choice()
-                                .when().simple("${body.id} < 100")
-                                    .bean(new UserErrorService(), "idToLowError")
-                                .otherwise()
-                                    .bean(new UserService(), "livesWhere");
+                rest("/users/").post("lives").type(UserPojo.class).outType(CountryPojo.class).route().choice().when().simple("${body.id} < 100")
+                    .bean(new UserErrorService(), "idToLowError").otherwise().bean(new UserService(), "livesWhere");
             }
         });
         try {

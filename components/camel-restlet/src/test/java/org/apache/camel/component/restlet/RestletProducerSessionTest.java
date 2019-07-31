@@ -30,10 +30,10 @@ import org.junit.Test;
 
 public class RestletProducerSessionTest extends RestletTestSupport {
     private String url = "restlet:http://127.0.0.1:" + portNum + "/session?restletMethod=POST";
-    
+
     @BindToRegistry("instanceCookieHandler")
     private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
-    
+
     @BindToRegistry("exchangeCookieHandler")
     private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
@@ -66,40 +66,30 @@ public class RestletProducerSessionTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to(url)
-                    .to(url)
-                    .to("mock:result");
+                from("direct:start").to(url).to(url).to("mock:result");
 
-                from("direct:instance")
-                    .to(url + "&cookieHandler=#instanceCookieHandler")
-                    .to(url + "&cookieHandler=#instanceCookieHandler")
-                    .to("mock:result");
+                from("direct:instance").to(url + "&cookieHandler=#instanceCookieHandler").to(url + "&cookieHandler=#instanceCookieHandler").to("mock:result");
 
-                from("direct:exchange")
-                    .to(url + "&cookieHandler=#exchangeCookieHandler")
-                    .to(url + "&cookieHandler=#exchangeCookieHandler")
-                    .to("mock:result");
+                from("direct:exchange").to(url + "&cookieHandler=#exchangeCookieHandler").to(url + "&cookieHandler=#exchangeCookieHandler").to("mock:result");
 
-                from("jetty://http://127.0.0.1:" + portNum + "/session?sessionSupport=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            HttpMessage message = exchange.getIn(HttpMessage.class);
-                            HttpSession session = message.getRequest().getSession();
-                            String body = message.getBody(String.class);
-                            if (body.length() > 2) {
-                                body = body.substring(1, body.length() - 1);
-                            }
-                            if ("bar".equals(session.getAttribute("foo"))) {
-                                body = "{Old " + body + "}";
-                            } else {
-                                session.setAttribute("foo", "bar");
-                                body = "{New " + body + "}";
-                            }
-                            exchange.getOut().setBody(body);
-                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                from("jetty://http://127.0.0.1:" + portNum + "/session?sessionSupport=true").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpMessage message = exchange.getIn(HttpMessage.class);
+                        HttpSession session = message.getRequest().getSession();
+                        String body = message.getBody(String.class);
+                        if (body.length() > 2) {
+                            body = body.substring(1, body.length() - 1);
                         }
-                    });
+                        if ("bar".equals(session.getAttribute("foo"))) {
+                            body = "{Old " + body + "}";
+                        } else {
+                            session.setAttribute("foo", "bar");
+                            body = "{New " + body + "}";
+                        }
+                        exchange.getOut().setBody(body);
+                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                    }
+                });
             }
         };
     }

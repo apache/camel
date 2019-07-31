@@ -32,9 +32,8 @@ import org.junit.Test;
 
 public class RestRestletRouterIdTest extends CamelTestSupport {
 
-	@BindToRegistry("setId")
-    private static final Processor SET_ROUTE_ID_AS_BODY =
-    exchange -> exchange.getIn().setBody(exchange.getFromRouteId());
+    @BindToRegistry("setId")
+    private static final Processor SET_ROUTE_ID_AS_BODY = exchange -> exchange.getIn().setBody(exchange.getFromRouteId());
     private int port = AvailablePortFinder.getNextAvailable(6000);
 
     @Override
@@ -43,87 +42,38 @@ public class RestRestletRouterIdTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
+                restConfiguration().component("restlet").host("localhost").port(port).bindingMode(RestBindingMode.auto);
 
-                restConfiguration().component("restlet").host("localhost")
-                        .port(port).bindingMode(RestBindingMode.auto);
-
-                rest("/app").get("/test1").id("test1").to("direct:setId")
-                    .get("/test2").route().routeId("test2").to("direct:setId");
+                rest("/app").get("/test1").id("test1").to("direct:setId").get("/test2").route().routeId("test2").to("direct:setId");
                 rest("/app").get("/test4").route().routeId("test4").to("direct:setId2");
 
+                from("direct:setId").process(SET_ROUTE_ID_AS_BODY);
 
-                from("direct:setId")
-                        .process(SET_ROUTE_ID_AS_BODY);
+                from("direct:setId2").process("setId");
 
-                from("direct:setId2")
-                        .process("setId");
-
-                rest("/app").get("/test3")
-                        .route()
-                        .id("test3")
-                        .process(SET_ROUTE_ID_AS_BODY);
+                rest("/app").get("/test3").route().id("test3").process(SET_ROUTE_ID_AS_BODY);
 
                 rest("/app").get("/REST-TEST").route().routeId("TEST").id("REST-TEST").to("direct:setId");
 
-                rest("/app").get("/test5").route()
-                        .id("test5")
-                        .to("direct:setId")
-                        .endRest()
-                .to("direct:setId2");
+                rest("/app").get("/test5").route().id("test5").to("direct:setId").endRest().to("direct:setId2");
             };
         };
     }
 
     @Test
     public void test() throws Exception {
-        
-        Assert.assertEquals("\"test1\"", template.requestBodyAndHeader(
-                "http4://localhost:" + port + "/app/test1",
-                "",
-                Exchange.HTTP_METHOD,
-                HttpMethods.GET,
-                String.class
-        ));
 
-        Assert.assertEquals("\"test2\"", template.requestBodyAndHeader(
-                "http4://localhost:" + port + "/app/test2",
-                "",
-                Exchange.HTTP_METHOD,
-                HttpMethods.GET,
-                String.class
-        ));
+        Assert.assertEquals("\"test1\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test1", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"test3\"", template.requestBodyAndHeader(
-                "http4://localhost:" + port + "/app/test3",
-                "",
-                Exchange.HTTP_METHOD,
-                HttpMethods.GET,
-                String.class
-        ));
+        Assert.assertEquals("\"test2\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test2", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"test4\"", template.requestBodyAndHeader(
-                "http4://localhost:" + port + "/app/test4",
-                "",
-                Exchange.HTTP_METHOD,
-                HttpMethods.GET,
-                String.class
-        ));
+        Assert.assertEquals("\"test3\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test3", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
+        Assert.assertEquals("\"test4\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test4", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"test5\"", template.requestBodyAndHeader(
-                "http4://localhost:" + port + "/app/test5",
-                "",
-                Exchange.HTTP_METHOD,
-                HttpMethods.GET,
-                String.class
-        ));
+        Assert.assertEquals("\"test5\"", template.requestBodyAndHeader("http4://localhost:" + port + "/app/test5", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
 
-        Assert.assertEquals("\"REST-TEST\"", template.requestBodyAndHeader(
-                "http4://localhost:" + port + "/app/REST-TEST",
-                "",
-                Exchange.HTTP_METHOD,
-                HttpMethods.GET,
-                String.class
-        ));
+        Assert.assertEquals("\"REST-TEST\"",
+                            template.requestBodyAndHeader("http4://localhost:" + port + "/app/REST-TEST", "", Exchange.HTTP_METHOD, HttpMethods.GET, String.class));
     }
 }

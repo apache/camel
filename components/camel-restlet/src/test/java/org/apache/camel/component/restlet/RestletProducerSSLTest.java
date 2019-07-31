@@ -32,7 +32,7 @@ import org.junit.Test;
 public class RestletProducerSSLTest extends RestletTestSupport {
 
     public static final String BODY = "some body";
-    
+
     @BindToRegistry("mySSLContextParameters")
     private SSLContextParameters sslContextParameters = createSSLContext();
 

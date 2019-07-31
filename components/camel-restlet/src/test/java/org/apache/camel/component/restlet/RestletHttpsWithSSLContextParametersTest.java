@@ -32,10 +32,9 @@ import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 
 public class RestletHttpsWithSSLContextParametersTest extends RestletTestSupport {
-    
-    private static final String REQUEST_MESSAGE = 
-        "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
-    
+
+    private static final String REQUEST_MESSAGE = "<mail><body>HelloWorld!</body><subject>test</subject><to>x@y.net</to></mail>";
+
     @BindToRegistry("mySSLContextParameters")
     public SSLContextParameters loadSSLContextParams() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
@@ -52,24 +51,21 @@ public class RestletHttpsWithSSLContextParametersTest extends RestletTestSupport
         return sslContextParameters;
     }
 
-    
-
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // enable POST support
-                from("restlet:https://localhost:" + portNum + "/users/?restletMethods=post&sslContextParameters=#mySSLContextParameters")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            assertNotNull(body);
-                            assertTrue("Get a wrong request message", body.indexOf(REQUEST_MESSAGE) >= 0);
-                            exchange.getOut().setBody("<status>OK</status>");
-                            exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-                        }
-                    });
+                from("restlet:https://localhost:" + portNum + "/users/?restletMethods=post&sslContextParameters=#mySSLContextParameters").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        assertNotNull(body);
+                        assertTrue("Get a wrong request message", body.indexOf(REQUEST_MESSAGE) >= 0);
+                        exchange.getOut().setBody("<status>OK</status>");
+                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+                    }
+                });
             }
         };
     }
@@ -78,13 +74,14 @@ public class RestletHttpsWithSSLContextParametersTest extends RestletTestSupport
     public void testPostXml() throws Exception {
         postRequestMessage(REQUEST_MESSAGE);
     }
-   
+
     private void postRequestMessage(String message) throws Exception {
-        // ensure jsse clients can validate the self signed dummy localhost cert, 
+        // ensure jsse clients can validate the self signed dummy localhost
+        // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
-        
+
         HttpPost post = new HttpPost("https://localhost:" + portNum + "/users/");
         post.addHeader(Exchange.CONTENT_TYPE, "application/xml");
         post.setEntity(new StringEntity(message));
