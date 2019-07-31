@@ -1115,7 +1115,7 @@ export $FOO_SERVICE_HOST=myserver export $FOO_SERVICE_PORT=8888
 
 For example if the `FOO` service a remote HTTP service, then we can
 refer to the service in the Camel endpoint URI, and use
-the xref:components::http4-component.adoc[HTTP] component to make the HTTP call:
+the xref:components::http-component.adoc[HTTP] component to make the HTTP call:
 
 [source,xml]
 ----

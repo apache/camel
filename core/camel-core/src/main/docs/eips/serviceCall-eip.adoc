@@ -34,11 +34,11 @@ Camel will then:
 * select the server to use
 * build a Camel URI using the chosen server info
 
-By default the Service Call EIP uses camel-http4 so assuming that the selected service instance runs on host ```myhost.com``` on port ```80```, the computed Camel URI will be:
+By default the Service Call EIP uses camel-http so assuming that the selected service instance runs on host ```myhost.com``` on port ```80```, the computed Camel URI will be:
 
 [source]
 ----
-http4:myhost.com:80
+http:myhost.com:80
 ----
 
 == Service Name to Camel URI Examples

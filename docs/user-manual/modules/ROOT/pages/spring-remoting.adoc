@@ -22,7 +22,7 @@ In your Spring XML just use the
 to create a client side proxy implementing some interface which then
 sends messages to some remote Camel xref:endpoint.adoc[Endpoint] such as
 xref:components::activemq-component.adoc[ActiveMQ], xref:components::jms-component.adoc[JMS], xref:components::file-component.adoc[File],
-xref:components::http4-component.adoc[HTTP], xref:components::xmpp-component.adoc[XMPP] etc.
+xref:components::http-component.adoc[HTTP], xref:components::xmpp-component.adoc[XMPP] etc.
 
 Then to implement the service you use
 `org.apache.camel.spring.remoting.CamelServiceExporter`.
