@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter.stream;
+package org.apache.camel.support.builder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.ExchangeHelper;
-
-// TODO: We can move this under org.apache.camel.support to have them all under the same package name
 
 /**
  * Utility to hide the complexity of choosing which OutputStream

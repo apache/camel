@@ -30,7 +30,7 @@ import org.apache.camel.component.crypto.cms.common.CryptoCmsUnmarshaller;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsException;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsFormatException;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsNoCertificateForRecipientsException;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
