@@ -18,6 +18,7 @@ package org.apache.camel.component.restlet;
 
 import java.io.File;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,17 +32,9 @@ import org.junit.Test;
 public class RestletProducerSSLTest extends RestletTestSupport {
 
     public static final String BODY = "some body";
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-
-        SSLContextParameters sslContextParameters = createSSLContext();
-
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("mySSLContextParameters", sslContextParameters);
-
-        return registry;
-    }
+    
+    @BindToRegistry("mySSLContextParameters")
+    private SSLContextParameters sslContextParameters = createSSLContext();
 
     @Test
     public void testRestletProducerComponentSSL() throws Exception {

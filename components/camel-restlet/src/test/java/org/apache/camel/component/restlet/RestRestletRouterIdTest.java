@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.restlet;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
@@ -31,16 +32,10 @@ import org.junit.Test;
 
 public class RestRestletRouterIdTest extends CamelTestSupport {
 
+	@BindToRegistry("setId")
     private static final Processor SET_ROUTE_ID_AS_BODY =
     exchange -> exchange.getIn().setBody(exchange.getFromRouteId());
     private int port = AvailablePortFinder.getNextAvailable(6000);
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry r = super.createRegistry();
-        r.bind("setId", SET_ROUTE_ID_AS_BODY);
-        return r;
-    }
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

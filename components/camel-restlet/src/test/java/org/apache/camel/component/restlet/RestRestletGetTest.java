@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.restlet;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,12 +26,8 @@ import org.junit.Test;
 
 public class RestRestletGetTest extends RestletTestSupport {
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBinding", new DefaultRestletBinding());
-        return jndi;
-    }
+	@BindToRegistry("myBinding")
+	private DefaultRestletBinding binding = new DefaultRestletBinding();
 
     @Test
     public void testRestletProducerGet() throws Exception {
