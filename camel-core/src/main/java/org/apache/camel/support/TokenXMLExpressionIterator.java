@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -55,6 +56,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
     private static final String SCAN_BLOCK_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^>]*)?/>|<{0}(\\s+[^>]*)?>(?:(?!(</{0}\\s*>)).)*</{0}\\s*>";
     private static final String SCAN_PARENT_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^>]*\\s*)?>";
     private static final String OPTION_WRAP_TOKEN = "<*>";
+    private static final String NAMESPACE_SEPERATOR = " ";
 
     protected final String tagToken;
     protected final String inheritNamespaceToken;
@@ -201,8 +203,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         String getNext(boolean first) {
             // initialize inherited namespaces on first
             if (first && inheritNamespaceToken != null && !wrapToken) {
-            	String rootTokenNamespacesString = getNamespacesFromNamespaceToken(scanner.findWithinHorizon(inheritNamespaceTokenPattern, 0));
-                rootTokenNamespaces =  rootTokenNamespacesString == null ? null : rootTokenNamespacesString.split(" ");
+                rootTokenNamespaces = getNamespacesFromNamespaceTokenSplitter(scanner.findWithinHorizon(inheritNamespaceTokenPattern, 0));
             }
 
             String next = scanner.findWithinHorizon(tagTokenPattern, 0);
@@ -239,28 +240,36 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         }
         
         private String getMissingInherritNamespaces(final String text) {
-            if (text == null) {
-                return "";
-            }
-            final String namespaces = getNamespacesFromNamespaceToken(text);
-            final String[] containedNamespaces = namespaces == null ? new String[0] : namespaces.split(" ");
             final StringBuilder sb = new StringBuilder();
-            boolean first = true;
-            for (String rn : rootTokenNamespaces) {
-                boolean nsExists = false;
-                for (String cn : containedNamespaces) {
-                    if (rn.equals(cn)) {
-                        nsExists = true;
-                        first = false;
-                        break;
+            if (text != null) {
+                boolean first = true;
+                final String[] containedNamespaces = getNamespacesFromNamespaceTokenSplitter(text);
+                for (final String rn : rootTokenNamespaces) {
+                    boolean nsExists = false;
+                    for (final String cn : containedNamespaces) {
+                        if (rn.equals(cn)) {
+                            nsExists = true;
+                            // already existing namespace in child were found we need a separator, so we set first = false
+                            if (first) {
+                                first = false;
+                            }
+                            break;
+                        }
                     }
-                }
-                if (!nsExists) {
-                    sb.append(first ? rn : " " + rn);
-                    first = false;
+                    if (!nsExists) {
+                        sb.append(first ? rn : NAMESPACE_SEPERATOR + rn);
+                        if (first) {
+                            first = false;
+                        }
+                    }
                 }
             }
             return sb.toString();
+        }
+
+        private String[] getNamespacesFromNamespaceTokenSplitter(final String text) {
+            final String namespaces = getNamespacesFromNamespaceToken(text);
+            return namespaces == null ? new String[0] : namespaces.split(NAMESPACE_SEPERATOR);
         }
 
         private String getNamespacesFromNamespaceToken(String text) {
